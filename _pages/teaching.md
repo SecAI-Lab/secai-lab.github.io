@@ -9,7 +9,7 @@ permalink: /teaching/
 ### Teaching
 
 #### Fall 2021
-* [GEDT018] C++ Programming (공학컴퓨터프로그래밍)
+* [GEDT018] Computer Programming for Engineers (공학컴퓨터프로그래밍; C++)
 * [SWE3028] Capstone Design Project (캡스톤설계프로젝트)
 
 #### Spring 2021
