@@ -18,13 +18,13 @@ Further, we attempt to apply the representation to other applications
 that require the inference of code semantics.
 Supported by NRF (National Research Foundation of Korea).
 
+
+### Past Projects
+
 **Autonomous Car Security as part of Advance Research and Development for Next-generation Security.**
 It aims to discover a vulnerability (e.g., sequence of malicious messages)
 against a car infortainment system, and to develop an AI-based intrusion detection system.
 Supported by IITP (Institute of Information & Communications Technology Planning & Evaluation).
-
-
-### Past Projects
 
 **Vulnerability Analysis on IoTivity Protocol Provisioning.** 
 The goal of the project is to analyze the IoTivity protocol,
