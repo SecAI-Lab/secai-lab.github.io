@@ -58,7 +58,12 @@ I am Hyungjoon Koo who leads the SecAI lab. Launching a new lab, a relatively yo
 [+] enjoys endless intellectual exploration, <br>
 [+] has full of curiosity and desire to unearth the unknown digital world, or <br>
 [+] exerts your passion to move forward together for making the world secure, <br>
-contact me here: kevin.koo@g.skku.edu
+
+Please contact me here: kevin.koo@g.skku.edu
+<br>
+Note that we are not considering any student who is (physically) abroad
+because COVID-19 makes the Korean Consulate postpone issuing a visa. 
+We will lift this constraint once things come back to normal.
 
 <!--
 <figure class="fourth">
