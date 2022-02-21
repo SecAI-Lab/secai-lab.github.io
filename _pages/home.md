@@ -61,9 +61,9 @@ I am Hyungjoon Koo who leads the SecAI lab. Launching a new lab, a relatively yo
 
 Please contact me here: kevin.koo@g.skku.edu
 <br>
-Note that we are not considering any student who is (physically) abroad
+<font color=red>Note that we are not considering any student who is (physically) abroad
 because COVID-19 makes the Korean Consulate postpone issuing a visa. 
-We will lift this constraint once things come back to normal.
+We will lift this constraint once things come back to normal.</font>
 
 <!--
 <figure class="fourth">
