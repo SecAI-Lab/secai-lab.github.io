@@ -57,4 +57,4 @@ a weakness of the protocol while onboarding and provisioning.
 Supported by NSRI (National Security Research Institute).
 *This is a joint project with
 [Hyongkee Choi](https://sites.google.com/g.skku.edu/meoseriful/), and
-[Jaehoon Paul Jeong](http://iotlab.skku.edu/)*
+[Jaehoon Paul Jeong](http://iotlab.skku.edu/)* at Sungkyunkwan University (SKKU).
