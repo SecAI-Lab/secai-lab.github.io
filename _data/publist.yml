@@ -1,3 +1,13 @@
+- title: "Phishing URL Detection with Text-CNN"
+  image: 
+  description: 
+  authors: Sechang Lim and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: 한국정보보호학회 하계학술대회 (CISC-S ’22)
+  highlight: 0
+  news2:
+
 - title: "IoTivity Packet Parser for Encrypted Messages in Internet of Things"
   image: 
   description: The Internet of Things (IoT) market has been ever-growing because both the demand of smart lives and the number of mobile users keep increasing. On the other hand, IoT device manufacturers tend to employ proprietary operating systems and network protocols, which may lead device interoperability issues. The Open Connectivity Foundation (OCF) has established a standard protocol for seamless IoT communication. IoTivity is one of reference implementations that conforms to the OCF specification. IoTivity utilizes both Datagram Transport Layer Security (DTLS) and Constrained Application Protocol (CoAP) to support a lightweight and secure communication. Although a packet analysis tool like Wireshark offers a feature to decrypt messages over TLS or DTLS by feeding a session key that a Web browser records, it cannot be directly applied to IoTivity because it lacks such a tracing functionality. In this paper, we develop an IoTivity Packet Parser (IPP) for encrypted CoAP messages tailored to IoTivity. To this end, we modify IoTivity source code to extract required keys, and implement an automated CoAP parser that parses each field with the collected keys, which allows for further debugging in a handy way.
