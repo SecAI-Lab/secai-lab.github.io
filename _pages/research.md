@@ -10,7 +10,25 @@ permalink: /research/
 
 Here are ongoing research projects.
 
-**A Study of Metric to Measure the Quality of Decompiled Codes**
+**AI Platform to Fully Adapt and Reflect Privacy-Policy Changes**
+Recent advancements in machine learning (e.g., deep neural network)
+exhibit varying applications. On the other hand, many voices 
+raise a privacy concern, establishing a privacy policy accordingly
+such as GDPR (General Data Protection Regulation). The policy can
+be updated to catch up ever-changing technologies. This project aims
+to build an adaptable AI platform that is able to comply with 
+an up-to-date privacy policy.
+*This is a joint project with [Simon Woo](https://dash-lab.github.io/About/)
+at Sungkyunkwan University (SKKU).*
+
+**A Generalizable and Continual Deep Learning Model for Inferring the Context of Binary Codes**
+This is a succeeding project to binary code representation with BERT.
+In particular, we explore a better metric to describe a binary property for a downstream task.
+Then, we study how to build a model for contextual inference of a binary
+in a generalizable and continual manner.
+Supported by NRF (National Research Foundation of Korea).
+
+**A Metric to Measure the Quality of Decompiled Codes**
 The project studies a metric (means) to evaluate quality of
 decompiled codes from varying decompilers such as Hex-Rays Decompiler.
 It encompasses an existing methodology for code quality measurement, comparison
@@ -28,6 +46,9 @@ followed by investigating efficient fuzzing techniques that focus on a target pr
 *This is a joint project with [Daehee Jang](https://daehee87.github.io/)
 at Sungshin Women's University.*
 
+
+### Past Projects
+
 **Semantic-aware Executable Binary Code Representation and its Applications with BERT.** 
 The project seeks a better binary code representation in an executable binary
 that can deduce the underlying code semantics with one of state-of-the-art
@@ -35,9 +56,6 @@ architectures, BERT (Bi-directional Encoder Representations from Transformers).
 Further, we attempt to apply the representation to other applications
 that require the inference of code semantics.
 Supported by NRF (National Research Foundation of Korea).
-
-
-### Past Projects
 
 **Autonomous Car Security as part of Advance Research and Development for Next-generation Security.**
 It aims to discover a vulnerability (e.g., sequence of malicious messages)
