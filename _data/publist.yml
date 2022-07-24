@@ -48,7 +48,16 @@
   highlight: 0
   news2: 
   
-
+- title: "Semantic-aware Binary Code Representation with BERT"
+  image:
+  description: A wide range of binary analysis applications, such as bug discovery, malware analysis and code clone detection, require recovery of contextual meanings on a binary code. Recently, binary analysis techniques based on machine learning have been proposed to automatically reconstruct the code representation of a binary instead of manually crafting specifics of the analysis algorithm. However, the existing approaches utilizing machine learning are still specialized to solve one domain of problems, rendering recreation of models for different types of binary analysis. In this paper, we propose DeepSemantic utilizing BERT in producing the semantic-aware code representation of a binary code. To this end, we introduce well-balanced instruction normalization that holds rich information for each of instructions yet minimizing an out-of-vocabulary (OOV) problem. DeepSemantic has been carefully designed based on our study with large swaths of binaries. Besides, DeepSemantic leverages the essence of the BERT architecture into re-purposing a pre-trained generic model that is readily available as a one-time processing, followed by quickly applying specific downstream tasks with a fine-tuning process. We demonstrate DeepSemantic with two downstream tasks, namely, binary similarity comparison and compiler provenance (i.e., compiler and optimization level) prediction. Our experimental results show that the binary similarity model outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, 49.84% and 15.83% on average, respectively.
+  authors: Hyungjoon Koo, Soyeon Park, Daejin Choi and Taesoo Kim
+  link:
+    url: https://arxiv.org/abs/2106.05478
+    display: ArXiv
+  highlight: 0
+  news2: 
+  
 - title: "Slimium: Debloating the Chromium Browser with Feature Subsetting"
   image: slimium.png
   description: Today, a web browser plays a crucial role in offering a broad spectrum of web experiences. The most popular browser, Chromium, has become an extremely complex application to meet ever-increasing user demands, exposing unavoidably large attack vectors due to its large code base. Code debloating attracts attention as a means of reducing such a potential attack surface by eliminating unused code. However, it is very challenging to perform sophisticated code removal without breaking needed functionalities because Chromium operates on a large number of closely connected and complex components, such as a renderer and JavaScript engine. In this paper, we present Slimium, a debloating framework for a browser (i.e., Chromium) that harnesses a hybrid approach for a fast and reliable binary instrumentation. The main idea behind Slimium is to determine a set of features as a debloating unit on top of a hybrid (i.e., static, dynamic, heuristic) analysis, and then leverage feature subsetting to code debloating. It aids in i) focusing on securityoriented features, ii) discarding unneeded code simply without complications, and iii) reasonably addressing a non-deterministic path problem raised from code complexity. To this end, we generate a feature-code map with a relation vector technique and prompt webpage profiling results. Our experimental results demonstrate the practicality and feasibility of Slimium for 40 popular websites, as on average it removes 94 CVEs (61.4%) by cutting down 23.85 MB code (53.1%) from defined features (21.7% of the whole) in Chromium. 
