@@ -57,7 +57,7 @@ I am Hyungjoon Koo who leads the SecAI lab. Launching a new lab, a relatively yo
 <br>If you think you are the one who <br>
 [+] enjoys endless intellectual exploration <br>
 [+] has full of curiosity and desire to unearth the unknown digital world <br>
-[+] exerts your passion to move forward together for making the world secure <br>,
+[+] exerts your passion to move forward together for making the world secure, <br>
 
 Please fill out <a href="https://forms.gle/FsHk1u8WrTKLayHVA" target=blank>this form</a>
 (An application via an email may not be considered). 
