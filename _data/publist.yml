@@ -1,3 +1,23 @@
+- title: "Practical Binary Code Similarity Detection with BERT-based Transferable Similarity Learning"
+  image: 
+  description: Binary code similarity detection serves as a basis for a wide spectrum of applications, including software plagiarism, malware classification, and known vulnerability discovery. However, the inference of contextual meanings of a binary is challenging due to the absence of semantic information available in source codes. Recent advances leverage the benefits of a deep learning architecture into a better understanding of underlying code semantics and the advantages of the Siamese architecture into better code similarity detection. In this paper, we propose BinShot, a BERT-based similarity learning architecture that is highly transferable for effective binary code similarity detection. We tackle the problem of detecting code similarity with one-shot learning (a special case of few-shot learning). To this end, we adopt a weighted distance vector with a binary cross entropy as a loss function on top of BERT. With the prototype implementation of BinShot, our experimental results demonstrate the effectiveness, transferability, and practicality of BinShot, which is robust to detecting the similarity of previously unseen functions.We show that BinShot outperforms the previous state-of-the-art approaches for binary code similarity detection. 
+  authors: Sunwoo Ahn, Seonggwan Ahn, Hyungjoon Koo and Yunheung Paek
+  link:
+    url: https://www.acsac.org/2022/
+    display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22; To appear)
+  highlight: 0
+  news2:
+
+- title: "DeView: Confining Progressive Web Applications by Debloating Web APIs"
+  image: 
+  description: A progressive web application (PWA) becomes an attractive option for building universal applications based on feature-rich web application programming interfaces (Web APIs). While flexible, such vast APIs inevitably bring a significant increase in an API attack surface, which commonly corresponds to a functionality that is neither needed nor wanted by the application. A promising approach to reduce the API attack surface is software debloating, a technique wherein an unused functionality is programmatically removed from an application or API. Unfortunately, debloating PWAs is challenging given the monolithic design and non-deterministic execution of a modern web browser. In this paper, we present DeView, a practical approach that reduces the attack surface of a PWA by blocking unnecessary but accessible web APIs. DeView tackles the challenges of PWA debloating by i) record-and-replay web API profiling that identifies needed web APIs on an app-by-app basis by replaying (recorded) browser interactions and ii) compiler-assisted browser debloating that eliminates the entry functions of corresponding web APIs from the mapping between web API and its entry point at a binary level. Our evaluation shows the effectiveness and practicality of DeView. DeView successfully eliminates 91.8% of accessible web APIs while i) maintaining original functionalities and ii) preventing 76.3% of known exploits on average 
+  authors: ChangSeok Oh, Sangho Lee, Chenxiong Qian, Hyungjoon Koo and Wenke Lee
+  link:
+    url: https://www.acsac.org/2022/
+    display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22; To appear)
+  highlight: 0
+  news2:
+
 - title: "Text-CNN을 활용한 피싱 URL 탐지 (Phishing URL Detection with Text-CNN)"
   image: 
   description: 
