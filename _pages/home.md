@@ -6,7 +6,8 @@ sitemap: false
 permalink: /
 ---
 
-We are a security research group at the [Department of Computer Science and Engineering](http://cs.skku.edu/en) in Sungkyunkwan University. 
+We are a [security research group](https://github.com/SecAI-Lab) at the [Department of Computer Science and Engineering](http://cs.skku.edu/en), 
+College of Computing and Informatics in [Sungkyunkwan University](https://www.skku.edu). 
 
 The number of computing devices such as laptops, workstations, mobiles, Internet of Things, and cloud services has been ever increasing, communicating with each other. Accordingly, enormous amount of digitalized data become available, necessitating information security all around us. 
 

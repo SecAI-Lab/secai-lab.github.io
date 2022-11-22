@@ -14,7 +14,7 @@ permalink: /publications/
 See [Full list](#full-list) ([Google Scholar](https://scholar.google.ch/citations?user=Jaws2sYAAAAJ))
 
 {% assign number_printed = 0 %}
-{% for publi in site.data.publist %}
+{% for publi in site.data.publist-conferences %}
 
 {% assign even_odd = number_printed | modulo: 2 %}
 {% if publi.highlight == 1 %}
@@ -52,10 +52,20 @@ See [Full list](#full-list) ([Google Scholar](https://scholar.google.ch/citation
 <p> &nbsp; </p>
 
 
+<a name="full-list">
+### Publications: International Conferences and Journals
 
-### Full List
+{% for publi in site.data.publist-conferences %}
 
-{% for publi in site.data.publist %}
+  {{ publi.title }} <br />
+  <em>{{ publi.authors }} </em><br /><a href="{{ publi.link.url }}">{{ publi.link.display }}</a>
+
+{% endfor %}
+
+
+### Publications: Workshops and Domestic Conferences
+
+{% for publi in site.data.publist-workshops %}
 
   {{ publi.title }} <br />
   <em>{{ publi.authors }} </em><br /><a href="{{ publi.link.url }}">{{ publi.link.display }}</a>

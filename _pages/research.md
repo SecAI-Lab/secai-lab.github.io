@@ -28,6 +28,9 @@ Then, we study how to build a model for contextual inference of a binary
 in a generalizable and continual manner.
 Supported by NRF (National Research Foundation of Korea).
 
+
+### Past Projects
+
 **A Metric to Measure the Quality of Decompiled Codes**
 The project studies a metric (means) to evaluate quality of
 decompiled codes from varying decompilers such as Hex-Rays Decompiler.
@@ -45,9 +48,6 @@ In particular, we look into protocols like uORB and FastRTPS in PX4,
 followed by investigating efficient fuzzing techniques that focus on a target protocol.
 *This is a joint project with [Daehee Jang](https://daehee87.github.io/)
 at Sungshin Women's University.*
-
-
-### Past Projects
 
 **Semantic-aware Executable Binary Code Representation and its Applications with BERT.** 
 The project seeks a better binary code representation in an executable binary
