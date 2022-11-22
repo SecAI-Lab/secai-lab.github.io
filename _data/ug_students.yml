@@ -8,12 +8,12 @@
 #  education3:
 #  education4:
 
-- name: Sechang Lim (임세창)
-  photo: sechang.jpg
-  info: Undergraduate student
-  email: dlaqnwk2 AT skku.edu
-  number_educ: 0
-  education1: 
+#- name: Sechang Lim (임세창)
+#  photo: sechang.jpg
+#  info: Undergraduate student
+#  email: dlaqnwk2 AT skku.edu
+#  number_educ: 0
+#  education1: 
 
 - name: Seok Kim (김석) 
   photo: seok.jpg
