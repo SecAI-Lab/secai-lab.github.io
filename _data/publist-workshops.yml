@@ -1,0 +1,71 @@
+- title: "A Study of Executable Binaries with Emerging Compilation Tools"
+  image: 
+  description: 
+  authors: Hohyeon Jang and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
+  highlight: 0
+  news2:
+
+- title: "A Study of Rarely Appeared Instructions in an Executable Binary"
+  image: 
+  description: 
+  authors: Nozima Murodova and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
+  highlight: 0
+  news2:
+
+- title: "Server-client Based Reversing Tools with a Prediction Model for Function Names"
+  image: 
+  description: 
+  authors: Seok Kim, Hyungjoon Jeon, Hyunjin Kim and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
+  highlight: 0
+  news2:
+
+- title: "Phishing URL Detection with Text-CNN"
+  image: 
+  description: 
+  authors: Sechang Lim and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 동계학술대회 (CISC-S ’22)
+  highlight: 0
+  news2:
+
+- title: "Inference of Compiler Provenance from Malware"
+  image:
+  description:
+  authors: Hohyun Jang and Hyungjoon Koo
+  link:
+    url: https://www.wisa.or.kr
+    display: Poster in the the 22nd World Conference on Information Security Applications (WISA ’21)
+  highlight: 0
+  news2: 
+  
+- title: "Semantic-aware Binary Code Representation with BERT"
+  image:
+  description: A wide range of binary analysis applications, such as bug discovery, malware analysis and code clone detection, require recovery of contextual meanings on a binary code. Recently, binary analysis techniques based on machine learning have been proposed to automatically reconstruct the code representation of a binary instead of manually crafting specifics of the analysis algorithm. However, the existing approaches utilizing machine learning are still specialized to solve one domain of problems, rendering recreation of models for different types of binary analysis. In this paper, we propose DeepSemantic utilizing BERT in producing the semantic-aware code representation of a binary code. To this end, we introduce well-balanced instruction normalization that holds rich information for each of instructions yet minimizing an out-of-vocabulary (OOV) problem. DeepSemantic has been carefully designed based on our study with large swaths of binaries. Besides, DeepSemantic leverages the essence of the BERT architecture into re-purposing a pre-trained generic model that is readily available as a one-time processing, followed by quickly applying specific downstream tasks with a fine-tuning process. We demonstrate DeepSemantic with two downstream tasks, namely, binary similarity comparison and compiler provenance (i.e., compiler and optimization level) prediction. Our experimental results show that the binary similarity model outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, 49.84% and 15.83% on average, respectively.
+  authors: Hyungjoon Koo, Soyeon Park, Daejin Choi and Taesoo Kim
+  link:
+    url: https://arxiv.org/abs/2106.05478
+    display: ArXiv
+  highlight: 0
+  news2: 
+  
+- title: "The Politics of Routing: Investigating the Relationship between AS Connectivity and Internet Freedom"
+  image: 
+  authors: Rachee Singh, Hyungjoon Koo, Najmehalsadat Miramirkhani, Fahimeh Mirhaj, Leman Akoglu, and Phillipa Gill
+  description: The Internet’s importance in promoting free and open communication has led to widespread crackdowns on its use in countries around the world. In this study, we investigate the relationship between national policies around freedom of speech and Internet topology in various countries. We combine techniques from network measurement and machine learning to identify features of Internet structure at the national level that are the best indicators of a country’s level of freedom. We find that IP density and path lengths to other countries are the best indicators of a country’s freedom. We also find that our methods predict the freedom category (Free/Partly Free/Not Free) of a country with 95% accuracy.
+  link:
+    url: https://www.usenix.org/conference/foci16/workshop-program/presentation/singh#:~:text=connect%20with%20us-,The%20Politics%20of%20Routing%3A%20Investigating%20the%20Relationship,AS%20Connectivity%20and%20Internet%20Freedom&text=We%20combine%20techniques%20from%20network,a%20country's%20level%20of%20freedom
+    display: In the 6th USENIX Workshop on Free and Open Communications on the Internet, 2016 (FOCI ’16)
+  highlight: 0
+  news2:
+
+
