@@ -1,31 +1,41 @@
+- title: "SmartMark: Software Watermarking Scheme for Smart Contracts"
+  image: 
+  description: "A smart contract is a self-executing program on a blockchain to ensure an immutable and transparent agreement without the involvement of intermediaries. Despite its growing popularity for many blockchain platforms like Ethereum, no technical means is available even when a smart contract requires to be protected from being copied. One of promising directions to claim a software ownership is software watermarking. However, applying existing software watermarking techniques is challenging because of the unique properties of a smart contract, such as a code size constraint, non-free execution cost, and no support for dynamic allocation under a virtual machine environment. This paper introduces a novel software watermarking scheme, dubbed SMARTMARK, aiming to protect the ownership of a smart contract against a pirate activity. SMARTMARK builds the control flow graph of a target contract runtime bytecode, and locates a collection of bytes that are randomly elected for representing a watermark. We implement a full-fledged prototype for Ethereum, applying SMARTMARK to 27,824 unique smart contract bytecodes. Our empirical results demonstrate that SMARTMARK can effectively embed a watermark into a smart contract and verify its presence, meeting the requirements of credibility and imperceptibility while incurring an acceptable performance degradation. Besides, our security analysis shows that SMARTMARK is resilient against viable watermarking corruption attacks; e.g., a large number of dummy opcodes are needed to disable a watermark effectively, resulting in producing an illegitimate smart contract clone that is not economical."
+  authors: Taeyoung Kim, Yunhee Jang, Chanjong Lee, Hyungjoon Koo and Hyoungshick Kim
+  link:
+    url: https://conf.researchr.org/home/icse-2023
+    display: In the 45th IEEE/ACM International Conference on Software Engineering, 2023 (ICSE ’23; To appear)
+  highlight: 1
+  news2:
+
 - title: "A Transformer-based Function Symbol Name Inference Model from an Assembly Language for Binary Reversing"
   image: 
-  description:
+  description: "Reverse engineering of a stripped binary has a wide range of applications, yet it is challenging mainly due to the lack of contextually useful information within. Once debugging symbols (e.g., variablenames, types, function names) are discarded, recovering such informationis not technically viable with traditional approacheslike static or dynamic binary analysis. We focus on a functionsymbol name recovery, which allows a reverse engineer to gaina quick overview of an unseen binary. The key insight is that awell-developed program labels a meaningful function name thatdescribes its underlying semantics well. In this paper, we presentAsmDepictor, the Transformer-based framework that generates afunction symbol name from a set of assembly codes (i.e., machine instructions),which consists of three major components: binary coderefinement, model training, and inference. To this end, we conductsystematic experiments on the effectiveness of code refinement thatcan enhance an overall performance. We introduce the per-layerpositional embedding and Unique-softmax for AsmDepictor sothat both can aid to capture a better relationship between tokens.Lastly, we devise a novel evaluation metric tailored for a short descriptionlength, the Jaccard* score. Our empirical evaluation showsthat the performance of AsmDepictor by far surpasses that of thestate-of-the-art models up to around 400%. The best AsmDepictormodel achieves an F1 of 71.5 and Jaccard* of 75.4."
   authors: Hyunjin Kim, Jinyeong Bak, Kyunghyun Cho, and Hyungjoon Koo
   link:
     url: https://asiaccs2023.org/
     display: In the 18th ACM Asia Conference on Computer and Communications Security, 2023 (ASIACCS ’23; To appear)
-  highlight: 0
+  highlight: 1
   news2:
 
 - title: "Practical Binary Code Similarity Detection with BERT-based Transferable Similarity Learning"
   image: 
-  description: Binary code similarity detection serves as a basis for a wide spectrum of applications, including software plagiarism, malware classification, and known vulnerability discovery. However, the inference of contextual meanings of a binary is challenging due to the absence of semantic information available in source codes. Recent advances leverage the benefits of a deep learning architecture into a better understanding of underlying code semantics and the advantages of the Siamese architecture into better code similarity detection. In this paper, we propose BinShot, a BERT-based similarity learning architecture that is highly transferable for effective binary code similarity detection. We tackle the problem of detecting code similarity with one-shot learning (a special case of few-shot learning). To this end, we adopt a weighted distance vector with a binary cross entropy as a loss function on top of BERT. With the prototype implementation of BinShot, our experimental results demonstrate the effectiveness, transferability, and practicality of BinShot, which is robust to detecting the similarity of previously unseen functions.We show that BinShot outperforms the previous state-of-the-art approaches for binary code similarity detection. 
+  description: "Binary code similarity detection serves as a basis for a wide spectrum of applications, including software plagiarism, malware classification, and known vulnerability discovery. However, the inference of contextual meanings of a binary is challenging due to the absence of semantic information available in source codes. Recent advances leverage the benefits of a deep learning architecture into a better understanding of underlying code semantics and the advantages of the Siamese architecture into better code similarity detection. In this paper, we propose BinShot, a BERT-based similarity learning architecture that is highly transferable for effective binary code similarity detection. We tackle the problem of detecting code similarity with one-shot learning (a special case of few-shot learning). To this end, we adopt a weighted distance vector with a binary cross entropy as a loss function on top of BERT. With the prototype implementation of BinShot, our experimental results demonstrate the effectiveness, transferability, and practicality of BinShot, which is robust to detecting the similarity of previously unseen functions.We show that BinShot outperforms the previous state-of-the-art approaches for binary code similarity detection." 
   authors: Sunwoo Ahn, Seonggwan Ahn, Hyungjoon Koo, and Yunheung Paek
   link:
-    url: https://www.acsac.org/2022/
-    display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22; To appear)
-  highlight: 0
+    url: https://dl.acm.org/doi/abs/10.1145/3564625.3567975 
+    display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22)
+  highlight: 1
   news2:
 
 - title: "DeView: Confining Progressive Web Applications by Debloating Web APIs"
   image: 
-  description: A progressive web application (PWA) becomes an attractive option for building universal applications based on feature-rich web application programming interfaces (Web APIs). While flexible, such vast APIs inevitably bring a significant increase in an API attack surface, which commonly corresponds to a functionality that is neither needed nor wanted by the application. A promising approach to reduce the API attack surface is software debloating, a technique wherein an unused functionality is programmatically removed from an application or API. Unfortunately, debloating PWAs is challenging given the monolithic design and non-deterministic execution of a modern web browser. In this paper, we present DeView, a practical approach that reduces the attack surface of a PWA by blocking unnecessary but accessible web APIs. DeView tackles the challenges of PWA debloating by i) record-and-replay web API profiling that identifies needed web APIs on an app-by-app basis by replaying (recorded) browser interactions and ii) compiler-assisted browser debloating that eliminates the entry functions of corresponding web APIs from the mapping between web API and its entry point at a binary level. Our evaluation shows the effectiveness and practicality of DeView. DeView successfully eliminates 91.8% of accessible web APIs while i) maintaining original functionalities and ii) preventing 76.3% of known exploits on average 
+  description: "A progressive web application (PWA) becomes an attractive option for building universal applications based on feature-rich web application programming interfaces (Web APIs). While flexible, such vast APIs inevitably bring a significant increase in an API attack surface, which commonly corresponds to a functionality that is neither needed nor wanted by the application. A promising approach to reduce the API attack surface is software debloating, a technique wherein an unused functionality is programmatically removed from an application or API. Unfortunately, debloating PWAs is challenging given the monolithic design and non-deterministic execution of a modern web browser. In this paper, we present DeView, a practical approach that reduces the attack surface of a PWA by blocking unnecessary but accessible web APIs. DeView tackles the challenges of PWA debloating by i) record-and-replay web API profiling that identifies needed web APIs on an app-by-app basis by replaying (recorded) browser interactions and ii) compiler-assisted browser debloating that eliminates the entry functions of corresponding web APIs from the mapping between web API and its entry point at a binary level. Our evaluation shows the effectiveness and practicality of DeView. DeView successfully eliminates 91.8% of accessible web APIs while i) maintaining original functionalities and ii) preventing 76.3% of known exploits on average."
   authors: ChangSeok Oh, Sangho Lee, Chenxiong Qian, Hyungjoon Koo, and Wenke Lee
   link:
-    url: https://www.acsac.org/2022/
-    display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22; To appear)
-  highlight: 0
+    url: https://dl.acm.org/doi/10.1145/3564625.3567987
+    display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22)
+  highlight: 1
   news2:
 
 - title: "IoTivity Packet Parser for Encrypted Messages in Internet of Things"
@@ -39,33 +49,33 @@
   news2:
 
 - title: "Software Watermarking via a Binary Function Relocation"
-  image: softmark.png
+  image: #softmark.png
   description: The ease of reproducibility of digital artifacts raises a growing concern in copyright infringement; in particular, for a software product. Software watermarking is one of the promising techniques to verify the owner of licensed software by embedding a digital fingerprint. Developing an ideal software watermark scheme is challenging because i) unlike digital media watermarking, software watermarking has to preserve the original code semantics after inserting software watermark, and ii) it requires well-balanced properties of credibility, resiliency, capacity, imperceptibility, and efficiency. We present SoftMark, a software watermarking system that leverages a function relocation where the order of functions implicitly encodes a hidden identifier. By design, SoftMark does not introduce additional structures (i.e., codes, blocks, or subroutines), being robust in unauthorized detection, while maintaining a negligible performance overhead and reasonable capacity. With various strategies against viable attacks (i.e., static binary re-instrumentation), we tackle the limitations of previous reordering-based approaches. Our empirical results demonstrate the practicality and effectiveness by successful embedding and extraction of various watermark values.
   authors: Honggoo Kang, Yonghwi Kwon, Sangjin Lee, and Hyungjoon Koo
   link:
     url: https://dl.acm.org/doi/abs/10.1145/3485832.3488027
     display: In the 37th Annual Computer Security Applications Conference (ACSAC ’21)
-  highlight: 1
+  highlight: 0
   news2: 
   
 - title: "A Look Back on a Function Identification Problem"
-  image: lookback.png
+  image: #lookback.png
   description: A function recognition problem serves as a basis for further binary analysis and many applications. Although common challenges for function detection are well known, prior works have repeatedly claimed a noticeable result with a high precision and recall. In this paper, we aim to fill the void of what has been overlooked or misinterpreted by closely looking into the previous datasets, metrics, and evaluations with varying case studies. Our major findings are that i) a common corpus like GNU utilities is insufficient to represent the effectiveness of function identification, ii) it is difficult to claim, at least in the current form, that an ML-oriented approach is scientifically superior to deterministic ones like IDA or Ghidra, iii) the current metrics may not be reasonable enough to measure all function detection cases, iv) the capability of recognizing functions depends on each tool’s strategic or peculiar choice. We perform re-evaluation of existing approaches on our own dataset, demonstrating that not a single state-of-the-art tool dominates all the others. In conclusion, a function detection problem has not yet been fully addressed, and we need a better methodology and metric to make advances in the field of function identification.
   authors: Hyungjoon Koo, Soyeon Park, and Taesoo Kim
   link:
     url: https://dl.acm.org/doi/abs/10.1145/3485832.3488018
     display: In the 37th Annual Computer Security Applications Conference (ACSAC ’21)
-  highlight: 1
+  highlight: 0
   news2: 
  
 - title: "Slimium: Debloating the Chromium Browser with Feature Subsetting"
-  image: slimium.png
+  image: #slimium.png
   description: Today, a web browser plays a crucial role in offering a broad spectrum of web experiences. The most popular browser, Chromium, has become an extremely complex application to meet ever-increasing user demands, exposing unavoidably large attack vectors due to its large code base. Code debloating attracts attention as a means of reducing such a potential attack surface by eliminating unused code. However, it is very challenging to perform sophisticated code removal without breaking needed functionalities because Chromium operates on a large number of closely connected and complex components, such as a renderer and JavaScript engine. In this paper, we present Slimium, a debloating framework for a browser (i.e., Chromium) that harnesses a hybrid approach for a fast and reliable binary instrumentation. The main idea behind Slimium is to determine a set of features as a debloating unit on top of a hybrid (i.e., static, dynamic, heuristic) analysis, and then leverage feature subsetting to code debloating. It aids in i) focusing on securityoriented features, ii) discarding unneeded code simply without complications, and iii) reasonably addressing a non-deterministic path problem raised from code complexity. To this end, we generate a feature-code map with a relation vector technique and prompt webpage profiling results. Our experimental results demonstrate the practicality and feasibility of Slimium for 40 popular websites, as on average it removes 94 CVEs (61.4%) by cutting down 23.85 MB code (53.1%) from defined features (21.7% of the whole) in Chromium. 
   authors: Chenxiong Qian, Hyungjoon Koo, Changseok Oh, Taesoo Kim, and Wenke Lee
   link:
     url: https://dl.acm.org/doi/pdf/10.1145/3372297.3417866
     display: In the 27th ACM Conference on Computer and Communications Security (CCS ’20)
-  highlight: 1
+  highlight: 0
   news2:
 
 - title: "Configuration-Driven Software Debloating"
@@ -85,7 +95,7 @@
   link:
     url: https://ieeexplore.ieee.org/document/8418619
     display: In the 39th IEEE Symposium on Security & Privacy, 2018 (S&P ’18)
-  highlight: 1
+  highlight: 0
   
 - title: "Defeating Zombie Gadgets by Re-randomizing Code Upon Disclosure"
   image: 
