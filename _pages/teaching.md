@@ -10,7 +10,16 @@ permalink: /teaching/
 
 #### Fall 2022
 * [ESW4011] Software Security with AI (AI를 활용한 소프트웨어 보안)
-* [SWE3028] Capstone Design Project (캡스톤설계프로젝트)
+* [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2022/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
+  - (Team A) SKKUlar; Scholarship Finder (Mobile App)* <br>
+    [성균관대 소프트웨어학과 캡스톤 디자인 경진대회 최우수상 수상]
+  - (Team B) Coloring Old Pictures with State-of-the-art Colorization Techniques (Web Application)* [동대회 장려상 수상]
+  - (Team C) ZzangBaguni; Mobile Platform for the Optimal Purchase of Items from Nearby Markets
+  - (Team D) Walking Mate and Tracking Diary (Mobile App)* [동대회 우수상 수상]
+  - (Team E) YoungFarmer; Mobile Platform for Farm Products' Transactions
+  - (Team F) Skkudo; College Club Management Web Platform* [동대회 우수상 수상]
+  - (Team G) MyCampus; Customized Course Manager for iCampus@SKKU (Chrome Extension)* [동대회 장려상 수상]
+  - (Team H) Kingo Manager; Private Assistant for the Requirements of Graduation (Mobile App)* [동대회 장려상 수상]
 
 #### Spring 2022
 * [DASF004] Basis and Practice in Programming (프로그래밍기초와실습; C Programming)
