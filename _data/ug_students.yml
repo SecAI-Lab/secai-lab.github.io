@@ -15,12 +15,12 @@
 #  number_educ: 0
 #  education1: 
 
-- name: Seok Kim (김석) 
-  photo: seok.jpg
-  info: Undergraduate student
-  email: seokcoding AT gmail.com
-  number_educ: 0
-  education1: 
+#- name: Seok Kim (김석) 
+#  photo: seok.jpg
+#  info: Undergraduate student
+#  email: seokcoding AT gmail.com
+#  number_educ: 0
+#  education1: 
 
 - name: Hyoungjune Jeon (전형준)
   photo: jeon.jpg
