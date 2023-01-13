@@ -8,6 +8,10 @@ permalink: /teaching/
 
 ### Teaching
 
+#### Spring 2023
+* [SWE3025] Computer Security (정보보호개론)
+* [SWE3028] <a href="#" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
+
 #### Fall 2022
 * [ESW4011] Software Security with AI (AI를 활용한 소프트웨어 보안)
 * [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2022/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
