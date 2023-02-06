@@ -8,13 +8,13 @@
 #  education3:
 #  education4:
 
-- name: Hohyeon Jang (장호현)
-  photo: hohyeon.jpg
-  info: Master student
-  email: jhh0121 AT g.skku.edu
-  research: Reverse engineering, Malware & Binary Analysis with AI
-  number_educ: 0
-  education1: 
+#- name: Hohyeon Jang (장호현)
+#  photo: hohyeon.jpg
+#  info: Master student
+#  email: jhh0121 AT g.skku.edu
+#  research: Reverse engineering, Malware & Binary Analysis with AI
+#  number_educ: 0
+#  education1: 
 
 - name: Nozima Murodova
   photo: nozima.jpg
@@ -29,5 +29,13 @@
   info: Master student
   email: shr2008 AT g.skku.edu
   research: Reverse engineering
+  number_educ: 0
+  education1: 
+
+- name: Inhoo Cho (조인후)
+  photo: inhoo.jpg
+  info: Master student
+  email:  inhooinu AT g.skku.edu
+  research: Binary level software security with AI
   number_educ: 0
   education1: 
