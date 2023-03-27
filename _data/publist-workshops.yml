@@ -1,3 +1,13 @@
+- title: "Evaluating Password Composition Policy and Password Meters of Popular Websites"
+  image: 
+  description: 
+  authors: Kyungchan Lim, Joshua Hankyul Kang, Matthew Dixson, Hyungjoon Koo, and Doowon Kim (SecWeb 23)
+  link:
+    url: https://secweb.work/2023.html 
+    display: Workshop on Designing Security for the Web (SecWeb ’23)
+  highlight: 0
+  news2:
+
 - title: "A Study of Executable Binaries with Emerging Compilation Tools"
   image: 
   description: 
