@@ -1,35 +1,46 @@
+
+- title: "BENZENE: A Practical Root Cause Analysis System with an Under-Constrained State Mutation"
+  image: benzene.png
+  description: "Fuzzing has demonstrated great success in bug discovery and plays a crucial role in software testing today. Despite the increasing popularity of fuzzing, automated root cause analysis (RCA) has drawn less attention. One of the recent advances in RCA is crash-based statistical debugging, which leverages the behavioral differences in program execution between crash-triggered and non-crashing inputs. Hence, obtaining non-crashing behaviors close to the original crash is crucial but challenging with previous approaches (e.g., fuzzing). In this paper, we present BENZENE, a practical end-to-end RCA system that facilitates a fully automated crash diagnosis. To this end, we introduce a novel technique, called under-constrained state mutation, that generates both crashing and non-crashing behaviors for effective and efficient RCA. We design and implement the BENZENE prototype, and evaluate it with 60 vulnerabilities in the wild. Our empirical results demonstrate that BENZENE not only surpasses in performance (i.e., root cause ranking), but also achieves superior results in both speed (4.6 times faster) and memory footprint (31.4 times less) on average than prior approaches." 
+  authors: Younggi Park, Hwiwon Lee, Jinho Jung, Hyungjoon Koo, and Huy Kang Kim
+  link:
+    url: https://sp2024.ieee-security.org/
+    display: In the 45th IEEE Symposium on Security and Privacy, 2024 (S&P ’24 to appear)
+  highlight: 1
+  news2:
+
 - title: "Binary Code Representation with Well-balanced Instruction Normalization"
   image:
   description: "The recovery of contextual meanings on a machine code is required by a wide range of binary analysis applications, such as bug discovery, malware analysis, and code clone detection. To accomplish this, advancements on binary code analysis borrow the techniques from natural language processing to automatically infer the underlying semantics of a binary, rather than replying on manual analysis. One of crucial pipelines in this process is instruction normalization, which helps to reduce the number of tokens and to avoid an out-of-vocabulary (OOV) problem. However, existing approaches often substitutes operands with a common token (e.g., callee target → FOO), inevitably resulting in the loss of important information. In this paper, we introduce well-balanced instruction normalization (WIN), a novel approach that retains rich code information while minimizing the downsides of code normalization. With large swaths of binary code, our finding shows that the instruction distribution follows Zipf’s Law like a natural language, a function conveys contextually meaningful information, and the same instruction at different positions may require diverse code representations. To show the effectiveness of WIN, we present DeepSemantic that harnesses the BERT architecture with two training phases: pre-training for generic assembly code representation, and fine-tuning for building a model tailored to a specialized task. We define a downstream task of binary code similarity detection, which requires underlying code semantics. Our experimental results show that our binary similarity model with WIN outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, with an average improvement of 49.8% and 15.8%, respectively."
   authors: Hyungjoon Koo, Soyeon Park, Daejin Choi, and Taesoo Kim
   link:
     url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
-    display: IEEE Access (To appear)
+    display: IEEE Access (2023)
   highlight: 0
   news2:
 
 - title: "SmartMark: Software Watermarking Scheme for Smart Contracts"
-  image: 
+  image: smartmark.png
   description: "A smart contract is a self-executing program on a blockchain to ensure an immutable and transparent agreement without the involvement of intermediaries. Despite its growing popularity for many blockchain platforms like Ethereum, no technical means is available even when a smart contract requires to be protected from being copied. One of promising directions to claim a software ownership is software watermarking. However, applying existing software watermarking techniques is challenging because of the unique properties of a smart contract, such as a code size constraint, non-free execution cost, and no support for dynamic allocation under a virtual machine environment. This paper introduces a novel software watermarking scheme, dubbed SMARTMARK, aiming to protect the ownership of a smart contract against a pirate activity. SMARTMARK builds the control flow graph of a target contract runtime bytecode, and locates a collection of bytes that are randomly elected for representing a watermark. We implement a full-fledged prototype for Ethereum, applying SMARTMARK to 27,824 unique smart contract bytecodes. Our empirical results demonstrate that SMARTMARK can effectively embed a watermark into a smart contract and verify its presence, meeting the requirements of credibility and imperceptibility while incurring an acceptable performance degradation. Besides, our security analysis shows that SMARTMARK is resilient against viable watermarking corruption attacks; e.g., a large number of dummy opcodes are needed to disable a watermark effectively, resulting in producing an illegitimate smart contract clone that is not economical."
   authors: Taeyoung Kim, Yunhee Jang, Chanjong Lee, Hyungjoon Koo, and Hyoungshick Kim
   link:
     url: https://conf.researchr.org/home/icse-2023
-    display: In the 45th IEEE/ACM International Conference on Software Engineering, 2023 (ICSE ’23; To appear)
+    display: In the 45th IEEE/ACM International Conference on Software Engineering, 2023 (ICSE ’23)
   highlight: 1
   news2:
 
 - title: "A Transformer-based Function Symbol Name Inference Model from an Assembly Language for Binary Reversing"
-  image: 
+  image: asmdepictor.png
   description: "Reverse engineering of a stripped binary has a wide range of applications, yet it is challenging mainly due to the lack of contextually useful information within. Once debugging symbols (e.g., variablenames, types, function names) are discarded, recovering such informationis not technically viable with traditional approacheslike static or dynamic binary analysis. We focus on a functionsymbol name recovery, which allows a reverse engineer to gaina quick overview of an unseen binary. The key insight is that awell-developed program labels a meaningful function name thatdescribes its underlying semantics well. In this paper, we presentAsmDepictor, the Transformer-based framework that generates afunction symbol name from a set of assembly codes (i.e., machine instructions),which consists of three major components: binary coderefinement, model training, and inference. To this end, we conductsystematic experiments on the effectiveness of code refinement thatcan enhance an overall performance. We introduce the per-layerpositional embedding and Unique-softmax for AsmDepictor sothat both can aid to capture a better relationship between tokens.Lastly, we devise a novel evaluation metric tailored for a short descriptionlength, the Jaccard* score. Our empirical evaluation showsthat the performance of AsmDepictor by far surpasses that of thestate-of-the-art models up to around 400%. The best AsmDepictormodel achieves an F1 of 71.5 and Jaccard* of 75.4."
   authors: Hyunjin Kim, Jinyeong Bak, Kyunghyun Cho, and Hyungjoon Koo
   link:
-    url: https://asiaccs2023.org/
-    display: In the 18th ACM Asia Conference on Computer and Communications Security, 2023 (ASIACCS ’23; To appear)
+    url: https://dl.acm.org/doi/abs/10.1145/3579856.3582823
+    display: In the 18th ACM Asia Conference on Computer and Communications Security, 2023 (ASIACCS ’23)
   highlight: 1
   news2:
 
 - title: "Practical Binary Code Similarity Detection with BERT-based Transferable Similarity Learning"
-  image: 
+  image: binshot.png
   description: "Binary code similarity detection serves as a basis for a wide spectrum of applications, including software plagiarism, malware classification, and known vulnerability discovery. However, the inference of contextual meanings of a binary is challenging due to the absence of semantic information available in source codes. Recent advances leverage the benefits of a deep learning architecture into a better understanding of underlying code semantics and the advantages of the Siamese architecture into better code similarity detection. In this paper, we propose BinShot, a BERT-based similarity learning architecture that is highly transferable for effective binary code similarity detection. We tackle the problem of detecting code similarity with one-shot learning (a special case of few-shot learning). To this end, we adopt a weighted distance vector with a binary cross entropy as a loss function on top of BERT. With the prototype implementation of BinShot, our experimental results demonstrate the effectiveness, transferability, and practicality of BinShot, which is robust to detecting the similarity of previously unseen functions.We show that BinShot outperforms the previous state-of-the-art approaches for binary code similarity detection." 
   authors: Sunwoo Ahn, Seonggwan Ahn, Hyungjoon Koo, and Yunheung Paek
   link:
@@ -45,7 +56,7 @@
   link:
     url: https://dl.acm.org/doi/10.1145/3564625.3567987
     display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22)
-  highlight: 1
+  highlight: 0
   news2:
 
 - title: "IoTivity Packet Parser for Encrypted Messages in Internet of Things"
@@ -59,7 +70,7 @@
   news2:
 
 - title: "Software Watermarking via a Binary Function Relocation"
-  image: #softmark.png
+  image: softmark.png
   description: The ease of reproducibility of digital artifacts raises a growing concern in copyright infringement; in particular, for a software product. Software watermarking is one of the promising techniques to verify the owner of licensed software by embedding a digital fingerprint. Developing an ideal software watermark scheme is challenging because i) unlike digital media watermarking, software watermarking has to preserve the original code semantics after inserting software watermark, and ii) it requires well-balanced properties of credibility, resiliency, capacity, imperceptibility, and efficiency. We present SoftMark, a software watermarking system that leverages a function relocation where the order of functions implicitly encodes a hidden identifier. By design, SoftMark does not introduce additional structures (i.e., codes, blocks, or subroutines), being robust in unauthorized detection, while maintaining a negligible performance overhead and reasonable capacity. With various strategies against viable attacks (i.e., static binary re-instrumentation), we tackle the limitations of previous reordering-based approaches. Our empirical results demonstrate the practicality and effectiveness by successful embedding and extraction of various watermark values.
   authors: Honggoo Kang, Yonghwi Kwon, Sangjin Lee, and Hyungjoon Koo
   link:
