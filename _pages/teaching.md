@@ -9,8 +9,16 @@ permalink: /teaching/
 ### Teaching
 
 #### Spring 2023
-* [SWE3025] Computer Security (정보보호개론)
-* [SWE3028] <a href="#" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
+* [SWE3025] Computer Security (정보보호개론) 
+* [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Spring-2023/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
+  - (Team A) CockTell: Developing a Web Application For Cocktail Community Service
+  - (Team B) TimeCodi: Time Coordination Service
+  - (Team C) NotiSKKU: Notification App for Targeted Major and Topic Information
+  - (Team D) AI-based Web Application for Children with Autism Spectrum Disorder 
+  - (Team E) Runtime Animation Generate Plug-in using Motion Diffusion Model
+  - (Team F) Merge: A team building and cooperation platform for developers and designers
+  - (Team G) Integrated Contents Recommendation Platform across Different Domains
+  - (Team H) SKKUEXS: Providing Support for Exchange Students at SKKU
 
 #### Fall 2022
 * [ESW4011] Software Security with AI (AI를 활용한 소프트웨어 보안)
