@@ -1,7 +1,37 @@
+- title: "Kingomanager: A Personalized Information-providing Application with a Recommendation System for University Students"
+  image: 
+  description: 
+  authors: Shingyu Kang, JunWoo Kim, ChoongHyeon Park, and Hyungjoon Koo
+  link:
+    url: http://www.kips.or.kr/ask2023 
+    display: Annual Spring Conference of KIPS (ASK ’23)
+  highlight: 0
+  news2:
+
+- title: "Vulnerability Analysis of CoAP Using a Coverage-based CoAP Fuzzer"
+  image: 
+  description: 
+  authors: Sechang Lim and Hyungjoon Koo
+  link:
+    url: http://www.kips.or.kr/ask2023
+    display: Annual Spring Conference of KIPS (ASK ’23)
+  highlight: 0
+  news2:
+
+- title: "A Recommendation System by Extracting Scholarship Information with a BERT’s Q&A Model"
+  image: 
+  description: 
+  authors: Byeongjun Kang, Kyujin Kim, Jinah Park, Ijun Jang, Jaehyun Joo, and Hyungjoon Koo
+  link:
+    url: http://www.kips.or.kr/ask2023
+    display: Annual Spring Conference of KIPS (ASK ’23)
+  highlight: 0
+  news2:
+
 - title: "Evaluating Password Composition Policy and Password Meters of Popular Websites"
   image: 
   description: 
-  authors: Kyungchan Lim, Joshua Hankyul Kang, Matthew Dixson, Hyungjoon Koo, and Doowon Kim (SecWeb 23)
+  authors: Kyungchan Lim, Joshua Hankyul Kang, Matthew Dixson, Hyungjoon Koo, and Doowon Kim
   link:
     url: https://secweb.work/2023.html 
     display: Workshop on Designing Security for the Web (SecWeb ’23)
