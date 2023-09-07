@@ -14,13 +14,13 @@ permalink: /activities/
 <li> IEEE Symposium on Security and Privacy (S&P) 2024 </li>
 <li> Annual Computer Security Applications Conference (ACSAC) 2023 </li>
 <li> International Symposium on Foundations & Practice of Security (FPS) 2023, 2022 </li>
-<li> NYU’s CSAW Program Committee 2022, 2021, 2020, 2019 </li>
+<li> NYU’s CSAW Program Committee 2023, 2022, 2021, 2020, 2019 </li>
 <li> World Conference on Information Security Applications (WISA) 2021 </li>
 </ul>
 
 #### Organizing Comittee
 <ul>
-<li> IEEE Secure Development Conference (SecDev) 2023 </li>
+<li> Publication Chair for IEEE Secure Development Conference (SecDev) 2023 </li>
 </ul>
 
 #### Session Chair
