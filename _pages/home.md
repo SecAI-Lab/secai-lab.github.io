@@ -54,14 +54,15 @@ The SecAI lab focuses on system/software security and emerging technologies that
 
 I am Hyungjoon Koo who leads the SecAI lab. Launching a new lab, a relatively young lab means that we have lots of potential for the future.
 
-**We are looking for a passionate Ph.D. student (Preferred fields: binary analysis with AI, privacy) to join our lab!**
+> We are temporarily closed to hire students. You may want to fill out 
+<a href="https://forms.gle/FsHk1u8WrTKLayHVA" target=blank>the application form</a> as a candidite.
+<!-- We are looking for a passionate Ph.D. student (Preferred fields: binary analysis with AI, privacy) to join our lab!** 
 <br>If you think you are the one who <br>
 [+] enjoys endless intellectual exploration <br>
 [+] has full of curiosity and desire to unearth the unknown digital world <br>
 [+] exerts your passion to move forward together for making the world secure, <br>
-
-Please fill out <a href="https://forms.gle/FsHk1u8WrTKLayHVA" target=blank>this form</a>
+<a href="https://forms.gle/FsHk1u8WrTKLayHVA" target=blank>Application</a> -->
 (An application via an email may not be considered). 
 
-<p align="right">Last updated: July 2023</p>
+<p align="right">Last updated: Oct. 2023</p>
 <br>
