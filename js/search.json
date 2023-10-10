@@ -1,0 +1,23 @@
+---
+---
+[
+    {% for post in site.data.publist-conferences %}
+    {
+        "title": "{{ post.title | strip_html | escape }}",   
+	"url": "{{ post.link.url }}",
+	"authors": "{{ post.authors }}",
+        "display": "{{post.link.display }}"
+    } {% unless forloop.last %},
+    {% endunless %}
+  {% endfor %},
+	
+ {% for post in site.data.publist-workshops %}
+    {
+        "title": "{{ post.title | strip_html | escape }}",   
+	"url": "{{ post.link.url }}",
+	"authors": "{{ post.authors }}",
+        "display": "{{post.link.display }}"
+    } {% unless forloop.last %},
+    {% endunless %}
+  {% endfor %}
+]

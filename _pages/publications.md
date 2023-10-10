@@ -9,6 +9,15 @@ permalink: /publications/
 
 ## Publications
 
+<div markdown="0" class="container">
+<div  class="col-sm-10">
+  <input type="text" class="form-control" id="search-input" placeholder="Search...">
+  <br>
+  <div class="list-group mt-5" id="results-container">   
+  </div>
+</div>
+</div>
+
 ### Highlighted Projects
 
 See [Full list](#full-list) ([Google Scholar](https://scholar.google.ch/citations?user=Jaws2sYAAAAJ))
