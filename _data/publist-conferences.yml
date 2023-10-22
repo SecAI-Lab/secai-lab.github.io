@@ -4,7 +4,7 @@
   description: "Fuzzing has demonstrated great success in bug discovery and plays a crucial role in software testing today. Despite the increasing popularity of fuzzing, automated root cause analysis (RCA) has drawn less attention. One of the recent advances in RCA is crash-based statistical debugging, which leverages the behavioral differences in program execution between crash-triggered and non-crashing inputs. Hence, obtaining non-crashing behaviors close to the original crash is crucial but challenging with previous approaches (e.g., fuzzing). In this paper, we present BENZENE, a practical end-to-end RCA system that facilitates a fully automated crash diagnosis. To this end, we introduce a novel technique, called under-constrained state mutation, that generates both crashing and non-crashing behaviors for effective and efficient RCA. We design and implement the BENZENE prototype, and evaluate it with 60 vulnerabilities in the wild. Our empirical results demonstrate that BENZENE not only surpasses in performance (i.e., root cause ranking), but also achieves superior results in both speed (4.6 times faster) and memory footprint (31.4 times less) on average than prior approaches." 
   authors: Younggi Park, Hwiwon Lee, Jinho Jung, Hyungjoon Koo, and Huy Kang Kim
   link:
-    url: https://sp2024.ieee-security.org/
+    url: https://www.computer.org/csdl/proceedings-article/sp/2024/313000a074/1RjEaJVHT4k
     display: In the 45th IEEE Symposium on Security and Privacy, 2024 (S&P ’24 to appear)
   highlight: 1
   news2:
