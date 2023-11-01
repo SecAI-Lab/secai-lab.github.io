@@ -8,6 +8,10 @@ permalink: /teaching/
 
 ### Teaching
 
+#### Fall 2023
+* [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
+* <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2023/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
+
 #### Spring 2023
 * [SWE3025] Computer Security (정보보호개론) 
 * <details markdown="0">
