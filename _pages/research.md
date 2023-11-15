@@ -31,6 +31,12 @@ Supported by NRF (National Research Foundation of Korea).
 
 ### Past Projects
 
+**Code Unpacking Intermediate Representation Conversion**
+This project focuses on the SGN packer, attempting to unpack
+a hidden code and to convert it to intermediate representation (IR)
+for further reliable execution. 
+Supported by NSRI (National Security Research Institute).
+
 **A Metric to Measure the Quality of Decompiled Codes**
 The project studies a metric (means) to evaluate quality of
 decompiled codes from varying decompilers such as Hex-Rays Decompiler.
