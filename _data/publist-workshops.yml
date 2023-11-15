@@ -1,3 +1,33 @@
+- title: "Trends in Machine Unlearning via Continual Learning to Mitigate Privacy Risks"
+  image: 
+  description: 
+  authors: Hohyeon Jang and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’23)
+  highlight: 0
+  news2:
+
+- title: "Trends in Membership Inference Attacks and Defenses"
+  image: 
+  description: 
+  authors: Nozima Murodova and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’23)
+  highlight: 0
+  news2:
+
+- title: "Trends in Explainable Artificial Intelligence for Security"
+  image: 
+  description: 
+  authors: Seok Kim, Hyungjoon Jeon, Hyunjin Kim and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’23)
+  highlight: 0
+  news2:
+
 - title: "An Unreal Engine Plugin for Text-based Runtime Animation Generation with a Motion Diffusion Model"
   image: 
   description: 
@@ -107,6 +137,16 @@
     display: ArXiv
   highlight: 0
   news2: 
+
+- title: "Configuration-Driven Software Debloating"
+  image:
+  description: With legitimate code becoming an attack surface due to the proliferation of code reuse attacks, software debloating is an effective mitigation that reduces the amount of instruction sequences that may be useful for an attacker, in addition to eliminating potentially exploitable bugs in the removed code. Existing debloating approaches either statically remove code that is guaranteed to not run (e.g., non-imported functions from shared libraries), or rely on profiling with realistic workloads to pinpoint and keep only the subset of code that was executed. In this work, we explore an alternative configuration-driven software debloating approach that removes feature-specific code that is exclusively needed only when certain configuration directives are specified—which are often disabled by default. Using a semi-automated approach, our technique identifies libraries solely needed for the implementation of a particular functionality and maps them to certain configuration directives. Based on this mapping, feature-specific libraries are not loaded at all if their corresponding directives are disabled. The results of our experimental evaluation with Nginx, VSFTPD, and OpenSSH show that using the default configuration in each case, configuration-driven debloating can remove 77% of the code for Nginx, 53% for VSFTPD, and 20% for OpenSSH, which represent a significant attack surface reduction.
+  authors: Hyungjoon Koo, Seyedhamed Ghavamnia, and Michalis Polychronakis
+  link:
+    url: https://dl.acm.org/doi/10.1145/3301417.3312501
+    display: In the 12th European Workshop on Systems Security, 2019 (EuroSec ’19)
+  highlight: 0
+  news2:
   
 - title: "The Politics of Routing: Investigating the Relationship between AS Connectivity and Internet Freedom"
   image: 

@@ -1,3 +1,12 @@
+- title: "Demystifying the Regional Phishing Landscape in South Korea"
+  image: 
+  description: "The ever-increasing phishing campaigns around the globe have been one of main threats in cyber security. In response, the global anti-phishing entity (APWG) collectively maintains the up-to-date blacklist database (e.g., eCrimeX) against phishing campaigns, and so do modern browsers (e.g., Google Safe Browsing). However, our finding reveals that such a mutual assistance system has been remaining a blind spot when detecting geolocation-based phishing campaigns. In this paper, we focus on phishing campaigns against the web portal service with the largest number of users (42 million) in South Korea. We harvest 1,558 phishing URLs from varying resources in the span of a full year, which only a small fraction (3.8%) have been detected by eCrimeX despite a wide spectrum of active fraudulence cases. We demystify three pervasive types of phishing campaigns in South Korea: i) sophisticated phishing campaigns with varying adversarial tactics such as a proxy configuration, ii) phishing campaigns against a secondhand online market, and iii) phishing campaigns against a non-specific target. Our finding shows that a phishing kit that supports automating the whole phishing campaigns is prevalent. Besides, we frequently observe a hit-and-run scam where a phishing campaign is immediately inaccessible right after victimization is complete, each of which is tailored to a single potential victim over a new channel like a messenger. As part of mitigation efforts, we promptly provide regional phishing information to APWG, and immediately lock down a victim’s account to prevent further damages."
+  authors: Hyunjun Park, Kyungchan Lim, Doowon Kim, Donghyun Yu, and Hyungjoon Koo
+  link:
+    url: 
+    display: IEEE Access (2023 to appear)
+  highlight: 0
+  news2:
 
 - title: "BENZENE: A Practical Root Cause Analysis System with an Under-Constrained State Mutation"
   image: benzene.png
@@ -96,16 +105,6 @@
   link:
     url: https://dl.acm.org/doi/pdf/10.1145/3372297.3417866
     display: In the 27th ACM Conference on Computer and Communications Security (CCS ’20)
-  highlight: 0
-  news2:
-
-- title: "Configuration-Driven Software Debloating"
-  image:
-  description: With legitimate code becoming an attack surface due to the proliferation of code reuse attacks, software debloating is an effective mitigation that reduces the amount of instruction sequences that may be useful for an attacker, in addition to eliminating potentially exploitable bugs in the removed code. Existing debloating approaches either statically remove code that is guaranteed to not run (e.g., non-imported functions from shared libraries), or rely on profiling with realistic workloads to pinpoint and keep only the subset of code that was executed. In this work, we explore an alternative configuration-driven software debloating approach that removes feature-specific code that is exclusively needed only when certain configuration directives are specified—which are often disabled by default. Using a semi-automated approach, our technique identifies libraries solely needed for the implementation of a particular functionality and maps them to certain configuration directives. Based on this mapping, feature-specific libraries are not loaded at all if their corresponding directives are disabled. The results of our experimental evaluation with Nginx, VSFTPD, and OpenSSH show that using the default configuration in each case, configuration-driven debloating can remove 77% of the code for Nginx, 53% for VSFTPD, and 20% for OpenSSH, which represent a significant attack surface reduction.
-  authors: Hyungjoon Koo, Seyedhamed Ghavamnia, and Michalis Polychronakis
-  link:
-    url: https://dl.acm.org/doi/10.1145/3301417.3312501
-    display: In the 12th European Workshop on Systems Security, 2019 (EuroSec ’19)
   highlight: 0
   news2:
 
