@@ -64,5 +64,5 @@ I am Hyungjoon Koo who leads the SecAI lab. Launching a new lab, a relatively yo
 <a href="https://forms.gle/FsHk1u8WrTKLayHVA" target=blank>Application</a> -->
 (An application via an email may not be considered). 
 
-<p align="right">Last updated: Oct. 2023</p>
+<p align="right">Last updated: Nov. 2023</p>
 <br>
