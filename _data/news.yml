@@ -1,6 +1,9 @@
 
+- date: Jan 23, 2024
+  headline: "Our paper, R2I: A Relative Readability Metric for Decompiled Code, has been accepted to FSE 2024!"
+
 - date: Jan 19, 2024
-  headline: "Our paper, BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binarypaper, has been accepted to ASIACCS 2024!"
+  headline: "Our paper, BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary, has been accepted to ASIACCS 2024!"
 
 - date: Jan 12, 2024
   headline: "Our paper, ToolPhet: Inference of Compiler Provenance from Stripped Binaries with Emerging Compilation Toolchains, has been accepted to IEEE Access!"
