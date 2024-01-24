@@ -1,21 +1,46 @@
 
 - title: "BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary"
   image: 
-  description: "Binary reverse engineering is crucial to gain insights into the inner workings of a stripped binary. Yet, it is challenging to read the original semantics from a binary code snippet because of the unavailability of high-level information in the source, such as function names, variable names, and types. Recent advancements in deep learning show the possibility of recovering such vanished information with a well-trained model from a pre-defined dataset. Albeit a static model’s notable performance, it can hardly cope with ever-increasing data stream (e.g., compiled binaries) by nature. The two viable approaches for ceaseless learning are retraining the whole dataset from scratch and fine-tuning a pre-trained model; however, retraining suffers from large computational overheads and fine-tuning from performance degradation (i.e., catastrophic forgetting). Lately, continual learning (CL) tackles the problem of handling incremental data in security domains (e.g., network intrusion detection, malware detection) using reasonable resources while maintaining performance in practice. In this paper, we focus on how CL assists the improvement of a generative model that predicts a function symbol name from a series of machine instructions. To this end, we introduce BinAdapter, a system that can infer function names from an incremental dataset without performance degradation from an original dataset by leveraging CL techniques. Our major finding shows that incremental tokens in the source (i.e., machine instructions) or the target (i.e., function names) largely affect the overall performance of a CL-enabled model. Accordingly, BinAdapter adopts three built-in approaches: i) inserting adapters in case of no incremental tokens in both the source and target, ii) harnessing multilingual neural machine translation (M-NMT) and fine-tuning the source embeddings with i) in case of incremental tokens in the source, and iii) fine-tuning target embeddings with ii) in case of incremental tokens in both. To demonstrate the effectiveness of BinAdapter, we evaluate the above three scenarios using incremental datasets with or without a set of new tokens (e.g., unseen machine instructions or function names), spanning across different architectures and optimization levels. Our empirical results show that BinAdapter outperforms the state-of-the-art CL techniques for an F1 of up to 24.3% or a Rouge-l of 21.5% in performance."
-  authors: Murodova, Nozima and Koo, Hyungjoon
+  description: "Decompilation is a process of converting a low-level machine code snippet back into a high-level programming
+language such as C. It serves as a basis to aid reverse engineers in comprehending the contextual semantics of
+the code. In this respect, commercial decompilers like Hex-Rays have made significant strides in improving
+the readability of decompiled code over time. While previous work has proposed the metrics for assessing the
+readability of source code, including identifiers, variable names, function names, and comments, those metrics
+are unsuitable for measuring the readability of decompiled code primarily due to i) the lack of rich semantic
+information in the source and ii) the presence of erroneous syntax or inappropriate expressions. In response,
+to the best of our knowledge, this work first introduces R2I, the Relative Readability Index, a specialized metric
+tailored to evaluate decompiled code in a relative context quantitatively. In essence, R2I can be computed by
+i) taking code snippets across different decompilers as input and ii) extracting pre-defined features from an
+abstract syntax tree. For the robustness of R2I, we thoroughly investigate the enhancement efforts made by
+existing decompilers and academic research to promote code readability, identifying 31 features to yield a
+reliable index collectively. Besides, we conducted a user survey to capture subjective factors such as one’s
+coding styles and preferences. Our empirical experiments demonstrate that R2I is a versatile metric capable of
+representing the relative quality of decompiled code (e.g., obfuscation, decompiler updates) and being well
+aligned with human perception in our survey."
+  authors: Haeun Eom, Dohee Kim, Sori Lim, Hyungjoon Koo, and Sungjae Hwang
   link:
     url: 
-    display: ASIACCS 2024
+    display: In the ACM International Conference on the Foundations of Software Engineering (FSE 2024; To appear)
+  highlight: 1
+  news2:
+
+- title: "BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary"
+  image: 
+  description: "Binary reverse engineering is crucial to gain insights into the inner workings of a stripped binary. Yet, it is challenging to read the original semantics from a binary code snippet because of the unavailability of high-level information in the source, such as function names, variable names, and types. Recent advancements in deep learning show the possibility of recovering such vanished information with a well-trained model from a pre-defined dataset. Albeit a static model’s notable performance, it can hardly cope with ever-increasing data stream (e.g., compiled binaries) by nature. The two viable approaches for ceaseless learning are retraining the whole dataset from scratch and fine-tuning a pre-trained model; however, retraining suffers from large computational overheads and fine-tuning from performance degradation (i.e., catastrophic forgetting). Lately, continual learning (CL) tackles the problem of handling incremental data in security domains (e.g., network intrusion detection, malware detection) using reasonable resources while maintaining performance in practice. In this paper, we focus on how CL assists the improvement of a generative model that predicts a function symbol name from a series of machine instructions. To this end, we introduce BinAdapter, a system that can infer function names from an incremental dataset without performance degradation from an original dataset by leveraging CL techniques. Our major finding shows that incremental tokens in the source (i.e., machine instructions) or the target (i.e., function names) largely affect the overall performance of a CL-enabled model. Accordingly, BinAdapter adopts three built-in approaches: i) inserting adapters in case of no incremental tokens in both the source and target, ii) harnessing multilingual neural machine translation (M-NMT) and fine-tuning the source embeddings with i) in case of incremental tokens in the source, and iii) fine-tuning target embeddings with ii) in case of incremental tokens in both. To demonstrate the effectiveness of BinAdapter, we evaluate the above three scenarios using incremental datasets with or without a set of new tokens (e.g., unseen machine instructions or function names), spanning across different architectures and optimization levels. Our empirical results show that BinAdapter outperforms the state-of-the-art CL techniques for an F1 of up to 24.3% or a Rouge-l of 21.5% in performance."
+  authors: Nozima Murodova and Hyungjoon Koo
+  link:
+    url: 
+    display: In the 19th ACM Asia Conference on Computer and Communications Security, 2024 (ASIACCS ’24; To appear) 
   highlight: 1
   news2:
 
 - title: "ToolPhet: Inference of Compiler Provenance from Stripped Binaries with Emerging Compilation Toolchains"
   image: 
   description: "Identifying compiler toolchain provenance serves as a basis for both benign and malicious binary analyses. A wealth of prior studies mostly focuses on the inference of a popular compiler toolchain for C and C++ languages from stripped binaries that are built with GCC or clang. Lately, the popularity of an emerging compiler is on the rise such as Rust, Go, and Nim programming languages that complement the downsides of C and C++ (e.g., security), which little has been explored on them. The main challenge arises when applying previous inference techniques for toolchain provenance because some emerging compilation toolchains adopt the same backend of traditional compilers. In this paper, we propose ToolPhet, an effective end-to-end BERT-based system for deducing the provenance of both traditional and emerging compiler toolchains. To this end, we thoroughly study the characteristics of both an emerging toolchain and an executable binary that is generated by that toolchain. We introduce two separate downstream tasks for the compiler toolchain inference with a (BERT-based) fine-tuning process, which produces i) a toolchain classification model, and ii) a binary code similarity detection model. Our findings show that the classification model (i) may not suffice when producing a binary with the existing backend like Nim, which we adopt the detection model (ii) that can infer underlying code semantics. We evaluate ToolPhet with the previous work including one signature-based tool and four machine-learning-based approaches, demonstrating its effectiveness by achieving higher F1 scores with the binaries compiled with emerging compilation toolchains."
-  authors: Hohyeon Jang, Nozima Murodova and Koo, Hyungjoon
+  authors: Hohyeon Jang, Nozima Murodova, and Hyungjoon Koo
   link:
-    url: 
-    display: IEEE Access (2024 to appear)
+    url: https://ieeexplore.ieee.org/document/10401926
+    display: IEEE Access (2024)
   highlight: 0
   news2:
 
@@ -34,7 +59,7 @@
   description: "The ever-increasing phishing campaigns around the globe have been one of main threats in cyber security. In response, the global anti-phishing entity (APWG) collectively maintains the up-to-date blacklist database (e.g., eCrimeX) against phishing campaigns, and so do modern browsers (e.g., Google Safe Browsing). However, our finding reveals that such a mutual assistance system has been remaining a blind spot when detecting geolocation-based phishing campaigns. In this paper, we focus on phishing campaigns against the web portal service with the largest number of users (42 million) in South Korea. We harvest 1,558 phishing URLs from varying resources in the span of a full year, which only a small fraction (3.8%) have been detected by eCrimeX despite a wide spectrum of active fraudulence cases. We demystify three pervasive types of phishing campaigns in South Korea: i) sophisticated phishing campaigns with varying adversarial tactics such as a proxy configuration, ii) phishing campaigns against a secondhand online market, and iii) phishing campaigns against a non-specific target. Our finding shows that a phishing kit that supports automating the whole phishing campaigns is prevalent. Besides, we frequently observe a hit-and-run scam where a phishing campaign is immediately inaccessible right after victimization is complete, each of which is tailored to a single potential victim over a new channel like a messenger. As part of mitigation efforts, we promptly provide regional phishing information to APWG, and immediately lock down a victim’s account to prevent further damages."
   authors: Hyunjun Park, Kyungchan Lim, Doowon Kim, Donghyun Yu, and Hyungjoon Koo
   link:
-    url: 
+    url: https://ieeexplore.ieee.org/document/10320327
     display: IEEE Access (2023)
   highlight: 0
   news2:
@@ -44,7 +69,7 @@
   description: "The recovery of contextual meanings on a machine code is required by a wide range of binary analysis applications, such as bug discovery, malware analysis, and code clone detection. To accomplish this, advancements on binary code analysis borrow the techniques from natural language processing to automatically infer the underlying semantics of a binary, rather than replying on manual analysis. One of crucial pipelines in this process is instruction normalization, which helps to reduce the number of tokens and to avoid an out-of-vocabulary (OOV) problem. However, existing approaches often substitutes operands with a common token (e.g., callee target → FOO), inevitably resulting in the loss of important information. In this paper, we introduce well-balanced instruction normalization (WIN), a novel approach that retains rich code information while minimizing the downsides of code normalization. With large swaths of binary code, our finding shows that the instruction distribution follows Zipf’s Law like a natural language, a function conveys contextually meaningful information, and the same instruction at different positions may require diverse code representations. To show the effectiveness of WIN, we present DeepSemantic that harnesses the BERT architecture with two training phases: pre-training for generic assembly code representation, and fine-tuning for building a model tailored to a specialized task. We define a downstream task of binary code similarity detection, which requires underlying code semantics. Our experimental results show that our binary similarity model with WIN outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, with an average improvement of 49.8% and 15.8%, respectively."
   authors: Hyungjoon Koo, Soyeon Park, Daejin Choi, and Taesoo Kim
   link:
-    url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
+    url: https://ieeexplore.ieee.org/document/10077368
     display: IEEE Access (2023)
   highlight: 0
   news2:
