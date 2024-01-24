@@ -1,6 +1,6 @@
 
-- title: "BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary"
-  image: 
+- title: "R2I: A Relative Readability Metric for Decompiled Code"
+  image: r2i.png
   description: "Decompilation is a process of converting a low-level machine code snippet back into a high-level programming
 language such as C. It serves as a basis to aid reverse engineers in comprehending the contextual semantics of
 the code. In this respect, commercial decompilers like Hex-Rays have made significant strides in improving
@@ -19,17 +19,17 @@ representing the relative quality of decompiled code (e.g., obfuscation, decompi
 aligned with human perception in our survey."
   authors: Haeun Eom, Dohee Kim, Sori Lim, Hyungjoon Koo, and Sungjae Hwang
   link:
-    url: 
+    url: #
     display: In the ACM International Conference on the Foundations of Software Engineering (FSE 2024; To appear)
   highlight: 1
   news2:
 
 - title: "BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary"
-  image: 
+  image: binadapter.png
   description: "Binary reverse engineering is crucial to gain insights into the inner workings of a stripped binary. Yet, it is challenging to read the original semantics from a binary code snippet because of the unavailability of high-level information in the source, such as function names, variable names, and types. Recent advancements in deep learning show the possibility of recovering such vanished information with a well-trained model from a pre-defined dataset. Albeit a static model’s notable performance, it can hardly cope with ever-increasing data stream (e.g., compiled binaries) by nature. The two viable approaches for ceaseless learning are retraining the whole dataset from scratch and fine-tuning a pre-trained model; however, retraining suffers from large computational overheads and fine-tuning from performance degradation (i.e., catastrophic forgetting). Lately, continual learning (CL) tackles the problem of handling incremental data in security domains (e.g., network intrusion detection, malware detection) using reasonable resources while maintaining performance in practice. In this paper, we focus on how CL assists the improvement of a generative model that predicts a function symbol name from a series of machine instructions. To this end, we introduce BinAdapter, a system that can infer function names from an incremental dataset without performance degradation from an original dataset by leveraging CL techniques. Our major finding shows that incremental tokens in the source (i.e., machine instructions) or the target (i.e., function names) largely affect the overall performance of a CL-enabled model. Accordingly, BinAdapter adopts three built-in approaches: i) inserting adapters in case of no incremental tokens in both the source and target, ii) harnessing multilingual neural machine translation (M-NMT) and fine-tuning the source embeddings with i) in case of incremental tokens in the source, and iii) fine-tuning target embeddings with ii) in case of incremental tokens in both. To demonstrate the effectiveness of BinAdapter, we evaluate the above three scenarios using incremental datasets with or without a set of new tokens (e.g., unseen machine instructions or function names), spanning across different architectures and optimization levels. Our empirical results show that BinAdapter outperforms the state-of-the-art CL techniques for an F1 of up to 24.3% or a Rouge-l of 21.5% in performance."
   authors: Nozima Murodova and Hyungjoon Koo
   link:
-    url: 
+    url: #
     display: In the 19th ACM Asia Conference on Computer and Communications Security, 2024 (ASIACCS ’24; To appear) 
   highlight: 1
   news2:
