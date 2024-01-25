@@ -26,6 +26,22 @@
   photo: jeon.jpg
   info: Undergraduate student
   email: wnssad0202 AT g.skku.edu
+  research: Security and Networking
   number_educ: 0
   education1: 
 
+- name: Junhyeong Jo (조준형)
+  photo: junhyoung.jpg
+  info: Undergraduate student
+  email: asdfq3128 AT g.skku.edu
+  research: System Programming, AI applications
+  number_educ: 0
+  education1: 
+
+- name: Seoyeon Jo (조서연)
+  photo: seoyeon.png
+  info: Undergraduate student
+  email: seoyeon2000 AT g.skku.edu
+  research: Machine Unlearnig 
+  number_educ: 0
+  education1: 
