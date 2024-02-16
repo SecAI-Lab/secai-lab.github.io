@@ -14,7 +14,26 @@ permalink: /teaching/
 
 #### Fall 2023
 * [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
-* <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2023/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
+* <details markdown="0">
+  <summary>
+  <li>[SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2023/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a></li>
+  </summary>
+  <ul>
+    <li>(Team A) Empty Seats? </li>
+    <li>(Team B) ChatPub: Retrieval Augmented Generation-Based Web Application to Help Finding Policy for Korean Youth </li>
+    <li>(Team C) SwipeBite: User-friendly Restaurant Selection Application </li>
+    <li>(Team D) VoCard: An Effective Approach to English Vocabulary Acquisition </li>
+    <li>(Team E) MailAI: Revolutionizing Email Management with Artificial Intelligence </li>
+    <li>(Team F) School Pick: Streamlining Student Dining and Meal Plans </li>
+    <li>(Team G) College Quest: A College Simulation Game </li>
+    <li>(Team H) Stock Price Prediction System </li>
+    <li>(Team I) Emotional Diary </li>
+    <li>(Team J) Web Platform Providing Information and Simulation Game of Baseball Metrics </li>
+    <li>(Team K) SwithS (Study with SKKU): Study Integration Patform for SKKU Students </li>
+    <li>(Team L) Algoverse: A Learning Platform for Visualizing Algorithms </li>
+    <li>(Team M) YogaForm: Yoga Pose Correction AI Web Service Using Pose Estimation Model </li>
+  </ul>
+  </details>
 
 #### Spring 2023
 * [SWE3025] Computer Security (정보보호개론) 
