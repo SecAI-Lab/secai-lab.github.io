@@ -1,0 +1,32 @@
+- title: "CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation"
+  ppt_link: "https://docs.google.com/presentation/d/1amblX-PbInT9vbEY1g8_tH1BNX60YOXAEVaNnCV6p4s/edit?usp=sharing"
+  code_link: ""
+  presenter: Yujeong
+  conference: EMNLP
+  date: 2024.02.05
+  pub_year: 2021
+
+- title: Ground Truth for Binary Disassembly is Not Easy
+  ppt_link: "https://drive.google.com/file/d/1BvH1VV88AKSkK5-WXDuqBE3CUMeeJEb3/view?usp=sharing"
+  code_link: ""
+  presenter: Jiyong
+  conference: USENIX
+  date: 2024.01.04
+  pub_year: 2022
+
+- title: Black-box Attacks Against Neural Binary Function Detection
+  ppt_link: "https://docs.google.com/presentation/d/1-hVG6pd7kFOkQaHFIRfCWYISzBuVYyd1QcRixXiEf44/edit?usp=sharing"
+  code_link: ""
+  presenter: Nozima
+  conference: RAID
+  date: 2023.11.23
+  pub_year: 2023
+
+- title: "SelectiveTaint: Efficient Data Flow Tracking With Static Binary Rewriting"
+  ppt_link: "https://drive.google.com/file/d/1MKIYdXi0rUznXA7gyRL9GEHowHMNj-Sv/view?usp=sharing"
+  code_link: ""
+  presenter: Jiyong
+  conference: USENIX
+  date: 2023.10.05
+  pub_year: 2021
+

@@ -1,114 +1,151 @@
 - date: Feb 15, 2024
   headline: "Yuldoshkhujaev Shakhzod joined our lab, welcome!"
+  id: 0
 
 - date: Jan 26, 2024
   headline: "Seoyeon Jo and Junhyeong Jo joined our lab, welcome!"
+  id: 1
 
 - date: Jan 23, 2024
   headline: "Our paper, R2I: A Relative Readability Metric for Decompiled Code, has been accepted to FSE 2024!"
+  id: 1
 
 - date: Jan 19, 2024
   headline: "Our paper, BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary, has been accepted to ASIACCS 2024!"
+  id: 1
 
 - date: Jan 12, 2024
   headline: "Our paper, ToolPhet: Inference of Compiler Provenance from Stripped Binaries with Emerging Compilation Toolchains, has been accepted to IEEE Access!"
+  id: 1
 
 - date: Nov 15, 2023
   headline: "Our paper, Demystifying the Regional Phishing Landscape in South Korea, has been accepted to IEEE Access!"
+  id: 1
 
 - date: Nov 15, 2023
   headline: "Our paper, Trends in Machine Unlearning via Continual Learning to Mitigate Privacy Risks, has been accepted to CISC-W 2023!"
+  id: 2
 
 - date: Nov 15, 2023
   headline: "Our paper, Trends in Membership Inference Attacks and Defenses, has been accepted to CISC-W 2023!"
+  id: 2
 
 - date: Nov 15, 2023
   headline: "Our paper, Trends in Explainable Artificial Intelligence for Security, has been accepted to CISC-W 2023!"
+  id: 2
 
 - date: Aug 25, 2023
   headline: "Our team, Team23, won the Silver Prize in SKKU CTF!"
+  id: 2
 
 - date: Jul 11, 2023
   headline: "Our paper, BENZENE: A Practical Root Cause Analysis System with an Under-Constrained State Mutation, has been accepted to IEEE S&P '24!!"
+  id: 2
 
 - date: Mar 26, 2023
   headline: "Our paper, Evaluating Password Composition Policy and Password Meters of Popular Websites, has been accepted to SecWeb Workshop (co-held with IEEE S&P '23)!"
+  id: 2
 
 - date: Mar 14, 2023
   headline: "Our paper, Binary Code Representation with Well-balanced Instruction Normalization, has been accepted to IEEE Access!"
+  id: 2
 
 - date: March 10, 2023
   headline: "Jiyong Uhm joined our lab, welcome!"
+  id: 2
 
 - date: Jan 9, 2023
   headline: "Yujeong Kwon joined our lab, welcome!"
+  id: 2
 
 - date: Dec 9, 2022
   headline: "Our paper, SmartMark: Software Watermarking Scheme for Smart Contracts, has been accepted to ICSE 2023!"
+  id: 2
 
 - date: Nov 24, 2022
   headline: "Our paper, A Transformer-based Function Symbol Name Inference Model from an Assembly Language for Binary Reversing, has been accepted to ASIACCS 2023!"
+  id: 2
 
 - date: Nov 9, 2022
   headline: "Our paper, A Study of Executable Binaries with Emerging Compilation Tools, has been accepted to CISC-W 2022 with the Best Paper Award!"
+  id: 2
 
 - date: Nov 9, 2022
   headline: "Our paper, A Study of Rarely Appeared Instructions in an Executable Binary, has been accepted to CISC-W 2022!"
+  id: 2
 
 - date: Nov 9, 2022
   headline: "Our paper, Server-client Based Reversing Tools with a Prediction Model for Function Names, has been accepted to CISC-W 2022!"
+  id: 2
 
 - date: Sep 3, 2022
   headline: "Our paper, Practical Binary Code Similarity Detection with BERT-based Transferable Similarity Learning, has been accepted to ACSAC 2022!"
+  id: 2
 
 - date: Sep 3, 2022
   headline: "Our paper, DeView: Confining Progressive Web Applications by Debloating Web APIs, has been accepted to ACSAC 2022!"
+  id: 2
 
 - date: Jul 1, 2022
   headline: "Hyoungjune Jeon and Seok Kim joined the lab, welcome!"
+  id: 2
 
 - date: Jun 29, 2022
   headline: "We got the Best Paper Award in the Competition of Capstone Design Project Hosted by Korean Institute of Smart Media (한국스마트미디어학회 종합학술대회)!"
+  id: 2
 
 - date: Jun 3, 2022
   headline: "Our paper, Phishing URL Detection with Text-CNN, has been accepted to CISC-S 2022!"
+  id: 2
 
 - date: Apr 1, 2022
   headline: "Sechang joined the lab, welcome!"
+  id: 2
 
 - date: Dec 17, 2021
   headline: "The SYSU team got the 4th place (2nd place for IDS)!"
+  id: 2
 
 - date: Dec 16, 2021
   headline: "Our paper, IoTivity Packet Parser for Encrypted Messages in Internet of Things, has been accepted to ICACT 2022!"
+  id: 2
 
 - date: Nov 24, 2021
   headline: "The SYSU (united) team advances to the Cyber Security Challenge Final!"
+  id: 2
 
 - date: Sep 1, 2021
   headline: "Our paper, Software Watermarking via a Binary Function Relocation, has been accepted to ACSAC 2021!"
+  id: 2
 
 - date: Sep 1, 2021
   headline: "Our paper, A Look Back on a Function Identification Problem, has been accepted to ACSAC 2021!"
+  id: 2
 
 - date: Aug 23, 2021
   headline: "Nozima joined the lab, welcome!"
+  id: 2
 
 - date: Jul 18, 2021
   headline: "Our poster on compiler inference has been accepted to WISA 2021!"
+  id: 2
 
 - date: Jul 1, 2021
   headline: "We have a lab space (27321C)!"
+  id: 2
 
 - date: May 16, 2021
   headline: "Hohyeon joined the lab, welcome!"
+  id: 2
 
 - date: Apr. 2, 2021
   headline: "Our lab homepage opens!"
+  id: 2
 
 - date: Mar 15, 2021
   headline: "Wonyoung joined the lab, welcome!"
+  id: 2
 
 - date: Feb 22, 2021
   headline: "SecAI lab begins!"
-
+  id: 2

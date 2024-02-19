@@ -1,0 +1,5 @@
+{% for page in site.pages %}
+	{% if page.title and page.main_nav == true %}
+	<li class="nav-link"><a href="{{ page.url | prepend: site.baseurl }}" style="color: #111;">{{ page.title }}</a>
+	{% endif %}
+{% endfor %}

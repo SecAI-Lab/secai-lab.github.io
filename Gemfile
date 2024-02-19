@@ -1,4 +1,9 @@
 source 'https://rubygems.org'
+gem 'jekyll', '<4'
+gem 'jekyll-archives'
+gem 'jekyll-sitemap'
+gem 'jekyll-paginate-v2'
+gem 'kramdown-parser-gfm'
+gem 'wdm', '>= 0.1.0'
 
-gem "jekyll", ">= 3.6.3"
-gem 'wdm', '~> 0.1.1', :install_if => Gem.win_platform?
+gem "webrick", "~> 1.8"

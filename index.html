@@ -1,0 +1,105 @@
+---
+layout: default
+paginate: true
+---
+<div class="home">
+
+<div class="site-header-container {% if site.cover %}has-cover{% endif %}" {% if site.cover %}style="background-image: url({{ site.cover | prepend: site.baseurl }});"{% endif %}>
+  <div class="scrim {% if site.cover %}has-cover{% endif %}">
+    <header class="site-header">
+      <h1 class="title">{{ site.title }}</h1>
+      {% if site.subtitle %}<p class="subtitle">{{ site.subtitle }}</p>{% endif %}
+    </header>
+    <br> <br>
+    <div class="news-cards">
+      <div id="newsCarousel" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner">
+        {% for news in site.data.news %}
+          {% if news.id < 2 %}
+          <div class="carousel-item {% if news.id == 0 %} active {% endif %}">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{news.headline}}</h5>
+                <p class="card-text">{{news.date}}</p>
+              </div>
+            </div>
+          </div>      
+          {% endif %}
+        {% endfor %}
+      </div>
+    
+    <a class="carousel-control-prev" href="#newsCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#newsCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+
+
+    </div>
+    </div>
+  </div>
+</div> 
+
+<div class="wrapper" style="max-width: 60em">
+
+<div>
+<br><br>
+<h3>Welcome to the SecAI Lab</h3>
+<br>
+We are a security research group at the Department of Computer Science and Engineering, College of Computing and Informatics in Sungkyunkwan University.
+The number of computing devices such as laptops, workstations, mobiles, Internet of Things, and cloud services has been ever increasing, communicating with each other. Accordingly, enormous amount of digitalized data become available, necessitating information security all around us.
+<br>
+<div class="card-sliders ">
+	<div class="container ">
+		<div class="row align-items-center">
+			<div class="col-md">
+				<div class="row mt-5">
+					<div class="col-lg">
+						<div class="card-decks">
+							<div class="card-deck deck-active">
+								<div class="card">
+								  <img class="card-img" src="images/pubs/benzene.png" alt="Card image">								  
+								</div>
+								<div class="card">
+							  <img class="card-img" src="images/pubs/r2i.png" alt="Card image">							  
+							</div>
+								<div class="card">
+							  <img class="card-img" src="images/pubs/binadapter.png" alt="Card image">							  
+							</div>
+							</div>
+							<div class="card-deck">
+								<div class="card">
+								  <img class="card-img" src="images/pubs/smartmark.png" alt="Card image">								  
+								</div>
+								<div class="card">
+							  <img class="card-img" src="images/pubs/asmdepictor.png" alt="Card image">							  
+							</div>
+								<div class="card">
+							  <img class="card-img" src="images/pubs/binshot.png" alt="Card image">							  
+							</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			
+				
+			</div>
+		</div>
+		
+	</div>
+
+<br><br>
+The SecAI lab focuses on system/software security and emerging technologies that require security. In particular, we are working on security with artificial intelligence (AI) where our lab name originates from. Our interests encompass varying topics to which deep learning could be applied including - but not limited to - executable binary analysis (e.g., benign software and malware), understanding of code semantics, advanced attack detection and prevention, digital forensics, etc.
+<br> <br>
+I am Hyungjoon Koo who leads the SecAI lab. Launching a new lab, a relatively young lab means that we have lots of potential for the future.
+
+</div>
+
+</div>
+
+</div>
+</div>

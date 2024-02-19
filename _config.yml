@@ -1,45 +1,36 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
+# External plugins
+# See http://ixti.net/software/2013/01/28/using-jekyll-plugins-on-github-pages.html for making `jekyll archives` work.
+plugins:
+  # - jekyll-archives # Sorry, not GitHub pages friendly!
+  - jekyll-sitemap
+  - jekyll-paginate-v2
+
+exclude:
+  - "/vendor/"
 
 # Site settings
-title: The SecAI Lab
+title: SecAI Lab @ Sungkyunkwan University
+subtitle: ""
 email: kevin.koo@g.skku.edu
-description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: ""
-url: ""
+# domain: ""
+baseurl: "" # the subpath of your site, e.g. /blog/
+# url: """ # the base hostname & protocol for your site
+cover: "/assets/cover-skku.jpg"
+logo: "/assets/image.png"
 
-include:
-  - .htaccess
-  - _pages
-
-sass:
-  sass_dir: _sass
-
-# Conversion
+# Build settings
 markdown: kramdown
-highlighter: rouge
-lsi: false
-excerpt_separator: "\n\n"
-incremental: false
+inter_post_navigation: false
+highlightjs_theme: "monokai-sublime"
 
+# Pagination Settings
+# https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md#site-configuration
+# pagination:
+#   enabled: true
+#   per_page: 4
+#   permalink: "/posts/page:num/"
+#   sort_reverse: true
 
-
-# Markdown Processing
-kramdown:
-  input: GFM
-  hard_wrap: false
-  auto_ids: true
-  footnote_nr: 1
-  entity_output: as_char
-  toc_levels: 1..6
-  smart_quotes: lsquo,rsquo,ldquo,rdquo
-  enable_coderay: false
-  parse_block_html: true # default for kramdown is false. This will enable using Markdown links
+# permalink: "/:title/"
+# Archive settings (see https://github.com/jekyll/jekyll-archives/)
 

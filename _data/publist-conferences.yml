@@ -1,22 +1,21 @@
-
 - title: "R2I: A Relative Readability Metric for Decompiled Code"
   image: r2i.png
   description: "Decompilation is a process of converting a low-level machine code snippet back into a high-level programming
-language such as C. It serves as a basis to aid reverse engineers in comprehending the contextual semantics of
-the code. In this respect, commercial decompilers like Hex-Rays have made significant strides in improving
-the readability of decompiled code over time. While previous work has proposed the metrics for assessing the
-readability of source code, including identifiers, variable names, function names, and comments, those metrics
-are unsuitable for measuring the readability of decompiled code primarily due to i) the lack of rich semantic
-information in the source and ii) the presence of erroneous syntax or inappropriate expressions. In response,
-to the best of our knowledge, this work first introduces R2I, the Relative Readability Index, a specialized metric
-tailored to evaluate decompiled code in a relative context quantitatively. In essence, R2I can be computed by
-i) taking code snippets across different decompilers as input and ii) extracting pre-defined features from an
-abstract syntax tree. For the robustness of R2I, we thoroughly investigate the enhancement efforts made by
-existing decompilers and academic research to promote code readability, identifying 31 features to yield a
-reliable index collectively. Besides, we conducted a user survey to capture subjective factors such as one’s
-coding styles and preferences. Our empirical experiments demonstrate that R2I is a versatile metric capable of
-representing the relative quality of decompiled code (e.g., obfuscation, decompiler updates) and being well
-aligned with human perception in our survey."
+  language such as C. It serves as a basis to aid reverse engineers in comprehending the contextual semantics of
+  the code. In this respect, commercial decompilers like Hex-Rays have made significant strides in improving
+  the readability of decompiled code over time. While previous work has proposed the metrics for assessing the
+  readability of source code, including identifiers, variable names, function names, and comments, those metrics
+  are unsuitable for measuring the readability of decompiled code primarily due to i) the lack of rich semantic
+  information in the source and ii) the presence of erroneous syntax or inappropriate expressions. In response,
+  to the best of our knowledge, this work first introduces R2I, the Relative Readability Index, a specialized metric
+  tailored to evaluate decompiled code in a relative context quantitatively. In essence, R2I can be computed by
+  i) taking code snippets across different decompilers as input and ii) extracting pre-defined features from an
+  abstract syntax tree. For the robustness of R2I, we thoroughly investigate the enhancement efforts made by
+  existing decompilers and academic research to promote code readability, identifying 31 features to yield a
+  reliable index collectively. Besides, we conducted a user survey to capture subjective factors such as one’s
+  coding styles and preferences. Our empirical experiments demonstrate that R2I is a versatile metric capable of
+  representing the relative quality of decompiled code (e.g., obfuscation, decompiler updates) and being well
+  aligned with human perception in our survey."
   authors: Haeun Eom, Dohee Kim, Sori Lim, Hyungjoon Koo, and Sungjae Hwang
   link:
     url: #
@@ -44,24 +43,24 @@ aligned with human perception in our survey."
   highlight: 0
   news2:
 
+- title: "Demystifying the Regional Phishing Landscape in South Korea"
+  image: 
+  description: "The ever-increasing phishing campaigns around the globe have been one of main threats in cyber security. In response, the global anti-phishing entity (APWG) collectively maintains the up-to-date blacklist database (e.g., eCrimeX) against phishing campaigns, and so do modern browsers (e.g., Google Safe Browsing). However, our finding reveals that such a mutual assistance system has been remaining a blind spot when detecting geolocation-based phishing campaigns. In this paper, we focus on phishing campaigns against the web portal service with the largest number of users (42 million) in South Korea. We harvest 1,558 phishing URLs from varying resources in the span of a full year, which only a small fraction (3.8%) have been detected by eCrimeX despite a wide spectrum of active fraudulence cases. We demystify three pervasive types of phishing campaigns in South Korea: i) sophisticated phishing campaigns with varying adversarial tactics such as a proxy configuration, ii) phishing campaigns against a secondhand online market, and iii) phishing campaigns against a non-specific target. Our finding shows that a phishing kit that supports automating the whole phishing campaigns is prevalent. Besides, we frequently observe a hit-and-run scam where a phishing campaign is immediately inaccessible right after victimization is complete, each of which is tailored to a single potential victim over a new channel like a messenger. As part of mitigation efforts, we promptly provide regional phishing information to APWG, and immediately lock down a victim’s account to prevent further damages."
+  authors: Hyunjun Park, Kyungchan Lim, Doowon Kim, Donghyun Yu, and Hyungjoon Koo
+  link:
+    url: 
+    display: IEEE Access (2023 to appear)
+  highlight: 0
+  news2:
+
 - title: "BENZENE: A Practical Root Cause Analysis System with an Under-Constrained State Mutation"
   image: benzene.png
   description: "Fuzzing has demonstrated great success in bug discovery and plays a crucial role in software testing today. Despite the increasing popularity of fuzzing, automated root cause analysis (RCA) has drawn less attention. One of the recent advances in RCA is crash-based statistical debugging, which leverages the behavioral differences in program execution between crash-triggered and non-crashing inputs. Hence, obtaining non-crashing behaviors close to the original crash is crucial but challenging with previous approaches (e.g., fuzzing). In this paper, we present BENZENE, a practical end-to-end RCA system that facilitates a fully automated crash diagnosis. To this end, we introduce a novel technique, called under-constrained state mutation, that generates both crashing and non-crashing behaviors for effective and efficient RCA. We design and implement the BENZENE prototype, and evaluate it with 60 vulnerabilities in the wild. Our empirical results demonstrate that BENZENE not only surpasses in performance (i.e., root cause ranking), but also achieves superior results in both speed (4.6 times faster) and memory footprint (31.4 times less) on average than prior approaches." 
   authors: Younggi Park, Hwiwon Lee, Jinho Jung, Hyungjoon Koo, and Huy Kang Kim
   link:
     url: https://www.computer.org/csdl/proceedings-article/sp/2024/313000a074/1RjEaJVHT4k
-    display: In the 45th IEEE Symposium on Security and Privacy, 2024 (S&P ’24)
+    display: In the 45th IEEE Symposium on Security and Privacy, 2024 (S&P ’24 to appear)
   highlight: 1
-  news2:
-
-- title: "Demystifying the Regional Phishing Landscape in South Korea"
-  image: 
-  description: "The ever-increasing phishing campaigns around the globe have been one of main threats in cyber security. In response, the global anti-phishing entity (APWG) collectively maintains the up-to-date blacklist database (e.g., eCrimeX) against phishing campaigns, and so do modern browsers (e.g., Google Safe Browsing). However, our finding reveals that such a mutual assistance system has been remaining a blind spot when detecting geolocation-based phishing campaigns. In this paper, we focus on phishing campaigns against the web portal service with the largest number of users (42 million) in South Korea. We harvest 1,558 phishing URLs from varying resources in the span of a full year, which only a small fraction (3.8%) have been detected by eCrimeX despite a wide spectrum of active fraudulence cases. We demystify three pervasive types of phishing campaigns in South Korea: i) sophisticated phishing campaigns with varying adversarial tactics such as a proxy configuration, ii) phishing campaigns against a secondhand online market, and iii) phishing campaigns against a non-specific target. Our finding shows that a phishing kit that supports automating the whole phishing campaigns is prevalent. Besides, we frequently observe a hit-and-run scam where a phishing campaign is immediately inaccessible right after victimization is complete, each of which is tailored to a single potential victim over a new channel like a messenger. As part of mitigation efforts, we promptly provide regional phishing information to APWG, and immediately lock down a victim’s account to prevent further damages."
-  authors: Hyunjun Park, Kyungchan Lim, Doowon Kim, Donghyun Yu, and Hyungjoon Koo
-  link:
-    url: https://ieeexplore.ieee.org/document/10320327
-    display: IEEE Access (2023)
-  highlight: 0
   news2:
 
 - title: "Binary Code Representation with Well-balanced Instruction Normalization"
@@ -69,7 +68,7 @@ aligned with human perception in our survey."
   description: "The recovery of contextual meanings on a machine code is required by a wide range of binary analysis applications, such as bug discovery, malware analysis, and code clone detection. To accomplish this, advancements on binary code analysis borrow the techniques from natural language processing to automatically infer the underlying semantics of a binary, rather than replying on manual analysis. One of crucial pipelines in this process is instruction normalization, which helps to reduce the number of tokens and to avoid an out-of-vocabulary (OOV) problem. However, existing approaches often substitutes operands with a common token (e.g., callee target → FOO), inevitably resulting in the loss of important information. In this paper, we introduce well-balanced instruction normalization (WIN), a novel approach that retains rich code information while minimizing the downsides of code normalization. With large swaths of binary code, our finding shows that the instruction distribution follows Zipf’s Law like a natural language, a function conveys contextually meaningful information, and the same instruction at different positions may require diverse code representations. To show the effectiveness of WIN, we present DeepSemantic that harnesses the BERT architecture with two training phases: pre-training for generic assembly code representation, and fine-tuning for building a model tailored to a specialized task. We define a downstream task of binary code similarity detection, which requires underlying code semantics. Our experimental results show that our binary similarity model with WIN outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, with an average improvement of 49.8% and 15.8%, respectively."
   authors: Hyungjoon Koo, Soyeon Park, Daejin Choi, and Taesoo Kim
   link:
-    url: https://ieeexplore.ieee.org/document/10077368
+    url: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=6287639
     display: IEEE Access (2023)
   highlight: 0
   news2:
