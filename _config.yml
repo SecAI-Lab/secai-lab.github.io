@@ -12,9 +12,9 @@ exclude:
 title: SecAI Lab @ Sungkyunkwan University
 subtitle: ""
 email: kevin.koo@g.skku.edu
-# domain: ""
+domain: "https://secai.skku.edu/"
 baseurl: "" # the subpath of your site, e.g. /blog/
-# url: """ # the base hostname & protocol for your site
+url: "secai-lab.github.io"  # the base hostname & protocol for your site
 cover: "/assets/cover-skku.jpg"
 logo: "/assets/image.png"
 
