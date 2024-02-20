@@ -1,4 +1,5 @@
 - title: "CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation"
+  link: "https://arxiv.org/pdf/2109.00859.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1amblX-PbInT9vbEY1g8_tH1BNX60YOXAEVaNnCV6p4s/edit?usp=sharing"
   code_link: ""
   presenter: Yujeong
@@ -7,6 +8,7 @@
   pub_year: 2021
 
 - title: Ground Truth for Binary Disassembly is Not Easy
+  link: "https://www.usenix.org/system/files/sec22-pang-chengbin.pdf"
   ppt_link: "https://drive.google.com/file/d/1BvH1VV88AKSkK5-WXDuqBE3CUMeeJEb3/view?usp=sharing"
   code_link: ""
   presenter: Jiyong
@@ -15,6 +17,7 @@
   pub_year: 2022
 
 - title: Black-box Attacks Against Neural Binary Function Detection
+  link: "https://arxiv.org/pdf/2208.11667.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1-hVG6pd7kFOkQaHFIRfCWYISzBuVYyd1QcRixXiEf44/edit?usp=sharing"
   code_link: ""
   presenter: Nozima
@@ -23,6 +26,7 @@
   pub_year: 2023
 
 - title: "SelectiveTaint: Efficient Data Flow Tracking With Static Binary Rewriting"
+  link: "https://www.usenix.org/system/files/sec21-chen-sanchuan.pdf"
   ppt_link: "https://drive.google.com/file/d/1MKIYdXi0rUznXA7gyRL9GEHowHMNj-Sv/view?usp=sharing"
   code_link: ""
   presenter: Jiyong
