@@ -1,3 +1,12 @@
+- title: "From Grim Reality to Practical Solution: Malware Classification in Real-World Noise"
+  link: "https://ieeexplore.ieee.org/document/10179453"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_FromGrimReality_SP23"
+  code_link: "https://github.com/nuwuxian/morse"
+  presenter: Jiyong
+  conference: S&P
+  date: 2024.02.20
+  pub_year: 2023
+
 - title: "CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation"
   link: "https://arxiv.org/pdf/2109.00859.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1amblX-PbInT9vbEY1g8_tH1BNX60YOXAEVaNnCV6p4s/edit?usp=sharing"
