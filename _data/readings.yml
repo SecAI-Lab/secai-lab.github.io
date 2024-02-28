@@ -1,3 +1,12 @@
+- title: "Learning to Unlearn: Instance-wise Unlearning for Pre-trained Classifiers"
+  link: "https://arxiv.org/pdf/2301.11578.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1Td2WBmxQGBCHTaJPtb3L4fSdyHV_40ibzjugTEadyRg/edit?usp=sharing"
+  code_link: ""
+  presenter: Yujeong
+  conference: AAAI
+  date: 2024.02.28
+  pub_year: 2024
+
 - title: "From Grim Reality to Practical Solution: Malware Classification in Real-World Noise"
   link: "https://ieeexplore.ieee.org/document/10179453"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_FromGrimReality_SP23.pdf"
@@ -10,11 +19,29 @@
 - title: "CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation"
   link: "https://arxiv.org/pdf/2109.00859.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1amblX-PbInT9vbEY1g8_tH1BNX60YOXAEVaNnCV6p4s/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/salesforce/CodeT5"
   presenter: Yujeong
+  conference: EMNLP
+  date: 2024.02.12
+  pub_year: 2021
+
+- title: "InCoder: A Generative Model for Code Infilling and Synthesis"
+  link: "https://arxiv.org/pdf/2204.05999.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1amblX-PbInT9vbEY1g8_tH1BNX60YOXAEVaNnCV6p4s/edit?usp=sharing"
+  code_link: ""
+  presenter: Jiyong
   conference: EMNLP
   date: 2024.02.05
   pub_year: 2021
+
+- title: "CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning"
+  link: "https://arxiv.org/pdf/2207.01780.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1PieMht5fRiNtdxh7IMV6wNbVqLtsuJD3ho3a6w9-Oac/edit#slide=id.p1"
+  code_link: "https://github.com/salesforce/CodeRL"
+  presenter: Yujeong
+  conference: NeurIPS
+  date: 2024.01.22
+  pub_year: 2022
 
 - title: Ground Truth for Binary Disassembly is Not Easy
   link: "https://www.usenix.org/system/files/sec22-pang-chengbin.pdf"
@@ -42,4 +69,3 @@
   conference: USENIX
   date: 2023.10.05
   pub_year: 2021
-
