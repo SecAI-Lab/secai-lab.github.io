@@ -1,5 +1,5 @@
 ---
-title: "Paper Reading"
+title: "Reading Seminar"
 layout: page
 permalink: /seminar/
 main_nav: true
@@ -11,7 +11,6 @@ main_nav: true
 <ul class="post-list">
   {% for post in site.data.readings %}
     <li>
-      <span><a href="{{ post.link }}" target="_blank"> {{ post.title }} </a> ({{ post.conference}}, {{post.pub_year}})</span>
       <section class="post-meta">
       <div class="post-data">{{ post.date | date: "%B %-d, %Y" }}, presented by {{ post.presenter }}              
         <a href="{{post.code_link}}" target="_blank" style="color: black"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
@@ -20,11 +19,12 @@ main_nav: true
             <path d="M7 5.5a1 1 0 0 0-1 1V13a.5.5 0 0 0 1 0v-2h1.188a2.75 2.75 0 0 0 0-5.5zM8.188 10H7V6.5h1.188a1.75 1.75 0 1 1 0 3.5"/>
             <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></a>
       </div>
-        
+    <span><a href="{{ post.link }}" target="_blank"> {{ post.title }} </a> ({{ post.conference}}, {{post.pub_year}})</span>
+    <div class="dotted-box">{{ post.discussion }}</div>
       </section>
     </li>
     {% if forloop.last == false %}
-      <hr>
+      <br>
     {% endif %}
   {% endfor %}
 </ul>
