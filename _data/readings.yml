@@ -24,6 +24,11 @@ is unavailable. Through extensive experimentation on various
 image classification benchmarks, we show that our approach
 effectively preserves knowledge of remaining data while unlearning given instances in both single-task and continual unlearning scenarios."
 
+The paper utilizes adversarial examples to retain the original decision boundary during unlearning. This approach 
+is intriguing yet it raises questions as to what it means to “forget” a data point. The paper states that 
+misclassification signifies forgetting yet “Right to be Forgotten” seems to imply the removal of a 
+certain training data.
+
 - title: "From Grim Reality to Practical Solution: Malware Classification in Real-World Noise"
   link: "https://ieeexplore.ieee.org/document/10179453"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_FromGrimReality_SP23.pdf"
