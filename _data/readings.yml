@@ -19,7 +19,7 @@ certain training data."
   conference: S&P
   date: 2024.02.20
   pub_year: 2023
-  discussion: ""
+  discussion: "Malware datasets inevitably contain incorrect labels due to the shortage of expertise and experience needed for sample labeling. Previous research demonstrated that a training dataset with incorrectly labeled samples would result in inaccurate model learning. To address this problem, researchers have proposed various noise learning methods to offset the impact of incorrectly labeled samples, and in image recognition and text mining applications, these methods demonstrated great success. In this work, we apply both representative and state-of-the-art noise learning methods to real-world malware classification tasks. We surprisingly observe that none of the existing methods could minimize incorrect labels’ impact. Through a carefully designed experiment, we discover that the inefficacy mainly results from extreme data imbalance and the high percentage of incorrectly labeled data samples. As such, we further propose a new noise learning method and name it after MORSE. Unlike existing methods, MORSE customizes and extends a state-of-the-art semi-supervised learning technique. It takes possibly incorrectly labeled data as unlabeled data and thus avoids their potential negative impact on model learning. In MORSE, we also integrate a sample re-weighting method that balances the training data usage in the model learning and thus handles the data imbalance challenge. We evaluate MORSE on both our synthesized and real-world datasets. We show that MORSE could significantly outperform existing noise learning methods and minimize the impact of incorrectly labeled data."
 
 - title: "CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation"
   link: "https://arxiv.org/pdf/2109.00859.pdf"
@@ -29,15 +29,50 @@ certain training data."
   conference: EMNLP
   date: 2024.02.12
   pub_year: 2021
+  discussion: "Pre-trained models for Natural Languages
+(NL) like BERT and GPT have been recently
+shown to transfer well to Programming Languages (PL) and largely benefit a broad set of
+code-related tasks. Despite their success, most
+current methods either rely on an encoder-only
+(or decoder-only) pre-training that is suboptimal for generation (resp. understanding) tasks
+or process the code snippet in the same way
+as NL, neglecting the special characteristics of
+PL such as token types. We present CodeT5,
+a unified pre-trained encoder-decoder Transformer model that better leverages the code semantics conveyed from the developer-assigned
+identifiers. Our model employs a unified
+framework to seamlessly support both code understanding and generation tasks and allows
+for multi-task learning. Besides, we propose a
+novel identifier-aware pre-training task that enables the model to distinguish which code tokens are identifiers and to recover them when
+they are masked. Furthermore, we propose to
+exploit the user-written code comments with a
+bimodal dual generation task for better NL-PL
+alignment. Comprehensive experiments show
+that CodeT5 significantly outperforms prior
+methods on understanding tasks such as code
+defect detection and clone detection, and generation tasks across various directions including PL-NL, NL-PL, and PL-PL. Further analysis reveals that our model can better capture
+semantic information from code. Our code
+and pre-trained models are released at https:
+//github.com/salesforce/CodeT5."
 
 - title: "InCoder: A Generative Model for Code Infilling and Synthesis"
   link: "https://arxiv.org/pdf/2204.05999.pdf"
-  ppt_link: "https://docs.google.com/presentation/d/1amblX-PbInT9vbEY1g8_tH1BNX60YOXAEVaNnCV6p4s/edit?usp=sharing"
-  code_link: ""
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_InCoder_ICLR23.pdf"
+  code_link: "https://github.com/dpfried/incoder"
   presenter: Jiyong
   conference: EMNLP
   date: 2024.02.05
   pub_year: 2021
+  discussion: "Code is seldom written in a single left-to-right pass and is instead repeatedly edited
+and refined. We introduce INCODER, a unified generative model that can perform
+program synthesis (via left-to-right generation) as well as editing (via masking
+and infilling). InCoder is trained to generate code files from a large corpus of permissively licensed code, where regions of code have been randomly masked and
+moved to the end of each file, allowing code infilling with bidirectional context.
+Our model is the first large generative code model that is able to infill arbitrary regions of code, which we evaluate in a zero-shot setting on challenging tasks such
+as type inference, comment generation, and variable re-naming. We find that the
+ability to condition on bidirectional context substantially improves performance
+on these tasks, while still performing comparably on standard program synthesis
+benchmarks in comparison to left-to-right only models pretrained at similar scale.
+Our models and code are publicly released."
 
 - title: "CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning"
   link: "https://arxiv.org/pdf/2207.01780.pdf"
@@ -47,6 +82,26 @@ certain training data."
   conference: NeurIPS
   date: 2024.01.22
   pub_year: 2022
+  discussion: "Program synthesis or code generation aims to generate a program that satisfies a
+problem specification. Recent approaches using large-scale pretrained language
+models (LMs) have shown promising results, yet they have some critical limitations.
+In particular, they often follow a standard supervised fine-tuning procedure to train a
+code generation model only from the pairs of natural-language problem descriptions
+and ground-truth programs. Such paradigm largely ignores some important but
+potentially useful signals in the problem specification such as unit tests, which
+thus often results in poor performance when solving complex unseen coding tasks.
+To address the limitations, we propose “CodeRL”, a new framework for program
+synthesis tasks through pretrained LMs and deep reinforcement learning (RL).
+Specifically, during training, we treat the code-generating LM as an actor network,
+and introduce a critic network that is trained to predict the functional correctness
+of generated programs and provide dense feedback signals to the actor. During
+inference, we introduce a new generation procedure with a critical sampling strategy
+that allows a model to automatically regenerate programs based on feedback from
+example unit tests and critic scores. For the model backbones, we extended the
+encoder-decoder architecture of CodeT5 with enhanced learning objectives, larger
+model sizes, and better pretraining data. Our method not only achieves new SOTA
+results on the challenging APPS benchmark, but also shows strong zero-shot
+transfer capability with new SOTA results on the simpler MBPP benchmark."
 
 - title: Ground Truth for Binary Disassembly is Not Easy
   link: "https://www.usenix.org/system/files/sec22-pang-chengbin.pdf"
@@ -56,6 +111,33 @@ certain training data."
   conference: USENIX
   date: 2024.01.04
   pub_year: 2022
+  discussion: "Modern disassembly tools often rely on empirical evaluations
+to validate their performance and discover their limitations,
+thus promoting long-term evolvement. To support the empirical evaluation, a foundation is the right approach to collect the
+ground truth knowledge. However, there has been no unanimous agreement on the approach we should use. Most users
+pick an approach based on their experience or will, regardless
+of the properties that the approach presents.
+In this paper, we perform a study on the approaches to
+building the ground truth for binary disassembly, aiming to
+shed light on the right way for the future. We first provide
+a taxonomy of the approaches used by past research, which
+unveils five major mechanisms behind those approaches. Following the taxonomy, we summarize the properties of the
+five mechanisms from two perspectives: (i) the coverage and
+precision of the ground truth produced by the mechanisms
+and (ii) the applicable scope of the mechanisms (e.g., what
+disassembly tasks and what types of binaries are supported).
+The summarization, accompanied by quantitative evaluations,
+illustrates that many mechanisms are ill-suited to support the
+generation of disassembly ground truth. The mechanism best
+serving today’s need is to trace the compiling process of the
+target binaries to collect the ground truth information.
+Observing that the existing tool to trace the compiling
+process can still miss ground truth results and can only handle
+x86/x64 binaries, we extend the tool to avoid overlooking
+those results and support ARM32/AArch64/MIPS32/MIPS64
+binaries. We envision that our extension will make the tool a
+better foundation to enable universal, standard ground truth
+for binary disassembly."
 
 - title: Black-box Attacks Against Neural Binary Function Detection
   link: "https://arxiv.org/pdf/2208.11667.pdf"
@@ -65,6 +147,29 @@ certain training data."
   conference: RAID
   date: 2023.11.23
   pub_year: 2023
+  discussion: "Binary analyses based on deep neural networks (DNNs), or neural
+binary analyses (NBAs), have become a hotly researched topic in
+recent years. DNNs have been wildly successful at pushing the
+performance and accuracy envelopes in the natural language and
+image processing domains. Thus, DNNs are highly promising for
+solving binary analysis problems that are hard due to a lack of
+complete information resulting from the lossy compilation process.
+Despite this promise, it is unclear that the prevailing strategy of
+repurposing embeddings and model architectures originally developed for other problem domains is sound given the adversarial
+contexts under which binary analysis often operates.
+In this paper, we empirically demonstrate that the current state of
+the art in neural function boundary detection is vulnerable to both
+inadvertent and deliberate adversarial attacks. We proceed from the
+insight that current generation NBAs are built upon embeddings
+and model architectures intended to solve syntactic problems. We
+devise a simple, reproducible, and scalable black-box methodology for exploring the space of inadvertent attacks – instruction
+sequences that could be emitted by common compiler toolchains
+and configurations – that exploits this syntactic design focus. We
+then show that these inadvertent misclassifications can be exploited
+by an attacker, serving as the basis for a highly effective black-box
+adversarial example generation process. We evaluate this methodology against two state-of-the-art neural function boundary detectors:
+XDA and DeepDi. We conclude with an analysis of the evaluation
+data and recommendations for ho"
 
 - title: "SelectiveTaint: Efficient Data Flow Tracking With Static Binary Rewriting"
   link: "https://www.usenix.org/system/files/sec21-chen-sanchuan.pdf"
@@ -74,3 +179,18 @@ certain training data."
   conference: USENIX
   date: 2023.10.05
   pub_year: 2021
+  discussion: "Taint analysis has been widely used in many security applications such as exploit detection, information flow tracking, malware analysis, and protocol reverse engineering. State-of-theart taint analysis tools are usually built atop dynamic binary
+instrumentation, which instruments at every possible instruction, and rely on runtime information to decide whether a particular instruction involves taint or not, thereby usually having
+high performance overhead. This paper presents SELECTIVETAINT, an efficient selective taint analysis framework for binary executables. The key idea is to selectively instrument the
+instructions involving taint analysis using static binary rewriting instead of dynamic binary instrumentation. At a high level,
+SELECTIVETAINT statically scans taint sources of interest in
+the binary code, leverages value set analysis to conservatively
+determine whether an instruction operand needs to be tainted
+or not, and then selectively taints the instructions of interest.
+We have implemented SELECTIVETAINT and evaluated it
+with a set of binary programs including 16 coreutils (focusing
+on file I/O) and five network daemon programs (focusing
+on network I/O) such as nginx web server. Our evaluation
+results show that the binaries statically instrumented by SELECTIVETAINT has superior performance compared to the
+state-of-the-art dynamic taint analysis frameworks (e.g., 1.7x
+faster than that of libdft)."
