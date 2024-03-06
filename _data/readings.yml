@@ -1,3 +1,13 @@
+- title: "Binary Function Clone Search in the Presence of Code Obfuscation and Optimization over Multi-CPU Architectures"
+  link: "https://dl.acm.org/doi/10.1145/3579856.3582818"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_BinaryFunctionClone_ASIACCS23.pdf"
+  code_link: ""
+  presenter: Jiyong
+  conference: ASIA CCS
+  date: 2024.0306
+  pub_year: 2023
+  discussion: "(Discussion)"
+
 - title: "Learning to Unlearn: Instance-wise Unlearning for Pre-trained Classifiers"
   link: "https://arxiv.org/pdf/2301.11578.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1Td2WBmxQGBCHTaJPtb3L4fSdyHV_40ibzjugTEadyRg/edit?usp=sharing"
@@ -6,7 +16,7 @@
   conference: AAAI
   date: 2024.02.28
   pub_year: 2024
-  discussion: "The paper utilizes adversarial examples to retain the original decision boundary during unlearning. This approach 
+  discussion: "(Discussion) The paper utilizes adversarial examples to retain the original decision boundary during unlearning. This approach 
 is intriguing yet it raises questions as to what it means to “forget” a data point. The paper states that 
 misclassification signifies forgetting yet “Right to be Forgotten” seems to imply the removal of a 
 certain training data."
@@ -29,7 +39,7 @@ certain training data."
   conference: EMNLP
   date: 2024.02.12
   pub_year: 2021
-  discussion: "Pre-trained models for Natural Languages
+  discussion: "(Abstract) Pre-trained models for Natural Languages
 (NL) like BERT and GPT have been recently
 shown to transfer well to Programming Languages (PL) and largely benefit a broad set of
 code-related tasks. Despite their success, most
@@ -62,7 +72,7 @@ and pre-trained models are released at https:
   conference: EMNLP
   date: 2024.02.05
   pub_year: 2021
-  discussion: "Code is seldom written in a single left-to-right pass and is instead repeatedly edited
+  discussion: "(Abstract) Code is seldom written in a single left-to-right pass and is instead repeatedly edited
 and refined. We introduce INCODER, a unified generative model that can perform
 program synthesis (via left-to-right generation) as well as editing (via masking
 and infilling). InCoder is trained to generate code files from a large corpus of permissively licensed code, where regions of code have been randomly masked and
@@ -82,7 +92,7 @@ Our models and code are publicly released."
   conference: NeurIPS
   date: 2024.01.22
   pub_year: 2022
-  discussion: "Program synthesis or code generation aims to generate a program that satisfies a
+  discussion: "(Abstract) Program synthesis or code generation aims to generate a program that satisfies a
 problem specification. Recent approaches using large-scale pretrained language
 models (LMs) have shown promising results, yet they have some critical limitations.
 In particular, they often follow a standard supervised fine-tuning procedure to train a
@@ -111,7 +121,7 @@ transfer capability with new SOTA results on the simpler MBPP benchmark."
   conference: USENIX
   date: 2024.01.04
   pub_year: 2022
-  discussion: "Modern disassembly tools often rely on empirical evaluations
+  discussion: "(Abstract) Modern disassembly tools often rely on empirical evaluations
 to validate their performance and discover their limitations,
 thus promoting long-term evolvement. To support the empirical evaluation, a foundation is the right approach to collect the
 ground truth knowledge. However, there has been no unanimous agreement on the approach we should use. Most users
@@ -147,7 +157,7 @@ for binary disassembly."
   conference: RAID
   date: 2023.11.23
   pub_year: 2023
-  discussion: "Binary analyses based on deep neural networks (DNNs), or neural
+  discussion: "(Abstract) Binary analyses based on deep neural networks (DNNs), or neural
 binary analyses (NBAs), have become a hotly researched topic in
 recent years. DNNs have been wildly successful at pushing the
 performance and accuracy envelopes in the natural language and
@@ -179,7 +189,7 @@ data and recommendations for ho"
   conference: USENIX
   date: 2023.10.05
   pub_year: 2021
-  discussion: "Taint analysis has been widely used in many security applications such as exploit detection, information flow tracking, malware analysis, and protocol reverse engineering. State-of-theart taint analysis tools are usually built atop dynamic binary
+  discussion: "(Abstract) Taint analysis has been widely used in many security applications such as exploit detection, information flow tracking, malware analysis, and protocol reverse engineering. State-of-theart taint analysis tools are usually built atop dynamic binary
 instrumentation, which instruments at every possible instruction, and rely on runtime information to decide whether a particular instruction involves taint or not, thereby usually having
 high performance overhead. This paper presents SELECTIVETAINT, an efficient selective taint analysis framework for binary executables. The key idea is to selectively instrument the
 instructions involving taint analysis using static binary rewriting instead of dynamic binary instrumentation. At a high level,
