@@ -6,7 +6,9 @@
   conference: JISA
   date: 2024.03.11
   pub_year: 2021
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Systems generate logs to record internal events. These logs are used after a cyber incident for forensic investigation. Unfortunately, the system generates numerous logs during its runtime and majority of the analysis is manual. This paper proposes a deep autoencoder for anomaly detection to assist analyzers by highlighting anomalous events in the Linux kernal system logs.
+
+Anomaly detection is a common application for autoencoders. It is utilized to analyze network traffic, logs, etc. It is difficult to identify what is different from previous work and this paper. Furthermore, the proposed model is evaluated with old dataset against ML methods such as SVM. It would have been preferable to see the model’s performance on up-to-date dataset against state-of-the-art models."
 
 - title: "Binary Function Clone Search in the Presence of Code Obfuscation and Optimization over Multi-CPU Architectures"
   link: "https://dl.acm.org/doi/10.1145/3579856.3582818"
