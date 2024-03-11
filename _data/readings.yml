@@ -1,3 +1,13 @@
+- title: "Anomaly detection in a forensic timeline with deep autoencoders"
+  link: "https://www.sciencedirect.com/science/article/abs/pii/S2214212621002076"
+  ppt_link: "https://drive.google.com/file/d/1Ndma6vyN2FouuMMHTJIBRsRJ88VupIPm/view?usp=drive_link"
+  code_link: ""
+  presenter: Suyeon
+  conference: JISA
+  date: 2024.03.11
+  pub_year: 2021
+  discussion: "(Discussion) "
+
 - title: "Binary Function Clone Search in the Presence of Code Obfuscation and Optimization over Multi-CPU Architectures"
   link: "https://dl.acm.org/doi/10.1145/3579856.3582818"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_BinaryFunctionClone_ASIACCS23.pdf"
