@@ -1,3 +1,14 @@
+- title: "A Comprehensive Detection Method for the Lateral Movement Stage of APT Attacks"
+  link: "https://ieeexplore.ieee.org/abstract/document/10273652"
+  ppt_link: "https://docs.google.com/presentation/d/14hGmxlQ8qmIxAjBmY01_yPBjiL72VUp6xqJJz8Tef3o/edit?usp=drivesdk"
+  code_link: ""
+  presenter: Shakhzod
+  conference: IEEE
+  date: 2024.03.19
+  pub_year: 2023
+  discusiion: "(Discussion) This paper designs a multidimensional detection framework to detect lateral movement behavior against APT attacks in an intranet environment based on the SMB protocol. 
+  However, contrary to this purpose, the experimental results are unfortunate in that the purpose and results differ because they are about how well malware has been classified."
+
 - title: "Anomaly detection in a forensic timeline with deep autoencoders"
   link: "https://www.sciencedirect.com/science/article/abs/pii/S2214212621002076"
   ppt_link: "https://drive.google.com/file/d/1Ndma6vyN2FouuMMHTJIBRsRJ88VupIPm/view?usp=drive_link"
