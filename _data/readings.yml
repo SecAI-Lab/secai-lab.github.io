@@ -6,7 +6,7 @@
   conference: IEEE
   date: 2024.03.19
   pub_year: 2023
-  discusiion: "(Discussion) This paper designs a multidimensional detection framework to detect lateral movement behavior against APT attacks in an intranet environment based on the SMB protocol. 
+  discussion: "(Discussion) This paper designs a multidimensional detection framework to detect lateral movement behavior against APT attacks in an intranet environment based on the SMB protocol. 
   However, contrary to this purpose, the experimental results are unfortunate in that the purpose and results differ because they are about how well malware has been classified."
 
 - title: "Anomaly detection in a forensic timeline with deep autoencoders"
