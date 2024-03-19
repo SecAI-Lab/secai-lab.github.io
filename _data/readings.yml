@@ -27,7 +27,7 @@ Anomaly detection is a common application for autoencoders. It is utilized to an
   code_link: ""
   presenter: Jiyong
   conference: ASIA CCS
-  date: 2024.0306
+  date: 2024.03.06
   pub_year: 2023
   discussion: "(Discussion) There are efficient ways to represent binary functions using a tokenizer (e.g., BPE) in assembly language. I'm curious about why the suggestion is to divide them into seven features like Vex-IR instructions, LibcCalls, Constants, etc., and create specific tokenizers for each feature to generate one-hot vectors. I also wonder if this approach is genuinely effective. The explanation about whether this method of tokenization has a positive impact on BCSD (Binary Code Similarity Detection) performance seems insufficient."
 
