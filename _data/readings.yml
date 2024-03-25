@@ -1,3 +1,16 @@
+- title: "Quark: Controllable Text Generation with Reinforced [Un]learning"
+  link: "https://proceedings.neurips.cc/paper_files/paper/2022/file/b125999bde7e80910cbdbd323087df8f-Paper-Conference.pdf"
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: NeurIPS
+  date: 2024.03.25
+  pub_year: 2022
+  discussion: "(Discussion) The paper discussion focuses on an innovative approach to optimizing the reward function of a Reinforcement Learning (RL) model to mitigate undesired behaviors. 
+  The authors detail a three-stage algorithm comprising exploration, quantization, and learning, each critical to the model's development. 
+  Notably, the paper demonstrates the model's effectiveness through three distinct evaluations, addressing the reduction of toxicity, improvement over negative baselines, and minimization of repetitive actions. 
+  This structured evaluation underscores the model's capability to unlearn specific unwanted behaviors, which outperforms both baselines and state-of-the-art RL methods."
+
 - title: "A Comprehensive Detection Method for the Lateral Movement Stage of APT Attacks"
   link: "https://ieeexplore.ieee.org/abstract/document/10273652"
   ppt_link: "https://docs.google.com/presentation/d/14hGmxlQ8qmIxAjBmY01_yPBjiL72VUp6xqJJz8Tef3o/edit?usp=drivesdk"
