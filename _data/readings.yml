@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.04.01
   pub_year: 2022
-  discussion: ""
+  discussion: "(Discussion) In this paper, a dataset composition for testing the latest BCSD (Binary Code Similarity Detection) techniques is proposed, and analysis of test results for various BCSD models, including the latest GNN-based BCSD and Embedding-based BCSD, has been performed. However, in the evaluation section, it is necessary to divide the results for similarity and similarity lacking into separate tables to enhance clarity. Additionally, there is a lack of explanation for the many abbreviations used in the dataset composition, making it difficult to understand."
 
 - title: "Quark: Controllable Text Generation with Reinforced [Un]learning"
   link: "https://proceedings.neurips.cc/paper_files/paper/2022/file/b125999bde7e80910cbdbd323087df8f-Paper-Conference.pdf"
