@@ -11,7 +11,7 @@
   Notably, the paper demonstrates the model's effectiveness through three distinct evaluations, addressing the reduction of toxicity, improvement over negative baselines, and minimization of repetitive actions. 
   This structured evaluation underscores the model's capability to unlearn specific unwanted behaviors, which outperforms both baselines and state-of-the-art RL methods.\n  
    In this paper, the focus is on defining three undesirable behaviors and proposing three methods (e.g. reward function) to forget each behavior. 
-  It seems inefficient to train a model separately for each behavior"
+  It seems inefficient to train a model separately for each behavior."
 
 - title: "A Comprehensive Detection Method for the Lateral Movement Stage of APT Attacks"
   link: "https://ieeexplore.ieee.org/abstract/document/10273652"
