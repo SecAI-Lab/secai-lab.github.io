@@ -1,3 +1,13 @@
+- title: "How Machine Learning Is Solving the Binary Function Similarity Problem"
+  link: "https://www.usenix.org/conference/usenixsecurity22/presentation/marcelli"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_HowMachineLearn_USENIX22.pdf"
+  code_link: "https://github.com/Cisco-Talos/binary_function_similarity"
+  presenter: Jiyong
+  conference: USENIX
+  date: 2024.04.01
+  pub_year: 2022
+  discussion: ""
+
 - title: "Quark: Controllable Text Generation with Reinforced [Un]learning"
   link: "https://proceedings.neurips.cc/paper_files/paper/2022/file/b125999bde7e80910cbdbd323087df8f-Paper-Conference.pdf"
   ppt_link: ""
