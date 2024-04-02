@@ -10,8 +10,8 @@
 
 - title: "Quark: Controllable Text Generation with Reinforced [Un]learning"
   link: "https://proceedings.neurips.cc/paper_files/paper/2022/file/b125999bde7e80910cbdbd323087df8f-Paper-Conference.pdf"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://docs.google.com/presentation/d/1dV-zasDjviDGyWy2qNTVgQGs4zMYPWv2gjZnluq5wtI/edit#slide=id.p15"
+  code_link: "https://github.com/GXimingLu/Quark"
   presenter: Yujeong
   conference: NeurIPS
   date: 2024.03.25
