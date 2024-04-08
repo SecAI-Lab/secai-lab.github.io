@@ -1,3 +1,14 @@
+- title: "The Circle Of Life: A Large-Scale Study of The IoT Malware Lifecycle"
+  link: "https://www.usenix.org/system/files/sec21fall-alrawi-circle.pdf"
+  ppt_link: "https://drive.google.com/file/d/1NGZ63h-rqPJo0bwrYvog_ti1cohR3hc0/view?usp=drive_link"
+  code_link: ""
+  presenter: Suyeon
+  conference: USENIX
+  date: 2024.04.08
+  pub_year: 2021
+  discussion: "(Discussion)"
+
+
 - title: "How Machine Learning Is Solving the Binary Function Similarity Problem"
   link: "https://www.usenix.org/conference/usenixsecurity22/presentation/marcelli"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_HowMachineLearn_USENIX22.pdf"
