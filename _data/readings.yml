@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.04.08
   pub_year: 2021
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper is a measurement study on the IoT Malware Lifecycle. It collects around 166K Linux-based IoT malware samples collected over a year to measure the characteristics of IoT Malware. The paper concludes with some characteristics that differentiate IoT malware from traditional malware, such as most IoT malware being a variant of the Mirai botnet. However, there does not seem to be unexpected findings. A slight complaint is that figures within the paper had unclear captions. Although the paper explains the concepts, some figures are difficult to understand."
 
 
 - title: "How Machine Learning Is Solving the Binary Function Similarity Problem"
