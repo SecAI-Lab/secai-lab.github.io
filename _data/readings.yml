@@ -3,7 +3,7 @@
   ppt_link: "https://docs.google.com/presentation/d/1HbiVu05FGPdXl_mRfIeUiZjFIEBwC9uDd9jaiEAOF40/edit?usp=sharing"
   code_link: ""
   presenter: Shakhzod
-  conference: SAC '22
+  conference: SAC
   date: 2024.04.15
   pub_year: 2022
   discussion: "(Discussion) This paper proposes 'Anubis', a provenance graph-based supervised APT detection framework. Anubis is a method leveraging a BNN(Bayesian Neural Network) to overcome limitations in current APT detection methods using provenance graphs. 
