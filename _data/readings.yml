@@ -1,3 +1,16 @@
+- title: "ANUBIS: a provenance graph-based framework for advanced persistent threat detection"
+  link: "https://dl.acm.org/doi/abs/10.1145/3477314.3507097"
+  ppt_link: "https://docs.google.com/presentation/d/1HbiVu05FGPdXl_mRfIeUiZjFIEBwC9uDd9jaiEAOF40/edit?usp=sharing"
+  code_link: ""
+  presenter: Shakhzod
+  conference: SAC '22
+  date: 2024.04.15
+  pub_year: 2022
+  discussion: "(Discussion) This paper proposes 'Anubis', a provenance graph-based supervised APT detection framework. Anubis is a method leveraging a BNN(Bayesian Neural Network) to overcome limitations in current APT detection methods using provenance graphs. 
+  The authors hypothesize that an attacker cannot breach the probability graph used to train ANUBIS, nor does it violate the event logging mechanism of the host system. 
+  These assumptions provide a strong premise for security scenarios, but they have limitations that do not take into account the practical considerations. 
+  However, this paper is significant because it has demonstrated that it is effective in predicting the nature of the activity by introducing a new graph neighbor encoding method."
+
 - title: "The Circle Of Life: A Large-Scale Study of The IoT Malware Lifecycle"
   link: "https://www.usenix.org/system/files/sec21fall-alrawi-circle.pdf"
   ppt_link: "https://drive.google.com/file/d/1NGZ63h-rqPJo0bwrYvog_ti1cohR3hc0/view?usp=drive_link"
@@ -7,7 +20,6 @@
   date: 2024.04.08
   pub_year: 2021
   discussion: "(Discussion) This paper is a measurement study on the IoT Malware Lifecycle. It collects around 166K Linux-based IoT malware samples collected over a year to measure the characteristics of IoT Malware. The paper concludes with some characteristics that differentiate IoT malware from traditional malware, such as most IoT malware being a variant of the Mirai botnet. However, there does not seem to be unexpected findings. A slight complaint is that figures within the paper had unclear captions. Although the paper explains the concepts, some figures are difficult to understand."
-
 
 - title: "How Machine Learning Is Solving the Binary Function Similarity Problem"
   link: "https://www.usenix.org/conference/usenixsecurity22/presentation/marcelli"
