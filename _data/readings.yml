@@ -6,7 +6,7 @@
   conference: S&P
   date: 2024.04.22
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper investigates the application of prompt learning with Large Language Models (LLMs) such as GPT-3 and T5 to address the issue of toxic online content. It focuses on three primary tasks: toxicity classification, toxic span detection, and detoxification, showing that prompt learning can perform as well as or even better than traditional models specifically trained for these tasks. Notably, this approach achieves a 10% improvement in toxicity classification and significantly lowers toxicity scores in detoxification tasks while maintaining the semantic integrity of the content. The study is distinguished by its innovative use of prompt tuning for managing toxic content and its thorough evaluation across five model architectures and eight different datasets, which verifies the method's effectiveness and efficiency. However, despite these strengths, the approach's dependency on the quality of datasets and its ability to generalize to unseen toxic content remain potential weaknesses. Furthermore, the complexity involved in designing effective prompts and the possible misuse of the techniques are also concerns."
 
 - title: "ANUBIS: a provenance graph-based framework for advanced persistent threat detection"
   link: "https://dl.acm.org/doi/abs/10.1145/3477314.3507097"
