@@ -1,3 +1,13 @@
+- title: "You Only Prompt Once: On the Capabilities of Prompt Learning on Large Language Models to Tackle Toxic Content"
+  link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a061/1RjEayUL076"
+  ppt_link: "https://drive.google.com/file/d/1bRcOLeW2NlZfgnXxwwlwu6mRWjvWaO1P/view?usp=drive_link"
+  code_link: "https://github.com/xinleihe/toxic-prompt"
+  presenter: Intae
+  conference: S&P
+  date: 2024.04.22
+  pub_year: 2024
+  discussion: "(Discussion) "
+
 - title: "ANUBIS: a provenance graph-based framework for advanced persistent threat detection"
   link: "https://dl.acm.org/doi/abs/10.1145/3477314.3507097"
   ppt_link: "https://docs.google.com/presentation/d/1HbiVu05FGPdXl_mRfIeUiZjFIEBwC9uDd9jaiEAOF40/edit?usp=sharing"
