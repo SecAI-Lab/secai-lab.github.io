@@ -16,7 +16,7 @@
   conference: SAC
   date: 2024.04.15
   pub_year: 2022
-  discussion: "(Discussion) This paper proposes 'Anubis', a provenance graph-based supervised APT detection framework. Anubis is a method leveraging a BNN(Bayesian Neural Network) to overcome limitations in current APT detection methods using provenance graphs. 
+  discussion: "(Discussion) This paper proposes 'ANUBIS', a provenance graph-based supervised APT detection framework. ANUBIS is a method leveraging a BNN(Bayesian Neural Network) to overcome limitations in current APT detection methods using provenance graphs. 
   The authors hypothesize that an attacker cannot breach the probability graph used to train ANUBIS, nor does it violate the event logging mechanism of the host system. 
   These assumptions provide a strong premise for security scenarios, but they have limitations that do not take into account the practical considerations. 
   However, this paper is significant because it has demonstrated that it is effective in predicting the nature of the activity by introducing a new graph neighbor encoding method."
