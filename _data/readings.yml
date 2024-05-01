@@ -1,3 +1,21 @@
+- title: "DETECTING PRETRAINING DATA FROM LARGE LANGUAGE MODELS"
+  link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a061/1RjEayUL076"
+  ppt_link: "https://drive.google.com/file/d/1bRcOLeW2NlZfgnXxwwlwu6mRWjvWaO1P/view?usp=drive_link"
+  code_link: "https://github.com/xinleihe/toxic-prompt"
+  presenter: yujeong
+  conference: ICLR
+  date: 2024.04.29
+  pub_year: 2024
+  discussion: "(Discussion) This paper proposes the Membership Inference method 'MIN-K% PROB' in LLM(Large Language Model). 
+  The problem presented in this paper is the challenge of detecting pretraining data. 
+  This is because LLM developers do not disclose the data used for pertaining, and since pretraining involves training on data instances once at a time, it makes detection even more difficult.
+  Hence, this paper assumes that the Membership Inference Detector cannot know the distribution of pretraining data.
+  This means that there is no Reference Model (e.g., Shadow Model) used in Membership Inference techniques.
+  Consequently, this paper proposes the Reference-free Method, MIN-K% PROB.
+  The 'Min-K% PROB' method selects outlier tokens with low token probability to create a set, and then uses the average of this set as the threshold for inferring between members and non-members.
+  This method seems to be efficient as it infers membership based on the token-level probability during the pretraining.
+  Additionally, using this method as an evaluation for Unlearning techniques, as demonstrated in the case study, would be beneficial."
+
 - title: "You Only Prompt Once: On the Capabilities of Prompt Learning on Large Language Models to Tackle Toxic Content"
   link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a061/1RjEayUL076"
   ppt_link: "https://drive.google.com/file/d/1bRcOLeW2NlZfgnXxwwlwu6mRWjvWaO1P/view?usp=drive_link"
