@@ -2,13 +2,13 @@
   link: "https://arxiv.org/pdf/2310.16789"
   ppt_link: "https://docs.google.com/presentation/d/1xjVmvLr7tYqUz17G5NAGJA8m8B_ep3Fm/edit?usp=sharing&ouid=107878723841384409882&rtpof=true&sd=true"
   code_link: "https://swj0419.github.io/detect-pretrain.github.io/"
-  presenter: yujeong
+  presenter: Yujeong
   conference: ICLR
   date: 2024.04.29
   pub_year: 2024
   discussion: "(Discussion) This paper proposes the Membership Inference method 'MIN-K% PROB' in LLM(Large Language Model). 
   The problem presented in this paper is the challenge of detecting pretraining data. 
-  This is because LLM developers do not disclose the data used for pertaining, and since pretraining involves training on data instances once at a time, it makes detection even more difficult.
+  This is because LLM developers do not open the data used for pertaining, and since pretraining involves training on data instances once at a time, it makes detection even more difficult.
   Hence, this paper assumes that the Membership Inference Detector cannot know the distribution of pretraining data.
   This means that there is no Reference Model (e.g., Shadow Model) used in Membership Inference techniques.
   Consequently, this paper proposes the Reference-free Method, MIN-K% PROB.
