@@ -1,3 +1,13 @@
+- title: "Ahoy SAILR! There is No Need to DREAM of C: A Compiler-Aware Structuring Algorithm for Binary Decompilation"
+  link: "https://www.usenix.org/conference/usenixsecurity24/presentation/basque"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_SAILR_USENIX24.pdf"
+  code_link: "https://github.com/mahaloz/sailr-eval"
+  presenter: Jiyong
+  conference: USENIX
+  date: 2024.05.07
+  pub_year: 2024
+  discussion: ""
+
 - title: "DETECTING PRETRAINING DATA FROM LARGE LANGUAGE MODELS"
   link: "https://arxiv.org/pdf/2310.16789"
   ppt_link: "https://docs.google.com/presentation/d/1xjVmvLr7tYqUz17G5NAGJA8m8B_ep3Fm/edit?usp=sharing&ouid=107878723841384409882&rtpof=true&sd=true"
