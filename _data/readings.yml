@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.05.07
   pub_year: 2024
-  discussion: ""
+  discussion: "(Discussion) In many ways, the compilation process is destructive. High-level constructs, variable names, and comments present in the source code are often lost. Nevertheless, decompilers aim to retrieve the source from a binary. Decompilation results vary between decompilers. So, what is a good decompilation? One could argue that fewer goto instructions indicate good decompilation. Because multiple gotos signify the decompiler failed to structure the control flow. This paper argues that good decompilation is similar to the source code and points out that 3,754 goto instructions are present in the Linux kernel. Since a goto instruction could be intentional by the developer, they argue we should separate intended gotos from unintended gotos. The authors investigate the gcc compiler to identify the transformation passes that cause unintended gotos. Afterward, they propose a structuring algorithm that deoptimizes code to remove unintended gotos while preserving intended ones. SAILR, the proposed structuring algorithm, is implemented on the angr decompiler. SAILR demonstrates and performs decently against state-of-the-art decompilers. The paper evaluates SAILR with 7,355 functions from 26 popular Debian packages. However, the number of functions is oddly low, considering the number of packages used."
 
 - title: "DETECTING PRETRAINING DATA FROM LARGE LANGUAGE MODELS"
   link: "https://arxiv.org/pdf/2310.16789"
