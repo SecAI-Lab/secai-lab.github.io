@@ -1,3 +1,13 @@
+- title: "Anomaly Detection in Aerial Videos With Transformers"
+  link: "https://ieeexplore.ieee.org/document/9854892"
+  ppt_link: "https://drive.google.com/file/d/1GoRgFU5OZ4xQtBfWOHyUOEKuDLb59K6C/view?usp=sharing"
+  code_link: "https://github.com/Jin-Pu/Drone-Anomaly"
+  presenter: Suyeon
+  conference: IEEE
+  date: 2024.05.13
+  pub_year: 2022
+  discussion: "(Discussion)"
+
 - title: "Ahoy SAILR! There is No Need to DREAM of C: A Compiler-Aware Structuring Algorithm for Binary Decompilation"
   link: "https://www.usenix.org/conference/usenixsecurity24/presentation/basque"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_SAILR_USENIX24.pdf"
