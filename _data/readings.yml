@@ -6,7 +6,7 @@
   conference: IEEE
   date: 2024.05.13
   pub_year: 2022
-  discussion: "(Discussion)"
+  discussion: "(Discussion) Let there be a video of a vehicle moving backward. An anomaly detection by frame alone would fail to capture any anomalies; instead, the model requires a sequence of frames to identify the anomaly. This paper proposes a Transformer-based anomaly detection in aerial videos from an Unmanned Aerial Vehicles (UAVs). By leveraging the Transformer encoder, they claim that the model can preserve spatiotemporal information.  The main contribution comprises an annotated dataset for realistic anomalous events, a benchmark for anomaly detection, and a baseline model ANDT. ANDT exhibits the best performance for certain scenes but does not do so for all scenes tested in the paper. Initial claims suggest that previous models do not preserve spatiotemporal information. However, previous models demonstrate decent performance on the provided dataset. In Figure 4, the MemAE model can infer the vehicle moving backward as an anomalous event, demonstrating its ability to preserve spatiotemporal information. Furthermore, the train test split in Table 1 is odd yet there is no mention why it was done in this way. For example, the test set is larger than the train set in the Bike roundabout scene."
 
 - title: "Ahoy SAILR! There is No Need to DREAM of C: A Compiler-Aware Structuring Algorithm for Binary Decompilation"
   link: "https://www.usenix.org/conference/usenixsecurity24/presentation/basque"
