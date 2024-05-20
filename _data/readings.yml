@@ -1,3 +1,16 @@
+- title: "Humans vs. Machines in Malware Classification"
+  link: "https://www.usenix.org/conference/usenixsecurity23/presentation/aonzo"
+  ppt_link: "https://docs.google.com/presentation/d/1E7GtE7fmpe3vDWGTMoDnOOV5WDJGdcftWfWkmOfs660/edit?usp=sharing"
+  code_link: ""
+  presenter: Shakhzod
+  conference: USENIX
+  date: 2024.05.20
+  pub_year: 2023
+  discussion: "(Discussion) This study collects and analyzes data from human participants through malware classification games, clearly revealing the differences between human and machine learning models. 
+  This is an original approach not seen in previous studies. However, the number of samples used in the experiment is limited to 20, which may be somewhat insufficient to represent the overall malware classification problem. 
+  Nevertheless, their results provide practical insights that can be applied directly to training malware analysis experts and improving ML models. For example, they propose integrating dynamic behavior analysis of human experts into ML models. 
+  This work provides important insights into how human experts and ML models classify malware, and suggests that a hybrid approach that incorporates human intuition and experience into ML models could be highly effective in future malware defense."
+
 - title: "Anomaly Detection in Aerial Videos With Transformers"
   link: "https://ieeexplore.ieee.org/document/9854892"
   ppt_link: "https://drive.google.com/file/d/1GoRgFU5OZ4xQtBfWOHyUOEKuDLb59K6C/view?usp=sharing"
