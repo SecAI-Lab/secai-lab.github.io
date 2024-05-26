@@ -1,6 +1,10 @@
+- date: May 20, 2024
+  headline: "BENZENE got a Distinguished Paper Award at IEEE S&P '24!!"
+  id: 0
+
 - date: Feb 28, 2024
   headline: "Intae Jeon joined our lab, welcome!"
-  id: 0
+  id: 1
 
 - date: Feb 26, 2024
   headline: "Suyeon Lee joined our lab, welcome!"
@@ -12,7 +16,7 @@
 
 - date: Jan 26, 2024
   headline: "Seoyeon Cho and Junhyeong Jo joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Jan 23, 2024
   headline: "Our paper, R2I: A Relative Readability Metric for Decompiled Code, has been accepted to FSE 2024!"
