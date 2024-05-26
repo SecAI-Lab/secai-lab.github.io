@@ -1,3 +1,23 @@
+- title: "ChatPub: Retrieval Augmented Generation-based Service to Aid in Finding Relevant Policies for Korean Youth"
+  image: 
+  description: 
+  authors: Gangsan Kim, Jinho Park, Seongbin Yang, Changmin Jeon, and Hyungjoon Koo
+  link:
+    url: http://www.kips.or.kr/ask2024 
+    display: Annual Spring Conference of KIPS (ASK ’24)
+  highlight: 0
+  news2:
+
+- title: "Baseball Simulation Game Service Based on Baseball Metrics"
+  image: 
+  description: 
+  authors: Chaewon Ko, Changwoo Shim, Hyunchang Shin, and Hyungjoon Koo
+  link:
+    url: http://www.kips.or.kr/ask2024 
+    display: Annual Spring Conference of KIPS (ASK ’24)
+  highlight: 0
+  news2:
+
 - title: "Trends in Machine Unlearning via Continual Learning to Mitigate Privacy Risks"
   image: 
   description: 
