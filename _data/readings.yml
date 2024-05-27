@@ -3,7 +3,7 @@
   ppt_link: "https://drive.google.com/file/d/1y7YnZa1PRxe4Au0qOPsw92dvqk6vMn6G/view?usp=sharing"
   code_link: ""
   presenter: Intae
-  conference: ""
+  conference: "not conference"
   date: 2024.05.27
   pub_year: 2023
   discussion: "(Discussion) The paper titled "Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations" introduces Llama Guard, a model developed to enhance safety in human-AI interactions. 
