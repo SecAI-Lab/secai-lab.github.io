@@ -1,3 +1,13 @@
+- title: "llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations"
+  link: "https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/"
+  ppt_link: "https://drive.google.com/file/d/1y7YnZa1PRxe4Au0qOPsw92dvqk6vMn6G/view?usp=sharing"
+  code_link: ""
+  presenter: Intae
+  conference: ""
+  date: 2024.05.27
+  pub_year: 2023
+  discussion: "(Discussion) The paper titled "Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations" introduces Llama Guard, a model developed to enhance safety in human-AI interactions. The model leverages the Llama2-7b architecture, fine-tuned to classify and mitigate safety risks in both user prompts and AI responses. The core contribution is a comprehensive safety risk taxonomy that guides the classification process, encompassing categories like violence, hate speech, sexual content, and self-harm. Llama Guard outperforms existing moderation tools on benchmarks such as the OpenAI Moderation Evaluation dataset and ToxicChat. The model supports customizable and adaptive use through zero-shot and few-shot learning, and its weights are publicly available for further research and development. However, the work has some limitations. Llama Guard's common sense knowledge is constrained by its training data, which can lead to incorrect judgments. Its performance in non-English languages is not guaranteed, and the quality of fine-tuning labels may not comprehensively cover all policy aspects, leading to subpar performance in some cases."
+
 - title: "Humans vs. Machines in Malware Classification"
   link: "https://www.usenix.org/conference/usenixsecurity23/presentation/aonzo"
   ppt_link: "https://docs.google.com/presentation/d/1E7GtE7fmpe3vDWGTMoDnOOV5WDJGdcftWfWkmOfs660/edit?usp=sharing"
