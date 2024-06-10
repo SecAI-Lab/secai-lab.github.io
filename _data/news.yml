@@ -1,18 +1,26 @@
+- date: Jun 6, 2024
+  headline: "Our apper, RoBERTa-based Obfuscated Binary Code Similarity Detection, has been accepted to CISC-S 24!"
+  id: 1
+
+- date: Jun 6, 2024
+  headline: "Our paper, Dynamic Analysis of Obfuscated Code with a 64-bit SGN Packer, has been accepted to CISC-S 24!"
+  id: 1
+
 - date: May 20, 2024
   headline: "BENZENE got a Distinguished Paper Award at IEEE S&P '24!!"
   id: 0
 
 - date: Feb 28, 2024
   headline: "Intae Jeon joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Feb 26, 2024
   headline: "Suyeon Lee joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Feb 15, 2024
   headline: "Yuldoshkhujaev Shakhzod joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Jan 26, 2024
   headline: "Seoyeon Cho and Junhyeong Jo joined our lab, welcome!"
