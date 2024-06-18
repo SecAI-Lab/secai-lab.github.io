@@ -1,4 +1,20 @@
 - title: "llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations"
+  link: "https://www.ijcai.org/proceedings/2022/0532.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1jwipRPV6XKZBzVBntrMpTLbh6GcH_0SlkN70jBY0r5U/edit#slide=id.p1"
+  code_link: "https://github.com/HongshengHu/membership-inference-via-backdooring"
+  presenter: Yujeong
+  conference: IJCAI
+  date: 2024.06.17
+  pub_year: 2022
+  discussion: "(Discussion) The paper titled "Membership Inference via Backdooring" presents a novel approach to addressing data privacy concerns in machine learning by introducing a method called Membership Inference via Backdooring (MIB). 
+  The main contribution of MIB lies in its ability to mark a small number of data samples, which, when used by an unauthorized party to train a model, allows the data owner to later identify this misuse through black-box queries and statistical hypothesis testing. 
+  However, several limitations and challenges accompany this promising approach. Firstly, the success of MIB hinges on the ability to inject backdoor triggers in a manner that remains undetectable by the unauthorized party. 
+  While the paper discusses techniques to make the triggers imperceptible, there is an inherent risk that sophisticated adversaries could develop detection methods to identify and neutralize these backdoors. 
+  Furthermore, the approach's reliance on statistical hypothesis testing to provide guarantees for inference results, while innovative, may still be vulnerable to model-specific variations and adversarial defenses. 
+  However, further exploration is needed to assess the robustness of MIB across various types of datasets and models not covered in the experiments of the paper. 
+  Additionally, it is regrettable that the examples from the various datasets experimented in Figure 5 were not also included."
+
+- title: "llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations"
   link: "https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/"
   ppt_link: "https://drive.google.com/file/d/1y7YnZa1PRxe4Au0qOPsw92dvqk6vMn6G/view?usp=sharing"
   code_link: ""
