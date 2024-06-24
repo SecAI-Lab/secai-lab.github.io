@@ -1,4 +1,14 @@
 - title: "Membership Inference via Backdooring"
+  link: "https://arxiv.org/abs/2307.15043"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_UniversalandTransferable_arxiv2023.pdf"
+  code_link: "https://github.com/llm-attacks/llm-attacks"
+  presenter: Jiyong
+  conference: arxiv
+  date: 2024.06.24
+  pub_year: 2023
+  discussion: "(Discussion) :D"
+ 
+- title: "Membership Inference via Backdooring"
   link: "https://www.ijcai.org/proceedings/2022/0532.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1jwipRPV6XKZBzVBntrMpTLbh6GcH_0SlkN70jBY0r5U/edit#slide=id.p1"
   code_link: "https://github.com/HongshengHu/membership-inference-via-backdooring"
