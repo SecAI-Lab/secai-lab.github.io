@@ -1,4 +1,4 @@
-- title: "Membership Inference via Backdooring"
+- title: "Universal and Transferable Adversarial Attacks on Aligned Language Models"
   link: "https://arxiv.org/abs/2307.15043"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_UniversalandTransferable_arxiv2023.pdf"
   code_link: "https://github.com/llm-attacks/llm-attacks"
@@ -6,7 +6,13 @@
   conference: arxiv
   date: 2024.06.24
   pub_year: 2023
-  discussion: "(Discussion) :D"
+  discussion: "(Discussion) This paper proposes an attack method that causes aligned language models to generate undesirable behaviors. 
+  Aligned language models refuse to respond to harmful queries.
+  To enable these language models to respond to harmful queries, this paper attaches a suffix to the query. 
+  This approach makes the LLM generate a positive response instead of refusing to answer.
+  Positive responses to harmful queries were obtained from ChatGPT, Bard, Claude, LLaMA-2-Chat, Pythia, and Falcon, with a much higher success rate for GPT-based models. 
+  The evaluation section only demonstrates the high success rate of the proposed attack method. 
+  It would have been better if the paper included the limitations of this study and a model ablation study section."
  
 - title: "Membership Inference via Backdooring"
   link: "https://www.ijcai.org/proceedings/2022/0532.pdf"
