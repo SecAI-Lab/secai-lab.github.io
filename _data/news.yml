@@ -1,3 +1,11 @@
+- date: Jul 1, 2024
+  headline: "Minseok Kim joined our lab, welcome!"
+  id: 1
+
+- date: Jun 20, 2024
+  headline: "Our apper, RoBERTa-based Obfuscated Binary Code Similarity Detection, got a best paper award (과학기술정보통신부 최우수논문상) at CISC-S 24!"
+  id: 1
+
 - date: Jun 6, 2024
   headline: "Our apper, RoBERTa-based Obfuscated Binary Code Similarity Detection, has been accepted to CISC-S 24!"
   id: 1
@@ -28,11 +36,11 @@
 
 - date: Jan 23, 2024
   headline: "Our paper, R2I: A Relative Readability Metric for Decompiled Code, has been accepted to FSE 2024!"
-  id: 1
+  id: 2
 
 - date: Jan 19, 2024
   headline: "Our paper, BinAdapter: Leveraging Continual Learning for Inferring Function Symbol Names in a Binary, has been accepted to ASIACCS 2024!"
-  id: 1
+  id: 2
 
 - date: Jan 12, 2024
   headline: "Our paper, ToolPhet: Inference of Compiler Provenance from Stripped Binaries with Emerging Compilation Toolchains, has been accepted to IEEE Access!"
