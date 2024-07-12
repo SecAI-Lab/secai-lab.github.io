@@ -6,7 +6,7 @@
   conference: ASIA CCS
   date: 2024.07.12
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper proposes an effective semantic ranking method for identifying reliable techniques in automated secure text analysis, and outperforms existing large language models. However, the problem of data scarcity for certain techniques and some models in LLMs tend not to follow instructions exactly, which may require additional fine-tuning. This work presents an innovative approach for critical automation tasks in the security field, and we consider it a very informative and advanced study in that it is designed with applicability in various real-world environments in mind."
 
 - title: "LogBERT: Log Anomaly Detection via BERT"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9534113"
