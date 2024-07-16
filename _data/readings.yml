@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.07.16
   pub_year: 2023
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper proposes a bi-directional transformer-based guessing framework, referred to as PassBERT, which applies the pre-training/fine-tuning paradigm to password guessing attacks. First, a model pre-trained on the general password distribution was prepared, which was then fine-tuned on three specifically designed attack approaches. These methods reflect real-world attack scenarios and include: 1) conditional password guessing, which recovers the complete password given a partial one; 2) targeted password guessing, which compromises the password of a specific user using personal information; and 3) adaptive rule-based password guessing, which selects rules to generate rule-transformed password candidates. The experimental results show that the fine-tuned models can outperform state-of-the-art models by 14.53%, 21.82%, and 4.86% in the three attacks, respectively, demonstrating the effectiveness of bi-directional transformers on downstream guessing attacks. Furthermore, a hybrid password strength meter was proposed to mitigate the risks from these three types of attacks."
 
 - title: "Semantic Ranking for Automated Adversarial Technique Annotation in Security Text"
   link: "https://dl.acm.org/doi/10.1145/3634737.3645000"
@@ -16,7 +16,7 @@
   conference: ASIA CCS
   date: 2024.07.12
   pub_year: 2024
-  discussion: "(Discussion) This paper proposes an effective semantic ranking method for identifying reliable techniques in automated secure text analysis, and outperforms existing large language models. However, the problem of data scarcity for certain techniques and some models in LLMs tend not to follow instructions exactly, which may require additional fine-tuning. This work presents an innovative approach for critical automation tasks in the security field, and we consider it a very informative and advanced study in that it is designed with applicability in various real-world environments in mind."
+  discussion: "(Discussion) The paper provides an extensive analysis of IoT malware characteristics by studying 166,000 Linux-based samples collected over a year. Despite the value of open artifacts on badthings.info, the findings largely confirm expected trends, such as IoT malware not using drive-by or phishing techniques during infection. But it is the inconsistency between Figure 4 and the collected dataset, suggesting possible errors or gaps in the analysis methodology. Several critiques emerge from the paper’s limitations and assumptions. The dataset’s exclusive focus on Linux-based samples may introduce bias, potentially overlooking malware targeting other operating systems or multi-platform threats. The framework’s reliance on current detection and countermeasure techniques may not adequately address emerging threats and evolving malware strategies. The study could benefit from a more explicit discussion of these limitations and assumptions, which would provide a clearer direction for future research. Additionally, a deeper analysis of the interaction between malware components and the broader IoT ecosystem, such as network configurations and usage patterns, could offer insights into designing more robust security measures."
 
 - title: "LogBERT: Log Anomaly Detection via BERT"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9534113"
