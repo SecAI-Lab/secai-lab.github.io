@@ -1,3 +1,13 @@
+- title: "Improving Real-world Password Guessing Attacks via Bi-directional Transformers"
+  link: "https://www.usenix.org/conference/usenixsecurity23/presentation/xu-ming"
+  ppt_link: "https://drive.google.com/file/d/1O9FE6M3x5XVBqyubhEU8nq3ongwgtS-g/view?usp=sharing"
+  code_link: "https://github.com/snow0011/PassBertStrengthMeter"
+  presenter: Minseok
+  conference: USENIX
+  date: 2024.07.16
+  pub_year: 2023
+  discussion: "(Discussion) "
+
 - title: "Semantic Ranking for Automated Adversarial Technique Annotation in Security Text"
   link: "https://dl.acm.org/doi/10.1145/3634737.3645000"
   ppt_link: "https://docs.google.com/presentation/d/1GY56E7gxjBpjBzh_3xWKjuGtpQwAAFe3YP9QbC8wkG0/edit?usp=sharing"
