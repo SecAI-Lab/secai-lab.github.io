@@ -1,3 +1,13 @@
+- title: "ProPILE: Probing Privacy Leakage in Large Language Models"
+  link: "https://arxiv.org/abs/2307.01881"
+  ppt_link: ""
+  code_link: ""
+  presenter: Intae
+  conference: NeurIPS
+  date: 2024.07.24
+  pub_year: 2024
+  discussion: "(Discussion) ProPILE, a novel probing tool designed to assess the risk of Personally Identifiable Information (PII) leakage in Large Language Models (LLMs), demonstrates the feasibility of extracting PII through strategic prompt engineering. By utilizing black-box probing for data subjects and white-box probing for LLM service providers, ProPILE enables the assessment of PII leakage in models like OPT-1.3B trained on the Pile dataset. Experiments reveal that the likelihood of target PII generation increases with more specific prompts or additional linked PII details, while white-box probing with access to a limited subset of training data significantly amplifies this leakage potential. These findings underscore the effectiveness of ProPILE as an assessment tool and highlight the need for ongoing research and robust mitigation strategies to address privacy vulnerabilities in LLMs."
+
 - title: "Improving Real-world Password Guessing Attacks via Bi-directional Transformers"
   link: "https://www.usenix.org/conference/usenixsecurity23/presentation/xu-ming"
   ppt_link: "https://drive.google.com/file/d/1O9FE6M3x5XVBqyubhEU8nq3ongwgtS-g/view?usp=sharing"
@@ -16,14 +26,14 @@
   conference: ASIA CCS
   date: 2024.07.12
   pub_year: 2024
-  discussion: "(Discussion) The paper provides an extensive analysis of IoT malware characteristics by studying 166,000 Linux-based samples collected over a year. Despite the value of open artifacts on badthings.info, the findings largely confirm expected trends, such as IoT malware not using drive-by or phishing techniques during infection. But it is the inconsistency between Figure 4 and the collected dataset, suggesting possible errors or gaps in the analysis methodology. Several critiques emerge from the paper’s limitations and assumptions. The dataset’s exclusive focus on Linux-based samples may introduce bias, potentially overlooking malware targeting other operating systems or multi-platform threats. The framework’s reliance on current detection and countermeasure techniques may not adequately address emerging threats and evolving malware strategies. The study could benefit from a more explicit discussion of these limitations and assumptions, which would provide a clearer direction for future research. Additionally, a deeper analysis of the interaction between malware components and the broader IoT ecosystem, such as network configurations and usage patterns, could offer insights into designing more robust security measures."
+  discussion: "(Discussion) This paper introduces an innovative multi-stage ranking system for extracting and annotating adversarial techniques from threat intelligence reports, leveraging language models fine-tuned for cybersecurity tasks. The system demonstrates significant improvements in accuracy and recall compared to previous methods, with enhanced performance on verbose datasets like MITRE ATT&CK Reports and WeLiveSecurity. The comprehensive approach, including testing across various datasets and the introduction of a public dataset with 6.6K annotations, strengthens the study's contributions to the field. However, the observed performance disparity across datasets highlights the need for further refinement to handle concise descriptions more effectively. Overall, the study advances automated threat technique annotation and provides a solid foundation for future cybersecurity research and development."
 
 - title: "LogBERT: Log Anomaly Detection via BERT"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9534113"
   ppt_link: "https://docs.google.com/presentation/d/1KkdM8aM_V4SBxDhb4lfbn9WcOOp9gH88/edit?usp=sharing&ouid=112194344922196039599&rtpof=true&sd=true"
   code_link: "https://github.com/HelenGuohx/logbert"
   presenter: Suyeon
-  conference: IEEE
+  conference: IJCNN
   date: 2024.07.04
   pub_year: 2021
   discussion: "(Discussion) Detecting anomalies within system logs is paramount to protecting the system from an attack or malfunction. Traditional methods employ regular expressions or machine learning models to identify anomalous events. These approaches depend on handcrafted features and are unable to capture temporal information. For example, malicious logs could be benign on their own, but the collection of these logs could be malicious. Recently, deep learning models such as recurrent neural networks (RNNs) have been widely used to evaluate these sequences and can capture temporal information. However, RNNs cannot encode contextual information in a bi-directional manner. This paper proposes a log anomaly detection model based on BERT. BERT can capture contextual information in a bi-directional manner making it suitable for this task. The model is evaluated on three datasets: Hadoop Distributed File System (HDFS), BlueGene/L Supercomputer System (BGL), and Thunderbird-mini dataset. The baseline models are Principal Component Analysis (PCA), One-Class SVM (OCSVM), IsolationForest (iForest), LogCluster, DeepLog, and LogAnomaly. Their proposed model demonstrates superior performance over all baseline state-of-the-art models in all datasets. However, the detailed process in training is not described. For example, BERT splits the training step into a pretraining and finetuning phase. However, LogBERT seems to only discuss the pretraining phase and have no mention about the fine tuning phase. As a result, it is not clear if the fine tuning phase is excluded or it is not mentioned."
@@ -94,7 +104,7 @@
   ppt_link: "https://drive.google.com/file/d/1GoRgFU5OZ4xQtBfWOHyUOEKuDLb59K6C/view?usp=sharing"
   code_link: "https://github.com/Jin-Pu/Drone-Anomaly"
   presenter: Suyeon
-  conference: IEEE
+  conference: IEEE GRSS
   date: 2024.05.13
   pub_year: 2022
   discussion: "(Discussion) Let there be a video of a vehicle moving backward. An anomaly detection by frame alone would fail to capture any anomalies; instead, the model requires a sequence of frames to identify the anomaly. This paper proposes a Transformer-based anomaly detection in aerial videos from an Unmanned Aerial Vehicles (UAVs). By leveraging the Transformer encoder, they claim that the model can preserve spatiotemporal information.  The main contribution comprises an annotated dataset for realistic anomalous events, a benchmark for anomaly detection, and a baseline model ANDT. ANDT exhibits the best performance for certain scenes but does not do so for all scenes tested in the paper. Initial claims suggest that previous models do not preserve spatiotemporal information. However, previous models demonstrate decent performance on the provided dataset. In Figure 4, the MemAE model can infer the vehicle moving backward as an anomalous event, demonstrating its ability to preserve spatiotemporal information. Furthermore, the train test split in Table 1 is odd yet there is no mention why it was done in this way. For example, the test set is larger than the train set in the Bike roundabout scene."
@@ -190,7 +200,7 @@
   ppt_link: "https://docs.google.com/presentation/d/14hGmxlQ8qmIxAjBmY01_yPBjiL72VUp6xqJJz8Tef3o/edit?usp=drivesdk"
   code_link: ""
   presenter: Shakhzod
-  conference: IEEE
+  conference: IEEE IoT-J
   date: 2024.03.19
   pub_year: 2023
   discussion: "(Discussion) This paper designs a multidimensional detection framework to detect lateral movement behavior against APT attacks in an intranet environment based on the SMB protocol. 
