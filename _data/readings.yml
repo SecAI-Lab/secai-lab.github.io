@@ -1,3 +1,13 @@
+- title: "Unlearning Bias in Language Models by Partitioning Gradients"
+  link: "https://aclanthology.org/2023.findings-acl.375.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1c4g1xazZW56AzWrCqAKcMOP2GARlfW9YL5xzDdjBqhk/edit#slide=id.p"
+  code_link: "https://github.com/CharlesYu2000/PCGU-UnlearningBias"
+  presenter: Yujeong
+  conference: ACL
+  date: 2024.07.29
+  pub_year: 2023
+  discussion: "(Discussion) "
+
 - title: "ProPILE: Probing Privacy Leakage in Large Language Models"
   link: "https://arxiv.org/abs/2307.01881"
   ppt_link: "https://drive.google.com/file/d/1kqLFJMrElBKXLEI67QEohhRkpi_r3RZf/view?usp=sharing"
