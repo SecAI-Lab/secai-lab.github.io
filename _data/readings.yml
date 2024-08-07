@@ -1,3 +1,12 @@
+- title: "Meta Large Language Model Compiler: Foundation Models of Compiler Optimization"
+  link: "https://arxiv.org/abs/2407.02524"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_LLMCOMPILER_ARXIV24.pdf"
+  code_link: "https://huggingface.co/facebook"
+  presenter: Jiyong
+  date: 2024.08.07
+  pub_year: 2024
+  discussion: "(Discussion):D"
+
 - title: "Unlearning Bias in Language Models by Partitioning Gradients"
   link: "https://aclanthology.org/2023.findings-acl.375.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1c4g1xazZW56AzWrCqAKcMOP2GARlfW9YL5xzDdjBqhk/edit#slide=id.p"
