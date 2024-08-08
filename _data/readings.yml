@@ -1,8 +1,9 @@
 - title: "Meta Large Language Model Compiler: Foundation Models of Compiler Optimization"
   link: "https://arxiv.org/abs/2407.02524"
-  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_LLMCOMPILER_ARXIV24.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_LLMCOMPILER_ARXIV.pdf"
   code_link: "https://huggingface.co/facebook"
   presenter: Jiyong
+  conference: arxiv
   date: 2024.08.07
   pub_year: 2024
   discussion: "(Discussion):D"
