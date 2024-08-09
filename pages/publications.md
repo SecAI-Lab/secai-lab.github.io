@@ -65,7 +65,9 @@ See [Full list](#full-list) ([Google Scholar](https://scholar.google.ch/citation
 {% for publi in site.data.publist-conferences %}
 
   {{ publi.title }} <br />
-  <em>{{ publi.authors }} </em><br /><a href="{{ publi.link.url }}">{{ publi.link.display }}</a>
+  <em>{{ publi.authors }} </em><br /> 
+  <a href="{{ publi.link.url }}">{{ publi.link.display }}</a><br />
+  <a href="{{ publi.link2.url }}">{{ publi.link2.display }}</a>
 
 {% endfor %}
 
@@ -75,6 +77,8 @@ See [Full list](#full-list) ([Google Scholar](https://scholar.google.ch/citation
 {% for publi in site.data.publist-workshops %}
 
   {{ publi.title }} <br />
-  <em>{{ publi.authors }} </em><br /><a href="{{ publi.link.url }}">{{ publi.link.display }}</a>
+  <em>{{ publi.authors }} </em><br />
+  <a href="{{ publi.link.url }}">{{ publi.link.display }}</a><br />
+  <a href="{{ publi.link2.url }}">{{ publi.link2.display }}</a>
 
 {% endfor %}
