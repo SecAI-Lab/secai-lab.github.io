@@ -1,3 +1,13 @@
+- title: "LLM Self Defense: By Self Examination, LLMs Know They Are Being Tricked"
+  link: "https://arxiv.org/abs/2308.07308"
+  ppt_link: "https://docs.google.com/presentation/d/1IaRYYq8H7n_TaPSZvcQ4vX6MoKCRS4uBQ1Tt2Fv4-Hw/edit?usp=sharing"
+  code_link: "https://github.com/poloclub/llm-self-defense"
+  presenter: Shakhzod
+  conference: Arxiv
+  date: 2024.08.14
+  pub_year: 2024
+  discussion: "(Discussion) The authors of the paper present a clever and straightforward approach to enhance the safety of large language models (LLMs). The idea is to have the LLM essentially double-check its own work for any potentially harmful content.  When the LLM receives a prompt that could lead to a harmful response, it generates the text as usual. But then, this response is passed to another LLM  that's been instructed to act as a filter. This filter LLM reads the generated text and makes a judgment call by evaluating "harmfulness". The beauty of this method lies in its simplicity - doesn't require any retraining or tweaking of the original LLM, also it doesn't involve any complex pre-processing of the input. They tested this "LLM self-defense" mechanism on two popular models, GPT-3.5 and LLaMA 2. In many cases, they were able to virtually eliminate the generation of harmful content."
+
 - title: "Meta Large Language Model Compiler: Foundation Models of Compiler Optimization"
   link: "https://arxiv.org/abs/2407.02524"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_LLMCOMPILER_ARXIV.pdf"
