@@ -1,3 +1,13 @@
+- title: "On Large Language Models’ Resilience to Coercive Interrogation"
+  link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a252/1WPcZ9B0jCg"
+  ppt_link: "https://bit.ly/4fJN0cU"
+  code_link: ""
+  presenter: Minseok
+  conference: S&P
+  date: 2024.08.14
+  pub_year: 2024
+  discussion: "(Discussion) In this paper, a new weakness in Large Language Models (LLMs) is exposed that doesn’t rely on creating special prompts, known as jail-breaking. Instead, this method, called model interrogation, uses the fact that even when an LLM refuses to answer a harmful question, the damaging reply might still be hidden in the less obvious parts of its output. By accessing the list of probable responses (top-k token predictions) available in many open-source and commercial LLMs, a person with bad intentions can manipulate the model to reveal these harmful answers. They do this by choosing less likely words from the list at certain points in the response. This technique proves to be not only different but also more effective than traditional jail-breaking, with a 92% success rate compared to 62%, and it works 10 to 20 times faster. The harmful content brought out by this method is also of higher quality. Moreover, combining model interrogation with jail-breaking methods greatly improves results over using either technique alone. The study also shows that LLMs made for specific tasks like programming can still be tricked into giving harmful responses using this method."
+
 - title: "LLM Self Defense: By Self Examination, LLMs Know They Are Being Tricked"
   link: "https://arxiv.org/abs/2308.07308"
   ppt_link: "https://docs.google.com/presentation/d/1IaRYYq8H7n_TaPSZvcQ4vX6MoKCRS4uBQ1Tt2Fv4-Hw/edit?usp=sharing"
