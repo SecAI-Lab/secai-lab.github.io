@@ -1,12 +1,12 @@
-- title: "Unlearning Bias in Language Models by Partitioning Gradients"
-  link: "https://aclanthology.org/2023.findings-acl.375.pdf"
-  ppt_link: "https://docs.google.com/presentation/d/1c4g1xazZW56AzWrCqAKcMOP2GARlfW9YL5xzDdjBqhk/edit#slide=id.p"
-  code_link: "https://github.com/CharlesYu2000/PCGU-UnlearningBias"
-  presenter: Yujeong
-  conference: ACL
-  date: 2024.07.29
-  pub_year: 2023
-  discussion: "(Discussion) "
+- title: "Meta Large Language Model Compiler: Foundation Models of Compiler Optimization"
+  link: "https://arxiv.org/abs/2407.02524"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_LLMCOMPILER_ARXIV.pdf"
+  code_link: "https://huggingface.co/facebook"
+  presenter: Jiyong
+  conference: Arxiv
+  date: 2024.08.07
+  pub_year: 2024
+  discussion: "(Discussion) This paper introduces LLM Compiler, a novel large language model designed for code optimization and compiler tasks. Building upon the Code Llama model, LLM Compiler is specifically trained to understand intermediate representations (IR) and assembly code, showing improved performance in code generation and compiler emulation tasks. The model demonstrates strong capabilities in handling compiler-related tasks and outperforms previous models in various benchmarks. However, the paper notes some limitations. The primary issue is the model's fixed input sequence length of 16k tokens, which restricts its ability to handle very large codebases effectively. Despite efforts to split large translation units, some remain too large for the model to process. Additionally, the accuracy of the model's outputs requires rigorous evaluation and verification to ensure correctness, as any suggested optimizations should be thoroughly tested. Despite these limitations, the paper makes significant contributions to the field of compiler optimization and provides a solid foundation for future research."
 
 - title: "Unlearning Bias in Language Models by Partitioning Gradients"
   link: "https://aclanthology.org/2023.findings-acl.375.pdf"
