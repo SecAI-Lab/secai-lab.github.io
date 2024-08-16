@@ -6,12 +6,12 @@
   conference: S&P
   date: 2024.08.14
   pub_year: 2024
-  discussion: "(Discussion):D"
+  discussion: "(Discussion)In this paper, a new weakness in Large Language Models (LLMs) is exposed that doesn’t rely on creating special prompts, known as jail-breaking. Instead, this method, called model interrogation, uses the fact that even when an LLM refuses to answer a harmful question, the damaging reply might still be hidden in the less obvious parts of its output. By accessing the list of probable responses (top-k token predictions) available in many open-source and commercial LLMs, a person with bad intentions can manipulate the model to reveal these harmful answers. They do this by choosing less likely words from the list at certain points in the response. This technique proves to be not only different but also more effective than traditional jail-breaking, with a 92% success rate compared to 62%, and it works 10 to 20 times faster. The harmful content brought out by this method is also of higher quality. Moreover, combining model interrogation with jail-breaking methods greatly improves results over using either technique alone. The study also shows that LLMs made for specific tasks like programming can still be tricked into giving harmful responses using this method."
 
 - title: "LLM Self Defense: By Self Examination, LLMs Know They Are Being Tricked"
   link: "https://arxiv.org/abs/2308.07308"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://docs.google.com/presentation/d/1IaRYYq8H7n_TaPSZvcQ4vX6MoKCRS4uBQ1Tt2Fv4-Hw/edit?usp=sharing"
+  code_link: "https://github.com/poloclub/llm-self-defense"
   presenter: Shakhzod
   conference: arxiv
   date: 2024.08.14
@@ -26,7 +26,7 @@
   conference: arxiv
   date: 2024.08.07
   pub_year: 2024
-  discussion: "(Discussion):D"
+  discussion: "(Discussion)This paper introduces LLM Compiler, a novel large language model designed for code optimization and compiler tasks. Building upon the Code Llama model, LLM Compiler is specifically trained to understand intermediate representations (IR) and assembly code, showing improved performance in code generation and compiler emulation tasks. The model demonstrates strong capabilities in handling compiler-related tasks and outperforms previous models in various benchmarks. However, the paper notes some limitations. The primary issue is the model's fixed input sequence length of 16k tokens, which restricts its ability to handle very large codebases effectively. Despite efforts to split large translation units, some remain too large for the model to process. Additionally, the accuracy of the model's outputs requires rigorous evaluation and verification to ensure correctness, as any suggested optimizations should be thoroughly tested. Despite these limitations, the paper makes significant contributions to the field of compiler optimization and provides a solid foundation for future research."
 
 - title: "Unlearning Bias in Language Models by Partitioning Gradients"
   link: "https://aclanthology.org/2023.findings-acl.375.pdf"
