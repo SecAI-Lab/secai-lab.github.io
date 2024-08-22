@@ -6,7 +6,7 @@
   conference: NeurIPS
   date: 2024.08.21
   pub_year: 2023
-  discussion: "(Discussion) ee"
+  discussion: "(Discussion) LLMs demonstrate remarkable capabilities in various complex tasks. Recent research has delved into the possibility of enhancing the performance of these LLMs by incorporating human-annotated data. Unfortunately, this method is limited in scalability and underperforms in specific scenarios. This paper proposes a technique that can automatically generate natural language rationales using the output attribution scores that capture the influence of each feature on model predictions. The new framework, AMPLIFY, improves the prediction accuracy to about 10-25%, including those where prior approaches relying on human-annotated rationales fall short. A fundamental limitation of AMPLIFY is that it inherits the limitations of LLMs and Post hoc explanation methods. "
 
 - title: "Beyond Memorization: The Challenge of Random Memory Access in Language Models"
   link: "https://arxiv.org/abs/2403.07805"
