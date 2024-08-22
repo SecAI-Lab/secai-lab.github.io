@@ -1,3 +1,13 @@
+- title: "Beyond Memorization: The Challenge of Random Memory Access in Language Models"
+  link: "https://arxiv.org/abs/2403.07805"
+  ppt_link: ""
+  code_link: ""
+  presenter: Intae
+  conference: ACL
+  date: 2024.08.21
+  pub_year: 2024
+  discussion: "(Discussion) This paper explores the memory access patterns of language models (LMs), particularly focusing on the challenges they face with random access to memorized information. The authors demonstrate that while LMs can sequentially reproduce stored content effectively, they struggle with accessing information in random segments, especially in the middle of memorized sequences. To address this, the paper proposes two strategies that \"recitation\" (having the model first recall the content) and \"permutation\" (shuffling sentence order) and shows through experiments that these methods can significantly improve the model's performance. The study provides valuable insights into the limitations of memory access in LMs and suggests practical ways to enhance their performance in real-world applications. However, the research is limited to decoder-only models and does not explore larger models beyond 7 billion parameters, which could offer further insights. Additionally, experiments are conducted on a fixed-size text corpus, leaving questions about scalability to larger pretraining datasets. Despite these limitations, the paper makes an important contribution to understanding and improving memory access in language models."
+
 - title: "Post Hoc Explanations of Language Models Can Improve Language Models"
   link: "https://arxiv.org/pdf/2305.11426"
   ppt_link: "https://docs.google.com/presentation/d/1_2KVJPmfgwGfG90SxW2SivejuPYqtM2xpqqVR6GyCsk/edit#slide=id.p"
