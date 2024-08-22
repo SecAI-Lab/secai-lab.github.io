@@ -1,3 +1,13 @@
+- title: "Post Hoc Explanations of Language Models Can Improve Language Models"
+  link: "https://arxiv.org/pdf/2305.11426"
+  ppt_link: "https://docs.google.com/presentation/d/1_2KVJPmfgwGfG90SxW2SivejuPYqtM2xpqqVR6GyCsk/edit#slide=id.p"
+  code_link: ""
+  presenter: Yujeong
+  conference: NeurIPS
+  date: 2024.08.21
+  pub_year: 2023
+  discussion: "(Discussion) ee"
+  
 - title: "On Large Language Models’ Resilience to Coercive Interrogation"
   link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a252/1WPcZ9B0jCg"
   ppt_link: "https://bit.ly/4fJN0cU"
