@@ -1,3 +1,13 @@
+- title: "Racing on the Negative Force: Efficient Vulnerability Root-Cause Analysis through Reinforcement Learning on Counterexamples"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-xu-dandan.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1l2Tb8lClYwJTgiKJELEmXUCT36a3PE-t/edit?usp=sharing&ouid=112194344922196039599&rtpof=true&sd=true"
+  code_link: "https://github.com/0xdd96/Racing-code/tree/master"
+  presenter: Suyeon
+  conference: USENIX
+  date: 2024.08.28
+  pub_year: 2024
+  discussion: "(Discussion) "
+  
 - title: "Post Hoc Explanations of Language Models Can Improve Language Models"
   link: "https://arxiv.org/pdf/2305.11426"
   ppt_link: "https://docs.google.com/presentation/d/1_2KVJPmfgwGfG90SxW2SivejuPYqtM2xpqqVR6GyCsk/edit#slide=id.p"
