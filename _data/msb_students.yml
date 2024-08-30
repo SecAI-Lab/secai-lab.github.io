@@ -30,8 +30,15 @@
 
 - name: Yuldoshkhujaev Shakhzod 
   photo: Shakhzod.jpg 
-  info: Undergraduate student
+  info: Master student (Combined BS and MS program)
   email: shakzod02 AT g.skku.edu
   research: Computer Security, Machine Learning 
   number_educ: 0
   education1: 
+
+- name: Yiyue Zhang
+  photo: yiyue.jpg
+  info: Master student (Combined MS and Ph.D. program)
+  email: yiyue AT g.skku.edu  
+  research: Computer security, Privacy
+
