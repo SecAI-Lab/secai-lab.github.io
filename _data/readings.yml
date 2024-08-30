@@ -6,6 +6,16 @@
   conference: USENIX
   date: 2024.08.28
   pub_year: 2024
+  discussion: "(Discussion) This paper presents RACING, a novel approach for efficient root cause analysis (RCA) in fuzzing. By leveraging counterexamples and reinforcement learning, RACING intelligently guides the fuzzing process to quickly identify the root cause of crashes. The experimental results demonstrate that RACING significantly outperforms the state-of-the-art technique, Aurora, in terms of both speed and accuracy. This work holds significant implications for improving the efficiency and effectiveness of vulnerability detection and analysis in software. However, limitations exist, such as the reliance on source code and the lack of support for compound predicates, which offer avenues for future research. Overall, RACING represents a promising advancement in automated RCA for fuzzing, with the potential to significantly impact the field of software security."
+
+- title: "Data Coverage for Guided Fuzzing"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-wang-mingzhe.pdf"
+  ppt_link: ""
+  code_link: ""
+  presenter: Jiyong
+  conference: USENIX
+  date: 2024.08.28
+  pub_year: 2024
   discussion: "(Discussion) "
   
 - title: "Post Hoc Explanations of Language Models Can Improve Language Models"
