@@ -16,7 +16,7 @@
   conference: USENIX
   date: 2024.08.28
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Code coverage faces a major challenge in that it only reflects a small part of a program's structure, leaving some crucial program constructs uncovered. To address this issue, this work proposes data coverage for guided fuzzing - a technique that focuses on detecting novel constant data references and maximizing their coverage. Additionally, real-world fuzzing practices were optimized by classifying data access according to semantics and designing customized collection strategies. This is crucial because improper handling of constant data can significantly impact fuzzing throughput. To further improve fuzzing efficiency, novel storage and utilization techniques were developed. Finally, libFuzzer was enhanced with data coverage capabilities and submitted to Google's FuzzBench for evaluation. In this evaluation, the proposed approach outperformed many state-of-the-art fuzzers and achieved the best coverage score in the experiment. As a result, using this enhanced code coverage, 28 previously unknown bugs in OSS-Fuzz projects were discovered."
   
 - title: "Post Hoc Explanations of Language Models Can Improve Language Models"
   link: "https://arxiv.org/pdf/2305.11426"
