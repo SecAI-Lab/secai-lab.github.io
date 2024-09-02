@@ -10,8 +10,8 @@
 
 - title: "Data Coverage for Guided Fuzzing"
   link: "https://www.usenix.org/system/files/usenixsecurity24-wang-mingzhe.pdf"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_DataCovFuzz_USENIX24.pdf"
+  code_link: "https://github.com/THU-WingTecher/wingfuzz"
   presenter: Jiyong
   conference: USENIX
   date: 2024.08.28
