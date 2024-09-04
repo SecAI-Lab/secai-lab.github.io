@@ -5,6 +5,9 @@ sitemap: false
 permalink: /teaching/
 main_nav: true
 ---
+##### Fall 2024
+* [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
+* [SWE3028] Capstone Design Project (캡스톤설계프로젝트)
 
 ##### Spring 2024
 * [ESW5042] Software Security Paper Writing and Presentation (소프트웨어 보안연구 논문작성)
