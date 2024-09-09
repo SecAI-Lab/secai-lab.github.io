@@ -1,12 +1,12 @@
 - title: "Decoding the MITRE Engenuity ATT&CK Enterprise Evaluation: An Analysis of EDR Performance in Real-World Environments"
-  link: "https://www.usenix.org/system/files/usenixsecurity24-xu-dandan.pdf"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3634737.3645012"
   ppt_link: "https://docs.google.com/presentation/d/1sfIBva1gaq-rwEg_alsK-m0IHV-iBKdzcyGl-z-9Lr0/edit?usp=sharing"
   code_link: ""
   presenter: Shakhzod
   conference: ASIA CCS
   date: 2024.09.05
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper provides a comprehensive analysis of the MITRE ATT&CK evaluations, aiming to address the limitations of the raw evaluation results. The paper's strengths lie in its introduction of new analysis methods, including whole-graph analysis and holistic assessments, to gain deeper insights into EDR system capabilities. The authors' reconstruction of attack scenarios and subsequent analysis shed light on EDR systems' attack reconstruction, behavior correlation, and overall detection performance. However, the paper could be improved by addressing the lack of access to crucial information like false positive alarm volume, response time, and raw data, which limits the scope of the analysis. Despite this limitation, the paper offers valuable contributions to the field by providing a systematic interpretation of MITRE ATT&CK evaluation results, aiding researchers, practitioners, and vendors in understanding and improving EDR systems."
 
 - title: "Racing on the Negative Force: Efficient Vulnerability Root-Cause Analysis through Reinforcement Learning on Counterexamples"
   link: "https://www.usenix.org/system/files/usenixsecurity24-xu-dandan.pdf"
