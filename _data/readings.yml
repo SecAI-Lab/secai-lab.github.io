@@ -1,3 +1,13 @@
+- title: "Can I Hear Your Face? Pervasive Attack on Voice Authentication Systems with a Single Face Image"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-jiang-nan.pdf"
+  ppt_link: "https://for8821.synology.me:5001/d/s/104DzKxOnLNGeaWBOfgyYqS4Gi4SZcJa/8jNBK92x6DwadsBPx6MRxFk2e5ICD9Bb-cbNguYYzqQs"
+  code_link: ""
+  presenter: Minseok
+  conference: USENIX
+  date: 2024.09.11
+  pub_year: 2024
+  discussion: "(Discussion) This paper presents a novel deepfake attack called Foice. This attack generates a synthetic voice of a victim using just a single face image, without requiring any voice samples. The generated voice is realistic enough to fool commercial voice authentication systems, such as those used by WeChat, Microsoft Azure, and other platforms. The core idea behind Foice is to learn the partial correlation between face and voice features, and then combine these with random face-independent voice features generated from a Gaussian distribution. The attack's effectiveness was demonstrated through real-world experiments on several authentication systems and voice assistants, where it showed high success rates, indicating significant vulnerabilities in these systems. The study emphasizes the importance of new defenses against such attacks, as current systems lack sufficient protection against deepfake threats based solely on facial images."
+
 - title: "Decoding the MITRE Engenuity ATT&CK Enterprise Evaluation: An Analysis of EDR Performance in Real-World Environments"
   link: "https://dl.acm.org/doi/pdf/10.1145/3634737.3645012"
   ppt_link: "https://docs.google.com/presentation/d/1sfIBva1gaq-rwEg_alsK-m0IHV-iBKdzcyGl-z-9Lr0/edit?usp=sharing"
