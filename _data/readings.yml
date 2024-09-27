@@ -1,3 +1,13 @@
+- title: "WebRR: A Forensic System for Replaying and Investigating Web-Based Attacks in The Modern Web"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-allen.pdf"
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: USENIX
+  date: 2024.09.25
+  pub_year: 2024
+  discussion: "(Discussion) "
+
 - title: "Can I Hear Your Face? Pervasive Attack on Voice Authentication Systems with a Single Face Image"
   link: "https://www.usenix.org/system/files/usenixsecurity24-jiang-nan.pdf"
   ppt_link: "https://for8821.synology.me:5001/d/s/104DzKxOnLNGeaWBOfgyYqS4Gi4SZcJa/8jNBK92x6DwadsBPx6MRxFk2e5ICD9Bb-cbNguYYzqQs"
