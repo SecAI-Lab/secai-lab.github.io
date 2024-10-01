@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.09.25
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents WEBRR (Web-based Enterprise Record and Replay), a novel forensic system designed for replaying and investigating web-based attacks in modern web environments. The authors address the limitations of existing forensic analysis tools in dealing with the complexity of modern web applications and browsers. WEBRR achieves deterministic replay of web attacks by leveraging the single-threaded nature of JavaScript and implementing a comprehensive recording and replay mechanism for various web components, including the Document Object Model (DOM), network requests, and asynchronous operations. The system is implemented as an extension to the Chromium browser and demonstrates high accuracy in replaying both benign websites and malicious attacks across multiple platforms (Linux, Windows, and Android). The authors evaluate WEBRR against existing solutions like WebCapsule, Mugshot, and RR, showing superior performance in replaying complex web attacks. The system exhibits low runtime overhead (median 2.94% increase in page load time) and reasonable storage requirements (17 MB per minute of browsing). While WEBRR has some limitations, such as incomplete support for certain web technologies (e.g., WebRTC, IndexedDB), the authors argue that these can be addressed with additional engineering effort. Overall, WEBRR represents a significant advancement in web forensics, enabling more accurate and interactive investigations of web-based attacks."
 
 - title: "Can I Hear Your Face? Pervasive Attack on Voice Authentication Systems with a Single Face Image"
   link: "https://www.usenix.org/system/files/usenixsecurity24-jiang-nan.pdf"
