@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.10.02
   pub_year: 2024
-  discussion: "(Discussion)"
+  discussion: "(Discussion) The paper, Exploring ChatGPT’s Capabilities on Vulnerability Management, examines ChatGPT's ability to assist in six stages of vulnerability management, utilizing a dataset of 70,346 samples. The authors compare ChatGPT's performance with state-of-the-art (SOTA) methods, assessing tasks like bug report summarization and vulnerability repair. While ChatGPT demonstrates promising potential in some areas, such as summarizing bug reports, challenges persist, particularly in patch correctness assessment. The paper's strengths include a comprehensive dataset and innovative exploration of prompt engineering techniques. However, it faces limitations in generalizing ChatGPT’s performance across all tasks, pointing to future research needs for refining its application in security tasks. This study is significant in highlighting ChatGPT’s growing role in automated vulnerability management, with the potential for advancing research in the domain."
 
 - title: "WebRR: A Forensic System for Replaying and Investigating Web-Based Attacks in The Modern Web"
   link: "https://www.usenix.org/system/files/usenixsecurity24-allen.pdf"
