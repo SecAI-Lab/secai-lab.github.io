@@ -1,4 +1,14 @@
 - title: "Exploring ChatGPT’s Capabilities on Vulnerability Management"
+  link: "https://www.usenix.org/conference/usenixsecurity24/presentation/ahn"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_BUDAlloc_USENIX24.pdf"
+  code_link: "https://github.com/casys-kaist/BUDAlloc"
+  presenter: Jiyong
+  conference: USENIX
+  date: 2024.10.23
+  pub_year: 2024
+  discussion: "(Discussion)"
+  
+- title: "Exploring ChatGPT’s Capabilities on Vulnerability Management"
   link: "https://www.usenix.org/system/files/usenixsecurity24-liu-peiyu.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1pixa1PjwRUt_aPwfSS5RQcRUTMQtIl72L4aouV7nsb8/edit?usp=sharing"
   code_link: ""
