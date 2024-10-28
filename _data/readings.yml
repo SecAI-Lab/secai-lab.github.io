@@ -1,4 +1,4 @@
-- title: "Exploring ChatGPT’s Capabilities on Vulnerability Management"
+- title: "BUDAlloc: Defeating Use-After-Free Bugs by Decoupling Virtual Address Management from Kernel"
   link: "https://www.usenix.org/conference/usenixsecurity24/presentation/ahn"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_BUDAlloc_USENIX24.pdf"
   code_link: "https://github.com/casys-kaist/BUDAlloc"
