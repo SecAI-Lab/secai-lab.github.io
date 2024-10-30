@@ -1,3 +1,13 @@
+- title: "AI Psychiatry: Forensic Investigation of Deep Learning Networks in Memory Images"
+  link: "https://www.usenix.org/system/files/sec24summer-prepub-517-oygenblik.pdf"
+  ppt_link: "https://drive.google.com/file/d/1S_4JgOGHVn36fbfTMY1b307_O9TLCqdP/view?usp=sharing"
+  code_link: "https://github.com/CyFI-Lab-Public/AiP"
+  presenter: Sueyon
+  conference: USENIX
+  date: 2024.10.30
+  pub_year: 2024
+  discussion: "(Discussion) " 
+
 - title: "BUDAlloc: Defeating Use-After-Free Bugs by Decoupling Virtual Address Management from Kernel"
   link: "https://www.usenix.org/conference/usenixsecurity24/presentation/ahn"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_BUDAlloc_USENIX24.pdf"
@@ -6,7 +16,7 @@
   conference: USENIX
   date: 2024.10.23
   pub_year: 2024
-  discussion: "(Discussion)This paper presents BUDAlloc, a novel one-time allocator (OTA) designed to address use-after-free (UAF) vulnerabilities by decoupling virtual address management from the kernel. Unlike conventional approaches, BUDAlloc shifts virtual memory operations to the user level, reducing system call overhead and improving performance, especially in multi-threaded applications. Using eBPF-based page fault handling, BUDAlloc efficiently manages virtual aliases and batches memory operations to minimize fragmentation. It offers two modes—detection and prevention—allowing users to prioritize either bug detection or performance. Evaluations show that BUDAlloc improves performance by 15% over DangZero and reduces memory overhead by 61% compared to FFmalloc, making it a scalable and practical solution for UAF bug detection without modifying existing binaries."
+  discussion: "(Discussion) This paper presents BUDAlloc, a novel one-time allocator (OTA) designed to address use-after-free (UAF) vulnerabilities by decoupling virtual address management from the kernel. Unlike conventional approaches, BUDAlloc shifts virtual memory operations to the user level, reducing system call overhead and improving performance, especially in multi-threaded applications. Using eBPF-based page fault handling, BUDAlloc efficiently manages virtual aliases and batches memory operations to minimize fragmentation. It offers two modes—detection and prevention—allowing users to prioritize either bug detection or performance. Evaluations show that BUDAlloc improves performance by 15% over DangZero and reduces memory overhead by 61% compared to FFmalloc, making it a scalable and practical solution for UAF bug detection without modifying existing binaries."
   
 - title: "Exploring ChatGPT’s Capabilities on Vulnerability Management"
   link: "https://www.usenix.org/system/files/usenixsecurity24-liu-peiyu.pdf"
