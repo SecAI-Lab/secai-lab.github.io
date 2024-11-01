@@ -8,7 +8,7 @@
 
 - date: Jul 1, 2024
   headline: "Minseok Kim joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Jun 20, 2024
   headline: "Our apper, RoBERTa-based Obfuscated Binary Code Similarity Detection, got a best paper award (과학기술정보통신부 최우수논문상) at CISC-S 24!"
@@ -16,11 +16,11 @@
 
 - date: Jun 6, 2024
   headline: "Our apper, RoBERTa-based Obfuscated Binary Code Similarity Detection, has been accepted to CISC-S 24!"
-  id: 1
+  id: 2
 
 - date: Jun 6, 2024
   headline: "Our paper, Dynamic Analysis of Obfuscated Code with a 64-bit SGN Packer, has been accepted to CISC-S 24!"
-  id: 1
+  id: 2
 
 - date: May 20, 2024
   headline: "BENZENE got a Distinguished Paper Award at IEEE S&P '24!!"
