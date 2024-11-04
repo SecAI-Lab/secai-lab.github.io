@@ -20,7 +20,7 @@
   link: 
     url:
     display: International Symposium on Foundations and Practice of Security (FPS 2024)
-  highlight: 1
+  highlight: 0
   news2:
   
 - title: "R2I: A Relative Readability Metric for Decompiled Code"
