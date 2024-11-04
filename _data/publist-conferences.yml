@@ -1,3 +1,22 @@
+- title: "An Empirical Study of Black-box based Membership Inference Attacks on a Real-World Dataset"
+  image: 
+  description: "The recent advancements in artificial intelligence drive the
+  widespread adoption of Machine-Learning-as-a-Service platforms, which
+  offers valuable services. However, these pervasive utilities in the cloud
+  environment unavoidably encounter security and privacy issues. In particular, a membership inference attack (MIA) poses a threat by recognizing the presence of a data sample in a training set for the target model.
+  Although prior MIA approaches underline privacy risks repeatedly by
+  demonstrating experimental results with standard benchmark datasets
+  such as MNIST and CIFAR. However, the effectiveness of such techniques
+  on a real-world dataset remains questionable. We are the first to perform
+  an in-depth empirical study on black-box based MIAs that hold realistic assumptions, including six metric-based and three classifier-based
+  MIAs with the high-dimensional image dataset that consists of identification (ID) cards and driving licenses. Additionally, we introduce the
+  Siamese-based MIA that shows similar or better performance than the
+  state-of-the-art approaches and suggest training a shadow model with
+  autoencoder-based reconstructed images. Our major findings show that
+  the performance of MIA techniques against too many features may be
+  degraded; the MIA configuration or a sample’s properties can impact the
+  accuracy of membership inference on members and non-members."
+  
 - title: "R2I: A Relative Readability Metric for Decompiled Code"
   image: r2i.png
   description: "Decompilation is a process of converting a low-level machine code snippet back into a high-level programming
