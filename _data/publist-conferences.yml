@@ -16,6 +16,12 @@
   the performance of MIA techniques against too many features may be
   degraded; the MIA configuration or a sample’s properties can impact the
   accuracy of membership inference on members and non-members."
+  authors: Yujeong Kwon, Simon S. Woo, and Hyungjoon Koo
+  link: to appear
+    url: to appear
+    display: International Symposium on Foundations and Practice of Security (FPS 2024)
+  highlight: 1
+  news2:
   
 - title: "R2I: A Relative Readability Metric for Decompiled Code"
   image: r2i.png
