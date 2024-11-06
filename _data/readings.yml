@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.10.30
   pub_year: 2024
-  discussion: "(Discussion) " 
+  discussion: "(Discussion) After the advent of deep learning (DL) models, several practical attacks against DL have surfaced. Consequently, the research community developed a complementary vetting technique to detect such attacks. However, these techniques do not address how to retrieve these DL models for inspection. Existing state-of-the-art memory forensic techniques rely on static data structure recovery, which cannot recover complex data structures used in DL software stacks. Furthermore, ML frameworks employ advanced garbage collection and memory management optimization, which obfuscates in-memory objects. Moreover, the layer weights are stored in a consecutive GPU memory while the context of these objects is stored in the CPU data structure. Lastly, white-box analysis techniques must rehost the DL model in a live environment for inspection. This paper proposes AiP, an automated system for recovering DL models from meory and rehosting them into a live process. AiP requires no prior knoweldge of the particular model. In the evaluation using LISA, CIFAR-10, and IMDB dataset, AiP successfully recovered 30 different models and achieved 100% recover accuracy. The paper demonstrates its practicality by recovering popular Python-based frameworks (Pytorch and Tensorflow), however acknowledges the existance of other ML frameworks (e.g., HuggingFace)." 
 
 - title: "BUDAlloc: Defeating Use-After-Free Bugs by Decoupling Virtual Address Management from Kernel"
   link: "https://www.usenix.org/conference/usenixsecurity24/presentation/ahn"
