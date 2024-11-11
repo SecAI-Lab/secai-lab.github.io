@@ -1,3 +1,13 @@
+- title: "Secrets Revealed in Container Images: An Internet-wide Study on Occurrence and Impact"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3579856.3590329"
+  ppt_link: "https://docs.google.com/presentation/d/1KMYaIsbHsbOneRYRM5WS-7HN5_Z3dyhhsrBUdr6J9mg/edit?usp=sharing"
+  code_link: ""
+  presenter: Shakhzod
+  conference: ASIA CCS
+  date: 2024.11.06
+  pub_year: 2023
+  discussion: "(Discussion) This paper examines the widespread issue of sensitive information, such as cryptographic keys and API secrets, unintentionally included in Docker images. Analyzing over 340,000 images, it finds that 8.5% contain secrets, creating serious security vulnerabilities. The study highlights the scale and potential impact of this problem, suggesting that it’s a structural issue in container usage rather than isolated errors. While the dataset and analysis are comprehensive, the lack of real-world examples and potential filtering inaccuracies are noted limitations."
+
 - title: "AI Psychiatry: Forensic Investigation of Deep Learning Networks in Memory Images"
   link: "https://www.usenix.org/system/files/sec24summer-prepub-517-oygenblik.pdf"
   ppt_link: "https://drive.google.com/file/d/1S_4JgOGHVn36fbfTMY1b307_O9TLCqdP/view?usp=sharing"
