@@ -1,3 +1,13 @@
+- title: "Teach LLMs to Phish: Stealing Private Information from Language Models"
+  link: "https://openreview.net/pdf?id=qo21ZlfNu6"
+  ppt_link: "https://for8821.synology.me:5001/d/s/10zk4kfAHVXxEMf7JwOZ8Tfu8xOyw6db/vUq4BkNEaWPqcv-did2uFZwiAPuKRplW-abmgxWAi2gs"
+  code_link: ""
+  presenter: Minseok
+  conference: ICLR
+  date: 2024.11.20
+  pub_year: 2024
+  discussion: "The paper introduces neural phishing, a method to extract sensitive information from large language models (LLMs) by injecting benign-looking poisoned data into their training datasets. The attack has three phases: poisoning during pretraining, memorization during fine-tuning, and information extraction during inference. Success rates range from 10% to 80%, depending on the model size, data duplication, and attacker knowledge. Larger and overtrained models are more vulnerable. Standard defenses like deduplication and differential privacy are ineffective. The study highlights significant privacy risks in LLMs and emphasizes the need for advanced defenses."
+
 - title: "Secrets Revealed in Container Images: An Internet-wide Study on Occurrence and Impact"
   link: "https://dl.acm.org/doi/pdf/10.1145/3579856.3590329"
   ppt_link: "https://docs.google.com/presentation/d/1KMYaIsbHsbOneRYRM5WS-7HN5_Z3dyhhsrBUdr6J9mg/edit?usp=sharing"
