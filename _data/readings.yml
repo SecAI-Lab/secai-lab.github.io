@@ -39,14 +39,14 @@
   discussion: "(Discussion) The paper introduces neural phishing, a method to extract sensitive information from large language models (LLMs) by injecting benign-looking poisoned data into their training datasets. The attack has three phases: poisoning during pretraining, memorization during fine-tuning, and information extraction during inference. Success rates range from 10% to 80%, depending on the model size, data duplication, and attacker knowledge. Larger and overtrained models are more vulnerable. Standard defenses like deduplication and differential privacy are ineffective. The work highlights significant privacy risks in LLMs and emphasizes the need for advanced defenses. While the study is significant, its limitations include reliance on poisoned data appearing before secrets in training, difficulty in fully preventing memorization of sensitive patterns, and the low likelihood of individuals leaking sensitive data directly to LLMs."
 
 - title: "Did the Neurons Read your Book? Document-level Membership Inference for Large Language Models"
-  link: ""
+  link: "https://www.usenix.org/biblio-14765"
   ppt_link: ""
   code_link: ""
   presenter: Yujeong
-  conference: 
+  conference: USENIX
   date: 2024.11.12
-  pub_year: 
-  discussion: ""
+  pub_year: 2024
+  discussion: "(Discussion) The paper presents a novel method to infer whether a document was included in the training dataset of large language models (LLMs). Using a black-box approach based on predicted token-level probabilities and normalization techniques, the authors develop a meta-classifier to distinguish between member and non-member documents. Evaluated on OpenLLaMA with datasets from Project Gutenberg and ArXiv, the method achieves AUC scores of 0.856 for books and 0.678 for papers, demonstrating its effectiveness. The study highlights that even small LLMs retain significant memorization, raising concerns about privacy and transparency in LLM training data. However, the approach relies on known datasets, limiting its applicability to proprietary models without accessible training data. It also assumes that non-member documents are similar but temporally distinct, which may not always hold. Additionally, the method's focus on black-box inference may not address vulnerabilities in fine-tuned or modified LLMs, warranting further research into privacy mitigation strategies."
 
 - title: "Secrets Revealed in Container Images: An Internet-wide Study on Occurrence and Impact"
   link: "https://dl.acm.org/doi/pdf/10.1145/3579856.3590329"
