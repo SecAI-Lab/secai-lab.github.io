@@ -1,10 +1,20 @@
+- title: "Don’t Listen To Me: Understanding and Exploring Jailbreak Prompts of Large Language Models"
+  link: "https://www.usenix.org/conference/usenixsecurity24/presentation/yu-zhiyuan"
+  ppt_link: "https://drive.google.com/file/d/1M8H4AzXU_KMB9iz67XzK7nYtBV8u8h4U/view?usp=sharing"
+  code_link: "https://github.com/WUSTL-CSPL/LLMJailbreak"
+  presenter: Suyeon
+  conference: USENIX
+  date: 2024.12.11
+  pub_year: 2024
+  discussion: ""
+
 - title: "RustSan: Retrofitting AddressSanitizer for Efficient Sanitization of Rust"
   link: "https://www.usenix.org/system/files/usenixsecurity24-cho-kyuwon.pdf"
   ppt_link: ""
   code_link: ""
   presenter: Jiyong
   conference: USENIX
-  date: 2024.12.03
+  date: 2024.12.04
   pub_year: 2024
   discussion: ""
 
