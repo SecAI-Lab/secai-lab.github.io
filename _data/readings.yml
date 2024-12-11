@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.12.11
   pub_year: 2024
-  discussion: ""
+  discussion: "(Discussion) "
 
 - title: "RustSan: Retrofitting AddressSanitizer for Efficient Sanitization of Rust"
   link: "https://www.usenix.org/system/files/usenixsecurity24-cho-kyuwon.pdf"
@@ -16,7 +16,7 @@
   conference: USENIX
   date: 2024.12.04
   pub_year: 2024
-  discussion: ""
+  discussion: "(Discussion) "
 
 - title: "Uncovering and Exploiting Hidden APIs in Mobile Super Apps"
   link: "https://dl.acm.org/doi/10.1145/3576915.3616676"
@@ -26,7 +26,7 @@
   conference: CCS
   date: 2024.11.27
   pub_year: 2023
-  discussion: "This paper makes a valuable contribution by systematically revealing undocumented APIs and their potential security exploits in popular “super apps” such as WeChat and TikTok. By leveraging both static and dynamic analysis, the authors’ tool, APIScope, successfully identifies hidden APIs and demonstrates their risks, thereby advancing our understanding of super app ecosystems and offering actionable guidance for platform vendors and developers. However, several limitations remain. The study focuses exclusively on Android versions of super apps using the V8 engine, narrowing the generalizability of its findings and excluding large market segments, like iOS platforms or super apps employing different JavaScript engines. Moreover, while APIScope identifies hidden APIs and validates certain vulnerabilities through test miniapps, it does not fully explore how organizational factors—such as development practices, code review processes, or internal security policies—contribute to these undocumented APIs. The paper also falls short of presenting robust, long-term defenses or systematic industry-level guidelines for mitigating undocumented APIs. A deeper integration of automated patching, secure coding frameworks, and clearer vendor-side standardization efforts would strengthen the practical impact. Future work should strive to broaden platform scope, thoroughly investigate root causes behind the emergence of undocumented APIs, and propose more comprehensive preventative strategies."
+  discussion: "(Discussion) This paper makes a valuable contribution by systematically revealing undocumented APIs and their potential security exploits in popular “super apps” such as WeChat and TikTok. By leveraging both static and dynamic analysis, the authors’ tool, APIScope, successfully identifies hidden APIs and demonstrates their risks, thereby advancing our understanding of super app ecosystems and offering actionable guidance for platform vendors and developers. However, several limitations remain. The study focuses exclusively on Android versions of super apps using the V8 engine, narrowing the generalizability of its findings and excluding large market segments, like iOS platforms or super apps employing different JavaScript engines. Moreover, while APIScope identifies hidden APIs and validates certain vulnerabilities through test miniapps, it does not fully explore how organizational factors—such as development practices, code review processes, or internal security policies—contribute to these undocumented APIs. The paper also falls short of presenting robust, long-term defenses or systematic industry-level guidelines for mitigating undocumented APIs. A deeper integration of automated patching, secure coding frameworks, and clearer vendor-side standardization efforts would strengthen the practical impact. Future work should strive to broaden platform scope, thoroughly investigate root causes behind the emergence of undocumented APIs, and propose more comprehensive preventative strategies."
 
 - title: "Teach LLMs to Phish: Stealing Private Information from Language Models"
   link: "https://openreview.net/pdf?id=qo21ZlfNu6"
