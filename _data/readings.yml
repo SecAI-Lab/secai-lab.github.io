@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2024.12.11
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Since the advent of Large Language Models (LLMs), there has been increasing interest in the concept of 'Jailbreak Prompts' for these LLMs. Since LLMs are trained on a large corpus of data, they can generate harmful content. As a result, LLM services provide 'Aligned Language Models' that aim to prevent generating harmful content. The 'Jailbreak Prompts' are prompts that allow an adversary to bypass the defense and cause LLMs to generate harmful content. This paper conducts a measurement study on existing Jailbreak Prompt methods to answer three research questions: 'What are jailbreak strategies and how do they work?', 'How do humans develop and execute jailbreak attacks?', and 'How to automate the process of jailbreaking?'. While the paper overviews the current landscape of jailbreak prompts, the metrics defined in the paper (Expected Maximum Harmfulness (EMH) and Jailbreak Success Rate(JSR)) are difficult to comprehend. For instance, in Table 3 the authors present the metrics for pairs of jailbreak prompts and malicious queries. Unfortunately, it is difficult to comprehend the result as EMH does not seem to be normalized (exceeding 1.0 in certain cases) and the overall JSR is very low, causing the reader to question the effectiveness of the attack."
 
 - title: "RustSan: Retrofitting AddressSanitizer for Efficient Sanitization of Rust"
   link: "https://www.usenix.org/system/files/usenixsecurity24-cho-kyuwon.pdf"
