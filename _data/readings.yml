@@ -1,12 +1,12 @@
 - title: "Instruction Backdoor Attacks Against Customized LLMs"
   link: "https://www.usenix.org/system/files/usenixsecurity24-zhang-rui.pdf"
-  ppt_link: ""
+  ppt_link: "https://for8821.synology.me:5001/d/s/11jFcNRWXwuwXF0FyTHN8S1gV3ICtCsb/MWzgnV2kSWENGUneHwWAlShcb3B2lZzH-U7IgTcFD-gs"
   code_link: "https://github.com/zhangrui4041/Instruction_Backdoor_Attack"
   presenter: Minseok
   conference: USENIX
   date: 2025.01.13
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The study explores instruction-based backdoor attacks on large language models (LLMs), targeting their instruction-following capabilities through crafted prompts embedding backdoor instructions. It categorizes attacks into word-level, syntax-level, and semantic-level, showing high attack success rates (ASR) while maintaining clean input utility. Larger models like GPT-4 and Claude-3 exhibit higher ASRs, making them more susceptible than smaller models such as LLaMA2 and Mistral. However, the attack's effectiveness depends heavily on trigger design, including length, position, and complexity, with semantic-level attacks being stealthier but less versatile in simpler tasks. The study highlights challenges in defending against such attacks, as existing detection methods like intent analysis yield high false alarm rates and limited accuracy in identifying more covert triggers. Practical limitations include the reliance on static prompt structures, assuming attackers have precise knowledge of prompt formats and tasks, which may not generalize to dynamic or adversarial real-world scenarios. Additionally, the approach has not been tested extensively across diverse LLM architectures or specialized domains, leaving gaps in understanding broader vulnerabilities and mitigation strategies."
 
 - title: "PLeak: Prompt Leaking Attacks against Large Language Model Applications"
   link: "https://dl.acm.org/doi/10.1145/3658644.3670370"
@@ -16,7 +16,7 @@
   conference: CCS
   date: 2025.01.06
   pub_year: 2024
-  discussion: "(Discussion) " 
+  discussion: "(Discussion) The paper introduces PLeak, an innovative framework designed to extract confidential system prompts from LLM applications, which are often protected as intellectual property. PLeak automates the process using a closed-box optimization approach, relying on shadow LLMs and datasets to simulate the target environment. It uses techniques like incremental query optimization and response aggregation to reconstruct system prompts effectively. The framework significantly outperforms previous methods, achieving high accuracy in metrics such as Exact Match and Semantic Similarity, and successfully reconstructs prompts in 68% of real-world tests on the Poe platform. However, PLeak has limitations, including its dependence on shadow environments that closely resemble the target, potential scalability issues with computationally intensive optimizations, and only partial exploration of defenses like output filtering or obfuscation. While it demonstrates critical security risks in LLM applications, the lack of broad evaluation across diverse platforms and limited engagement from reported parties like Poe raise concerns about its practical implications and ethical considerations." 
 
 - title: "Deepfake CAPTCHA: A Method for Preventing Fake Calls"
   link: "https://dl.acm.org/doi/10.1145/3579856.3595801"
