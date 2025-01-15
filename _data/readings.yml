@@ -1,3 +1,23 @@
+- title: "Instruction Backdoor Attacks Against Customized LLMs"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-zhang-rui.pdf"
+  ppt_link: ""
+  code_link: "https://github.com/zhangrui4041/Instruction_Backdoor_Attack"
+  presenter: Minseok
+  conference: USENIX
+  date: 2025.01.13
+  pub_year: 2024
+  discussion: "(Discussion) "
+
+- title: "PLeak: Prompt Leaking Attacks against Large Language Model Applications"
+  link: "https://dl.acm.org/doi/10.1145/3658644.3670370"
+  ppt_link: "https://drive.google.com/file/d/1EogyVyPwVQGH2sHCZfZhUrEF3qJYZhTI/view?usp=sharing"
+  code_link: "https://github.com/BHui97/PLeak"
+  presenter: Mijin
+  conference: CCS
+  date: 2025.01.06
+  pub_year: 2024
+  discussion: "(Discussion) " 
+
 - title: "Deepfake CAPTCHA: A Method for Preventing Fake Calls"
   link: "https://dl.acm.org/doi/10.1145/3579856.3595801"
   ppt_link: "https://docs.google.com/presentation/d/1SGQWZTxii6KBhrQDXnjLyHM0lWdNbk9ljA0C3_XJsUY/edit?usp=sharing"
