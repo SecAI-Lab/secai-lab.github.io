@@ -1,3 +1,13 @@
+- title: "PhyFu: Fuzzing Modern Physics Simulation Engines"
+  link: "https://dl.acm.org/doi/10.1109/ASE56229.2023.00054"
+  ppt_link: "https://drive.google.com/file/d/166BGYajr0WaucrKW9xkudetsI-Po3HMZ/view?usp=sharing"
+  code_link: ""
+  presenter: Intae
+  conference: ASE
+  date: 2025.01.20
+  pub_year: 2024
+  discussion: "(Discussion) "
+  
 - title: "Instruction Backdoor Attacks Against Customized LLMs"
   link: "https://www.usenix.org/system/files/usenixsecurity24-zhang-rui.pdf"
   ppt_link: "https://for8821.synology.me:5001/d/s/11jFcNRWXwuwXF0FyTHN8S1gV3ICtCsb/MWzgnV2kSWENGUneHwWAlShcb3B2lZzH-U7IgTcFD-gs"
