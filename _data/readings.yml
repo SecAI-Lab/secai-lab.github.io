@@ -6,7 +6,7 @@
   conference: ASE
   date: 2025.01.20
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents PHYFU, an innovative fuzzing framework aimed at detecting logic errors in physics simulation engines (PSES) by leveraging forward and backward simulation oracles grounded in physical laws. The authors demonstrate its effectiveness across eight configurations, uncovering various errors in both forward and backward simulation processes. However, the study has several limitations. First, the reliance on manual hyperparameter tuning for oracle thresholds and perturbation magnitudes makes the approach labor-intensive and less reproducible. Second, while PHYFU claims general applicability, its evaluation is confined to a limited set of scenarios and engines, leaving its effectiveness in diverse or unconventional physical simulations uncertain. Third, the framework's detection of "unapparent errors," which lack observable patterns, raises concerns about false positives and the robustness of its oracles. Finally, although PHYFU highlights errors caused by simulation inaccuracies, it does not explore their downstream impact on applications such as robotics or training agents, missing an opportunity to contextualize the significance of the findings. Despite its novelty, these constraints highlight challenges in scalability and broader applicability."
   
 - title: "Instruction Backdoor Attacks Against Customized LLMs"
   link: "https://www.usenix.org/system/files/usenixsecurity24-zhang-rui.pdf"
