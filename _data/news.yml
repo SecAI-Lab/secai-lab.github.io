@@ -1,18 +1,22 @@
+- date: Jan 30, 2025
+  headline: "Our paper, Evaluating the Effectiveness and Robustness of Visual Similarity-based Phishing Detection Models, has been accepted to USENIX 25!"
+  id: 0
+
 - date: Nov 11, 2024
   headline: "Our paper, Advanced Persistent Threats: Addressed and Open Research Questions, has been accepted to CISC-W 24!"
-  id: 1
+  id: 2
   
 - date: Nov 11, 2024
   headline: "Our paper, Trends in Attacks and Defenses against Retrieval-Augmented Generation (RAG) Systems, has been accepted to CISC-W 24!"
-  id: 1
+  id: 2
   
 - date: Nov 11, 2024
   headline: "Our paper, Trends in Deep-learning-based Models for Anomaly Detection in Log Records, has been accepted to CISC-W 24!"
-  id: 1
+  id: 2
 
 - date: Nov 11, 2024
   headline: "Mijin Jeon joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Oct 31, 2024
   headline: "Our paper, An Empirical Study of Black-box based Membership Inference Attacks on a Real-World Dataset, has been accepted to FPS 2024!"
@@ -20,7 +24,7 @@
 
 - date: Aug 30, 2024
   headline: "Yiyue Zhang joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Jul 1, 2024
   headline: "Minseok Kim joined our lab, welcome!"
@@ -28,7 +32,7 @@
 
 - date: Jun 20, 2024
   headline: "Our paper, RoBERTa-based Obfuscated Binary Code Similarity Detection, got a best paper award (과학기술정보통신부 최우수논문상) at CISC-S 24!"
-  id: 1
+  id: 2
 
 - date: Jun 6, 2024
   headline: "Our paper, RoBERTa-based Obfuscated Binary Code Similarity Detection, has been accepted to CISC-S 24!"
@@ -40,7 +44,7 @@
 
 - date: May 20, 2024
   headline: "BENZENE got a Distinguished Paper Award at IEEE S&P '24!!"
-  id: 0
+  id: 1
 
 - date: Feb 28, 2024
   headline: "Intae Jeon joined our lab, welcome!"
