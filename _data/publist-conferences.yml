@@ -1,4 +1,4 @@
-- title: "An Empirical Study of Black-box based Membership Inference Attacks on a Real-World Dataset (to appear)"
+- title: "An Empirical Study of Black-box based Membership Inference Attacks on a Real-World Dataset"
   image: 
   description: "The recent advancements in artificial intelligence drive the
   widespread adoption of Machine-Learning-as-a-Service platforms, which
@@ -18,7 +18,7 @@
   accuracy of membership inference on members and non-members."
   authors: Yujeong Kwon, Simon S. Woo, and Hyungjoon Koo
   link: 
-    url: to appear
+    url: https://easychair.org/publications/preprint/gP41/open
     display: International Symposium on Foundations and Practice of Security (FPS 2024)
   highlight: 0
   news2:
