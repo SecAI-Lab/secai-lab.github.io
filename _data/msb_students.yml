@@ -1,44 +1,37 @@
-- name: Yujeong Kwon (권유정)
-  photo: yujeong.jpg
-  info: Master student
-  email: shr2008 AT g.skku.edu
-  research: Reverse engineering, Privacy in AI
-  
-- name: Jiyong Uhm (엄지용)
-  photo: jiyong.jpg
-  info: Master student
-  email: jiyong423 AT g.skku.edu
-  research: System programming, Networking, and Security
-
 - name: Suyeon Lee (이수연)
   photo: suyeon.jpg
   info: Master student
-  email: susan2ee AT g.skku.edu  
+  email: susan2ee AT g.skku.edu
   research: Privacy, Network security
 
 - name: Intae Jeon (전인태)
-  photo: intae.jpg
+  photo: intae2.jpg
   info: Master student
-  email: intae515 AT g.skku.edu  
+  email: intae515 AT g.skku.edu
   research: Privacy, LLM
 
 - name: Minseok Kim (김민석)
   photo: minseok.jpg
   info: Master student
-  email: for8821 AT g.skku.edu  
+  email: for8821 AT g.skku.edu
   research: Binary Reversing, Password Guessing, Machine Unlearning
 
-- name: Yuldoshkhujaev Shakhzod 
-  photo: Shakhzod.jpg 
+- name: Yuldoshkhujaev Shakhzod
+  photo: Shakhzod.jpg
   info: Master student (Combined BS and MS program)
   email: shakzod02 AT g.skku.edu
-  research: Computer Security, Machine Learning 
+  research: Computer Security, Machine Learning
   number_educ: 0
-  education1: 
+  education1:
 
 - name: Yiyue Zhang
   photo: yiyue.jpg
   info: Master student (Combined MS and Ph.D. program)
-  email: yiyue AT g.skku.edu  
+  email: yiyue AT g.skku.edu
   research: Computer security, Privacy
 
+- name: Mijin Jeon (전미진)
+  photo: mijin.jpg
+  info: Master student
+  email: jinijxxn AT g.skku.edu
+  research: Computer security, Machine Learning

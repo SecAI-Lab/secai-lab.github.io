@@ -24,8 +24,15 @@ main_nav: true
 <br>
   
 <h4> Ph.D. Students </h4>
-<p><strong>We are looking for highly motivated Ph.D students!</strong></p>
+{% for member in site.data.phd_students %}
+<img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ member.photo }}" class="img-responsive members"/>
+<h5 style="padding: 3%">{{ member.name }}</h5>
+<em><strong>Email:</strong> {{ member.email }}</em>
+<em><br><strong>Research interests:</strong> {{ member.research }}</em>
+<ul style="overflow: hidden">  
+</ul>
 <br>
+{% endfor %}
 
 <h4> Master Students </h4>
 {% for member in site.data.msb_students %}
@@ -55,6 +62,3 @@ main_nav: true
 {% for alumni in site.data.alumni_members %}
 <em>{{ alumni.name }}</em>
 {% endfor %}
-
-
-

@@ -15,4 +15,14 @@
 #  number_educ: 0
 #  education1:
 
+- name: Yujeong Kwon (권유정)
+  photo: yujeong.jpg
+  info: Master student
+  email: shr2008 AT g.skku.edu
+  research: Reverse engineering, Privacy in AI
 
+- name: Jiyong Uhm (엄지용)
+  photo: jiyong.jpg
+  info: Master student
+  email: jiyong423 AT g.skku.edu
+  research: System programming, Networking, and Security
