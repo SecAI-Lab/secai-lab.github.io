@@ -5,9 +5,33 @@ sitemap: false
 permalink: /teaching/
 main_nav: true
 ---
+
+#### Spring 2025
+* [ESW4020] Computer Security (Graduate)
+* [SWE3025] Introduction to Computer Security (Undergraduate)
+* [DFS5005] Information Security
+
 ##### Fall 2024
 * [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
-* [SWE3028] Capstone Design Project (캡스톤설계프로젝트)
+* <details markdown="0">
+  <summary>
+   [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2024/" target="_blank"> Capstone Design Project (캡스톤설계프로젝트) </a>
+  </summary>
+  <ul>
+    <li>(Team A) Housit: Mobile Application for Household Care </li>
+    <li>(Team B) Tool to monitor Thread Pool of Spring Web Application</li>
+    <li>(Team C) MindCompass: NLP-based Psychological Diagnostic Diary</li>
+    <li>(Team D) ALL-IN-ONE Platform For Private Tutoring</li>
+    <li>(Team E) CircleSpace: University Club Archive for All Students</li>
+    <li>(Team F) HallyuGo: A Guide to Discover and Visit K-Culture Hotspots</li>
+    <li>(Team G) SKKU-DM, A Platform for Dual Major Students in SKKU</li>
+    <li>(Team H) SKKU Chatbot for Exchange Students</li>
+    <li>(Team I) Parking Lot Vacancy Notification System</li>
+    <li>(Team J) Web Platform Providing Information and Simulation Game of Baseball Metrics</li>
+    <li>(Team K) Perfect Studymate: A Learning Chatbot Powered by RAG Technology</li>
+    <li>(Team L) FLEX: AI-Powered Diet and Workout Plan Application</li>
+  </ul>
+  </details>
 
 ##### Spring 2024
 * [ESW5042] Software Security Paper Writing and Presentation (소프트웨어 보안연구 논문작성)
