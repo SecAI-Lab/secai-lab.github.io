@@ -6,17 +6,19 @@
   conference: USENIX
   date: 2025.02.10
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper highlights critical blind spots in SIEM rule based detection, showing that 38% of Sigma rules can be fully evaded with simple obfuscation techniques. To address this, the authors propose AMIDES, a machine-learning-based detection system that identifies evasions by comparing events to existing SIEM rules. Tested on 155 million enterprise security events, AMIDES detects 70% of evasions with zero false positives and operates 330 times faster than required for real-time deployment. A major strength of this study is its real-world validation using large-scale enterprise data and its open-source implementation, making it highly practical and reproducible. It also expands detection beyond process creation logs to include PowerShell, registry, and web requests, increasing its applicability. However, AMIDES relies on supervised learning, making it vulnerable to novel, unseen evasions, and its long-term efficiency in evolving attack landscapes needs further testing. Despite these challenges, this work demonstrates the inadequacy of rule-based SIEM detection alone and underscores the need for hybrid approaches integrating AI-driven analytics. By identifying a major cybersecurity weakness and providing a scalable solution, the study contributes significantly to the future of SIEM systems and adaptive threat detection."
 
 - title: "ERASan: Efficient Rust Address Sanitizer"
-  link: ""
+  link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10646812"
   ppt_link: ""
-  code_link: ""
+  code_link: "https://github.com/S2-Lab/ERASan"
   presenter: Yujeong
   conference: S&P
   date: 2025.02.05
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) ERASAN introduces a selective instrumentation approach to address sanitization in Rust, significantly reducing ASan’s runtime overhead without compromising its ability to detect memory bugs. By targeting raw pointer-related vulnerabilities, ERASAN eliminates redundant checks and achieves substantial performance gains. The evaluation demonstrates impressive efficiency improvements, making it a promising alternative for Rust develo
+However, several concerns remain. The static analysis approach may overlook certain dynamic memory issues,its optimization strategy struggles with multi-threaded environments, as memory allocation patterns in concurrent execution cannot always be statically determined. Another challenge lies in the scope of evaluation, which focuses on popular Rust crates, leaving questions about its applicability in domains with heavy foreign function interface (FFI) usage or unconventional memory management patterns. Finally, the increased compile-time overhead may hinder adoption, particularly in large-scale projects requiring frequent recompilation.
+While ERASAN makes notable strides in improving Rust’s memory safety tools, its scalability, multi-threading limitations, and compilation costs warrant further refinement to maximize its practicality across diverse real-world applications."
   
 - title: "PhyFu: Fuzzing Modern Physics Simulation Engines"
   link: "https://dl.acm.org/doi/10.1109/ASE56229.2023.00054"
