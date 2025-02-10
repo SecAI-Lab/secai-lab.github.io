@@ -1,7 +1,7 @@
 - title: "You Cannot Escape Me: Detecting Evasions of SIEM Rules in Enterprise Networks"
-  link: ""
-  ppt_link: ""
-  code_link: ""
+  link: "https://www.usenix.org/system/files/sec23winter-prepub-112-uetz.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1Cd6Zor8NJtBntnMCSdywPGmdHU6M6nAy--YXBbEleSg/edit?usp=sharing"
+  code_link: "https://github.com/fkie-cad/amides"
   presenter: Yiyue
   conference: USENIX
   date: 2025.02.10
