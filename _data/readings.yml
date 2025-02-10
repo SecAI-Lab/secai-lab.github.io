@@ -1,3 +1,23 @@
+- title: "You Cannot Escape Me: Detecting Evasions of SIEM Rules in Enterprise Networks"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Yiyue
+  conference: USENIX
+  date: 2025.02.10
+  pub_year: 2024
+  discussion: "(Discussion) "
+
+- title: "ERASan: Efficient Rust Address Sanitizer"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: S&P
+  date: 2025.02.05
+  pub_year: 2024
+  discussion: "(Discussion) "
+  
 - title: "PhyFu: Fuzzing Modern Physics Simulation Engines"
   link: "https://dl.acm.org/doi/10.1109/ASE56229.2023.00054"
   ppt_link: "https://drive.google.com/file/d/1D_wHVyIB1BAH0oyfunFnVujH4BBPIKga/view?usp=sharing"
