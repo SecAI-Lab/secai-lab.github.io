@@ -6,7 +6,7 @@
   conference: NDSS
   date: 2025.02.17
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper investigates privacy risks in Cross-App Content Sharing (Cracs), revealing how sharing activities expose user identities, social relationships, and personal data. The authors identify three key privacy issues, Sharing Behavior Tracking (SBT), where source apps infer social connections; Sharing Data Interception (SDI), where shared content is secretly collected. And Sharer Data Exposure (SDE), where a sharer’s identity is unintentionally revealed to the receiver. Using Shark, an analysis tool combining static and dynamic methods, they find that over 55% of Chinese apps and 10% of US apps exhibit privacy vulnerabilities. While the paper highlights critical concerns, it has some weaknesses. The focus on Android apps limits generalizability to iOS, and Shark’s accuracy against obfuscated code is unclear. And the discussion on legal frameworks is superficial, and there is no exploration of real-world harm from these privacy leaks. Strengthening these areas would enhance the study’s impact."
 
 - title: "You Cannot Escape Me: Detecting Evasions of SIEM Rules in Enterprise Networks"
   link: "https://www.usenix.org/system/files/sec23winter-prepub-112-uetz.pdf"
