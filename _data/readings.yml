@@ -1,3 +1,13 @@
+- title: "Leaking the Privacy of Groups and More: Understanding Privacy Risks of Cross-App Content Sharing in Mobile Ecosystem"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2024-138-paper.pdf"
+  ppt_link: "https://drive.google.com/file/d/1BuhsHNsp69TmsocqXrZS5mdSbRS43exR/view?usp=sharing"
+  code_link: ""
+  presenter: Suyeon
+  conference: NDSS
+  date: 2025.02.17
+  pub_year: 2024
+  discussion: "(Discussion) "
+
 - title: "You Cannot Escape Me: Detecting Evasions of SIEM Rules in Enterprise Networks"
   link: "https://www.usenix.org/system/files/sec23winter-prepub-112-uetz.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1Cd6Zor8NJtBntnMCSdywPGmdHU6M6nAy--YXBbEleSg/edit?usp=sharing"
