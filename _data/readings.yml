@@ -1,3 +1,23 @@
+- title: "FakeX: A Framework for Detecting Fake Reviews of Browser Extensions"
+  link: "https://dl.acm.org/doi/10.1145/3634737.3656999"
+  ppt_link: ""
+  code_link: "https://github.com/FakeX-Paper/fakex"
+  presenter: Shakhzod
+  conference: ASIA CCS
+  date: 2025.03.05
+  pub_year: 2024
+  discussion: "(Discussion) The Chromium browser provides browser extensions to boost user experience. As a result, browsers like Chrome distribute browser extensions via their Web Store. However, the review system in the Chrome Web Store is subject to various malicious manipulations. This paper presents FakeX, a framework to detect fake reviews by analyzing the review metadata. FakeX employs five distinct methods (e.g., temporal distribution analysis, relationship clustering, and ratio-based assessment) to identify patterns indicative of fake reviews. The authors evaluate over 1.7 million reviews and identify hundreds of suspected fake review campaigns. Furthermore, the authors uncover 86 malicious extensions ranging from data stealing to monetization. The authors highlight the potential connection between some identified fake review campaigns and malicious extensions. However, the absence of a ground truth makes the validity of the method difficult to evaluate. Furthermore, the authors do not compare their work with any existing previous work which also handles fake reviews. Nevertheless, the identification of actual malicious extensions on top of their correlation with identified fake review campaigns is an interesting finding."
+
+- title: "VeriBin: Adaptive Verification of Patches at the Binary Level"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2025-359-paper.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_Veribin_NDESS25.pdf"
+  code_link: "https://github.com/purseclab/VeriBin"
+  presenter: Jiyong
+  conference: NDSS
+  date: 2025.02.26
+  pub_year: 2025
+  discussion: ""
+
 - title: "Leaking the Privacy of Groups and More: Understanding Privacy Risks of Cross-App Content Sharing in Mobile Ecosystem"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2024-138-paper.pdf"
   ppt_link: "https://drive.google.com/file/d/1BuhsHNsp69TmsocqXrZS5mdSbRS43exR/view?usp=sharing"
@@ -82,8 +102,8 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 
 - title: "RustSan: Retrofitting AddressSanitizer for Efficient Sanitization of Rust"
   link: "https://www.usenix.org/system/files/usenixsecurity24-cho-kyuwon.pdf"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_RustSan_USENIX25.pdf"
+  code_link: "https://github.com/sslab-skku/RustSan"
   presenter: Jiyong
   conference: USENIX
   date: 2024.12.04
