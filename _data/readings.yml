@@ -16,7 +16,7 @@
   conference: NDSS
   date: 2025.02.26
   pub_year: 2025
-  discussion: ""
+  discussion: "This paper introduces VERIBIN, a system for verifying whether binary-level patches maintain functional correctness. Since security patches are often distributed as binaries without source code, traditional source-code-based verification tools are insufficient. VERIBIN employs symbolic execution to compare original and patched binaries, ensuring that modifications do not break functionality. The system improves efficiency through the Matching Path Pairs (MPP) approach and enhances accuracy with adaptive verification, allowing analyst input when necessary. The evaluation on 86 real-world patches demonstrates 93% accuracy with 0% false positives, proving its effectiveness. The paper's key strength lies in its practical applicability and its emphasis on the critical need for binary patch verification, especially in light of incidents like the XZ Utils backdoor. However, symbolic execution can be resource-intensive, leading to timeouts and memory limitations on complex binaries. Additionally, while VERIBIN can handle many structural differences, functionally equivalent but syntactically different changes remain a challenge for full automation. Despite these limitations, VERIBIN represents a significant step forward in binary patch verification and has great potential to become a powerful automated security analysis tool with further improvements."
 
 - title: "Leaking the Privacy of Groups and More: Understanding Privacy Risks of Cross-App Content Sharing in Mobile Ecosystem"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2024-138-paper.pdf"
