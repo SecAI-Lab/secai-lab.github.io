@@ -1,3 +1,43 @@
+- title: "LeakLess: Selective Data Protection against Memory Leakage Attacks for Serverless Platforms"
+  link: "https://www.ndss-symposium.org/ndss-paper/leakless-selective-data-protection-against-memory-leakage-attacks-for-serverless-platforms/"
+  ppt_link: "https://docs.google.com/presentation/d/158GvRwMMuF0oOp8kIeE01tKN7wp6k-yc7naYZ24Xmgs/edit?usp=sharing"
+  code_link: ""
+  presenter: Mijin
+  conference: NDSS
+  date: 2025.03.19
+  pub_year: 2024
+  discussion: "(Discussion) "
+
+- title: "Mask-based Membership Inference Attacks for Retrieval-Augmented Generation"
+  link: "https://openreview.net/forum?id=jBXq5UIov4#discussion"
+  ppt_link: ""
+  code_link: ""
+  presenter: Minseok
+  conference: WWW
+  date: 2025.03.12
+  pub_year: 2025
+  discussion: "(Discussion) "
+
+- title: "Generating Is Believing: Membership Inference Attacks against Retrieval-Augmented Generation"
+  link: "https://ieeexplore.ieee.org/abstract/document/10889013"
+  ppt_link: ""
+  code_link: ""
+  presenter: Minseok
+  conference: ICASSP
+  date: 2025.03.12
+  pub_year: 2025
+  discussion: "(Discussion) "
+
+- title: "Is My Data in Your Retrieval Database? Membership Inference Attacks Against Retrieval Augmented Generation"
+  link: "https://arxiv.org/abs/2405.20446"
+  ppt_link: ""
+  code_link: ""
+  presenter: Minseok
+  conference: arXiv
+  date: 2025.03.12
+  pub_year: 2024
+  discussion: "(Discussion) "
+  
 - title: "FakeX: A Framework for Detecting Fake Reviews of Browser Extensions"
   link: "https://dl.acm.org/doi/10.1145/3634737.3656999"
   ppt_link: "https://docs.google.com/presentation/d/1HQwz44xYrOvICC8TjD0jvtgUtZiDd22MX0gdLd8UCZU/edit?usp=sharing"
