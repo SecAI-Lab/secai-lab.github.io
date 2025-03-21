@@ -5,7 +5,7 @@
   presenter: Mijin
   conference: NDSS
   date: 2025.03.19
-  pub_year: 2024
+  pub_year: 2025
   discussion: "(Discussion) The paper introduces LeakLess, a novel approach to protect sensitive data within serverless platforms from memory disclosure and transient execution attacks. LeakLess employs in-memory encryption and a separate I/O module to manage cryptographic operations, ensuring sensitive data remains encrypted within the serverless runtime's memory. This I/O module acts as a secure intermediary, handling the decryption and encryption of sensitive data during communication between serverless functions and external entities. Implemented on the Spin serverless platform, LeakLess demonstrates robust protection with minimal performance overhead. However, the clarity of the result demonstration could be improved, as there might be a possibility of plain text partially remaining in the memory region. Additionally, the reliance on tools like gcore for memory analysis might not guarantee a comprehensive search of unmapped memory regions. While LeakLess offers a significant step towards enhancing the security of serverless applications, these aspects regarding the demonstration of results and the necessity for broader evaluation across different platforms warrant further investigation. The open-source nature of LeakLess encourages community involvement and wider adoption."
 
 - title: "Mask-based Membership Inference Attacks for Retrieval-Augmented Generation"
