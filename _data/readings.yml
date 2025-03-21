@@ -6,37 +6,38 @@
   conference: NDSS
   date: 2025.03.19
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper introduces LeakLess, a novel approach to protect sensitive data within serverless platforms from memory disclosure and transient execution attacks. LeakLess employs in-memory encryption and a separate I/O module to manage cryptographic operations, ensuring sensitive data remains encrypted within the serverless runtime's memory. This I/O module acts as a secure intermediary, handling the decryption and encryption of sensitive data during communication between serverless functions and external entities. Implemented on the Spin serverless platform, LeakLess demonstrates robust protection with minimal performance overhead. However, the clarity of the result demonstration could be improved, as there might be a possibility of plain text partially remaining in the memory region. Additionally, the reliance on tools like gcore for memory analysis might not guarantee a comprehensive search of unmapped memory regions. While LeakLess offers a significant step towards enhancing the security of serverless applications, these aspects regarding the demonstration of results and the necessity for broader evaluation across different platforms warrant further investigation. The open-source nature of LeakLess encourages community involvement and wider adoption."
 
 - title: "Mask-based Membership Inference Attacks for Retrieval-Augmented Generation"
   link: "https://openreview.net/forum?id=jBXq5UIov4#discussion"
-  ppt_link: ""
+  ppt_link: "https://for8821.synology.me:5001/d/s/12Uf5R2m9cY2PMVY5lfpCjVNonjai1uE/cWXcuKcc8lo74cCPd2YnFo1oJpyD28Ww-y7Bgj8L1Iww"
   code_link: ""
   presenter: Minseok
   conference: WWW
   date: 2025.03.12
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper introduces Mask-Based Membership Inference Attacks (MBA), a novel approach to determine whether a target document is stored in a Retrieval-Augmented Generation (RAG) system's knowledge base. The method involves masking challenging terms in the target document, using the masked version as a query, and then assessing whether the RAG system can correctly predict the masked terms. If the masked terms are accurately predicted, it suggests the original document is likely stored in the database. The approach outperforms prior MIA methods across multiple benchmarks, achieving significantly higher ROC AUC scores. Its strengths include robustness in black-box settings, strong empirical results, and resistance to noise from internal LLM knowledge. However, it relies on high retrieval quality, handcrafted masking strategies, and tuning of multiple hyperparameters (e.g., number of masks, prediction threshold), which may limit scalability or generalizability in diverse RAG settings."
 
 - title: "Generating Is Believing: Membership Inference Attacks against Retrieval-Augmented Generation"
   link: "https://ieeexplore.ieee.org/abstract/document/10889013"
-  ppt_link: ""
+  ppt_link: "https://for8821.synology.me:5001/d/s/12Uf5R2m9cY2PMVY5lfpCjVNonjai1uE/cWXcuKcc8lo74cCPd2YnFo1oJpyD28Ww-y7Bgj8L1Iww"
   code_link: ""
   presenter: Minseok
   conference: ICASSP
   date: 2025.03.12
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper introduces S2MIA, a novel membership inference attack that targets the external databases of Retrieval-Augmented Generation (RAG) systems by exploiting semantic similarity and perplexity between a target sample and the generated output. Unlike prior attacks relying on direct prompt responses or overfitting, S2MIA infers membership by measuring how closely the system's response matches the input, even under sampling variability. Experiments across five LLMs and two datasets show that S2MIA consistently outperforms five prior MIA methods, even when standard defenses like paraphrasing, prompt modification, and re-ranking are applied. The approach is notable for its simplicity, strong performance, and model-agnostic design. However, its effectiveness weakens under paraphrasing and prompt defenses, and it relies on BLEU scores and access to model outputs and perplexity, which may not be available in all RAG systems."
 
 - title: "Is My Data in Your Retrieval Database? Membership Inference Attacks Against Retrieval Augmented Generation"
   link: "https://arxiv.org/abs/2405.20446"
-  ppt_link: ""
+  ppt_link: "https://for8821.synology.me:5001/d/s/12Uf5R2m9cY2PMVY5lfpCjVNonjai1uE/cWXcuKcc8lo74cCPd2YnFo1oJpyD28Ww-y7Bgj8L1Iww"
   code_link: ""
   presenter: Minseok
   conference: arXiv
   date: 2025.03.12
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents a novel and practical membership inference attack (MIA) against Retrieval-Augmented Generation (RAG) systems, allowing adversaries to determine if specific documents exist in the retrieval database using only model outputs. The proposed black-box and gray-box attacks are tested on medical and email datasets across multiple generative models (Flan, LLaMA, Mistral), showing high effectiveness, especially in the gray-box setting. An initial defense, involving modified RAG templates with instruction-based filtering, significantly reduces attack success for LLaMA and Mistral but is largely ineffective against Flan. While the attack is simple and requires no internal access, its reliance on prompt crafting and limited defense evaluation suggest a need for more robust, adaptive privacy-preserving techniques in future work."
+
   
 - title: "FakeX: A Framework for Detecting Fake Reviews of Browser Extensions"
   link: "https://dl.acm.org/doi/10.1145/3634737.3656999"
