@@ -1,3 +1,13 @@
+- title: "DeGPT: Optimizing Decompiler Output with LLM"
+  link: "https://www.ndss-symposium.org/ndss-paper/degpt-optimizing-decompiler-output-with-llm/"
+  ppt_link: "https://drive.google.com/file/d/1tXo9OQEA0jQXAhOHZAEFrqWY7OSSRbWF/view?usp=sharing"
+  code_link: "https://github.com/PeiweiHu/DeGPT"
+  presenter: Hyoungjun
+  conference: NDSS
+  date: 2025.03.26
+  pub_year: 2025
+  discussion: "(Discussion) "
+
 - title: "LeakLess: Selective Data Protection against Memory Leakage Attacks for Serverless Platforms"
   link: "https://www.ndss-symposium.org/ndss-paper/leakless-selective-data-protection-against-memory-leakage-attacks-for-serverless-platforms/"
   ppt_link: "https://docs.google.com/presentation/d/158GvRwMMuF0oOp8kIeE01tKN7wp6k-yc7naYZ24Xmgs/edit?usp=sharing"
