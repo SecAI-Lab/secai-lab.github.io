@@ -48,7 +48,6 @@
   pub_year: 2024
   discussion: "(Discussion) This paper presents a novel and practical membership inference attack (MIA) against Retrieval-Augmented Generation (RAG) systems, allowing adversaries to determine if specific documents exist in the retrieval database using only model outputs. The proposed black-box and gray-box attacks are tested on medical and email datasets across multiple generative models (Flan, LLaMA, Mistral), showing high effectiveness, especially in the gray-box setting. An initial defense, involving modified RAG templates with instruction-based filtering, significantly reduces attack success for LLaMA and Mistral but is largely ineffective against Flan. While the attack is simple and requires no internal access, its reliance on prompt crafting and limited defense evaluation suggest a need for more robust, adaptive privacy-preserving techniques in future work."
 
-  
 - title: "FakeX: A Framework for Detecting Fake Reviews of Browser Extensions"
   link: "https://dl.acm.org/doi/10.1145/3634737.3656999"
   ppt_link: "https://docs.google.com/presentation/d/1HQwz44xYrOvICC8TjD0jvtgUtZiDd22MX0gdLd8UCZU/edit?usp=sharing"
