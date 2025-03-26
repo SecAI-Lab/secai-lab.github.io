@@ -6,7 +6,7 @@
   conference: NDSS
   date: 2025.03.26
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) DeGPT presents an innovative approach to optimizing decompiler output, demonstrating significant improvements in code readability and supporting reverse engineering analysis through a unique three-role mechanism powered by Large Language Models (LLM). However, since LLM responses are not always accurate, the implementation of the MSSC technique is crucial for preventing changes in function semantics and ensuring the correctness of optimizations. Experimental results show that DeGPT performs exceptionally well across various optimization tasks, effectively enhancing variable renaming and comment addition, thus aiding in the understanding of binary code. Nonetheless, the metrics used in the experiments may not fully capture the subjective elements of code optimization, and there may be limitations in fully explaining its real-world impact on reverse engineering analysis."
 
 - title: "LeakLess: Selective Data Protection against Memory Leakage Attacks for Serverless Platforms"
   link: "https://www.ndss-symposium.org/ndss-paper/leakless-selective-data-protection-against-memory-leakage-attacks-for-serverless-platforms/"
