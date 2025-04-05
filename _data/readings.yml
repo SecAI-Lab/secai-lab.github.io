@@ -6,7 +6,7 @@
   conference: NDSS
   date: 2025.04.02
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper aims to infer function names from stripped binaries. To better identify function names, the authors applied a technique called Domain Adaptation for fine-tuning. Their proposed model, SymGen, demonstrated good performance in various experiments, particularly showing effectiveness with unseen data. However, the paper failed to indicate that the experimental datasets used cannot be considered truly unseen, and it did not acknowledge that what is referred to as \"data leakage\" was actually deliberately designed."
 
 - title: "DeGPT: Optimizing Decompiler Output with LLM"
   link: "https://www.ndss-symposium.org/ndss-paper/degpt-optimizing-decompiler-output-with-llm/"
