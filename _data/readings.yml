@@ -1,3 +1,14 @@
+- title: "Alternate Preference Optimization for Unlearning Factual Knowledge in Large Language Models"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2025-797-paper.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1B19yBC_baZF5QqSh2ItHffZCd4KDcfZI0uO4z5J7XKk/edit?usp=sharing"
+  code_link: "https://github.com/molereddy/Alternate-Preference-Optimization"
+  presenter: Yujoeng
+  conference: COLING
+  date: 2025.04.09
+  pub_year: 2025
+  discussion: "(Discussion)"
+
+
 - title: "Beyond Classification: Inferring Function Names in Stripped Binaries via Domain Adapted LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-797-paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/14UW5abifAx86j3EE4F4FHvOp0bjwtgplgKaQ1a_CYks/edit?usp=sharing"
