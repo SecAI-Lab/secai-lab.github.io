@@ -6,7 +6,7 @@
   conference: COLING
   date: 2025.04.09
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion)SYMGEN proposes a generative approach to function name inference in stripped binaries using domain-adapted Large Language Models, improving upon traditional classification-based methods. By incorporating decompiled code and LLM-generated summaries, SYMGEN enhances semantic understanding and generalizability across architectures. The framework achieves significant performance gains, especially on unseen and obfuscated binaries. While the reliance on generated summaries may introduce noise, the model's robustness and parameter-efficient training make it a practical tool for real-world reverse engineering."
 
 
 - title: "Beyond Classification: Inferring Function Names in Stripped Binaries via Domain Adapted LLMs"
