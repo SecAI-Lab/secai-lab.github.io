@@ -1,3 +1,13 @@
+- title: "TokenFormer: Rethinking Transformer Scaling with Tokenized Model Parameters"
+  link: "https://openreview.net/pdf/430572f27d6b814d52dfb4df61bbb5ccad24d5d0.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_TokenFormer_ICLR25_0416.pdf"
+  code_link: "https://github.com/Haiyang-W/TokenFormer"
+  presenter: Jiyong
+  conference: ICLR
+  date: 2025.04.16
+  pub_year: 2025
+  discussion: "(Discussion) :D"
+
 - title: "Alternate Preference Optimization for Unlearning Factual Knowledge in Large Language Models"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-797-paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1B19yBC_baZF5QqSh2ItHffZCd4KDcfZI0uO4z5J7XKk/edit?usp=sharing"
