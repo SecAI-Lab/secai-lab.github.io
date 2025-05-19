@@ -6,7 +6,7 @@
   conference: EMNLP
   date: 2025.05.14
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Identifying vulnerabilities early is crucial for preventing security incidents. Moreover, the common weakness enumerations (CWEs) provide a useful taxonomy for organizing various vulnerabilities in code. Building on CWEs, this paper propose a hierarchical contrastive learning framework to classify code vulnerability types by clustering related weaknesses in a shared embedding space. While the approach shows promising results and outperforms existing baselines on their selected dataset, the evaluation raises few concerns. The model is only tested on a curated vulnerability dataset (ie., BigVul and PrimeVule), which, despite including non-vulnerable functions, may not reflect the complexity of large scale projects like the Linux kernel. Moreover, the model performs worse on PrimeVul -- a dataset with higher label accuracy -- suggesting limitations in a more realitic scenario. Although, the framwork demonstrates higher performance against state-of-the-art models, its application remains uncertain without further investigation."
   
 - title: "TokenFormer: Rethinking Transformer Scaling with Tokenized Model Parameters"
   link: "https://openreview.net/pdf/430572f27d6b814d52dfb4df61bbb5ccad24d5d0.pdf"
