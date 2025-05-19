@@ -1,3 +1,13 @@
+- title: "Applying Contrastive Learning to Code Vulnerability Type Classification"
+  link: "https://aclanthology.org/2024.emnlp-main.666/"
+  ppt_link: "https://for8821.synology.me:5001/d/s/13LfsfuN0ZEsWuoQTCqZeM0JCPgxlwR5/9rH39goZMtV12rLBlKCf2CpOagzE6B71-8LogaH4VSgw"
+  code_link: ""
+  presenter: Minseok
+  conference: EMNLP
+  date: 2025.05.14
+  pub_year: 2024
+  discussion: "(Discussion) "
+  
 - title: "TokenFormer: Rethinking Transformer Scaling with Tokenized Model Parameters"
   link: "https://openreview.net/pdf/430572f27d6b814d52dfb4df61bbb5ccad24d5d0.pdf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_TokenFormer_ICLR25_0416.pdf"
@@ -6,7 +16,7 @@
   conference: ICLR
   date: 2025.04.30
   pub_year: 2025
-  discussion: "(Discussion) ToKenFormer introduces a novel approach by integrating a p-attention layer into a Transformer-based architecture. Unlike the standard self-attention mechanism, the p-attention layer stores its weights as external parameters. This design allows for more efficient fine-tuning on new datasets with reduced computational overhead. A key distinction of this method is that both the original attention weights \"old parameters\" and the newly introduced weights \"new parameters\" remain trainable during fine-tuning. This contrasts with many existing fine-tuning strategies, which typically freeze the original parameters to prevent catastrophic forgetting. Interestingly, the authors do not explicitly address catastrophic forgetting in the paper, despite deviating from the conventional practice of parameter freezing."
+  discussion: "(Discussion) TokenFormer introduces a novel approach by integrating a p-attention layer into a Transformer-based architecture. Unlike the standard self-attention mechanism, the p-attention layer stores its weights as external parameters. This design allows for more efficient fine-tuning on new datasets with reduced computational overhead. A key distinction of this method is that both the original attention weights \"old parameters\" and the newly introduced weights \"new parameters\" remain trainable during fine-tuning. This contrasts with many existing fine-tuning strategies, which typically freeze the original parameters to prevent catastrophic forgetting. Interestingly, the authors do not explicitly address catastrophic forgetting in the paper, despite deviating from the conventional practice of parameter freezing."
   
 - title: "Alternate Preference Optimization for Unlearning Factual Knowledge in Large Language Models"
   link: "https://aclanthology.org/2025.coling-main.252.pdf"
