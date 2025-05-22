@@ -1,3 +1,13 @@
+- title: "The Conspiracy Money Machine: Uncovering Telegram's Conspiracy Channels and their Profit Model"
+  link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec24winter-prepub-541-imperati.pdf"
+  ppt_link: "https://drive.google.com/file/d/1EOBkqmF8-iRL9nfOFzn8f1YtCP5g6F6x/view?usp=sharing"
+  code_link: ""
+  presenter: Suyeon
+  conference: USENIX
+  date: 2025.05.21
+  pub_year: 2025
+  discussion: "(Discussion) The paper presents a large scale analysis of Telegram’s conspiracy theory ecosystem by combining a novel Conspiracy Resource Dataset drawn from prior academic work on YouTube, Reddit, and other fringe platforms with the TGDataset of 120,000 public Telegram channels. Using URL matching and community detection on a forward graph of 498 million messages, the authors identify four distinct \“conspiracy communities\” totaling nearly 18,000 channels, then reveal how these channels monetize their audiences through donations, crowdfunding, and affiliate links raising almost $71 million from over 900,000 backers. They also release two datasets and prototype mitigation tools (a Telegram bot and browser plug-in) to warn users about suspicious channels and links. However, the study’s reliance on link-based detection overlooks monetization embedded in media or private features (e.g., sponsored images, webinars, Telegram’s own Sponsored Messages), its Conspiracy Resource Dataset may be biased toward English language sources and known platforms (potentially under-detecting non-English communities), and the 9 to 15 month gap between message collection and monetization crawling could understate ongoing campaigns. Furthermore, using GPT-4o to classify promotional versus discrediting messages, while efficient, introduces misclassification risk, and the analysis stops short of firmly linking channel operators to the funds they promote issues that call for more comprehensive signal integration, finer grained validation, and evaluation of real-world efficacy."
+
 - title: "Applying Contrastive Learning to Code Vulnerability Type Classification"
   link: "https://aclanthology.org/2024.emnlp-main.666/"
   ppt_link: "https://for8821.synology.me:5001/d/s/13LfsfuN0ZEsWuoQTCqZeM0JCPgxlwR5/9rH39goZMtV12rLBlKCf2CpOagzE6B71-8LogaH4VSgw"
