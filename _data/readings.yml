@@ -1,3 +1,13 @@
+- title: "AudioMarkNet: Audio Watermarking for Deepfake Speech Detection"
+  link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-386-zong.pdf"
+  ppt_link: "https://drive.google.com/file/d/1dTp9fcacErUT4L8whE1GUBTlpMymL0-v/view?usp=sharing"
+  code_link: ""
+  presenter: Intae
+  conference: USENIX
+  date: 2025.06.04
+  pub_year: 2025
+  discussion:"(Discussion) (Shakhzod)"
+  
 - title: "LLMmap: Fingerprinting for Large Language Models"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-469-pasquini.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1MEzPz2cS7Y_pmGCFTjQIwMw7uf3BIw6U3KxAU7sigEU/edit?usp=sharing"
