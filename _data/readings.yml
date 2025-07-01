@@ -1,3 +1,15 @@
+- title: "VulSim: Leveraging Similarity of Multi-Dimensional Neighbor Embeddings for Vulnerability Detection"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-shimmi.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1sy7zUyKygvrbG8RPILe4USYTvPu7y2TvpYGOT8vx5Yo/edit?usp=sharing"
+  code_link: ""
+  presenter: Mijin
+  conference: USENIX
+  date: 2025.06.30
+  pub_year: 2024
+  discussion: |
+    (Discussion) This paper proposes 'VulSim', a novel framework to solve the persistent problem of data scarcity in vulnerability detection. Instead of simply increasing data volume, VulSim enhances informational depth by integrating a code's semantic, contextual, and syntactic properties and analyzing the similarity of neighboring data. This unique approach surpassed existing state-of-the-art models with 75.41% accuracy on the Microsoft CodexGLUE benchmark and demonstrated excellent generalizability and practical potential by achieving a high recall of 85% on a completely new dataset. Despite these achievements, several clear limitations exist. First, as the model was validated only on C code, its effectiveness on the unique vulnerability patterns of other programming languages remains unknown. Second, its function-level analysis carries a methodological constraint, as it may miss complex vulnerabilities that span multiple functions or be diluted by irrelevant code. Finally, from a practical standpoint, the trade-off of sacrificing precision (53% on unseen data) for high recall can become a major obstacle to adoption, as it would incur significant costs in triaging false positives in a real-world environment. In conclusion, while VulSim presents an effective alternative beyond data-centric approaches, further research is needed to fully realize its potential. Future work must go beyond expansion to other languages  and focus on resolving granularity issues and optimizing the precision-recall balance to enhance its reliability and efficiency in real-world development settings. (Intae).
+  
+
 - title: "AudioMarkNet: Audio Watermarking for Deepfake Speech Detection"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-386-zong.pdf"
   ppt_link: "https://drive.google.com/file/d/1dTp9fcacErUT4L8whE1GUBTlpMymL0-v/view?usp=sharing"
