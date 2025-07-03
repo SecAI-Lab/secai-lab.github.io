@@ -1,3 +1,6 @@
+- date: Jul 3, 2025
+  headline: "Our paper, A Decade-long Landscape of Advanced Persistent Threats: Longitudinal Analysis and Global Trends, has been accepted to CCS 25!"
+  id: 0
 
 - date: Apr 11, 2025
   headline: "Our paper, BOOTKITTY: A Stealthy Bootkit-Rootkit Against Modern Operating Systems, has been accepted to WOOT 25!"
@@ -10,11 +13,11 @@
 - date: Nov 11, 2024
   headline: "Our paper, Advanced Persistent Threats: Addressed and Open Research Questions, has been accepted to CISC-W 24!"
   id: 2
-  
+
 - date: Nov 11, 2024
   headline: "Our paper, Trends in Attacks and Defenses against Retrieval-Augmented Generation (RAG) Systems, has been accepted to CISC-W 24!"
   id: 2
-  
+
 - date: Nov 11, 2024
   headline: "Our paper, Trends in Deep-learning-based Models for Anomaly Detection in Log Records, has been accepted to CISC-W 24!"
   id: 2
