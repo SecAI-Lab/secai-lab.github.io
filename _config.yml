@@ -20,6 +20,10 @@ logo: "/assets/image.png"
 
 # Build settings
 markdown: kramdown
+karmdown:
+  input: GFM
+  hard_wrap: false
+  html_to_native: true
 inter_post_navigation: false
 highlightjs_theme: "monokai-sublime"
 
