@@ -1,7 +1,7 @@
 - title: "XDAC: XAI-Driven Detection and Attribution of LLM-Generated News Comments in Korean"
   link: "https://syssec.kaist.ac.kr/pub/2025/XDAC.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1jBrQ7Q0SjP-dTVdc1yPC73uHWm7Gt4gBj62crjJOyN4/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/airobotlab/XDAC"
   presenter: Yujeong
   conference: ACL
   date: 2025.07.09
@@ -22,7 +22,7 @@
 - title: "VulSim: Leveraging Similarity of Multi-Dimensional Neighbor Embeddings for Vulnerability Detection"
   link: "https://www.usenix.org/system/files/usenixsecurity24-shimmi.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1sy7zUyKygvrbG8RPILe4USYTvPu7y2TvpYGOT8vx5Yo/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/SamihaShimmi/VulSim"
   presenter: Mijin
   conference: USENIX
   date: 2025.06.30
@@ -114,7 +114,7 @@
 - title: "LeakLess: Selective Data Protection against Memory Leakage Attacks for Serverless Platforms"
   link: "https://www.ndss-symposium.org/ndss-paper/leakless-selective-data-protection-against-memory-leakage-attacks-for-serverless-platforms/"
   ppt_link: "https://docs.google.com/presentation/d/158GvRwMMuF0oOp8kIeE01tKN7wp6k-yc7naYZ24Xmgs/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/mrostamipoor/LeakLess"
   presenter: Mijin
   conference: NDSS
   date: 2025.03.19
@@ -193,7 +193,7 @@
 
 - title: "ERASan: Efficient Rust Address Sanitizer"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10646812"
-  ppt_link: ""
+  ppt_link: "https://docs.google.com/presentation/d/1w2Nffo_k85i-nDuuA-YGdkAOAYXz8RdRDK5ERbi-1fY/edit?usp=sharing"
   code_link: "https://github.com/S2-Lab/ERASan"
   presenter: Yujeong
   conference: S&P
@@ -206,7 +206,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 - title: "PhyFu: Fuzzing Modern Physics Simulation Engines"
   link: "https://dl.acm.org/doi/10.1109/ASE56229.2023.00054"
   ppt_link: "https://drive.google.com/file/d/1D_wHVyIB1BAH0oyfunFnVujH4BBPIKga/view?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/PhyFuzz/phyfu"
   presenter: Intae
   conference: ASE
   date: 2025.01.20
@@ -286,7 +286,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 - title: "Did the Neurons Read your Book? Document-level Membership Inference for Large Language Models"
   link: "https://www.usenix.org/biblio-14765"
   ppt_link: "https://docs.google.com/presentation/d/1wLd_myO1ejaWSKmLb6Qk2P_o1bml6i9_nVpQ7K7zqII/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/computationalprivacy/document-level-membership-inference"
   presenter: Yujeong
   conference: USENIX
   date: 2024.11.12
@@ -296,7 +296,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 - title: "Secrets Revealed in Container Images: An Internet-wide Study on Occurrence and Impact"
   link: "https://dl.acm.org/doi/pdf/10.1145/3579856.3590329"
   ppt_link: "https://docs.google.com/presentation/d/1KMYaIsbHsbOneRYRM5WS-7HN5_Z3dyhhsrBUdr6J9mg/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/COMSYS/docker-secret-analysis"
   presenter: Shakhzod
   conference: ASIA CCS
   date: 2024.11.06
@@ -326,7 +326,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 - title: "Exploring ChatGPT’s Capabilities on Vulnerability Management"
   link: "https://www.usenix.org/system/files/usenixsecurity24-liu-peiyu.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1pixa1PjwRUt_aPwfSS5RQcRUTMQtIl72L4aouV7nsb8/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/Jamrot/ChatGPT-Vulnerability-Management"
   presenter: Yiyue
   conference: USENIX
   date: 2024.10.02
@@ -346,7 +346,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 - title: "Can I Hear Your Face? Pervasive Attack on Voice Authentication Systems with a Single Face Image"
   link: "https://www.usenix.org/system/files/usenixsecurity24-jiang-nan.pdf"
   ppt_link: "https://for8821.synology.me:5001/d/s/104DzKxOnLNGeaWBOfgyYqS4Gi4SZcJa/8jNBK92x6DwadsBPx6MRxFk2e5ICD9Bb-cbNguYYzqQs"
-  code_link: ""
+  code_link: "https://github.com/SeCATrity/Foice"
   presenter: Minseok
   conference: USENIX
   date: 2024.09.11
@@ -406,7 +406,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 - title: "On Large Language Models’ Resilience to Coercive Interrogation"
   link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a252/1WPcZ9B0jCg"
   ppt_link: "https://bit.ly/4fJN0cU"
-  code_link: ""
+  code_link: "https://github.com/ZhangZhuoSJTU/LINT"
   presenter: Minseok
   conference: S&P
   date: 2024.08.14
@@ -515,10 +515,10 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
   However, further exploration is needed to assess the robustness of MIB across various types of datasets and models not covered in the experiments of the paper. 
   Additionally, it is regrettable that the examples from the various datasets experimented in Figure 5 were not also included."
   
-- title: "llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations"
+- title: "Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations"
   link: "https://ai.meta.com/research/publications/llama-guard-llm-based-input-output-safeguard-for-human-ai-conversations/"
   ppt_link: "https://drive.google.com/file/d/1y7YnZa1PRxe4Au0qOPsw92dvqk6vMn6G/view?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/meta-llama/PurpleLlama/tree/main/Llama-Guard"
   presenter: Intae
   conference: Meta
   date: 2024.05.27
@@ -676,7 +676,7 @@ Anomaly detection is a common application for autoencoders. It is utilized to an
 - title: "Learning to Unlearn: Instance-wise Unlearning for Pre-trained Classifiers"
   link: "https://arxiv.org/pdf/2301.11578.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1Td2WBmxQGBCHTaJPtb3L4fSdyHV_40ibzjugTEadyRg/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/csm9493/L2UL"
   presenter: Yujeong
   conference: AAAI
   date: 2024.02.28
@@ -817,7 +817,7 @@ for binary disassembly."
 - title: Black-box Attacks Against Neural Binary Function Detection
   link: "https://arxiv.org/pdf/2208.11667.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1-hVG6pd7kFOkQaHFIRfCWYISzBuVYyd1QcRixXiEf44/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/RobertoFalconi/BlackBoxAttackDNN"
   presenter: Nozima
   conference: RAID
   date: 2023.11.23
@@ -849,7 +849,7 @@ data and recommendations for ho"
 - title: "SelectiveTaint: Efficient Data Flow Tracking With Static Binary Rewriting"
   link: "https://www.usenix.org/system/files/sec21-chen-sanchuan.pdf"
   ppt_link: "https://drive.google.com/file/d/1MKIYdXi0rUznXA7gyRL9GEHowHMNj-Sv/view?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/OSUSecLab/SelectiveTaint"
   presenter: Jiyong
   conference: USENIX
   date: 2023.10.05
