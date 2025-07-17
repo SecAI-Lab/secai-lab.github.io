@@ -1,5 +1,15 @@
-- title: "Building A Secure Agentic AI Application Leveraging Google’s A2A Protocol", "Model Context Protocol (MCP): Landscape, Security Threats and Future Research Directions"
-  link: "https://arxiv.org/abs/2504.16902","https://arxiv.org/abs/2503.23278"
+- title: "Model Context Protocol (MCP): Landscape, Security Threats and Future Research Directions"
+  link: "https://arxiv.org/abs/2503.23278"
+  ppt_link: "https://docs.google.com/presentation/d/19iNO2zslPc7D0LCmvzDnZT-oOxThghC3IlvEZERzsMs/edit?usp=sharing"
+  code_link: ""
+  presenter: Yiyue
+  conference: arXiv
+  date: 2025.07.15
+  pub_year: 2025
+  discussion: "(Discussion)"
+
+- title: "Building A Secure Agentic AI Application Leveraging Google’s A2A Protocol"
+  link: "https://arxiv.org/abs/2504.16902"
   ppt_link: "https://docs.google.com/presentation/d/19iNO2zslPc7D0LCmvzDnZT-oOxThghC3IlvEZERzsMs/edit?usp=sharing"
   code_link: ""
   presenter: Yiyue
