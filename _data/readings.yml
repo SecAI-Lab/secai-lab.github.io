@@ -20,7 +20,7 @@
 
 - title: "TYPEPULSE: Detecting Type Confusion Bugs in Rust Programs"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-952-chen-hung-mao.pdf"
-  ppt_link: ""
+  ppt_link: "https://github.com/mohammadi-ali/MetamorphASM"
   code_link: ""
   presenter: Jiyong
   conference: USENIX
