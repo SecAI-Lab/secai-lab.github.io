@@ -26,7 +26,7 @@
   conference: USENIX
   date: 2025.07.15
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper presents TYPEPULSE, a static analysis tool for detecting type confusion bugs in Rust programs, addressing a critical gap in memory safety analysis for Rust's unsafe code. Unlike C/C++, Rust enforces safety through strict compile-time checks, but unsafe pointer conversions can still lead to severe bugs. TYPEPULSE targets three key bug types—misalignment, inconsistent layout, and mismatched scope—by analyzing type conversions, trait-bound generics, and pointer aliasing. It builds a property graph to capture interprocedural behaviors and uses this to identify invalid type accesses. Evaluated on 3,000 top Rust packages, TYPEPULSE uncovered 71 previously unknown bugs, surpassing the number reported to RustSec over the last five years. However, the tool's precision (75.5%) is limited by its reliance on static patterns and its difficulty in interpreting complex developer-enforced checks. Despite these limitations, TYPEPULSE represents a major step forward in automated detection of unsafe Rust bugs, offering both greater coverage and accuracy than existing tools like Clippy and Rudra. (Hyoungjun)"
   
 - title: "Model Context Protocol (MCP): Landscape, Security Threats and Future Research Directions"
   link: "https://arxiv.org/abs/2503.23278"
@@ -36,7 +36,7 @@
   conference: arXiv
   date: 2025.07.15
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper introduces the Model Context Protocol (MCP), a standardized framework that streamlines interaction between AI models and external tools, addressing long-standing inefficiencies in tool integration, manual API wiring, and fragmented plugin systems. Inspired by the Language Server Protocol, MCP allows AI agents to dynamically discover and invoke external tools through a unified interface, enhancing autonomy and flexibility. The paper presents a comprehensive overview of the MCP ecosystem, detailing its architecture—comprising MCP hosts, clients, and servers—as well as the protocol's workflow and server lifecycle phases: creation, operation, and update. Notably, the authors conduct the first systematic analysis of MCP's security landscape, identifying risks such as name collision, installer spoofing, sandbox escapes, and privilege persistence. With real-world adoption by industry leaders like OpenAI, Cloudflare, and Anthropic, MCP is rapidly becoming foundational for AI-native applications. However, its ecosystem remains immature and decentralized, lacking formal security standards, version control, and authentication protocols. The paper emphasizes the urgent need for centralized package management, secure installation frameworks, and improved debugging tools to support MCP's safe and scalable growth. While MCP marks a significant step toward enabling agentic AI workflows, its current vulnerabilities underscore the importance of proactive governance, rigorous security audits, and continued research into robust deployment mechanisms. (Yujeong)"
 
 - title: "Building A Secure Agentic AI Application Leveraging Google’s A2A Protocol"
   link: "https://arxiv.org/abs/2504.16902"
@@ -46,7 +46,7 @@
   conference: arXiv
   date: 2025.07.15
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents a security-focused analysis of Google's Agent-to-Agent (A2A) protocol, a foundational framework for enabling secure communication in agentic AI systems. As autonomous agents become more complex and interconnected, traditional security models fall short. The authors apply the MAESTRO threat modeling framework—tailored for multi-agent AI—to identify key vulnerabilities in A2A systems, including Agent Card spoofing, task replay attacks, and prompt injection via poisoned metadata. Through two detailed case studies, the paper illustrates real-world risks and proposes robust mitigation strategies such as strict schema validation, mutual TLS, digital signatures, and secure Agent Card discovery. While offering actionable guidance and best practices for secure implementation, the work's effectiveness relies heavily on disciplined protocol adherence and may face scalability challenges in untrusted ecosystems. Nonetheless, it marks a critical step in building secure, trustworthy infrastructure for the next generation of interoperable agentic applications. (Yujeong)"
 
 - title: "XDAC: XAI-Driven Detection and Attribution of LLM-Generated News Comments in Korean"
   link: "https://syssec.kaist.ac.kr/pub/2025/XDAC.pdf"
