@@ -16,7 +16,7 @@
   conference: TMLR
   date: 2025.07.23
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion)This paper introduces JiT, an information-theoretic framework for zero-shot machine unlearning, addressing the challenge of removing specific training data from models without access to retained data. The authors propose a novel method that estimates a sample’s influence through local information gain, measured by the curvature of the model’s output space. By minimizing gradients in the neighborhood of forget samples, JiT effectively erases their impact while preserving model performance. The method outperforms prior zero-shot techniques across full-class, sub-class, and random unlearning benchmarks, achieving comparable performance to retraining with significantly lower computational cost. For instance, JiT maintains high accuracy on retained data and achieves similar entropy distributions to retrained models on CIFAR-10. However, the approach has notable limitations, including sensitivity to hyperparameter tuning, incompatibility with batch normalization, and lack of formal unlearning certification. JiT marks a significant advance in practical zero-shot unlearning, offering a scalable and effective method under strict constraints, yet highlights ongoing challenges in reliable data removal from black-box models.(Yiyue)"
 
 - title: "TYPEPULSE: Detecting Type Confusion Bugs in Rust Programs"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-952-chen-hung-mao.pdf"
