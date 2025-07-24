@@ -11,7 +11,7 @@
 - title: "An Information Theoretic Approach to Machine Unlearning"
   link: "https://openreview.net/pdf?id=t1utIThKHD"
   ppt_link: "https://for8821.synology.me:5001/d/s/14GvvzNyUMHP1CCYW7OlbmtaKnBpmBKA/pa7XZwUUN98JOh17DGIry0G1fGSlXFOT-BbPgcA75cww"
-  code_link: ""
+  code_link: "https://github.com/jwf40/Information-Theoretic-Unlearning"
   presenter: Minseok
   conference: TMLR
   date: 2025.07.23
