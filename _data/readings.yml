@@ -6,7 +6,7 @@
   conference: USENIX 
   date: 2025.07.23
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion)This paper proposes URL Inspection Tasks, an active defense mechanism to reduce phishing success in emails by requiring users to engage with a URL before visiting it. Inspired by CAPTCHAs, the system presents one of three tasks—clicking the correct domain, highlighting it, or re-typing it—designed to focus user attention on the domain and verify alignment with their intent. In a large-scale online study (2,673 participants), these tasks cut phishing success from 74.5% (control) to 35%, with particularly strong performance against typosquatting (down to 17.1%). However, the approach has limitations, including minor increases in false positives, added user burden (7–10 seconds), and reduced effectiveness for users unfamiliar with URL structures or non-Latin scripts. Despite these trade-offs, the work demonstrates that lightweight, interactive tasks can meaningfully reduce phishing risks by enhancing user awareness.(Jiyong)"
 
 - title: "An Information Theoretic Approach to Machine Unlearning"
   link: "https://openreview.net/pdf?id=t1utIThKHD"
