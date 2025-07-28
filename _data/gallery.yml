@@ -1,15 +1,24 @@
-- title: "교수님 생신"
+- title: "AI시스템 연구회 워크샵"
   images:
-    - filename: 20250120_174636.jpg
-    - filename: 20250120_174534.jpg
+    - filename: 250717.jpg
+      date: "2025-07-17"
+
+- title: "AI보안 워크샵"
+  images:
+    - filename: 250716.jpg
+      date: "2025-07-16"
+
+- title: "한국정보보호학회 하계학술대회"
+  images:
+    - filename: 250624.jpg
+      date: "2025-06-24"
+
+- title: "에이전틱 AI 단기 강좌"
+  images:
+    - filename: 250418.jpg
+      date: "2025-04-18"
 
 - title: "한국정보처리학회 연구회 공동 워크샵"
   images:
     - filename: 241017.jpg
-
-- title: "에이전틱 AI 단기 강좌"
-  images:
-    - filename: 250418.jpg
-- title: "에이전틱 AI 단기 강좌"
-  images:
-    - filename: 250418.jpg
+      date: "2024-10-17"

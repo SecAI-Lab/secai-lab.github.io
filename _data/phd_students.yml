@@ -16,13 +16,17 @@
 #  education1:
 
 - name: Yujeong Kwon (권유정)
-  photo: yujeong.jpg
+  photo: yujeong2.jpg
   info: Master student
   email: shr2008 AT g.skku.edu
   research: Reverse engineering, Privacy in AI
+  github: https://github.com/KwonYuJeong00
+  joined: Spring 2023
 
 - name: Jiyong Uhm (엄지용)
   photo: jiyong.jpg
   info: Master student
   email: jiyong423 AT g.skku.edu
   research: System programming, Networking, and Security
+  github: https://github.com/wldyd423
+  joined: Spring 2023

@@ -85,29 +85,26 @@ pre code.hljs {
 }
 
 .carousel-item .card {
-	background-color: rgba(4,
-			85,
-			96,
-			0.6);
+	background-color: rgba(4, 85, 96, 0.6);
 }
 
 .dotted-box {
-	border: 2px dotted #AED6F1;
+	border: 2px dotted #aed6f1;
 	padding: 8px;
 	width: 750 px;
 	height: 100 px;
 	line-height: 18px;
 }
 
-$extraDark: #181A28;
-$dark: #2A2E45;
+$extraDark: #181a28;
+$dark: #2a2e45;
 $light: #343956;
-$green: #3BCEAC;
+$green: #3bceac;
 
 body {
 	height: 100%;
 	background: $dark;
-	color: #FFF;
+	color: #fff;
 	font-family: "montserrat";
 
 	// &:before {
@@ -144,7 +141,7 @@ body {
 				border: 0;
 				border-radius: 1.25rem;
 				box-shadow: 0 10px 20px 2px $light;
-				color: #FFF;
+				color: #fff;
 
 				height: 170px;
 				overflow: hidden;
@@ -171,28 +168,25 @@ body {
 					top: 50%;
 					left: 50%;
 					transform: translate(-50%, -50%);
-
 				}
 
 				.card-img-overlay {
-					background: rgba(0, 0, 0, 0.1)
+					background: rgba(0, 0, 0, 0.1);
 				}
 			}
-
 		}
 	}
-
 }
 
 /* Custom animate.css delay */
 .animated.delay-02s {
-	-webkit-animation-delay: .2s;
-	animation-delay: .2s;
+	-webkit-animation-delay: 0.2s;
+	animation-delay: 0.2s;
 }
 
 .animated.delay-04s {
-	-webkit-animation-delay: .4s;
-	animation-delay: .4s;
+	-webkit-animation-delay: 0.4s;
+	animation-delay: 0.4s;
 }
 
 .site-header-container,
@@ -242,10 +236,7 @@ body {
 *	Header
 */
 .navigation {
-	box-shadow: 0 2px 3px 0 rgba(4,
-			85,
-			96,
-			255); //0 2px $highlight-color;
+	box-shadow: 0 2px 3px 0 rgba(4, 85, 96, 255); //0 2px $highlight-color;
 	padding: 0 1em;
 	margin: 0;
 	// Remove this to make header scrollable again
@@ -253,7 +244,7 @@ body {
 	top: 0;
 	left: 0;
 	right: 0;
-	background: white; // rgba(4, 85, 96, 0.8); 
+	background: white; // rgba(4, 85, 96, 0.8);
 	//border-color: #e7e7e7;
 	z-index: 1;
 	color: white;
@@ -269,7 +260,7 @@ body {
 		font-size: 1.5em;
 		padding-top: 0.5em;
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			display: none;
 		}
 	}
@@ -285,7 +276,7 @@ body {
 		float: left;
 		height: 4em;
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			padding-left: $em-base;
 		}
 
@@ -304,7 +295,7 @@ body {
 		float: none;
 		padding: 1.25em 0;
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			float: right;
 			line-height: 1.5em;
 		}
@@ -318,7 +309,7 @@ body {
 		padding: 0;
 		width: 100%;
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			display: block;
 			margin: 0;
 			padding: 0;
@@ -336,7 +327,7 @@ body {
 		width: 100%;
 		padding: 0.25em 0;
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			background: transparent;
 			display: inline;
 			text-decoration: none;
@@ -348,13 +339,13 @@ body {
 		a {
 			display: inline-block;
 
-			@include media ($tablet) {
+			@include media($tablet) {
 				padding-right: 1.5em;
 			}
 		}
 
 		&:last-child a {
-			@include media ($tablet) {
+			@include media($tablet) {
 				padding-right: 1em;
 			}
 		}
@@ -366,14 +357,14 @@ body {
 	animation-duration: 0.7s;
 	background: #fff;
 	margin: 20px;
-	box-shadow: 0 5px 25px 0 rgba(204, 204, 204, .75);
-	border-radius: 12px
+	box-shadow: 0 5px 25px 0 rgba(204, 204, 204, 0.75);
+	border-radius: 12px;
 }
 
 .bd_lst_con {
 	overflow: hidden;
 	position: relative;
-	padding: 2%,
+	padding: 2%;
 }
 
 #bd_lst .bd_tit {
@@ -406,7 +397,7 @@ td {
 	border-radius: 35px;
 	float: left;
 	width: 18% !important;
-	padding: 2%
+	padding: 2%;
 }
 
 .page-content {
@@ -512,7 +503,7 @@ td {
 			margin: 1em 0 0 0;
 			@include span-columns(12);
 
-			@include media ($tablet) {
+			@include media($tablet) {
 				margin: 1em 0;
 				@include span-columns(6);
 			}
@@ -523,7 +514,7 @@ td {
 			margin: 0 0 1em 0;
 			@include span-columns(12);
 
-			@include media ($tablet) {
+			@include media($tablet) {
 				@include span-columns(6);
 				margin: 1em 0;
 				text-align: right;
@@ -604,12 +595,8 @@ td {
 	padding: 1em 1em 2em 1em;
 	// background-color: $highlight-color;
 	// color: $white;
-	background: rgb(4,
-			85,
-			96); //#f8f8f8; //$white;
-	border-color: rgb(4,
-			85,
-			96); //#e7e7e7;
+	background: rgb(4, 85, 96); //#f8f8f8; //$white;
+	border-color: rgb(4, 85, 96); //#e7e7e7;
 	color: white;
 
 	a {
@@ -631,7 +618,8 @@ td {
 		@include outer-container;
 	}
 
-	.footer-heading {}
+	.footer-heading {
+	}
 
 	/*
 	*	Site Navigation (left)
@@ -639,11 +627,11 @@ td {
 	.site-navigation {
 		@include span-columns(12);
 
-		@include media ($mobile) {
+		@include media($mobile) {
 			@include span-columns(6);
 		}
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			@include span-columns(4);
 		}
 
@@ -661,13 +649,13 @@ td {
 		margin-top: 1em;
 		@include span-columns(12);
 
-		@include media ($mobile) {
+		@include media($mobile) {
 			@include span-columns(6);
 			margin-top: 0;
 			margin-right: 0;
 		}
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			@include span-columns(4);
 			margin-top: 0;
 		}
@@ -691,7 +679,7 @@ td {
 		margin-top: 1em;
 		@include span-columns(12);
 
-		@include media ($tablet) {
+		@include media($tablet) {
 			@include span-columns(4);
 			margin-right: 0;
 			margin-top: 0;
