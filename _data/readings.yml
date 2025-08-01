@@ -16,7 +16,8 @@
   conference: "Forensic Science International: Digital Investigation"
   date: 2025.07.30
   pub_year: 2025
-  discussion: "(Discussion) (Shakhzod)"
+  discussion: |
+            (Discussion) This paper presents a forensic framework for investigating conversational AI services—specifically ChatGPT, Gemini, Copilot, and Claude—by treating them as forensic targets rather than tools. It analyzes how these services store and handle data across desktop apps, mobile apps, and web browsers, identifying various artifacts such as chat logs, cache files, attachments, and account information. The authors propose a five-phase forensic process (Preparation, Identification, Collection, Analysis, and Reporting) and provide open-source tools to support data extraction and normalization. Through detailed technical analysis and two case studies—a ransomware investigation and a copyright dispute—the paper demonstrates how forensic investigators can uncover evidence even from deleted or inaccessible accounts. However, the study has limitations: it relies heavily on platform-specific behaviors that may change over time and cannot recover deleted data without access credentials or device-level traces. Additionally, the specific forensic platform used is not clearly stated, and key assumptions for the investigation process are not explicitly defined. (Shakhzod)
   
 - title: "URL Inspection Tasks: Helping Users Detect Phishing Links in Emails"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-1341-lain.pdf"
