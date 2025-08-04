@@ -1,3 +1,24 @@
+- title: "LLM4Decompile: Decompiling Binary Code with Large Language Models"
+  link: "https://arxiv.org/pdf/2403.05286"
+  ppt_link: "https://docs.google.com/presentation/d/1th-iYARri6pTla3ocqxoxWmt7P9VFBhZgLF2_NUB4Ic/edit?usp=sharing"
+  code_link: ""
+  presenter: Mijin
+  conference: EMNLP
+  date: 2025.07.30
+  pub_year: 2024
+  discussion: "(Discussion) (Minseok)"
+
+- title: "Conversational AI forensics: A case study on ChatGPT, Gemini, Copilot, and Claude"
+  link: "https://www.sciencedirect.com/science/article/pii/S2666281724001823?ref=pdf_download&fr=RR-2&rr=96741f40da9aea8b"
+  ppt_link: "https://drive.google.com/file/d/1uAJRk88pmG2sCRTyzwFnaXMX17MVQfDZ/view?usp=sharing"
+  code_link: "https://github.com/kninami/conversational-ai-forensic"
+  presenter: Suyeon
+  conference: "Forensic Science International: Digital Investigation"
+  date: 2025.07.30
+  pub_year: 2025
+  discussion: |
+            (Discussion) This paper presents a forensic framework for investigating conversational AI services—specifically ChatGPT, Gemini, Copilot, and Claude—by treating them as forensic targets rather than tools. It analyzes how these services store and handle data across desktop apps, mobile apps, and web browsers, identifying various artifacts such as chat logs, cache files, attachments, and account information. The authors propose a five-phase forensic process (Preparation, Identification, Collection, Analysis, and Reporting) and provide open-source tools to support data extraction and normalization. Through detailed technical analysis and two case studies—a ransomware investigation and a copyright dispute—the paper demonstrates how forensic investigators can uncover evidence even from deleted or inaccessible accounts. However, the study has limitations: it relies heavily on platform-specific behaviors that may change over time and cannot recover deleted data without access credentials or device-level traces. Additionally, the specific forensic platform used is not clearly stated, and key assumptions for the investigation process are not explicitly defined. (Shakhzod)
+  
 - title: "URL Inspection Tasks: Helping Users Detect Phishing Links in Emails"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-1341-lain.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1l47EPx8emWDFvv4KL8_HNfUl7ilVvXM0-viH8rnMlPw/edit?usp=sharing"
