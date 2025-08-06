@@ -1,26 +1,66 @@
+- title: "Trends in Securing Unsafe Regions for Rust"
+  image:
+  description:
+  authors: Hyungjun Jeon, Jiyong Uhm and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
+  highlight: 0
+  news2:
+
+- title: "Security Analysis of Agentic Communication Protocols: Model Context Protocol (MCP) and Agent-to-Agent (A2A)"
+  image:
+  description:
+  authors: Yiyue Zhang, Minseok Kim and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
+  highlight: 0
+  news2:
+
+- title: "Investigating the Acquisition and Analysis of Digital Artifacts for Messaging Applications"
+  image:
+  description:
+  authors: Suyeon Lee, Yuldoshkhujaev Shakhzod and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
+  highlight: 0
+  news2:
+
+- title: "Trends in LLM-assisted Attacks"
+  image:
+  description:
+  authors: Mijin Jeon, Yujeong Kwon and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
+  highlight: 0
+  news2:
+
 - title: "Advanced Persistent Threats: Addressed and Open Research Questions"
-  image: 
-  description: 
+  image:
+  description:
   authors: Shakhzod Yuldoshkhujaev and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’24)
   highlight: 0
   news2:
-  
+
 - title: "Trends in Attacks and Defenses against Retrieval-Augmented Generation (RAG) Systems"
-  image: 
-  description: 
+  image:
+  description:
   authors: Minseok Kim and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’24)
   highlight: 0
   news2:
-  
+
 - title: "Trends in Deep-learning-based Models for Anomaly Detection in Log Records"
-  image: 
-  description: 
+  image:
+  description:
   authors: Suyeon Lee and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -29,8 +69,8 @@
   news2:
 
 - title: "RoBERTa-based Obfuscated Binary Code Similarity Detection"
-  image: 
-  description: 
+  image:
+  description:
   authors: Yujeong Kwon, Jiyong Uhm, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -42,8 +82,8 @@
   news2:
 
 - title: "Dynamic Analysis of Obfuscated Code with a 64-bit SGN Packer"
-  image: 
-  description: 
+  image:
+  description:
   authors: Jiyong Uhm, Hyongjun Jeon, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -52,28 +92,28 @@
   news2:
 
 - title: "ChatPub: Retrieval Augmented Generation-based Service to Aid in Finding Relevant Policies for Korean Youth"
-  image: 
-  description: 
+  image:
+  description:
   authors: Gangsan Kim, Jinho Park, Seongbin Yang, Changmin Jeon, and Hyungjoon Koo
   link:
-    url: http://www.kips.or.kr/ask2024 
+    url: http://www.kips.or.kr/ask2024
     display: Annual Spring Conference of KIPS (ASK ’24)
   highlight: 0
   news2:
 
 - title: "Baseball Simulation Game Service Based on Baseball Metrics"
-  image: 
-  description: 
+  image:
+  description:
   authors: Chaewon Ko, Changwoo Shim, Hyunchang Shin, and Hyungjoon Koo
   link:
-    url: http://www.kips.or.kr/ask2024 
+    url: http://www.kips.or.kr/ask2024
     display: Annual Spring Conference of KIPS (ASK ’24)
   highlight: 0
   news2:
 
 - title: "Trends in Machine Unlearning via Continual Learning to Mitigate Privacy Risks"
-  image: 
-  description: 
+  image:
+  description:
   authors: Yujeong Kwon and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -82,8 +122,8 @@
   news2:
 
 - title: "Trends in Membership Inference Attacks and Defenses"
-  image: 
-  description: 
+  image:
+  description:
   authors: Nozima Murodova and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -92,8 +132,8 @@
   news2:
 
 - title: "Trends in Explainable Artificial Intelligence for Security"
-  image: 
-  description: 
+  image:
+  description:
   authors: Jiyong Uhm, Hyungjoon Jeon, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -102,28 +142,28 @@
   news2:
 
 - title: "An Unreal Engine Plugin for Text-based Runtime Animation Generation with a Motion Diffusion Model"
-  image: 
-  description: 
+  image:
+  description:
   authors: Suho Park, Jaehoon Lee, YongHyeon Jo, Haechan Je, Daniel Cha, and Hyungjoon Koo
   link:
-    url: https://www.manuscriptlink.com/society/kips/conference/ack2023 
+    url: https://www.manuscriptlink.com/society/kips/conference/ack2023
     display: Annual Fall Conference of KIPS (ASK ’23)
   highlight: 0
   news2:
 
 - title: "Kingomanager: A Personalized Information-providing Application with a Recommendation System for University Students"
-  image: 
-  description: 
+  image:
+  description:
   authors: Shingyu Kang, JunWoo Kim, ChoongHyeon Park, and Hyungjoon Koo
   link:
-    url: http://www.kips.or.kr/ask2023 
+    url: http://www.kips.or.kr/ask2023
     display: Annual Spring Conference of KIPS (ASK ’23)
   highlight: 0
   news2:
 
 - title: "Vulnerability Analysis of CoAP Using a Coverage-based CoAP Fuzzer"
-  image: 
-  description: 
+  image:
+  description:
   authors: Sechang Lim and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2023
@@ -132,8 +172,8 @@
   news2:
 
 - title: "A Recommendation System by Extracting Scholarship Information with a BERT’s Q&A Model"
-  image: 
-  description: 
+  image:
+  description:
   authors: Byeongjun Kang, Kyujin Kim, Jinah Park, Ijun Jang, Jaehyun Joo, and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2023
@@ -142,18 +182,18 @@
   news2:
 
 - title: "Evaluating Password Composition Policy and Password Meters of Popular Websites"
-  image: 
-  description: 
+  image:
+  description:
   authors: Kyungchan Lim, Joshua Hankyul Kang, Matthew Dixson, Hyungjoon Koo, and Doowon Kim
   link:
-    url: https://secweb.work/2023.html 
+    url: https://secweb.work/2023.html
     display: Workshop on Designing Security for the Web (SecWeb ’23)
   highlight: 0
   news2:
 
 - title: "A Study of Executable Binaries with Emerging Compilation Tools"
-  image: 
-  description: 
+  image:
+  description:
   authors: Hohyeon Jang and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -165,8 +205,8 @@
   news2:
 
 - title: "A Study of Rarely Appeared Instructions in an Executable Binary"
-  image: 
-  description: 
+  image:
+  description:
   authors: Nozima Murodova and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -175,8 +215,8 @@
   news2:
 
 - title: "Server-client Based Reversing Tools with a Prediction Model for Function Names"
-  image: 
-  description: 
+  image:
+  description:
   authors: Seok Kim, Hyungjoon Jeon, Hyunjin Kim and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -185,8 +225,8 @@
   news2:
 
 - title: "Phishing URL Detection with Text-CNN"
-  image: 
-  description: 
+  image:
+  description:
   authors: Sechang Lim and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
@@ -202,8 +242,8 @@
     url: https://www.wisa.or.kr
     display: Poster in the the 22nd World Conference on Information Security Applications (WISA ’21)
   highlight: 0
-  news2: 
-  
+  news2:
+
 - title: "Semantic-aware Binary Code Representation with BERT"
   image:
   description: A wide range of binary analysis applications, such as bug discovery, malware analysis and code clone detection, require recovery of contextual meanings on a binary code. Recently, binary analysis techniques based on machine learning have been proposed to automatically reconstruct the code representation of a binary instead of manually crafting specifics of the analysis algorithm. However, the existing approaches utilizing machine learning are still specialized to solve one domain of problems, rendering recreation of models for different types of binary analysis. In this paper, we propose DeepSemantic utilizing BERT in producing the semantic-aware code representation of a binary code. To this end, we introduce well-balanced instruction normalization that holds rich information for each of instructions yet minimizing an out-of-vocabulary (OOV) problem. DeepSemantic has been carefully designed based on our study with large swaths of binaries. Besides, DeepSemantic leverages the essence of the BERT architecture into re-purposing a pre-trained generic model that is readily available as a one-time processing, followed by quickly applying specific downstream tasks with a fine-tuning process. We demonstrate DeepSemantic with two downstream tasks, namely, binary similarity comparison and compiler provenance (i.e., compiler and optimization level) prediction. Our experimental results show that the binary similarity model outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, 49.84% and 15.83% on average, respectively.
@@ -212,7 +252,7 @@
     url: https://arxiv.org/abs/2106.05478
     display: ArXiv
   highlight: 0
-  news2: 
+  news2:
 
 - title: "Configuration-Driven Software Debloating"
   image:
@@ -223,9 +263,9 @@
     display: In the 12th European Workshop on Systems Security, 2019 (EuroSec ’19)
   highlight: 0
   news2:
-  
+
 - title: "The Politics of Routing: Investigating the Relationship between AS Connectivity and Internet Freedom"
-  image: 
+  image:
   authors: Rachee Singh, Hyungjoon Koo, Najmehalsadat Miramirkhani, Fahimeh Mirhaj, Leman Akoglu, and Phillipa Gill
   description: The Internet’s importance in promoting free and open communication has led to widespread crackdowns on its use in countries around the world. In this study, we investigate the relationship between national policies around freedom of speech and Internet topology in various countries. We combine techniques from network measurement and machine learning to identify features of Internet structure at the national level that are the best indicators of a country’s level of freedom. We find that IP density and path lengths to other countries are the best indicators of a country’s freedom. We also find that our methods predict the freedom category (Free/Partly Free/Not Free) of a country with 95% accuracy.
   link:
@@ -233,5 +273,3 @@
     display: In the 6th USENIX Workshop on Free and Open Communications on the Internet, 2016 (FOCI ’16)
   highlight: 0
   news2:
-
-
