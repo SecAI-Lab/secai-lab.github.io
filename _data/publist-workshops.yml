@@ -1,3 +1,15 @@
+
+- title: "On the Learnability, Robustness, and Adaptability of Deep Learning Models for Obfuscation-applied Code (To appear)"
+  image: 
+  description: "Code obfuscation is a common technique to impede software analysis on purpose by concealing a program’s structure, logic, or behavior for both benign and malicious purposes. Its widespread adoption poses a significant challenge to security analysts. While deep learning has shown promise across various binary analysis tasks, the learnability and the applicability from obfuscation-applied code have received less attention to date. Prior work often overlooks code obfuscation or defers it to future research, as the complexity of obfuscation may differ significantly depending on the design and implementation differences across obfuscation tools. In this paper, we investigate how well obfuscation-applied code can be learned on a state-of-the-art model for the binary code similarity detection task. Training the model with obfuscated codes from two source-based and IR-based obfuscation tools (e.g., Tigress, Obfuscator-LLVM), we evaluate: i) learnability on obfuscated code, ii) generalizability for both obfuscated and non-obfuscated code, iii) robustness to known obfuscation techniques, and iv) adaptability to unknown obfuscation techniques. Our findings show that learning a task directly from obfuscated code is feasible, outperforming models trained on large volumes of non-obfuscated code even with a comparatively small dataset. However, achieving generalizability across obfuscated and non-obfuscated code remains challenging. Furthermore, we find that the model’s robustness and adaptability to previously (un)known obfuscations is closely tied to the inherent complexity of an obfuscation technique."
+  authors: Jiyong Uhm, Yujeong Kwon and, Hyungjoon Koo
+  link: 
+    URL: To appear
+    display: Workshop on Software Understanding and Reverse Engineering (SURE'25)
+  highlight: 0
+  news2:
+
+
 - title: "Trends in Securing Unsafe Regions for Rust"
   image:
   description:
