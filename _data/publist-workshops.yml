@@ -2,7 +2,7 @@
 - title: "On the Learnability, Robustness, and Adaptability of Deep Learning Models for Obfuscation-applied Code"
   image: 
   description: "Code obfuscation is a common technique to impede software analysis on purpose by concealing a program’s structure, logic, or behavior for both benign and malicious purposes. Its widespread adoption poses a significant challenge to security analysts. While deep learning has shown promise across various binary analysis tasks, the learnability and the applicability from obfuscation-applied code have received less attention to date. Prior work often overlooks code obfuscation or defers it to future research, as the complexity of obfuscation may differ significantly depending on the design and implementation differences across obfuscation tools. In this paper, we investigate how well obfuscation-applied code can be learned on a state-of-the-art model for the binary code similarity detection task. Training the model with obfuscated codes from two source-based and IR-based obfuscation tools (e.g., Tigress, Obfuscator-LLVM), we evaluate: i) learnability on obfuscated code, ii) generalizability for both obfuscated and non-obfuscated code, iii) robustness to known obfuscation techniques, and iv) adaptability to unknown obfuscation techniques. Our findings show that learning a task directly from obfuscated code is feasible, outperforming models trained on large volumes of non-obfuscated code even with a comparatively small dataset. However, achieving generalizability across obfuscated and non-obfuscated code remains challenging. Furthermore, we find that the model’s robustness and adaptability to previously (un)known obfuscations is closely tied to the inherent complexity of an obfuscation technique."
-  authors: Jiyong Uhm, Yujeong Kwon and, Hyungjoon Koo
+  authors: Jiyong Uhm, Yujeong Kwon, and Hyungjoon Koo
   link: 
     url: https://sure-workshop.org
     display: Workshop on Software Understanding and Reverse Engineering (SURE'25)
@@ -13,7 +13,7 @@
 - title: "Trends in Securing Unsafe Regions for Rust"
   image:
   description:
-  authors: Hyungjun Jeon, Jiyong Uhm and Hyungjoon Koo
+  authors: Hyungjun Jeon, Jiyong Uhm, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
@@ -23,7 +23,7 @@
 - title: "Security Analysis of Agentic Communication Protocols: Model Context Protocol (MCP) and Agent-to-Agent (A2A)"
   image:
   description:
-  authors: Yiyue Zhang, Minseok Kim and Hyungjoon Koo
+  authors: Yiyue Zhang, Minseok Kim, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
@@ -33,7 +33,7 @@
 - title: "Investigating the Acquisition and Analysis of Digital Artifacts for Messaging Applications"
   image:
   description:
-  authors: Suyeon Lee, Yuldoshkhujaev Shakhzod and Hyungjoon Koo
+  authors: Suyeon Lee, Yuldoshkhujaev Shakhzod, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
@@ -43,7 +43,7 @@
 - title: "Trends in LLM-assisted Attacks"
   image:
   description:
-  authors: Mijin Jeon, Yujeong Kwon and Hyungjoon Koo
+  authors: Mijin Jeon, Yujeong Kwon, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’25)
@@ -109,7 +109,7 @@
   authors: Gangsan Kim, Jinho Park, Seongbin Yang, Changmin Jeon, and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2024
-    display: Annual Spring Conference of KIPS (ASK ’24)
+    display: Annual Spring Conference of KIPS (ASK’24)
   highlight: 0
   news2:
 
@@ -119,7 +119,7 @@
   authors: Chaewon Ko, Changwoo Shim, Hyunchang Shin, and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2024
-    display: Annual Spring Conference of KIPS (ASK ’24)
+    display: Annual Spring Conference of KIPS (ASK’24)
   highlight: 0
   news2:
 
@@ -169,7 +169,7 @@
   authors: Shingyu Kang, JunWoo Kim, ChoongHyeon Park, and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2023
-    display: Annual Spring Conference of KIPS (ASK ’23)
+    display: Annual Spring Conference of KIPS (ASK’23)
   highlight: 0
   news2:
 
@@ -179,7 +179,7 @@
   authors: Sechang Lim and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2023
-    display: Annual Spring Conference of KIPS (ASK ’23)
+    display: Annual Spring Conference of KIPS (ASK’23)
   highlight: 0
   news2:
 
@@ -189,7 +189,7 @@
   authors: Byeongjun Kang, Kyujin Kim, Jinah Park, Ijun Jang, Jaehyun Joo, and Hyungjoon Koo
   link:
     url: http://www.kips.or.kr/ask2023
-    display: Annual Spring Conference of KIPS (ASK ’23)
+    display: Annual Spring Conference of KIPS (ASK’23)
   highlight: 0
   news2:
 
@@ -229,7 +229,7 @@
 - title: "Server-client Based Reversing Tools with a Prediction Model for Function Names"
   image:
   description:
-  authors: Seok Kim, Hyungjoon Jeon, Hyunjin Kim and Hyungjoon Koo
+  authors: Seok Kim, Hyungjoon Jeon, Hyunjin Kim, and Hyungjoon Koo
   link:
     url: https://www.cisc.or.kr
     display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
@@ -252,14 +252,14 @@
   authors: Hohyun Jang and Hyungjoon Koo
   link:
     url: https://www.wisa.or.kr
-    display: Poster in the the 22nd World Conference on Information Security Applications (WISA ’21)
+    display: Poster in the 22nd World Conference on Information Security Applications (WISA ’21)
   highlight: 0
   news2:
 
 - title: "Semantic-aware Binary Code Representation with BERT"
   image:
   description: A wide range of binary analysis applications, such as bug discovery, malware analysis and code clone detection, require recovery of contextual meanings on a binary code. Recently, binary analysis techniques based on machine learning have been proposed to automatically reconstruct the code representation of a binary instead of manually crafting specifics of the analysis algorithm. However, the existing approaches utilizing machine learning are still specialized to solve one domain of problems, rendering recreation of models for different types of binary analysis. In this paper, we propose DeepSemantic utilizing BERT in producing the semantic-aware code representation of a binary code. To this end, we introduce well-balanced instruction normalization that holds rich information for each of instructions yet minimizing an out-of-vocabulary (OOV) problem. DeepSemantic has been carefully designed based on our study with large swaths of binaries. Besides, DeepSemantic leverages the essence of the BERT architecture into re-purposing a pre-trained generic model that is readily available as a one-time processing, followed by quickly applying specific downstream tasks with a fine-tuning process. We demonstrate DeepSemantic with two downstream tasks, namely, binary similarity comparison and compiler provenance (i.e., compiler and optimization level) prediction. Our experimental results show that the binary similarity model outperforms two state-of-the-art binary similarity tools, DeepBinDiff and SAFE, 49.84% and 15.83% on average, respectively.
-  authors: Hyungjoon Koo, Soyeon Park, Daejin Choi and Taesoo Kim
+  authors: Hyungjoon Koo, Soyeon Park, Daejin Choi, and Taesoo Kim
   link:
     url: https://arxiv.org/abs/2106.05478
     display: ArXiv
@@ -272,7 +272,7 @@
   authors: Hyungjoon Koo, Seyedhamed Ghavamnia, and Michalis Polychronakis
   link:
     url: https://dl.acm.org/doi/10.1145/3301417.3312501
-    display: In the 12th European Workshop on Systems Security, 2019 (EuroSec ’19)
+    display: In the 12th European Workshop on Systems Security, 2019 (EuroSec’19)
   highlight: 0
   news2:
 
