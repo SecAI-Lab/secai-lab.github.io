@@ -33,6 +33,11 @@
     - filename: 230823.jpg
       date: "2023-08-23"
 
+- title: "한국 컴퓨터 종합 학술대회 (KCC)"
+  images:
+    - filename: 230617.jpg
+      date: "2023-06-17"
+
 - title: "한국정보보호학회 동계학술대회 (CISC-W'22)"
   images:
     - filename: 221126.jpg
