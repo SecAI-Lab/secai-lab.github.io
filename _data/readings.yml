@@ -1,11 +1,11 @@
 - title: "Coda: An End-to-End Neural Program Decompiler"
-  link: ""
-  ppt_link: ""
+  link: "https://papers.nips.cc/paper_files/paper/2019/file/093b60fd0557804c8ba0cbf1453da22f-Paper.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1gksvOShAC65id9pi7OWjt7dCRIiRdoNp8IE8vf64vG8/edit?slide=id.g37838ef575b_0_15#slide=id.g37838ef575b_0_15"
   code_link: ""
   presenter: Yujeong
-  conference: 
+  conference: NeurIPS
   date: 2025.08.13
-  pub_year: 
+  pub_year: 2019
   discussion: "(Discussion) (Mijin)"
 
 - title: "Universal Cross-app Attacks: Exploiting and Securing OAuth 2.0 in Integration Platforms"
