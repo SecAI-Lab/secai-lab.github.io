@@ -8,7 +8,7 @@
     - filename: 250716.jpg
       date: "2025-07-16"
 
-- title: "한국정보보호학회 하계학술대회"
+- title: "한국정보보호학회 하계학술대회 (CISC-S'25)"
   images:
     - filename: 250624.jpg
       date: "2025-06-24"
@@ -18,17 +18,22 @@
     - filename: 250418.JPG
       date: "2025-04-18"
 
-- title: "한국정보보호학회 동계학술대회"
+- title: "한국정보보호학회 동계학술대회 (CISC-W'24)"
   images:
     - filename: 241128.jpg
       date: "2024-11-28"
+
+- title: "한국정보보호학회 하계학술대회 (CISC-S'24)"
+  images:
+    - filename: 240620.jpg
+      date: "2024-06-20"
 
 - title: "융합보안대학원 해커톤 대회"
   images:
     - filename: 230823.jpg
       date: "2023-08-23"
 
-- title: "한국정보보호학회 동계학술대회"
+- title: "한국정보보호학회 동계학술대회 (CISC-W'22)"
   images:
     - filename: 221126.jpg
       date: "2022-11-26"
