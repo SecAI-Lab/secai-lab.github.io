@@ -6,7 +6,7 @@
   conference: NeurIPS
   date: 2025.08.13
   pub_year: 2019
-  discussion: "(Discussion) (Mijin)"
+  discussion: "(Discussion) This paper presents Coda, a neural-based framework for program decompilation that departs from traditional rule-based approaches by employing a two-phase design: code sketch generation using an instruction type-aware encoder and AST decoder, followed by iterative error correction guided by ensembled error predictors and compiler feedback. The framework achieves significantly higher program recovery accuracy than both conventional decompilers and Seq2Seq-based models, demonstrating its ability to preserve semantics as well as functionality. However, its effectiveness is constrained by assumptions such as access to compiler configurations and unoptimized binaries (-O0), and performance drops on more complex ISAs like x86-64 or longer programs due to input length and architectural challenges. While the study convincingly shows the feasibility of end-to-end neural decompilation and raises concerns about software IP protection, its applicability to real-world scenarios with optimized binaries, diverse architectures, and richer data structures remains an open challenge. (Mijin)"
 
 - title: "Universal Cross-app Attacks: Exploiting and Securing OAuth 2.0 in Integration Platforms"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec24winter-prepub-332-luo.pdf"
