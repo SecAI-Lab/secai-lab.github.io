@@ -9,14 +9,14 @@
   discussion: "(Discussion) (Mijin)"
 
 - title: "Universal Cross-app Attacks: Exploiting and Securing OAuth 2.0 in Integration Platforms"
-  link: ""
-  ppt_link: ""
+  link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec24winter-prepub-332-luo.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1O_aSHJScU6mGk0w4VM5rB7fwkRBdvXYh/edit?usp=drive_link&ouid=105169929856978165097&rtpof=true&sd=true"
   code_link: ""
   presenter: Hyoungjun
   conference: USENIX
   date: 2025.08.06
-  pub_year: 
-  discussion: "(Discussion) (Suyeon)"
+  pub_year: 2025
+  discussion: "(Discussion) The study explores how OAuth 2.0, when applied in integration platforms like workflow automation, virtual assistants, and smart homes, can be exploited due to a role reversal in trust relationships. The authors identify two novel cross-app attacks—Cross-app OAuth Account Takeover (COAT) and Cross-app OAuth Request Forgery (CORF)—that allow malicious apps to hijack or forge account linkages, sometimes with just a single click. A strength of this work is that it introduces a new threat model and attack types while keeping the scenarios realistic, and the authors also discovered real bugs in widely used platforms, even leading to bug bounty rewards. On the other hand, all attacks rely on the assumption that a victim connects to a malicious app, which is a relatively strong premise, and some of the proposed defenses are challenging to put into practice. Still, the contribution is meaningful in showing the prevalence of these vulnerabilities across major platforms such as Microsoft, Google, and Amazon, and in providing systematic analysis and concrete guidance for securing the ecosystem.(Suyeon)"
   
 - title: "LLM4Decompile: Decompiling Binary Code with Large Language Models"
   link: "https://arxiv.org/pdf/2403.05286"
