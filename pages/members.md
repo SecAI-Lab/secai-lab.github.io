@@ -10,7 +10,7 @@ main_nav: true
 
 {% for member in site.data.team_members %}
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ member.photo }}" class="img-responsive" style="float: left; width: 25%; padding: 3%; border-radius: 35px;" />
+<img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ member.photo }}" class="img-responsive" style="float: left; width: 15%; padding: 1.5%; border-radius: 35px;" />
 
 <h5>{{ member.name }}</h5>
 <i>{{ member.info }}

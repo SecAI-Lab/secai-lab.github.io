@@ -3,13 +3,56 @@ title: "Reading Seminar"
 layout: page
 permalink: /seminar/
 main_nav: true
-# pagination: 
+# pagination:
 #   enabled: true
 ---
 
-<ul class="post-list">
+<style>
+.toggle-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000000;
+    padding: 0;
+}
+
+.toggle-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #000000ff;
+}
+
+.toggle-icon {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.toggle-button.active .toggle-icon {
+    transform: rotate(90deg);
+}
+
+.dotted-box {
+    display: none;
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px dashed #ccc;
+    background: #f9f9f9;
+}
+
+.dotted-box.active {
+    display: block;
+}
+</style>
+
+<div class="post-list">
   {% for post in site.data.readings %}
-    <li>
       <section class="post-meta">
         <div class="post-data">{{ post.date | date: "%B %-d, %Y" }}, presented by {{ post.presenter }}  
           <a href="{{post.code_link}}" target="_blank" style="color: black"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
@@ -17,20 +60,44 @@ main_nav: true
           </a> | 
           <a href="{{post.ppt_link}}" style="color: orange" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ppt" viewBox="0 0 16 16">
             <path d="M7 5.5a1 1 0 0 0-1 1V13a.5.5 0 0 0 1 0v-2h1.188a2.75 2.75 0 0 0 0-5.5zM8.188 10H7V6.5h1.188a1.75 1.75 0 1 1 0 3.5"/>
-            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg>
+            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
+          </svg>
           </a>
         </div>
-        <span class="toggle-triangle">▶</span>
+        <span class="toggle-button" onclick="toggleDiscussion(this)">
+          <span class="toggle-icon">▶</span>
+        </span>
         <span><a href="{{ post.link }}" target="_blank"> {{ post.title }} </a> ({{ post.conference }}, {{ post.pub_year }})</span>
         <div class="dotted-box">{{ post.discussion }}</div>
       </section>
-    </li>
     {% if forloop.last == false %}
       <br>
     {% endif %}
   {% endfor %}
-</ul>
+</div>
 
+<script>
+function toggleDiscussion(button) {
+    const discussionBox = button.parentElement.querySelector('.dotted-box');
+    const isActive = discussionBox.classList.contains('active');
+    
+    if (isActive) {
+        discussionBox.classList.remove('active');
+        button.classList.remove('active');
+    } else {
+        discussionBox.classList.add('active');
+        button.classList.add('active');
+    }
+}
+
+// Ensure all triangles start in the correct position
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-button');
+    toggleButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+});
+</script>
 
 <!-- <div aria-label="Page navigation" >
   <ul class="pagination" style="margin-left: 43%;">
