@@ -1,7 +1,6 @@
 @import url(//fonts.googleapis.com/css?family=Roboto+Slab:400,700,300|Roboto:400,700,300|Open+Sans:300italic,400italic,600italic,700italic,800italic,400,800,700,600,300);
 
 .gallery-container {
-  gap: 20px;
   justify-content: center;
   font-family: "Roboto Slab";
   font-weight: bold;
@@ -12,7 +11,6 @@
 }
 
 .gallery-box {
-  width: 350px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.2);
