@@ -21,12 +21,12 @@
 - title: "LLM4Decompile: Decompiling Binary Code with Large Language Models"
   link: "https://arxiv.org/pdf/2403.05286"
   ppt_link: "https://docs.google.com/presentation/d/1th-iYARri6pTla3ocqxoxWmt7P9VFBhZgLF2_NUB4Ic/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/albertan017/LLM4Decompile"
   presenter: Mijin
   conference: EMNLP
   date: 2025.07.30
   pub_year: 2024
-  discussion: "(Discussion) (Minseok)"
+  discussion: "(Discussion) This paper presents LLM4Decompile, an open-source series (1.3B–33B) tailored for binary-to-C decompilation via two complementary pipelines—an end-to-end model trained on disassembled ASM and a refinement model that cleans Ghidra output—together with pragmatic training choices (O0–O3 augmentation, duplicate filtering, and a two-stage “compilable→executable” curriculum).  Its chief strengths are careful experimental design (per-optimization analysis, ablations disentangling compilable vs. executable distributions), clear, execution-based metrics, and a convincing demonstration that coupling LLMs with classical tooling (Ghidra+Ref) lifts re-executability beyond both GPT-4o and Ghidra alone; the obfuscation study is also a thoughtful, policy-aware addition.  However, several weaknesses temper the claims: (i) external validity—the main targets are single functions or small C snippets on x86; results may not transfer to multi-file projects, other ISAs, or other languages; (ii) the key metric (re-executability under unit tests) can overestimate semantic recovery and underreport subtle miscompilations, while the GPT-based readability score introduces subjectivity; (iii) the “end-to-end” path still relies on disassembly (Objdump), sidestepping raw-byte modeling challenges; (iv) the refinement data decompiled from non-executable objects may diverge from real analyst workflows; and (v) scaling conclusions are confounded by the undertrained 33B model and limited compute, with no detailed error taxonomy or human-in-the-loop studies to gauge usefulness in practice.  Overall, the work is a substantial step toward LLM-assisted decompilation and a strong empirical baseline, but broader architectures, languages, and user-centered evaluations will be essential to cement its impact. (Minseok)"
 
 - title: "Conversational AI forensics: A case study on ChatGPT, Gemini, Copilot, and Claude"
   link: "https://www.sciencedirect.com/science/article/pii/S2666281724001823?ref=pdf_download&fr=RR-2&rr=96741f40da9aea8b"
