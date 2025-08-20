@@ -6,14 +6,57 @@ permalink: /teaching/
 main_nav: true
 ---
 
+<style>
+details summary {
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary::before {
+    content: "▶";
+    position: absolute;
+    left: -20px;
+    top: 4px;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+    font-size: 12px;
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+details ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 20px;
+}
+
+details ul li {
+    padding-left: 0;
+}
+
+/* Hide bullet points for list items containing details elements */
+li:has(details) {
+    list-style: none;
+}
+</style>
+
 #### Spring 2025
-* [ESW4020] Computer Security (Graduate)
-* [SWE3025] Introduction to Computer Security (Undergraduate)
-* [DFS5005] Information Security
+
+- [ESW4020] Computer Security (Graduate)
+- [SWE3025] Introduction to Computer Security (Undergraduate)
+- [DFS5005] Information Security
 
 ##### Fall 2024
-* [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
-* <details markdown="0">
+
+- [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
+- <details markdown="0">
   <summary>
    [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2024/" target="_blank"> Capstone Design Project (캡스톤설계프로젝트) </a>
   </summary>
@@ -34,12 +77,14 @@ main_nav: true
   </details>
 
 ##### Spring 2024
-* [ESW5042] Software Security Paper Writing and Presentation (소프트웨어 보안연구 논문작성)
-* [SFC5005] Smart Factory Application Programming (스마트팩토리 응용 프로그래밍)
+
+- [ESW5042] Software Security Paper Writing and Presentation (소프트웨어 보안연구 논문작성)
+- [SFC5005] Smart Factory Application Programming (스마트팩토리 응용 프로그래밍)
 
 ##### Fall 2023
-* [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
-* <details markdown="0">
+
+- [SWE3058] Technical Writing and Presentation for Software Developers (소프트웨어 개발자를 위한 기술 작문 및 프리젠테이션)
+- <details markdown="0">
   <summary>
   [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2023/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
   </summary>
@@ -61,8 +106,9 @@ main_nav: true
   </details>
 
 ##### Spring 2023
-* [SWE3025] Computer Security (정보보호개론) 
-* <details markdown="0">
+
+- [SWE3025] Computer Security (정보보호개론)
+- <details markdown="0">
   <summary>
   [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Spring-2023/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
   </summary>
@@ -76,11 +122,12 @@ main_nav: true
     <li>(Team G) Integrated Contents Recommendation Platform across Different Domains</li>
     <li>(Team H) SKKUEXS: Providing Support for Exchange Students at SKKU</li>
   </ul>
-  </details>  
+  </details>
 
 ##### Fall 2022
-* [ESW4011] Software Security with AI (AI를 활용한 소프트웨어 보안)
-* <details markdown="0">
+
+- [ESW4011] Software Security with AI (AI를 활용한 소프트웨어 보안)
+- <details markdown="0">
   <summary>
   [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2022/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
   </summary>
@@ -95,11 +142,12 @@ main_nav: true
     <li>(Team G) MyCampus; Customized Course Manager for iCampus@SKKU (Chrome Extension)* <br> [동대회 장려상 수상]</li>
     <li>(Team H) Kingo Manager; Private Assistant for the Requirements of Graduation (Mobile App)* <br> [동대회 장려상 수상]</li>
   </ul>
-  </details>  
+  </details>
 
 ##### Spring 2022
-* [DASF004] Basis and Practice in Programming (프로그래밍기초와실습; C Programming)
-* <details markdown="0">
+
+- [DASF004] Basis and Practice in Programming (프로그래밍기초와실습; C Programming)
+- <details markdown="0">
   <summary>
   [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Spring-2022/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
   </summary>
@@ -115,8 +163,9 @@ main_nav: true
   </details>
 
 ##### Fall 2021
-* [GEDT018] Computer Programming for Engineers (공학컴퓨터프로그래밍; C++ Programming)
-* <details markdown="0">
+
+- [GEDT018] Computer Programming for Engineers (공학컴퓨터프로그래밍; C++ Programming)
+- <details markdown="0">
   <summary>
   [SWE3028] <a href="https://github.com/SecAI-Lab/SWE3028-Fall-2021/" target="_blank">Capstone Design Project (캡스톤설계프로젝트)</a>
   </summary>
@@ -132,7 +181,8 @@ main_nav: true
     <li>(Team H) CNN based Location Image Search and its Adaptation to Social Network* <br>
     [성균관대 글로벌융합학부 인공지능융합의 날 공모전 수상]</li>
   </ul>
-  </details> 
+  </details>
 
 ##### Spring 2021
-* [ES4010] Advanced Topics in System Security (시스템보안특론) 
+
+- [ES4010] Advanced Topics in System Security (시스템보안특론)
