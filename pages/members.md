@@ -85,15 +85,62 @@ main_nav: true
   font-style: normal;
 }
 
+/* Leaders section mobile styles */
+.leader-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.leader-container img.img-responsive {
+  width: auto !important;
+  height: 195px !important;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .leader-container {
+    gap: 12px;
+  }
+  
+  .leader-container img.img-responsive {
+    width: 80px !important;
+    height: 120px !important;
+  }
+  
+  .leader-info h5 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  
+  .leader-info em {
+    font-size: 14px !important;
+    margin-bottom: 3px !important;
+  }
+  
+  .leader-info ul {
+    margin-top: 8px !important;
+    font-size: 14px !important;
+  }
+  
+  .leader-info li {
+    margin-bottom: 2px !important;
+  }
+}
+
 </style>
 <h3> Leader </h3>
 
 {% for member in site.data.team_members %}
 
-<div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 32px;">
-  <img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ member.photo }}" class="img-responsive" style="width: auto; height: 195px; border-radius: 12px; flex-shrink: 0;" />
+<div class="leader-container">
+  <img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ member.photo }}" class="img-responsive" />
   
-  <div style="flex: 1;">
+  <div class="leader-info" style="flex: 1;">
     <h5 style="margin-top: 40px; margin-bottom: 16px; font-weight: 600; line-height: 1.3;">{{ member.name }}</h5>
     <em style="font-style: normal; line-height: 1.5; display: block; margin-bottom: 0px;">{{ member.info }}</em>
     <ul style="overflow: hidden; margin-top: 8px; padding-left: 20px; line-height: 1.5;">
