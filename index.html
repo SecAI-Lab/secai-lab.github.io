@@ -18,9 +18,9 @@ paginate: true
           {% if news.id < 2 %}
           <div class="carousel-item {% if news.id == 0 %} active {% endif %}">
             <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{news.headline}}</h5>
-                <p class="card-text">{{news.date}}</p>
+              <div class="card-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <h5 class="card-title" style="margin: 0; max-width: 80%;">{{news.headline}}</h5>
+                <p class="card-text" style="margin: 0;">{{news.date}}</p>
               </div>
             </div>
           </div>      
