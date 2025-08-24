@@ -13,15 +13,6 @@
   research: Privacy, LLM
   joined: Spring 2024
 
-- name: Minseok Kim (김민석)
-  photo: minseok.jpg
-  info: Master student
-  email: for8821 AT g.skku.edu
-  research: Binary Reversing, Machine Unlearning
-  github: https://github.com/DenisKimskku
-  joined: Fall 2024
-  blog: https://deniskim1.com
-
 - name: Shakhzod Yuldoshkhujaev
   photo: Shakhzod.jpg
   info: Master student (Combined BS and MS program)
@@ -30,6 +21,15 @@
   github: https://github.com/ShakYld
   joined: Fall 2024
   blog: https://shakyld.github.io/
+
+- name: Minseok Kim (김민석)
+  photo: minseok.jpg
+  info: Master student
+  email: for8821 AT g.skku.edu
+  research: Binary Reversing, Machine Unlearning
+  github: https://github.com/DenisKimskku
+  joined: Fall 2024
+  blog: https://deniskim1.com
 
 - name: Mijin Jeon (전미진)
   photo: mijin.jpg
