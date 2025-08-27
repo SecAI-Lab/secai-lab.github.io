@@ -1,3 +1,23 @@
+- title: "Inbox Invasion: Exploiting MIME Ambiguities to Evade Email Attachment Detection"
+  link: "https://dl.acm.org/doi/10.1145/3658644.3670386"
+  ppt_link: "https://drive.google.com/file/d/1NXeZUPIi8k4XsptboSzeiv-IiNv5mUIh/view?usp=sharing"
+  code_link: ""
+  presenter: Suyeon
+  conference: CCS
+  date: 2025.08.27
+  pub_year: 20204
+  discussion: "(Discussion) (Hyoungjun)"
+  
+- title: "KernelGPT: Enhanced Kernel Fuzzing via Large Language Models"
+  link: "https://dl.acm.org/doi/10.1145/3676641.3716022"
+  ppt_link: "https://docs.google.com/presentation/d/1kEhf3KnR0TfdF1Fi9m6r8RUHCffaxD1VfSwd5tR1yeY/edit?usp=sharing"
+  code_link: ""
+  presenter: Yiyue
+  conference: ASPLOS
+  date: 2025.08.27
+  pub_year: 2025
+  discussion: "(Discussion) (Yujeong)"
+  
 - title: "Coda: An End-to-End Neural Program Decompiler"
   link: "https://papers.nips.cc/paper_files/paper/2019/file/093b60fd0557804c8ba0cbf1453da22f-Paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1gksvOShAC65id9pi7OWjt7dCRIiRdoNp8IE8vf64vG8/edit?slide=id.g37838ef575b_0_15#slide=id.g37838ef575b_0_15"
