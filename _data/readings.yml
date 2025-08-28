@@ -5,8 +5,8 @@
   presenter: Suyeon
   conference: CCS
   date: 2025.08.27
-  pub_year: 20204
-  discussion: "(Discussion) (Hyoungjun)"
+  pub_year: 2024
+  discussion: "(Discussion) This paper analyzed and discovered vulnerabilities in email system attachment detection. It demonstrated that malicious code detection can be evaded by exploiting differences in MIME parsing methods between email security detectors and clients. Using this approach, they developed a framework and discovered a total of 24 vulnerabilities across 7 popular email clients. Although there are limitations such as potential errors in many real-world cases due to reliance on open-source parser filtering, and the approach is only applicable within restricted scenarios, they achieved significant results including being the first to analyze MIME parsing ambiguity and actually discovering vulnerabilities.(Hyoungjun)"
   
 - title: "KernelGPT: Enhanced Kernel Fuzzing via Large Language Models"
   link: "https://dl.acm.org/doi/10.1145/3676641.3716022"
