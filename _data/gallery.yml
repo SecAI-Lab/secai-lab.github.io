@@ -23,6 +23,11 @@
     - filename: 241128.jpg
       date: "2024-11-28"
 
+- title: "ACM ASIACCS 2024"
+  images:
+    - filename: 240704.png
+      date: "2024-07-04"
+      
 - title: "한국정보보호학회 하계학술대회 (CISC-S'24)"
   images:
     - filename: 240620.png
