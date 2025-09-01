@@ -490,13 +490,17 @@ main_nav: true
     }
     
     .publication-links {
-        flex-direction: column;
+        flex-direction: row;
         gap: 0.5rem;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        padding-top: 1rem;
+        border-top: none;
     }
     
     .publication-link {
-        text-align: center;
-        width: 100%;
+        flex: 0 0 auto;
+        min-width: 60px;
     }
 }
 
