@@ -6,6 +6,11 @@ permalink: /publications/
 main_nav: true
 ---
 
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
 <style>
 .academic-header {
     border-bottom: 2px solid #2c3e50;
@@ -344,6 +349,36 @@ main_nav: true
     text-decoration: none;
 }
 
+/* GitHub button styling */
+.github-link {
+    padding: 0.3rem 0.6rem;
+    background: #f8f9fa;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+
+/* Slides button styling */
+.slides-link {
+    padding: 0.3rem 0.6rem;
+    background: #f8f9fa;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+/* Icon spacing */
+.github-link i, .slides-link i {
+    margin-right: 0.3rem;
+}
+
 
 @media (max-width: 768px) {
     .academic-header h1 {
@@ -362,6 +397,30 @@ main_nav: true
     
     .filter-btn {
         width: 200px;
+    }
+    
+    /* Fix mobile layout for featured publications */
+    .featured-publication {
+        height: auto !important;
+        min-height: 400px;
+        padding-bottom: 3rem;
+    }
+    
+    .featured-publication.expanded {
+        min-height: 400px;
+    }
+    
+    .abstract-container {
+        height: auto !important;
+        margin-bottom: 1.5rem;
+    }
+    
+    .publication-links {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        margin-top: 1rem;
     }
 }
 </style>
@@ -407,7 +466,17 @@ main_nav: true
                 
                 <div class="publication-links">
                     {% if publi.link.url and publi.link.url != "To appear" %}
-                    <a href="{{ publi.link.url }}" class="publication-link" target="_blank">Paper</a>
+                    <a href="{{ publi.link.url }}" class="publication-link" target="_blank"> Paper</a>
+                    {% endif %}
+                    {% if publi.github %}
+                    <a href="{{ publi.github }}" class="publication-link github-link" target="_blank">
+                        Code
+                    </a>
+                    {% endif %}
+                    {% if publi.slides %}
+                    <a href="{{ publi.slides }}" class="publication-link slides-link" target="_blank">
+                         Slides
+                    </a>
                     {% endif %}
                 </div>
             </div>
@@ -427,9 +496,18 @@ main_nav: true
 
             <div class="entry-links">
                 {% if publi.link.url and publi.link.url != "To appear" %}
-                <a href="{{ publi.link.url }}" class="entry-link" target="_blank">Paper</a>
+                <a href="{{ publi.link.url }}" class="entry-link" target="_blank">
+                 Paper</a>
                 {% endif %}
-                {% if publi.highlight == 1 %}
+                {% if publi.github %}
+                <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
+                     Code
+                </a>
+                {% endif %}
+                {% if publi.slides %}
+                <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
+                    Slides
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -447,7 +525,17 @@ main_nav: true
 
             <div class="entry-links">
                 {% if publi.link.url %}
-                <a href="{{ publi.link.url }}" class="entry-link" target="_blank">Paper</a>
+                <a href="{{ publi.link.url }}" class="entry-link" target="_blank"> Paper</a>
+                {% endif %}
+                {% if publi.github %}
+                <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
+                     Code
+                </a>
+                {% endif %}
+                {% if publi.slides %}
+                <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
+                     Slides
+                </a>
                 {% endif %}
             </div>
         </div>

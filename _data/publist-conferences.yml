@@ -177,7 +177,8 @@
     display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22)
   highlight: 1
   news2:
-
+  github: "https://github.com/asw0316/binshot"
+  slides: "https://kevinkoo001.github.io/assets/pdf/binshot-acsac22-slides.pdf"
 - title: "DeView: Confining Progressive Web Applications by Debloating Web APIs"
   image: 
   description: "A progressive web application (PWA) becomes an attractive option for building universal applications based on feature-rich web application programming interfaces (Web APIs). While flexible, such vast APIs inevitably bring a significant increase in an API attack surface, which commonly corresponds to a functionality that is neither needed nor wanted by the application. A promising approach to reduce the API attack surface is software debloating, a technique wherein an unused functionality is programmatically removed from an application or API. Unfortunately, debloating PWAs is challenging given the monolithic design and non-deterministic execution of a modern web browser. In this paper, we present DeView, a practical approach that reduces the attack surface of a PWA by blocking unnecessary but accessible web APIs. DeView tackles the challenges of PWA debloating by i) record-and-replay web API profiling that identifies needed web APIs on an app-by-app basis by replaying (recorded) browser interactions and ii) compiler-assisted browser debloating that eliminates the entry functions of corresponding web APIs from the mapping between web API and its entry point at a binary level. Our evaluation shows the effectiveness and practicality of DeView. DeView successfully eliminates 91.8% of accessible web APIs while i) maintaining original functionalities and ii) preventing 76.3% of known exploits on average."
