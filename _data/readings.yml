@@ -16,7 +16,7 @@
   conference: ASPLOS
   date: 2025.08.27
   pub_year: 2025
-  discussion: "(Discussion) (Yujeong)"
+  discussion: "(Discussion) KernelGPT takes a stepwise approach to interpreting kernel driver and socket code with an LLM—recovering identifiers, types, and dependencies—and iteratively verifying and repairing its outputs to produce syzlang specifications, thereby extending fuzzing into paths that earlier tools left uncovered. In evaluation, it generated 532 new syscall specifications and 294 new type definitions; combined with Syzkaller, these additions unlocked 20,472 additional unique basic blocks and surpassed state-of-the-art baselines in both coverage and crash discovery. This specification lift translated into practice: the system uncovered 24 new kernel bugs (21 confirmed, 11 assigned CVEs, 12 already patched), underscoring a clear link between specification quality and fuzzing effectiveness. Still, the current pipeline relies largely on syntactic and shallow semantic checks and can miss runtime semantic errors, while risks such as LLM hallucination and version drift remain."
   
 - title: "Coda: An End-to-End Neural Program Decompiler"
   link: "https://papers.nips.cc/paper_files/paper/2019/file/093b60fd0557804c8ba0cbf1453da22f-Paper.pdf"
