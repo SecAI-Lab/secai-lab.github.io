@@ -402,17 +402,28 @@ main_nav: true
     /* Fix mobile layout for featured publications */
     .featured-publication {
         height: auto !important;
-        min-height: 400px;
-        padding-bottom: 3rem;
+        min-height: auto !important;
+        padding: 1.5rem;
+        padding-bottom: 1.5rem !important;
+        display: flex;
+        flex-direction: column;
     }
     
     .featured-publication.expanded {
-        min-height: 400px;
+        min-height: auto !important;
+        padding-bottom: 1.5rem !important;
     }
     
     .abstract-container {
         height: auto !important;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.5rem !important;
+        flex: 1;
+        min-height: 0;
+    }
+    
+    .description-preview {
+        -webkit-line-clamp: 3 !important;
+        max-height: none !important;
     }
     
     .publication-links {
@@ -420,7 +431,83 @@ main_nav: true
         bottom: auto !important;
         left: auto !important;
         right: auto !important;
-        margin-top: 1rem;
+        margin-top: auto;
+        margin-bottom: 0;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .publication-header {
+        flex-shrink: 0;
+    }
+    
+    .publication-image {
+        height: 120px;
+    }
+}
+
+/* Additional responsive breakpoints for better window resizing support */
+@media (max-width: 992px) and (min-width: 769px) {
+    .featured-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    
+    .featured-publication {
+        height: auto;
+        min-height: 450px;
+        padding-bottom: 4rem;
+    }
+    
+    .abstract-container {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .academic-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .search-filter-section {
+        padding: 1.5rem;
+        margin: 0 -1rem;
+    }
+    
+    .featured-publication {
+        padding: 1rem !important;
+        margin: 0 -0.5rem;
+    }
+    
+    .publication-image {
+        height: 100px;
+    }
+    
+    .publication-title {
+        font-size: 1.05rem;
+    }
+    
+    .publication-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .publication-link {
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* Improved window resize handling */
+@media (min-width: 769px) {
+    .featured-publication {
+        transition: height 0.3s ease, min-height 0.3s ease;
+    }
+    
+    .abstract-container {
+        transition: height 0.3s ease;
     }
 }
 </style>
@@ -694,6 +781,18 @@ function calculateLineClamp(desc) {
     if (!abstractContainer) return;
     
     const container = desc.closest('.featured-publication');
+    
+    // Check if we're on mobile
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
+    if (isMobile) {
+        // On mobile, use flexible layout without height constraints
+        abstractContainer.style.height = 'auto';
+        desc.style.webkitLineClamp = '3'; // Fixed 3 lines on mobile
+        return;
+    }
+    
+    // Desktop/tablet logic
     const containerHeight = 500; // Fixed height
     const headerHeight = container.querySelector('.publication-header').offsetHeight;
     const reservedBottomSpace = 64; // 4rem bottom padding for button area
@@ -716,6 +815,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const descriptions = document.querySelectorAll('.featured-publication .description-preview');
     descriptions.forEach(desc => {
         calculateLineClamp(desc);
+    });
+    
+    // Handle window resize
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Recalculate line clamps after resize
+            const currentDescriptions = document.querySelectorAll('.featured-publication .description-preview');
+            currentDescriptions.forEach(desc => {
+                calculateLineClamp(desc);
+            });
+        }, 250); // Debounce resize events
     });
 });
 </script>
