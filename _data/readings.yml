@@ -7,7 +7,7 @@
   date: 2025.09.04
   pub_year: 2025
   discussion: |
-    (Discussion)
+    (Discussion) This paper introduces EvoCrawl, a novel web application crawler that leverages evolutionary search to overcome the limitations of traditional state exploration in vulnerability detection. Its key strengths lie in the innovative use of dependency tracking and a fitness-based evolutionary algorithm, which enable it to efficiently navigate complex interaction sequences, achieve significantly higher code coverage, and uncover real zero-day vulnerabilities across widely used platforms. The implementation is technically robust, integrating multiple modules (ESM, PM, IVD, XVD) and demonstrating practical effectiveness through extensive case studies. Nonetheless, the work has some shortcomings: the design section is at times confusing in its presentation, terminology inconsistencies appear, and the system currently requires manual parameter tuning while struggling with certain token-handling scenarios. Despite these limitations, EvoCrawl represents a meaningful advancement in automated security testing by showing how evolutionary algorithms can push the boundaries of web application exploration and vulnerability discovery. (Suyeon)
 
 - title: "Inbox Invasion: Exploiting MIME Ambiguities to Evade Email Attachment Detection"
   link: "https://dl.acm.org/doi/10.1145/3658644.3670386"
