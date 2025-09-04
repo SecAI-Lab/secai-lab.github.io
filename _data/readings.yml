@@ -1,3 +1,14 @@
+- title: "An Empirical Study of Rust-for-Linux: The Success, Dissatisfaction, and Compromise"
+  link: "https://www.usenix.org/conference/atc24/presentation/li-hongyu"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_EmpiricalRustforLinux.pdf"
+  code_link: "https://github.com/Richardhongyu/rfl_empirical_tool"
+  presenter: Jiyong
+  conference: USENIX ATC
+  date: 2025.09.04
+  pub_year: 2024
+  discussion: |
+    (Discussion) :D
+
 - title: "EvoCrawl: Exploring Web Application Code and State using Evolutionary Search"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-366-paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1IxPZYLJivJx5MW0-0U8wFnn4NMcgnzoDXERjAT_2KBM/edit?usp=sharing"
