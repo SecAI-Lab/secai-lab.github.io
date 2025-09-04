@@ -1,3 +1,14 @@
+- title: "EvoCrawl: Exploring Web Application Code and State using Evolutionary Search"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2025-366-paper.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1IxPZYLJivJx5MW0-0U8wFnn4NMcgnzoDXERjAT_2KBM/edit?usp=sharing"
+  code_link: "https://github.com/dlgroupuoft/evocrawl"
+  presenter: Shakhzod
+  conference: NDSS
+  date: 2025.09.04
+  pub_year: 2025
+  discussion: |
+    (Discussion)
+
 - title: "Inbox Invasion: Exploiting MIME Ambiguities to Evade Email Attachment Detection"
   link: "https://dl.acm.org/doi/10.1145/3658644.3670386"
   ppt_link: "https://drive.google.com/file/d/1NXeZUPIi8k4XsptboSzeiv-IiNv5mUIh/view?usp=sharing"
