@@ -7,7 +7,7 @@
   date: 2025.09.04
   pub_year: 2024
   discussion: |
-    (Discussion) :D
+    (Discussion) This paper conducts the first empirical study of Rust-for-Linux, revealing both its successes and compromises. Its strengths lie in a thorough analysis of drivers, commits, and benchmarks, showing that Rust improves code quality, testing, and developer engagement while making Linux more securable. However, unsafe code remains inevitable, performance is inconsistent across drivers, and the steep learning curve complicates adoption. Despite these limitations, the study marks an important step in understanding how Rust reshapes kernel development, offering valuable insights for balancing safety, efficiency, and community growth in future RFL work. (Yiyue)
 
 - title: "EvoCrawl: Exploring Web Application Code and State using Evolutionary Search"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-366-paper.pdf"
