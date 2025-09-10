@@ -32,7 +32,12 @@
   images:
     - filename: 240620.png
       date: "2024-06-20"
-
+      
+- title: "The ACM Conference on Computer and Communications Security (CCS'23)"
+  images:
+    - filename: 231126jpg
+      date: "2023-11-26"
+      
 - title: "융합보안대학원 해커톤 대회 (2023)"
   images:
     - filename: 230823.jpg
