@@ -4,7 +4,7 @@
   description: "An advanced persistent threat (APT) refers to a covert and long-term cyberattack, typically conducted by state-sponsored actors, targeting critical sectors and often remaining undetected for long periods. In response, collective intelligence from around the globe collaborates to identify and trace surreptitious activities, generating substantial documentation on APT campaigns publicly available on the web. While a multitude of prior works predominantly focus on specific aspects of APT cases, such as detection, evaluation, cyber threat intelligence, and dataset creation, limited attention has been devoted to revisiting and investigating these scattered dossiers in a longitudinal manner. The objective of our study lies in filling the gap by offering a macro perspective, connecting key insights and global trends in the past APT attacks. We systematically analyze six reliable sources - three focused on technical reports and another three on threat actors - examining 1,509 APT dossiers (i.e., totaling 24,215 pages) spanning from 2014 to 2023 (a decade), and identifying 603 unique APT groups in the world. To efficiently unearth relevant information, we employ a hybrid methodology that combines rule-based information retrieval with large-language-model-based search techniques. Our longitudinal analysis reveals shifts in threat actor activities, global attack vectors, changes in targeted sectors, and the relationships between cyberattacks and significant events, such as elections or wars, which provides insights into historical patterns in APT evolution. Over the past decade, 154 countries have been affected, primarily using malicious documents and spear phishing as the dominant initial infiltration vectors, and a noticeable decline in zero-day exploitation since 2016. Furthermore, we present our findings through interactive visualization tools, such as an APT map or a flow diagram, to facilitate intuitive understanding of the global patterns and trends in APT activities." 
   authors: Shakhzod Yuldoshkhujaev, Mijin Jeon, Doowon Kim, Nick Nikiforakis, and Hyungjoon Koo
   link: 
-    URL: To appear
+    url: To appear
     display: In the 32nd ACM Conference on Computer and Communications Security (CCS'25)
   highlight: 0
   news2:
@@ -14,7 +14,7 @@
   description: "Bootkits and rootkits are among the most elusive and persistent forms of malware, subverting system defenses by operating at the lowest levels of system architecture. Bootkits compromise the firmware or bootloader, allowing them to manipulate the boot sequence and gain control before security mechanisms initialize. Meanwhile, rootkits embed themselves within the OS kernel, stealthily conceal malicious activities, and maintain long-term persistence. Despite their critical implications for security, these threats remain underexplored due to the technical complexity involved in their study, the scarcity of real-world samples, and the challenges posed by defense-in-depth security in modern OSes. In this paper, we introduce BOOTKITTY, a hybrid bootkit-rootkit capable of circumventing modern security features in multiple OS platforms, across Windows, Linux, and Android. We explore critical firmware and bootloader vulnerabilities that can lead to a low-level compromise, demonstrating techniques that bypass advanced security protections by breaking the chain of trust. Our study addresses technical challenges such as exploiting UEFI drivers, manipulating kernel memory, and evading advanced mitigations in the boot process, and provides actionable insights. Our systematic evaluations show that BOOTKITTY reveals critical weaknesses in contemporary security mechanisms, highlighting the need for better security design that offers holistic (low-level) protection." 
   authors: Junho Lee, Jihoon Kwon, HyunA Seo, Myeongyeol Lee, Hyungyu Seo, Jinho Jung, and Hyungjoon Koo
   link: 
-    URL: https://www.usenix.org/system/files/woot25-lee.pdf
+    url: https://www.usenix.org/system/files/woot25-lee.pdf
     display: In the 19th USENIX WOOT Conference on Offensive Technologies (WOOT'25)
   highlight: 0
   news2:
@@ -40,7 +40,7 @@
   phishing defense systems, encouraging proactive actions."
   authors: Fujiao Ji, Kiho Lee, Hyungjoon Koo, Wenhao You, Euijin Choo, Hyoungshick Kim, and Doowon Kim
   link: 
-    URL: https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-483-ji.pdf
+    url: https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-483-ji.pdf
     display: In the 34nd USENIX Conference on Security Symposium (USENIX'25)
   highlight: 0
   news2:
