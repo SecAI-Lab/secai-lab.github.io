@@ -47,6 +47,10 @@ li:has(details) {
 }
 </style>
 
+#### Fall 2025
+
+- [SWE3025] Introduction to Computer Security (Undergraduate)
+
 #### Spring 2025
 
 - [ESW4020] Computer Security (Graduate)
