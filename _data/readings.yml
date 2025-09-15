@@ -18,7 +18,7 @@
   date: 2025.09.11
   pub_year: 2025
   discussion: |
-    (Discussion) :) (Jiyong).
+    (Discussion) Recent studies have shown that Large Language Model (LLM)-based agents are vulnerable to security risks; that is, malicious prompts can exploit sensitive operations. To address this, the paper introduces AgentFuzz, a greybox fuzzing framework designed to detect taint-style vulnerabilities in LLM-based agents. AgentFuzz leverages dataflow analysis to identify predefined sinks, such as SQL and code injection, and constructs call chains that guide LLM-assisted prompt generation, forming the main seed pool. Afterward, each seed's execution trace is evaluated at both semantic and distance levels to schedule the seed to mutate first. Using this approach, AgentFuzz uncovered 34 previously unknown high-risk vulnerabilities, 23 of which were assigned CVE at the time of publication. This work is a novel direction for identifying vulnerabilities in LLM-based agents. (Jiyong).
 
 
 - title: "An Empirical Study of Rust-for-Linux: The Success, Dissatisfaction, and Compromise"
