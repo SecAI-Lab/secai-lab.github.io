@@ -18,6 +18,11 @@
     - filename: 250418.JPG
       date: "2025-04-18"
 
+- title: "International Symposium on Foundations & Practice of Security (FPS'24)"
+  images:
+    - filename: 20241211.jpg
+      date: "2024-12-11"
+      
 - title: "한국정보보호학회 동계학술대회 (CISC-W'24)"
   images:
     - filename: 241128.jpg
