@@ -1,3 +1,14 @@
+- title: "Nothing is Unreachable: Automated Synthesis of Robust Code-Reuse Gadget Chains for Arbitrary Exploitation Primitives"
+  link: "https://www.usenix.org/system/files/usenixsecurity25-bailluet.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1kqp1BlKW4faCW6NjdQwiPkPsN_Hjlo2n/edit?usp=sharing&ouid=110356779034791900133&rtpof=true&sd=true"
+  code_link: "https://zenodo.org/records/14724514"
+  presenter: Hyungjoon
+  conference: USENIX
+  date: 2025.09.18
+  pub_year: 2025
+  discussion: |
+    (Discussion)
+  
 - title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-446-qu-watermarking.pdf"
   ppt_link: "https://drive.google.com/drive/folders/15mXQhaOKNFbaR6DAVHVq0e79VFbs0Ao0?usp=sharing"
