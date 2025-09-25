@@ -509,7 +509,7 @@ main_nav: true
     
     .publication-link {
         flex: 0 0 auto;
-        min-width: 60px;
+        /* min-width: 60px; */
     }
 
     .title-with-buttons {
