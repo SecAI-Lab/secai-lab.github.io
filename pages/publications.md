@@ -583,6 +583,9 @@ main_nav: true
                     {% if publi.link.url and publi.link.url != "To appear" %}
                     <a href="{{ publi.link.url }}" class="publication-link" target="_blank"> Paper</a>
                     {% endif %}
+                    {% if publi.link.arXiv %}
+                    <a href="{{ publi.link.arXiv }}" class="publication-link" target="_blank"> arXiv</a>
+                    {% endif %}
                     {% if publi.github %}
                     <a href="{{ publi.github }}" class="publication-link github-link" target="_blank">
                         Code
@@ -612,6 +615,10 @@ main_nav: true
                     <a href="{{ publi.link.url }}" class="entry-link" target="_blank">
                      Paper</a>
                     {% endif %}
+                    {% if publi.link.arXiv %}
+                    <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank">
+                     arXiv</a>
+                    {% endif %}
                     {% if publi.github %}
                     <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
                          Code
@@ -640,6 +647,9 @@ main_nav: true
                 <div class="entry-links">
                     {% if publi.link.url %}
                     <a href="{{ publi.link.url }}" class="entry-link" target="_blank"> Paper</a>
+                    {% endif %}
+                    {% if publi.link.arXiv %}
+                    <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank"> arXiv</a>
                     {% endif %}
                     {% if publi.github %}
                     <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
