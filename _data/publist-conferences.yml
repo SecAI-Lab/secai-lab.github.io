@@ -17,7 +17,7 @@
     url: To appear
     display: In the 32nd ACM Conference on Computer and Communications Security (CCS'25)
   highlight: 1
-  # github: "https://zenodo.org/records/16869733"
+  github: "https://zenodo.org/records/16869733"
   news2:
 
 - title: "BOOTKITTY: A Stealthy Bootkit-Rootkit Against Modern Operating Systems"
