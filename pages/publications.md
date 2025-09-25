@@ -295,8 +295,8 @@ main_nav: true
 
 
 .publication-entry {
-    padding: 1rem 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 0.3rem 0;
+    /* border-bottom: 1px solid #f0f0f0; */
     margin: 0;
 }
 
@@ -304,17 +304,25 @@ main_nav: true
     border-bottom: none;
 }
 
+.title-with-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 0.0rem;
+}
+
 .entry-title {
     font-size: 1.05rem;
     font-weight: 600;
     color: #2c3e50;
-    margin-bottom: 0.4rem;
+    margin: 0;
     line-height: 1.4;
 }
 
 .entry-authors {
     color: #34495e;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.1rem;
     font-style: italic;
     font-size: 0.95rem;
 }
@@ -328,8 +336,9 @@ main_nav: true
 
 .entry-links {
     display: flex;
-    gap: 0.8rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .entry-link {
@@ -502,6 +511,21 @@ main_nav: true
         flex: 0 0 auto;
         min-width: 60px;
     }
+
+    .title-with-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .entry-links {
+        margin-top: 0.5rem;
+    }
+
+    .entry-link {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
 }
 
 /* Improved window resize handling */
@@ -581,26 +605,27 @@ main_nav: true
 
         {% for publi in site.data.publist-conferences %}
         <div class="publication-entry" data-type="conferences">
-            <h4 class="entry-title">{{ publi.title }}</h4>
+            <div class="title-with-buttons">
+                <h4 class="entry-title">{{ publi.title }}</h4>
+                <div class="entry-links">
+                    {% if publi.link.url and publi.link.url != "To appear" %}
+                    <a href="{{ publi.link.url }}" class="entry-link" target="_blank">
+                     Paper</a>
+                    {% endif %}
+                    {% if publi.github %}
+                    <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
+                         Code
+                    </a>
+                    {% endif %}
+                    {% if publi.slides %}
+                    <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
+                        Slides
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
             <p class="entry-authors">{{ publi.authors }}</p>
             <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display }}</span>{% endif %}</p>
-
-            <div class="entry-links">
-                {% if publi.link.url and publi.link.url != "To appear" %}
-                <a href="{{ publi.link.url }}" class="entry-link" target="_blank">
-                 Paper</a>
-                {% endif %}
-                {% if publi.github %}
-                <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
-                     Code
-                </a>
-                {% endif %}
-                {% if publi.slides %}
-                <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
-                    Slides
-                </a>
-                {% endif %}
-            </div>
         </div>
         {% endfor %}
     </div>
@@ -610,25 +635,26 @@ main_nav: true
 
         {% for publi in site.data.publist-workshops %}
         <div class="publication-entry" data-type="workshops">
-            <h4 class="entry-title">{{ publi.title }}</h4>
+            <div class="title-with-buttons">
+                <h4 class="entry-title">{{ publi.title }}</h4>
+                <div class="entry-links">
+                    {% if publi.link.url %}
+                    <a href="{{ publi.link.url }}" class="entry-link" target="_blank"> Paper</a>
+                    {% endif %}
+                    {% if publi.github %}
+                    <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
+                         Code
+                    </a>
+                    {% endif %}
+                    {% if publi.slides %}
+                    <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
+                         Slides
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
             <p class="entry-authors">{{ publi.authors }}</p>
             <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display }}</span>{% endif %}</p>
-
-            <div class="entry-links">
-                {% if publi.link.url %}
-                <a href="{{ publi.link.url }}" class="entry-link" target="_blank"> Paper</a>
-                {% endif %}
-                {% if publi.github %}
-                <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
-                     Code
-                </a>
-                {% endif %}
-                {% if publi.slides %}
-                <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
-                     Slides
-                </a>
-                {% endif %}
-            </div>
         </div>
         {% endfor %}
     </div>
