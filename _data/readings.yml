@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2025.09.18
   pub_year: 2025
-  discussion: "(Discussion) The paper addresses practical limits of text watermarking—where prior work either detects only “watermarked vs. not” or supports multi-bit messages but with poor accuracy or heavy extraction cost—by proposing a deployable multi-bit scheme that packs bits into segments, assigns segments to tokens via a pseudo-random schedule, balances allocation with token-frequency–aware optimization, and integrates Reed–Solomon error correction; experiments across multiple open LLMs and datasets show fast extraction, stable recovery, and robustness under realistic edits with minimal impact on fluency, and a formal edit-distance robustness bound plus released code further strengthen its practicality, while open questions remain around public verification, cross-tokenizer portability, multilingual robustness, and scaling to longer documents (Mijin)."
+  discussion: "(Discussion) "
   
 - title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-446-qu-watermarking.pdf"
@@ -16,7 +16,7 @@
   conference: USENIX
   date: 2025.09.18
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper addresses practical limits of text watermarking—where prior work either detects only “watermarked vs. not” or supports multi-bit messages but with poor accuracy or heavy extraction cost—by proposing a deployable multi-bit scheme that packs bits into segments, assigns segments to tokens via a pseudo-random schedule, balances allocation with token-frequency–aware optimization, and integrates Reed–Solomon error correction; experiments across multiple open LLMs and datasets show fast extraction, stable recovery, and robustness under realistic edits with minimal impact on fluency, and a formal edit-distance robustness bound plus released code further strengthen its practicality, while open questions remain around public verification, cross-tokenizer portability, multilingual robustness, and scaling to longer documents (Mijin)."
 
 - title: "LLMxCPG: Context-Aware Vulnerability Detection Through Code Property Graph-Guided Large Language Models"
   link: "https://www.usenix.org/system/files/usenixsecurity25-lekssays.pdf"
