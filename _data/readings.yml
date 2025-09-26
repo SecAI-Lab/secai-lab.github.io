@@ -6,8 +6,7 @@
   conference: USENIX
   date: 2025.09.18
   pub_year: 2025
-  discussion: |
-    (Discussion)
+  discussion: "(Discussion) The paper addresses practical limits of text watermarking—where prior work either detects only “watermarked vs. not” or supports multi-bit messages but with poor accuracy or heavy extraction cost—by proposing a deployable multi-bit scheme that packs bits into segments, assigns segments to tokens via a pseudo-random schedule, balances allocation with token-frequency–aware optimization, and integrates Reed–Solomon error correction; experiments across multiple open LLMs and datasets show fast extraction, stable recovery, and robustness under realistic edits with minimal impact on fluency, and a formal edit-distance robustness bound plus released code further strengthen its practicality, while open questions remain around public verification, cross-tokenizer portability, multilingual robustness, and scaling to longer documents (Mijin)."
   
 - title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-446-qu-watermarking.pdf"
@@ -17,8 +16,7 @@
   conference: USENIX
   date: 2025.09.18
   pub_year: 2025
-  discussion: |
-    (Discussion)
+  discussion: "(Discussion) "
 
 - title: "LLMxCPG: Context-Aware Vulnerability Detection Through Code Property Graph-Guided Large Language Models"
   link: "https://www.usenix.org/system/files/usenixsecurity25-lekssays.pdf"
@@ -28,8 +26,7 @@
   conference: USENIX
   date: 2025.09.11
   pub_year: 2025
-  discussion: |
-    (Discussion) This paper proposes a hybrid framework that combines Code Property Graphs (CPGs) with Large Language Models (LLMs) to improve software vulnerability detection. By constructing vulnerability-focused code slices, the system enables LLMs to capture security-critical context across both function-level and project-level codebases. Empirical evaluation demonstrates improvements over state-of-the-art baselines, strong robustness against code transformations, and effective generalization to unseen datasets. However, limitations remain, including the inability of CPG-based methods to capture runtime-dependent vulnerabilities, the scarcity of high-quality datasets, and context length constraints in the fine-tuned LLMs. In addition, the system’s performance degrades on deeply nested code structures and shows reduced effectiveness on underrepresented CWEs (Shakhzod).
+  discussion: "(Discussion) This paper proposes a hybrid framework that combines Code Property Graphs (CPGs) with Large Language Models (LLMs) to improve software vulnerability detection. By constructing vulnerability-focused code slices, the system enables LLMs to capture security-critical context across both function-level and project-level codebases. Empirical evaluation demonstrates improvements over state-of-the-art baselines, strong robustness against code transformations, and effective generalization to unseen datasets. However, limitations remain, including the inability of CPG-based methods to capture runtime-dependent vulnerabilities, the scarcity of high-quality datasets, and context length constraints in the fine-tuned LLMs. In addition, the system’s performance degrades on deeply nested code structures and shows reduced effectiveness on underrepresented CWEs (Shakhzod)."
 
 - title: "Make Agent Defeat Agent: Automatic Detection of Taint-Style Vulnerabilities in LLM-based Agents"
   link: "https://www.usenix.org/system/files/usenixsecurity25-liu-fengyu.pdf"
@@ -39,8 +36,7 @@
   conference: USENIX
   date: 2025.09.11
   pub_year: 2025
-  discussion: |
-    (Discussion) Recent studies have shown that Large Language Model (LLM)-based agents are vulnerable to security risks; that is, malicious prompts can exploit sensitive operations. To address this, the paper introduces AgentFuzz, a greybox fuzzing framework designed to detect taint-style vulnerabilities in LLM-based agents. AgentFuzz leverages dataflow analysis to identify predefined sinks, such as SQL and code injection, and constructs call chains that guide LLM-assisted prompt generation, forming the main seed pool. Afterward, each seed's execution trace is evaluated at both semantic and distance levels to schedule the seed to mutate first. Using this approach, AgentFuzz uncovered 34 previously unknown high-risk vulnerabilities, 23 of which were assigned CVE at the time of publication. This work is a novel direction for identifying vulnerabilities in LLM-based agents. (Jiyong).
+  discussion: "(Discussion) Recent studies have shown that Large Language Model (LLM)-based agents are vulnerable to security risks; that is, malicious prompts can exploit sensitive operations. To address this, the paper introduces AgentFuzz, a greybox fuzzing framework designed to detect taint-style vulnerabilities in LLM-based agents. AgentFuzz leverages dataflow analysis to identify predefined sinks, such as SQL and code injection, and constructs call chains that guide LLM-assisted prompt generation, forming the main seed pool. Afterward, each seed's execution trace is evaluated at both semantic and distance levels to schedule the seed to mutate first. Using this approach, AgentFuzz uncovered 34 previously unknown high-risk vulnerabilities, 23 of which were assigned CVE at the time of publication. This work is a novel direction for identifying vulnerabilities in LLM-based agents. (Jiyong)."
 
 
 - title: "An Empirical Study of Rust-for-Linux: The Success, Dissatisfaction, and Compromise"
