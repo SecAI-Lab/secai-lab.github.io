@@ -16,6 +16,9 @@
     arXiv: https://arxiv.org/abs/2509.07457
     url: To appear
     display: In the 32nd ACM Conference on Computer and Communications Security (CCS'25)
+  link2:
+    url: https://www.sigsac.org/ccs/CCS2025/awards/
+    display: Distinguished Paper Award*
   highlight: 1
   github: "https://zenodo.org/records/16869733"
   news2:
