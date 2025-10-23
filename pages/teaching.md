@@ -4,6 +4,7 @@ layout: page
 sitemap: false
 permalink: /teaching/
 main_nav: true
+sitemap: true
 ---
 
 <style>

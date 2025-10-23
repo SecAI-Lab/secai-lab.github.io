@@ -1,9 +1,9 @@
 ---
 title: "Lab Members"
 layout: page
-sitemap: false
 permalink: /members/
 main_nav: true
+sitemap: true
 ---
 
 <style>

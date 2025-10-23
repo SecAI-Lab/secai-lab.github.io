@@ -1,9 +1,9 @@
 ---
 title: "Publications"
 layout: page
-sitemap: false
 permalink: /publications/
 main_nav: true
+sitemap: true
 ---
 
 <!-- Font Awesome for icons -->
