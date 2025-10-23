@@ -14,7 +14,7 @@ subtitle: ""
 email: kevin.koo@g.skku.edu
 # domain: ""
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: ""  # the base hostname & protocol for your site
+url: "https://secai.skku.edu" # the base hostname & protocol for your site
 cover: "/assets/cover-skku.jpg"
 logo: "/assets/image.png"
 
@@ -26,7 +26,6 @@ karmdown:
   html_to_native: true
 inter_post_navigation: false
 highlightjs_theme: "monokai-sublime"
-
 # Pagination Settings
 # https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md#site-configuration
 # pagination:
