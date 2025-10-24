@@ -21,6 +21,7 @@
     display: Distinguished Paper Award*
   highlight: 1
   github: "https://zenodo.org/records/16869733"
+  slides: "https://kevinkoo001.github.io/assets/pdf/ccs25-apt-slides.pdf"
   news2:
 
 - title: "BOOTKITTY: A Stealthy Bootkit-Rootkit Against Modern Operating Systems"
