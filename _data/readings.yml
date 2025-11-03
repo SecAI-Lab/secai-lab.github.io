@@ -1,3 +1,25 @@
+- title: "SRDC: Semantics-based Ransomware Detection and Classifcation with LLM-assisted Pre-training"
+  link: "https://ojs.aaai.org/index.php/AAAI/article/view/35080/37235"
+  ppt_link: ""
+  code_link: ""
+  presenter: Yiyue
+  conference: AAAI
+  date: 2025.10.30
+  pub_year: 2025
+  discussion: |
+    (Discussion)
+
+- title: "How Far We Have Come: Testing Decompilation Correctness of C Decompilers"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3395363.3397370"
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: ISSTA
+  date: 2025.10.30
+  pub_year: 2020
+  discussion: |
+    (Discussion)
+
 - title: "Nothing is Unreachable: Automated Synthesis of Robust Code-Reuse Gadget Chains for Arbitrary Exploitation Primitives"
   link: "https://www.usenix.org/system/files/usenixsecurity25-bailluet.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1kqp1BlKW4faCW6NjdQwiPkPsN_Hjlo2n/edit?usp=sharing&ouid=110356779034791900133&rtpof=true&sd=true"
