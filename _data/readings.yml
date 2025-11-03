@@ -17,8 +17,7 @@
   conference: ISSTA
   date: 2025.10.30
   pub_year: 2020
-  discussion: |
-    (Discussion)
+  discussion: "(Discussion) The paper systematically evaluates decompilation correctness of modern C decompilers through EMI testing, revealing that while recompilation remains challenging due to undefined symbols and syntax issues, most decompiled code achieves semantic correctness after minor instrumentation; the study identifies 1,423 decompilation errors across four popular decompilers and traces them to 13 root causes in open-source tools, with type recovery and aggressive optimization emerging as primary obstacles rather than the traditionally feared control-flow reconstruction, suggesting the gap between academic advances and industrial implementation persists despite encouraging progress toward functionality-preserving decompilation (Giuk)."
 
 - title: "Nothing is Unreachable: Automated Synthesis of Robust Code-Reuse Gadget Chains for Arbitrary Exploitation Primitives"
   link: "https://www.usenix.org/system/files/usenixsecurity25-bailluet.pdf"
