@@ -1,3 +1,34 @@
+- title: "The Information Security Conference (ISC' 25)"
+  images:
+    - filename: /ISC_25/251020.jpg
+      date: "2025-10-20"
+    - filename: /ISC_25/251020-1.jpg
+      date: "2025-10-20"
+
+- title: "The ACM Conference on Computer and Communications Security (CCS'25)"
+  images:
+    - filename: /CCS_25/251015.jpg
+      date: "2025-10-15"
+    - filename: /CCS_25/251015-1.png
+      date: "2025-10-15"
+    - filename: /CCS_25/251015-2.jpg
+      date: "2025-10-15"
+    - filename: /CCS_25/251015-3.jpg
+      date: "2025-10-15"
+    - filename: /CCS_25/251016.jpg
+      date: "2025-10-16"
+    - filename: /CCS_25/251016-1.jpg
+      date: "2025-10-16"
+
+- title: "The Workshop on Software Understanding and Reverse Engineering (SURE'25)"
+  images:
+    - filename: /SURE_25/251013-1.jpg
+      date: "2025-10-13"
+    - filename: /SURE_25/251013-2.jpg
+      date: "2025-10-13"
+    - filename: /SURE_25/251013.jpg
+      date: "2025-10-13"
+
 - title: "AI시스템 연구회 워크샵"
   images:
     - filename: 250717.jpg
@@ -22,7 +53,7 @@
   images:
     - filename: 20241211.jpg
       date: "2024-12-11"
-      
+
 - title: "한국정보보호학회 동계학술대회 (CISC-W'24)"
   images:
     - filename: 241128.jpg
@@ -32,17 +63,17 @@
   images:
     - filename: 240704.jpg
       date: "2024-07-04"
-      
+
 - title: "한국정보보호학회 하계학술대회 (CISC-S'24)"
   images:
     - filename: 240620.png
       date: "2024-06-20"
-      
+
 - title: "The ACM Conference on Computer and Communications Security (CCS'23)"
   images:
     - filename: 231126.jpg
       date: "2023-11-26"
-      
+
 - title: "융합보안대학원 해커톤 대회 (2023)"
   images:
     - filename: 230823.jpg
