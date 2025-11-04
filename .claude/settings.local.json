@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(dir \"C:\\jinijxxn\\Project\\secai-lab.github.io\\images\\gallery\\CCS_25\")"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}
