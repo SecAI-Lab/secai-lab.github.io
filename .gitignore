@@ -13,3 +13,5 @@ vendor/
 
 Gemfile
 Gemfile.lock
+
+.claude/
