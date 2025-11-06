@@ -16,7 +16,7 @@
   conference: CCS
   date: 2025.11.06
   pub_year: 2025
-  discussion: "(Discussion) (Yujeong)"
+  discussion: "(Discussion) The paper shows that post-Efail the real weak point is isolation: three mainstream PGP-enabled clients (Thunderbird, KMail, Apple Mail+GPGSuite) still render attacker CSS in the same context as decrypted text, enabling a CSS-only, single-pass exfiltration that combines container queries, web-fonts, and ligatures; in practice they leak ~2 B/s end-to-end and recover structured secrets (PINs/keywords) instantly, while “block remote content” proves brittle due to allowlists, spoofing, and caching, so risk remains practical despite parser-level Efail fixes . Mitigations should prioritize strict content isolation or unconditional inlining of remote resources, and expand sanitizers/CSP to treat CSS as active: the authors show DOMPurify and Firefox’s HTML Sanitizer miss this by default and note Meta’s Code Verify updated its model after disclosure—evidence of a persistent gap between today’s defenses and functionality-preserving, CSS-only attacks.(Yujeong)"
 
 - title: "SRDC: Semantics-based Ransomware Detection and Classifcation with LLM-assisted Pre-training"
   link: "https://ojs.aaai.org/index.php/AAAI/article/view/35080/37235"
