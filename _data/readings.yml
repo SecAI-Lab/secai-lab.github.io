@@ -1,3 +1,23 @@
+- title: "Lock the Door But Keep the Window Open: Extracting App-Protected Accessibility Information from Browser-Rendered Websites"
+  link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
+  ppt_link: "https://drive.google.com/file/d/1HSHoltWpplz-DitpEzCKnK4Zb0-wWkK1/view?usp=sharing"
+  code_link: "https://github.com/CyFI-Lab-Public/SOMBRA"
+  presenter: Suyeon
+  conference: CCS
+  date: 2025.11.06
+  pub_year: 2025
+  discussion: " (Discussion)"
+
+- title: "Styled to Steal: The Overlooked Attack Surface in Email Clients"
+  link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
+  ppt_link: ""
+  code_link: ""
+  presenter: Jiyong
+  conference: CCS
+  date: 2025.11.06
+  pub_year: 2025
+  discussion: " (Discussion)"
+
 - title: "SRDC: Semantics-based Ransomware Detection and Classifcation with LLM-assisted Pre-training"
   link: "https://ojs.aaai.org/index.php/AAAI/article/view/35080/37235"
   ppt_link: ""
@@ -6,8 +26,7 @@
   conference: AAAI
   date: 2025.10.30
   pub_year: 2025
-  discussion: |
-    (Discussion)
+  discussion: " (Discussion)"
 
 - title: "How Far We Have Come: Testing Decompilation Correctness of C Decompilers"
   link: "https://dl.acm.org/doi/pdf/10.1145/3395363.3397370"
