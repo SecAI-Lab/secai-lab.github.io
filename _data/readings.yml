@@ -6,7 +6,7 @@
   conference: CCS
   date: 2025.11.06
   pub_year: 2025
-  discussion: "(Discussion) (Yujeong or Yiyue)"
+  discussion: "(Discussion) (Yiyue)"
 
 - title: "Styled to Steal: The Overlooked Attack Surface in Email Clients"
   link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
@@ -16,7 +16,7 @@
   conference: CCS
   date: 2025.11.06
   pub_year: 2025
-  discussion: "(Discussion) (Yujeong or Yiyue)"
+  discussion: "(Discussion) (Yujeong)"
 
 - title: "SRDC: Semantics-based Ransomware Detection and Classifcation with LLM-assisted Pre-training"
   link: "https://ojs.aaai.org/index.php/AAAI/article/view/35080/37235"
