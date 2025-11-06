@@ -6,7 +6,7 @@
   conference: CCS
   date: 2025.11.06
   pub_year: 2025
-  discussion: "(Discussion) (Yiyue)"
+  discussion: "(Discussion) The paper evaluates the privacy consistency of accessibility (a11y) protections across Android apps and their corresponding mobile websites, revealing that while developers increasingly adopt Android’s a11yDataSensitive and custom event defenses, browser-side ARIA handling fails to preserve these protections. Through analysis of 29 real-world services, the study finds widespread exposure of sensitive information—up to 400+ leaked elements per browser—due to inconsistent ARIA-to-AOM translation and missing web analogues for app-level access controls. Contrary to expectations, the main challenge lies not in developer negligence but in the web platform’s limited, uneven enforcement of sensitivity semantics across engines like Blink and Gecko. These results highlight a persistent gap between mobile OS-level privacy mechanisms and browser implementations, underscoring the need for unified standards, consistent engine behavior, and developer guidance to achieve privacy-preserving accessibility on the web. (yiyue)"
 
 - title: "Styled to Steal: The Overlooked Attack Surface in Email Clients"
   link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
@@ -20,8 +20,8 @@
 
 - title: "SRDC: Semantics-based Ransomware Detection and Classifcation with LLM-assisted Pre-training"
   link: "https://ojs.aaai.org/index.php/AAAI/article/view/35080/37235"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://docs.google.com/presentation/d/1WinbxeqquFTYQU9AHVCq4AAJBHKaxYCvO1ZgQOlGKTk/edit?usp=sharing"
+  code_link: "https://github.com/iDC-NEU/SRDC"
   presenter: Yiyue
   conference: AAAI
   date: 2025.10.30
