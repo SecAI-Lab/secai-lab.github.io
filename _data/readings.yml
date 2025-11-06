@@ -10,8 +10,8 @@
 
 - title: "Styled to Steal: The Overlooked Attack Surface in Email Clients"
   link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_styledtosteal_CCS25.pdf"
+  code_link: "https://d-we.me/papers/stylemail_ccs25.pdf"
   presenter: Jiyong
   conference: CCS
   date: 2025.11.06
