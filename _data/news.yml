@@ -4,11 +4,11 @@
 
 - date: Nov 10, 2025
   headline: "Our paper, Analysis of Watermarking for AI-generated Text, has been accepted to CISC-W 25!"
-  id: 0
+  id: 1
 
 - date: Oct 15, 2025
   headline: "Our paper, A Decade-long Landscape of Advanced Persistent Threats: Longitudinal Analysis and Global Trends, received a Distinguished Paper Award at CCS '25!"
-  id: 0
+  id: 1
 
 - date: Sep 22, 2025
   headline: "Our paper, Rescuing the Unpoisoned: Efficient Defense against Knowledge Corruption Attacks on RAG Systems, has been accepted to ACSAC 25!"
@@ -28,7 +28,7 @@
 
 - date: Jan 30, 2025
   headline: "Our paper, Evaluating the Effectiveness and Robustness of Visual Similarity-based Phishing Detection Models, has been accepted to USENIX 25!"
-  id: 1
+  id: 2
 
 - date: Nov 11, 2024
   headline: "Our paper, Advanced Persistent Threats: Addressed and Open Research Questions, has been accepted to CISC-W 24!"
