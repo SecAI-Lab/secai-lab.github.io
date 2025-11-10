@@ -1,3 +1,11 @@
+- date: Nov 10, 2025
+  headline: "Our paper, Evolving Attack Tactics against Messaging Applications, has been accepted to CISC-W 25!"
+  id: 0
+
+- date: Nov 10, 2025
+  headline: "Our paper, Analysis of Watermarking for AI-generated Text, has been accepted to CISC-W 25!"
+  id: 0
+
 - date: Oct 15, 2025
   headline: "Our paper, A Decade-long Landscape of Advanced Persistent Threats: Longitudinal Analysis and Global Trends, received a Distinguished Paper Award at CCS '25!"
   id: 0
@@ -16,7 +24,7 @@
 
 - date: Jul 1, 2025
   headline: "Giuk Kwon joined our lab, welcome!"
-  id: 1
+  id: 2
 
 - date: Jan 30, 2025
   headline: "Our paper, Evaluating the Effectiveness and Robustness of Visual Similarity-based Phishing Detection Models, has been accepted to USENIX 25!"
