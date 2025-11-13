@@ -26,7 +26,7 @@
   conference: AAAI
   date: 2025.10.30
   pub_year: 2025
-  discussion: "(Discussion) (Hyoungjun)"
+  discussion: "(Discussion) The paper presents SRDC, a semantics-based ransomware detection framework that leverages both internal semantics through feature preprocessing and external semantics via LLM-assisted pre-training, demonstrating superior performance in zero-day ransomware detection with 12.15% improvement in family classification and 4.03% in zero-day detection over state-of-the-art methods; while the approach shows promising results in few-shot learning scenarios requiring only 35% of typical training data, the framework's reliance on LLM-generated external semantic corpus raises scalability concerns and potential bias issues, and the evaluation dataset's limited size (582 ransomware samples from 2016) may not fully represent the evolving ransomware landscape, suggesting that while semantic understanding represents a valuable advancement over pattern-matching approaches, real-world deployment would benefit from larger-scale validation and more automated corpus generation methods. (Hyoungjun)"
 
 - title: "How Far We Have Come: Testing Decompilation Correctness of C Decompilers"
   link: "https://dl.acm.org/doi/pdf/10.1145/3395363.3397370"
