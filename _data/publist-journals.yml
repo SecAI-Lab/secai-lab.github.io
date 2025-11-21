@@ -1,1 +1,29 @@
+- title: "Online Messenger Forensics Across Platforms: A Systematic Comparative Study"
+  image: 
+  description: "Instant messengers have become essential communication tools, widely used across varying platforms. The digital traces from user activities provide critical evidence for forensic investigations. However, differences in operating systems, storage architectures, and encryption techniques lead to variations in how data is preserved and what information can be collected from each messenger, which requires forensic investigation strategies tailored to each service. This study systematically compares 15 major messengers by examining storage locations, security mechanisms, artifact types, forensic tools, and data collection procedures. It analyzes the location and characteristics of artifacts based on platform environments, evaluating how combinations of tools and collection methods affect the scope of data recovery. By categorizing service-specific approaches and identifying technical constraints, we establish a forensic workflow adaptable to different platform environments. These findings necessitate standardized forensic procedures and the development of automated tools. Ultimately, we aim to design versatile analysis strategies applicable across a wide range of platforms and operational conditions."
+  authors: Suyeon Lee, Yuldoshkhujaev Shakhzod, and Hyungjoon Koo
+  link:
+    url: 
+    display: Journal of The Korea Institute of information Security & Cryptology (2025)
+  highlight: 0
+  news2:
 
+  - title: "LLM-Based Drug Term Detection in Korean Messenger Conversations"
+  image: 
+  description: "We propose an LLM-based system that automatically detects (unknown) Korean slang and its variations referring to drugs in online conversations. Traditional approaches, such as simple keyword matching or Word2Vec-based word embedding for capturing semantic and contextual information in a vector space, have limitations in coping with continuously evolving slang and intentional word alterations. In this work, we generate linguistic variations using statistical weighting based on Term Frequency–Inverse Document Frequency (TF-IDF), constructing an LLM-based large-scale training dataset. Besides, we introduce a drug-referring slang detection system that employs a sliding-window-based contextual recognition architecture and a message-level attention learning model trained with a dual-loss function. Experimental results using the KLUE/RoBERTa and KLUE/BERT models demonstrate that the proposed system achieves an accuracy of 0.9816 and a recall of 0.9763."
+  authors: Minseok Kim and Hyungjoon Koo
+  link:
+    url: 
+    display: Journal of The Korea Institute of information Security & Cryptology (2025)
+  highlight: 0
+  news2:
+
+  - title: "A Risk Assessment Framework for Personally Identifiable Information Leakage in Generative AI Models through its Quantification"
+  image: 
+  description: "The advancement of Large Language Models has accelerated the proliferation of data-driven AI services, but also heightened the risk of privacy breaches from PII exposure. While institutions such as NIST, DHS, and HIPAA provide PII risk assessment standards, their inconsistencies hinder consistent evaluation. This study proposes an integrated framework to quantitatively assess PII risk levels by consolidating existing criteria into a three-tier classification and designing a scoring model based on PII attributes. The framework’s effectiveness is validated using real-world datasets, offering a systematic methodology for PII risk assessment in AI environments."
+  authors: Intae Jeon and Hyungjoon Koo
+  link: 
+    url: https://koreascience.kr/article/JAKO202525536060122.page
+    display: Journal of The Korea Institute of information Security & Cryptology (2025)
+  highlight: 0
+  news2:
