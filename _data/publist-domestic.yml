@@ -27,3 +27,24 @@
     display: Journal of The Korea Institute of information Security & Cryptology (2025)
   highlight: 0
   news2:
+
+  
+- title: "Evolving Attack Tactics against Messaging Applications"
+  image:
+  description:
+  authors: Shakhzod Yuldoshkhujaev, Suyeon Lee, and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’25)
+  highlight: 0
+  news2:
+  
+- title: "Analysis of Watermarking for AI-generated Text"
+  image:
+  description:
+  authors: Giuk Kwon, Minseok Kim, and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’25)
+  highlight: 0
+  news2:
