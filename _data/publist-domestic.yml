@@ -230,3 +230,46 @@
     display: Annual Spring Conference of KIPS (ASK’23)
   highlight: 0
   news2:
+
+  - title: "A Study of Executable Binaries with Emerging Compilation Tools"
+  image:
+  description:
+  authors: Hohyeon Jang and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
+  link2:
+    url: https://www.manuscriptlink.com/society/kiisc/conference/ciscw2022/bestPaper
+    display: Best Paper Award *
+  highlight: 0
+  news2:
+
+- title: "A Study of Rarely Appeared Instructions in an Executable Binary"
+  image:
+  description:
+  authors: Nozima Murodova and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
+  highlight: 0
+  news2:
+
+- title: "Server-client Based Reversing Tools with a Prediction Model for Function Names"
+  image:
+  description:
+  authors: Seok Kim, Hyungjoon Jeon, Hyunjin Kim, and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’22)
+  highlight: 0
+  news2:
+
+- title: "Phishing URL Detection with Text-CNN"
+  image:
+  description:
+  authors: Sechang Lim and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Summer 한국정보보호학회 하계학술대회 (CISC-S ’22)
+  highlight: 0
+  news2:
