@@ -1,6 +1,18 @@
+- date: Nov 21, 2025
+  headline: "Our paper, Online Messenger Forensics Across Platforms: A Systematic Comparative Study, has been accepted to JIKSC 25!"
+  id: 0
+
+- date: Nov 21, 2025
+  headline: "Our paper, LLM-Based Drug Term Detection in Korean Messenger Conversations, has been accepted to JIKSC 25!"
+  id: 1
+
+- date: Jul 24, 2025
+  headline: "Our paper, A Risk Assessment Framework for Personally Identifiable Information Leakage in Generative AI Models through its Quantification, has been accepted to JIKSC 25!"
+  id: 1
+
 - date: Nov 10, 2025
   headline: "Our paper, Evolving Attack Tactics against Messaging Applications, has been accepted to CISC-W 25!"
-  id: 0
+  id: 1
 
 - date: Nov 10, 2025
   headline: "Our paper, Analysis of Watermarking for AI-generated Text, has been accepted to CISC-W 25!"
