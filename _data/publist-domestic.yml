@@ -8,7 +8,7 @@
   highlight: 0
   news2:
 
-  - title: "LLM-Based Drug Term Detection in Korean Messenger Conversations"
+- title: "LLM-Based Drug Term Detection in Korean Messenger Conversations"
   image: 
   description: "We propose an LLM-based system that automatically detects (unknown) Korean slang and its variations referring to drugs in online conversations. Traditional approaches, such as simple keyword matching or Word2Vec-based word embedding for capturing semantic and contextual information in a vector space, have limitations in coping with continuously evolving slang and intentional word alterations. In this work, we generate linguistic variations using statistical weighting based on Term Frequency–Inverse Document Frequency (TF-IDF), constructing an LLM-based large-scale training dataset. Besides, we introduce a drug-referring slang detection system that employs a sliding-window-based contextual recognition architecture and a message-level attention learning model trained with a dual-loss function. Experimental results using the KLUE/RoBERTa and KLUE/BERT models demonstrate that the proposed system achieves an accuracy of 0.9816 and a recall of 0.9763."
   authors: Minseok Kim and Hyungjoon Koo
@@ -18,7 +18,7 @@
   highlight: 0
   news2:
 
-  - title: "A Risk Assessment Framework for Personally Identifiable Information Leakage in Generative AI Models through its Quantification"
+- title: "A Risk Assessment Framework for Personally Identifiable Information Leakage in Generative AI Models through its Quantification"
   image: 
   description: "The advancement of Large Language Models has accelerated the proliferation of data-driven AI services, but also heightened the risk of privacy breaches from PII exposure. While institutions such as NIST, DHS, and HIPAA provide PII risk assessment standards, their inconsistencies hinder consistent evaluation. This study proposes an integrated framework to quantitatively assess PII risk levels by consolidating existing criteria into a three-tier classification and designing a scoring model based on PII attributes. The framework’s effectiveness is validated using real-world datasets, offering a systematic methodology for PII risk assessment in AI environments."
   authors: Intae Jeon and Hyungjoon Koo
