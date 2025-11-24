@@ -544,22 +544,25 @@ sitemap: true
         <input type="text" class="search-input" id="search-input" placeholder="Search publications by title, authors, or venue...">
     </div>
     
+
     <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="all">All Publications</button>
-        <button class="filter-btn" data-filter="conferences">Conferences & Journals</button>
-        <button class="filter-btn" data-filter="workshops">Workshops & Domestic</button>
+      <button class="filter-btn active" data-filter="all">All Publications</button>
+      <button class="filter-btn" data-filter="international">International</button>
+      <button class="filter-btn" data-filter="domestic">Domestic</button>
+      <button class="filter-btn" data-filter="workshop">Workshop</button>
     </div>
+
     
 </div>
 
 <div id="publications-content">
     <div class="highlighted-section" id="highlighted-section">
         <h2 class="section-title">Featured Publications</h2>
-        
+
         <div class="featured-grid">
-            {% for publi in site.data.publist-conferences %}
+            {% for publi in site.data.publist-international %}
             {% if publi.highlight == 1 %}
-            <div class="featured-publication" data-type="highlighted conferences" data-year="{{ publi.link.display | slice: -4, 4 }}">
+            <div class="featured-publication" data-type="international" data-year="{{ publi.link.display | slice: -4, 4 }}">
                 <div class="publication-header">
                     {% if publi.image %}
                     <img src="{{ site.url }}{{ site.baseurl }}/images/pubs/{{ publi.image }}" class="publication-image" alt="{{ publi.title }}">
@@ -603,11 +606,11 @@ sitemap: true
         </div>
     </div>
 
-    <div class="year-section" id="conferences-section">
+    <div class="year-section" id="international-section">
         <h2 class="section-title">International Conferences and Journals</h2>
 
-        {% for publi in site.data.publist-conferences %}
-        <div class="publication-entry" data-type="conferences">
+        {% for publi in site.data.publist-international %}
+        <div class="publication-entry" data-type="international">
             <div class="title-with-buttons">
                 <h4 class="entry-title">{{ publi.title }}</h4>
                 <div class="entry-links">
@@ -637,37 +640,72 @@ sitemap: true
         {% endfor %}
     </div>
 
-    <div class="year-section" id="workshops-section">
-        <h2 class="section-title">Workshops and Domestic Conferences</h2>
+    <div class="year-section" id="domestic-section">
+      <h2 class="section-title">Domestic Conferences and Journals</h2>
 
-        {% for publi in site.data.publist-workshops %}
-        <div class="publication-entry" data-type="workshops">
-            <div class="title-with-buttons">
-                <h4 class="entry-title">{{ publi.title }}</h4>
-                <div class="entry-links">
-                    {% if publi.link.url %}
-                    <a href="{{ publi.link.url }}" class="entry-link" target="_blank"> Paper</a>
-                    {% endif %}
-                    {% if publi.link.arXiv %}
-                    <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank"> arXiv</a>
-                    {% endif %}
-                    {% if publi.github %}
-                    <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
-                         Code
-                    </a>
-                    {% endif %}
-                    {% if publi.slides %}
-                    <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
-                         Slides
-                    </a>
-                    {% endif %}
-                </div>
+      {% for publi in site.data.publist-domestic %}
+      <div class="publication-entry" data-type="domestic">
+        <div class="title-with-buttons">
+            <h4 class="entry-title">{{ publi.title }}</h4>
+            <div class="entry-links">
+                {% if publi.link.url %}
+                <a href="{{ publi.link.url }}" class="entry-link" target="_blank">Paper</a>
+                {% endif %}
+                {% if publi.link.arXiv %}
+                <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank">arXiv</a>
+                {% endif %}
+                {% if publi.github %}
+                <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">Code</a>
+                {% endif %}
+                {% if publi.slides %}
+                <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">Slides</a>
+                {% endif %}
             </div>
-            <p class="entry-authors">{{ publi.authors }}</p>
-            <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display }}</span>{% endif %}</p>
         </div>
-        {% endfor %}
+        <p class="entry-authors">{{ publi.authors }}</p>
+        <p class="entry-venue">
+            {{ publi.link.display }}
+            {% if publi.link2.display contains "Award" %}
+            <span class="award-badge">{{ publi.link2.display }}</span>
+            {% endif %}
+        </p>
+      </div>
+      {% endfor %}
     </div>
+  
+    <div class="year-section" id="workshops-section">
+      <h2 class="section-title">Workshops</h2>
+
+      {% for publi in site.data.publist-workshops %}
+      <div class="publication-entry" data-type="workshop">
+        <div class="title-with-buttons">
+            <h4 class="entry-title">{{ publi.title }}</h4>
+            <div class="entry-links">
+                {% if publi.link.url %}
+                <a href="{{ publi.link.url }}" class="entry-link" target="_blank">Paper</a>
+                {% endif %}
+                {% if publi.link.arXiv %}
+                <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank">arXiv</a>
+                {% endif %}
+                {% if publi.github %}
+                <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">Code</a>
+                {% endif %}
+                {% if publi.slides %}
+                <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">Slides</a>
+                {% endif %}
+            </div>
+        </div>
+        <p class="entry-authors">{{ publi.authors }}</p>
+        <p class="entry-venue">
+            {{ publi.link.display }}
+            {% if publi.link2.display contains "Award" %}
+            <span class="award-badge">{{ publi.link2.display }}</span>
+            {% endif %}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+
 
 </div>
 
@@ -704,13 +742,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const sectionId = section.id;
             let shouldShow = false;
             
+
             if (currentFilter === 'all') {
+                shouldShow = true;  
+            } else if (currentFilter === 'international' && sectionId === 'international-section') {
                 shouldShow = true;
-            } else if (currentFilter === 'conferences' && sectionId === 'conferences-section') {
+            } else if (currentFilter === 'domestic' && sectionId === 'domestic-section') {
                 shouldShow = true;
-            } else if (currentFilter === 'workshops' && sectionId === 'workshops-section') {
+            } else if (currentFilter === 'workshop' && sectionId === 'workshops-section') {
                 shouldShow = true;
             }
+
             
             section.style.display = shouldShow ? 'block' : 'none';
         });
@@ -725,16 +767,20 @@ document.addEventListener('DOMContentLoaded', function() {
                                 authors.includes(searchTerm) || 
                                 venue.includes(searchTerm);
             
+
             // Filter based on current selection
             let matchesFilter = false;
-            
+
             if (currentFilter === 'all') {
                 matchesFilter = true;
-            } else if (currentFilter === 'conferences') {
-                matchesFilter = pubType.includes('conferences');
-            } else if (currentFilter === 'workshops') {
-                matchesFilter = pubType.includes('workshops');
+            } else if (currentFilter === 'international') {
+                matchesFilter = pubType.includes('international');
+            } else if (currentFilter === 'domestic') {
+                matchesFilter = pubType.includes('domestic');
+            } else if (currentFilter === 'workshop') {
+                matchesFilter = pubType.includes('workshop');
             }
+
             
             if (matchesSearch && matchesFilter) {
                 pub.style.display = 'block';
