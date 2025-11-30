@@ -3,15 +3,11 @@
   id: 0
 
 - date: Nov 21, 2025
-  headline: "Our paper, Online Messenger Forensics Across Platforms: A Systematic Comparative Study, has been accepted to JKIISC 25!"
+  headline: "Our paper, Online Messenger Forensics Across Platforms: A Systematic Comparative Study, has been accepted to Journal of the Korea Institute of Information Security & Cryptology!"
   id: 1
 
 - date: Nov 21, 2025
-  headline: "Our paper, LLM-Based Drug Term Detection in Korean Messenger Conversations, has been accepted to JKIISC 25!"
-  id: 1
-
-- date: Jul 24, 2025
-  headline: "Our paper, A Risk Assessment Framework for Personally Identifiable Information Leakage in Generative AI Models through its Quantification, has been accepted to JKIISC 25!"
+  headline: "Our paper, LLM-Based Drug Term Detection in Korean Messenger Conversations, has been accepted to Journal of the Korea Institute of Information Security & Cryptology!"
   id: 1
 
 - date: Nov 10, 2025
@@ -32,6 +28,10 @@
 
 - date: Aug 18, 2025
   headline: "Our paper, On the Learnability, Robustness, and Adaptability of Deep Learning Models for Obfuscation-applied Code, has been accepted to SURE 25!"
+  id: 2
+
+- date: Jul 24, 2025
+  headline: "Our paper, A Risk Assessment Framework for Personally Identifiable Information Leakage in Generative AI Models through its Quantification, has been accepted to Journal of the Korea Institute of Information Security & Cryptology!"
   id: 2
 
 - date: Jul 3, 2025
