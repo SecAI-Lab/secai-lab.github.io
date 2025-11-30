@@ -1,6 +1,10 @@
+- date: Nov 24, 2025
+  headline: "We won the Excellence Prize (우수상) at the AI-assisted vulnerability-finding challenge, earning 2 million KRW!"
+  id: 0
+
 - date: Nov 21, 2025
   headline: "Our paper, Online Messenger Forensics Across Platforms: A Systematic Comparative Study, has been accepted to JKIISC 25!"
-  id: 0
+  id: 1
 
 - date: Nov 21, 2025
   headline: "Our paper, LLM-Based Drug Term Detection in Korean Messenger Conversations, has been accepted to JKIISC 25!"
@@ -28,11 +32,11 @@
 
 - date: Aug 18, 2025
   headline: "Our paper, On the Learnability, Robustness, and Adaptability of Deep Learning Models for Obfuscation-applied Code, has been accepted to SURE 25!"
-  id: 1
+  id: 2
 
 - date: Jul 3, 2025
   headline: "Our paper, A Decade-long Landscape of Advanced Persistent Threats: Longitudinal Analysis and Global Trends, has been accepted to CCS 25!"
-  id: 1
+  id: 2
 
 - date: Jul 1, 2025
   headline: "Giuk Kwon joined our lab, welcome!"
