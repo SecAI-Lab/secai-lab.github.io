@@ -1,3 +1,23 @@
+- title: "GASLITEing the Retrieval: Poisoning Knowledge DBs to Mislead Embedding-based Search"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Minseok
+  conference: CCS
+  date: 2025.12.04
+  pub_year: 2025
+  discussion: "(Discussion) (Shakhzod)"
+
+- title: "Bin2Summary: Beyond Function Name Prediction in Stripped Binaries with Functionality-Specific Code Embeddings"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3643729"
+  ppt_link: ""
+  code_link: ""
+  presenter: Mijin
+  conference: FSE
+  date: 2025.12.04
+  pub_year: 2024
+  discussion: "(Discussion) (Jiyong)"
+
 - title: "BACScan: Automatic Black-Box Detection of Broken-Access-Control Vulnerabilities in Web Applications"
   link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
   ppt_link: "https://docs.google.com/presentation/d/1jpymw02SS2DdavruHySq86Pgwcy44AY7RI-iwrczAo4/edit?usp=sharing"
@@ -6,8 +26,7 @@
   conference: CCS
   date: 2025.11.14
   pub_year: 2025
-  discussion: |
-    "(Discussion) This paper introduces BACScan, a black-box scanner for Broken Access Control that can detect not only read-based but also modification-based BAC by building an inter-page data dependency graph between “modification” and “status” pages. Its main strengths are the clever feedback-driven oracle design, the practical engineering (e.g., handling real-world web workflows), and a strong evaluation showing many previously unknown vulnerabilities compared to existing tools. However, as a crawler-based black-box approach, it still suffers from coverage limits and makes assumptions (e.g., about request types and parameter styles) that may cause some BAC cases to be missed. Despite these limitations, the work meaningfully advances automated BAC detection and has clear practical impact, which explains its selection as a distinguished paper. (Suyeon)"
+  discussion: "(Discussion) This paper introduces BACScan, a black-box scanner for Broken Access Control that can detect not only read-based but also modification-based BAC by building an inter-page data dependency graph between “modification” and “status” pages. Its main strengths are the clever feedback-driven oracle design, the practical engineering (e.g., handling real-world web workflows), and a strong evaluation showing many previously unknown vulnerabilities compared to existing tools. However, as a crawler-based black-box approach, it still suffers from coverage limits and makes assumptions (e.g., about request types and parameter styles) that may cause some BAC cases to be missed. Despite these limitations, the work meaningfully advances automated BAC detection and has clear practical impact, which explains its selection as a distinguished paper. (Suyeon)"
 
 - title: "Lock the Door But Keep the Window Open: Extracting App-Protected Accessibility Information from Browser-Rendered Websites"
   link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
