@@ -1,12 +1,12 @@
 - title: "GASLITEing the Retrieval: Poisoning Knowledge DBs to Mislead Embedding-based Search"
-  link: ""
-  ppt_link: ""
+  link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765095"
+  ppt_link: "https://for8821.synology.me:5001/d/s/15nVXpW6JYEHczBFTaoMFz13UcYBOGv0/KaE5hc6o-vjl027wdZC0go6JsoR5rmxE-TbuAG5Mxygw"
   code_link: ""
   presenter: Minseok
   conference: CCS
   date: 2025.12.04
   pub_year: 2025
-  discussion: "(Discussion) (Shakhzod)"
+  discussion: "(Discussion) This paper demonstrates that modern dense embedding-based retrieval systems, widely used in search and RAG, are highly vulnerable to SEO-style poisoning attacks. The authors introduce GASLITE, a new gradient-based method that generates adversarial text capable of reliably appearing in top search rankings, even when inserted at extremely low poisoning rates. Through large-scale testing across multiple models and threat settings, they show that a single crafted passage can dominate retrieval results, defenses can be bypassed, and certain model properties make systems more susceptible. (Shakhzod)"
 
 - title: "Bin2Summary: Beyond Function Name Prediction in Stripped Binaries with Functionality-Specific Code Embeddings"
   link: "https://dl.acm.org/doi/pdf/10.1145/3643729"
