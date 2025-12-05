@@ -16,7 +16,7 @@
   conference: FSE
   date: 2025.12.04
   pub_year: 2024
-  discussion: "(Discussion) (Jiyong)"
+  discussion: "(Discussion) Stripped binaries pose challenges due to the absense of symbolic information, such as function names. While traditional research has primarily focused on predicting function names, this approach may not provide a comprehensive understanding of code functionality. This paper introduces Bin2Summary, a model designed to generate natural language summaries of functions in stripped binaries. Despite the ambitious goal, several methodological concerns exist. Most notably, the cross-architecture evaluation is comparing x86 and x64 platforms, which are fundamentally the same architecture and may not adequately demonstrate the model's capability to generalize across distinct architecture (i.e., ARM). (Jiyong)"
 
 - title: "BACScan: Automatic Black-Box Detection of Broken-Access-Control Vulnerabilities in Web Applications"
   link: "https://www.sigsac.org/ccs/CCS2025/schedule/"
