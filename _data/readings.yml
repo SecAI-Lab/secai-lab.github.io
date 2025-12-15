@@ -6,7 +6,7 @@
   conference: CCS
   date: 2025.12.11
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents RAG-WM, a black-box knowledge watermarking approach for protecting the intellectual property of retrieval-augmented generation systems by embedding entity–relation-based watermark knowledge into the RAG knowledge base. The design effectively addresses the limitations of existing text and database watermarks under black-box access and shows strong robustness against paraphrasing and knowledge manipulation attacks in the evaluated settings. However, the approach depends on deliberate knowledge perturbations and multi-LLM interactions, which may introduce scalability and deployment overhead in large or frequently updated RAG systems. In addition, the evaluation is largely confined to question-answering benchmarks, leaving the applicability of the method to other RAG scenarios insufficiently explored. (Mijin)"
 
 - title: "Adversarially Robust Assembly Language Model for Packed Executables Detection"
   link: "https://arxiv.org/abs/2509.15499"
@@ -16,7 +16,7 @@
   conference: CCS
   date: 2025.12.11
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper proposes Pack-ALM, a packing-aware assembly language model that detects packed binaries by distinguishing real instructions from pseudo instructions, outperforming entropy-based and prior learning-based methods, particularly under low-entropy packing. While the results indicate that instruction-level contextual modeling is effective, the evaluation is limited to x86/x64 binaries, which are closely related architectures and do not fully demonstrate generalization to fundamentally different architectures such as ARM. Moreover, the reliance on linear disassembly may introduce tool-dependent noise. Overall, Pack-ALM is promising, but its general applicability requires further validation. (Mijin)"
 
 - title: "GASLITEing the Retrieval: Poisoning Knowledge DBs to Mislead Embedding-based Search"
   link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765095"
