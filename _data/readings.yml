@@ -1,3 +1,22 @@
+- title: "ForeDroid: Scenario-Aware Analysis for Android Malware Detection and Explanation"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765207"
+  ppt_link: "https://docs.google.com/presentation/d/1MpkiNE6JNJrQi70f8HkZAXEf8tFakbm4iXMzVwlJBmg/edit?usp=sharing"
+  presenter: Shakhzod
+  conference: CCS
+  date: 2025.12.18
+  pub_year: 2025
+  discussion: "(Discussion) (Suyeon)"
+  
+- title: "MiSum: Multi-modality Heterogeneous Code Graph Learning for Multi-intent Binary Code Summarization"
+  link: "https://dl.acm.org/doi/10.1145/3715780"
+  ppt_link: "https://docs.google.com/presentation/d/1U9OxcoQ1bkHMHBm0KhgcyHAfTzX1pdqpyLzuJH4fUdI/edit?usp=sharing"
+  code_link: "https://github.com/Kobe-Zed/MiSum"
+  presenter: Yiyue
+  conference: FSE
+  date: 2025.12.18
+  pub_year: 2025
+  discussion: "(Discussion) (Suyeon)"
+
 - title: "RAG-WM: An Efficient Black-Box Watermarking Approach for Retrieval-Augmented Generation of Large Language Models"
   link: "https://arxiv.org/abs/2501.05249"
   ppt_link: "https://drive.google.com/file/d/1rhR5ZW2Akw73cqMnVoMXXQM2E6IEE6Xb/view?usp=sharing"
