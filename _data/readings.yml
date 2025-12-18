@@ -1,6 +1,7 @@
 - title: "ForeDroid: Scenario-Aware Analysis for Android Malware Detection and Explanation"
   link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765207"
   ppt_link: "https://docs.google.com/presentation/d/1MpkiNE6JNJrQi70f8HkZAXEf8tFakbm4iXMzVwlJBmg/edit?usp=sharing"
+  code_link: "https://anonymous.4open.science/r/ForeDroid-5AC6/"
   presenter: Shakhzod
   conference: CCS
   date: 2025.12.18
