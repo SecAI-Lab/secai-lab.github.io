@@ -6,7 +6,7 @@
   conference: CCS
   date: 2025.12.18
   pub_year: 2025
-  discussion: "(Discussion) (Suyeon)"
+  discussion: "(Discussion) ForeDroid is a scenario-aware framework for Android malware detection and explanation that treats malicious intent as behavioral inconsistency within a functional scenario (e.g., what the app appears to be doing vs. what sensitive actions it triggers). It clusters app entry points into scenarios, reconstructs sensitive API call chains via enhanced static analysis, summarizes those chains into natural-language intents with LLMs, and performs unsupervised, scenario-specific anomaly detection by comparing each intent to benign behavior distributions; highly suspicious cases are then turned into structured, fine-grained reports. Its key strengths are strong zero-day robustness (beating several prior baselines under temporal-split evaluation) and actionable interpretability, including strong fine-grained behavior detection performance (F1 = 0.94 on the manually annotated GPMalware dataset). Main limitations come from static-analysis and scenario-modeling constraints-dynamic loading/reflection/web-injected threats can be hard to capture, context granularity may be insufficient for traffic-dependent behaviors, benign reference coverage can cause false positives for rare-but-benign cases, and adaptive evasion/obfuscation remains a challenge. Overall, the paper is significant because it bridges low-level call-chain analysis with high-level semantic reasoning to deliver detection that is both more generalizable and more explainable. (Suyeon)"
   
 - title: "MiSum: Multi-modality Heterogeneous Code Graph Learning for Multi-intent Binary Code Summarization"
   link: "https://dl.acm.org/doi/10.1145/3715780"
@@ -16,7 +16,7 @@
   conference: FSE
   date: 2025.12.18
   pub_year: 2025
-  discussion: "(Discussion) (Suyeon)"
+  discussion: "(Discussion) MiSum addresses multi-intent binary code summarization by generating different kinds of summaries depending on what a reverse engineer wants to know, and it does so by aligning assembly with decompiled pseudo code into a multi-modality heterogeneous code graph (MM-HCG) and then producing intent-aware summaries from the fused representation. The approach is strong in how it frames summarization as intent-conditioned rather than one-size-fits-all, leverages the complementary strengths of low-level assembly details and higher-level pseudo-code structure, and reports improved results over a range of baselines including LLM-based ones under both automatic metrics and human evaluation. At the same time, its effectiveness can hinge on decompiler/disassembler quality and the reliability of address-based alignment, and the dataset construction and intent labeling process may introduce noise or bias that could affect generalization to harder real-world binaries such as those compiled with unusual toolchains or obfuscated. Overall, the paper’s significance is in showing that combining intent conditioning with structured multi-modality fusion can make binary summarization more useful and adaptable to diverse reverse-engineering tasks. (Suyeon)"
 
 - title: "RAG-WM: An Efficient Black-Box Watermarking Approach for Retrieval-Augmented Generation of Large Language Models"
   link: "https://arxiv.org/abs/2501.05249"
