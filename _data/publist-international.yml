@@ -230,7 +230,7 @@
   link:
     url: https://dl.acm.org/doi/abs/10.1145/3564625.3567975 
     display: In the 38th Annual Computer Security Applications Conference (ACSAC ’22)
-  highlight: 1
+  highlight: 
   news2:
   github: "https://github.com/asw0316/binshot"
   slides: "https://kevinkoo001.github.io/assets/pdf/binshot-acsac22-slides.pdf"
