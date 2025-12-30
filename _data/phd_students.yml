@@ -8,25 +8,28 @@
 #  education3:
 #  education4:
 
-#- name: Wonyoung Cho
-#  photo: wonyoung.jpg
-#  info: Master student
-#  email: cliffclimber AT g.skku.edu
-#  number_educ: 0
-#  education1:
-
 - name: Yujeong Kwon (권유정)
   photo: yujeong2.jpg
-  info: Master student
+  info: Ph.D. Student
   email: shr2008 AT g.skku.edu
   research: Reverse engineering, Privacy in AI
   github: https://github.com/KwonYuJeong00
-  joined: Spring 2023
+  joined: Spring 2025 (M.S. 2023~24)
 
 - name: Jiyong Uhm (엄지용)
   photo: jiyong.jpg
-  info: Master student
+  info: Ph.D. Student
   email: jiyong423 AT g.skku.edu
-  research: System programming, Networking, and Security
+  research: System programming, Networking, Security
   github: https://github.com/wldyd423
-  joined: Spring 2023
+  joined: Spring 2025 (M.S. 2023~24)
+
+- name: Minseok Kim (김민석)
+  photo: minseok.jpg
+  info: Ph.D. student
+  email: for8821 AT g.skku.edu
+  research: Binary Reversing, Machine Unlearning
+  github: https://github.com/DenisKimskku
+  joined: Spring 2026 (M.S. 2024~25)
+
+
