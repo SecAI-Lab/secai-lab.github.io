@@ -1,6 +1,6 @@
 - name: Yiyue Zhang
   photo: yiyue.jpg
-  info: Master student (Combined MS and Ph.D. program)
+  info: Master student 
   email: yiyue AT g.skku.edu
   research: Computer security, Binary Reversing
   github: https://github.com/Yii-99
@@ -8,7 +8,7 @@
 
 - name: Hyoungjun Jeon (전형준)
   photo: jeon.jpg
-  info: Master student (Combined MS and Ph.D. program)
+  info: Master student
   email: wnssad0202 AT g.skku.edu
   research: Network Security, Reversing
   github: https://github.com/CodingJune20

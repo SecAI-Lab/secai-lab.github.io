@@ -153,7 +153,7 @@ sitemap: true
 </div>
 {% endfor %}
   
-<h4> Ph.D. Students </h4>
+<h4> Ph.D. Student(s) </h4>
 
 <div class="members-grid">
 {% for member in site.data.phd_students %}
@@ -190,8 +190,8 @@ sitemap: true
       </a>
         {% endif %}
       </h5>
-
-      <em><strong>Email:</strong> {{ member.email }}</em>
+      <em><strong>Status:</strong> {{ member.info }}</em>
+      <em><br><strong>Email:</strong> {{ member.email }}</em>
       <em><br><strong>Research interests:</strong> {{ member.research }}</em>
       <em><br><strong>Joined:</strong> {{ member.joined }}</em>
     </div>
@@ -199,7 +199,7 @@ sitemap: true
   </div>
 {% endfor %}
 </div>
-<h4> M.S./Ph.D. Students </h4>
+<h4> M.S./Ph.D. Student(s) </h4>
 <div class="members-grid">
 {% for member in site.data.phd_ms_students %}
   <div class="member-card">
@@ -235,8 +235,8 @@ sitemap: true
       </a>
         {% endif %}
       </h5>
-
-      <em><strong>Email:</strong> {{ member.email }}</em>
+      <em><strong>Status:</strong> {{ member.info }}</em>
+      <em><br><strong>Email:</strong> {{ member.email }}</em>
       <em><br><strong>Research interests:</strong> {{ member.research }}</em>
       <em><br><strong>Joined:</strong> {{ member.joined }}</em>
     </div>
@@ -244,7 +244,7 @@ sitemap: true
   </div>
 {% endfor %}
 </div>
-<h4> Master Students </h4>
+<h4> Master Student(s) </h4>
 <div class="members-grid">
 {% for member in site.data.msb_students %}
   <div class="member-card">
@@ -280,8 +280,8 @@ sitemap: true
       </a>
         {% endif %}
       </h5>
-
-      <em><strong>Email:</strong> {{ member.email }}</em>
+      <em><strong>Status:</strong> {{ member.info }}</em>
+      <em><br><strong>Email:</strong> {{ member.email }}</em>
       <em><br><strong>Research interests:</strong> {{ member.research }}</em>
       <em><br><strong>Joined:</strong> {{ member.joined }}</em>
     </div>
@@ -290,7 +290,7 @@ sitemap: true
 {% endfor %}
 </div>
 
-<h4> Undergraduate Students </h4>
+<h4> Undergraduate Student(s) </h4>
 <div class="members-grid">
 {% for member in site.data.ug_students %}
   <div class="member-card">
@@ -327,8 +327,8 @@ sitemap: true
       </a>
         {% endif %}
       </h5>
-
-      <em><strong>Email:</strong> {{ member.email }}</em>
+      <em><strong>Status:</strong> {{ member.info }}</em>
+      <em><br><strong>Email:</strong> {{ member.email }}</em>
       <em><br><strong>Research interests:</strong> {{ member.research }}</em>
       <em><br><strong>Joined:</strong> {{ member.joined }}</em>
     </div>
