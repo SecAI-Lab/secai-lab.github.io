@@ -6,6 +6,8 @@ main_nav: true
 sitemap: true
 ---
 
+**Research Aims**
+
 <img src="{{ site.url }}{{ site.baseurl }}/images/r1.png" style="max-width:none; width: auto; height: auto;">
 In essence, our lab advances practical security by protecting software and data in 
 real-world environments. We study both offensive and defensive 
@@ -43,14 +45,13 @@ to build robust, trustworthy, and privacy-preserving AI systems.
 
 <div class="mermaid">
 gantt
-  title Ongoing Projects
+  title Ongoing Projects with Fundings
   dateFormat  YYYY-MM-DD
   axisFormat  %m/%y
   section Fundings
   [12] Modular AI Watermarking : 2025-06-01, 36M
   [11] Binary Micro-patching: 2024-06-01, 33M
   [10] Securing Memory-Safety Languages: 2024-06-01, 48M
-  [09] Digital Forensics: 2024-04-01, 21M
 </div>
 
 <script type="module">
@@ -58,7 +59,7 @@ gantt
   mermaid.initialize({ startOnLoad: true });
 </script>
 
-**Fundings (Past to Present) **
+**Fundings (Past to Present)**
 
 [12] _Research Laboratory for Modular AI Watermarking for Generative AI Compliance_,
 Supported by NRF (National Research Foundation of Korea);
