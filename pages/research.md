@@ -6,9 +6,22 @@ main_nav: true
 sitemap: true
 ---
 
-**Research Aims**
+<style>
+  .container {
+    display: flex;
+    align-items: center;   /* vertically align image and text */
+    gap: 24px;             /* space between image and text */
+    margin: 40px auto;
+  }
+</style>
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/r1.png" style="max-width:none; width: auto; height: auto;">
+#### Research Aims
+
+<div class="container">
+  <div>
+    <img src="{{ site.url }}{{ site.baseurl }}/images/r1.png" style="max-width:200px;width:auto; height:auto;">
+  </div>
+  <div>
 In essence, our lab advances practical security by protecting software and data in 
 real-world environments. We study both offensive and defensive 
 dimensions of security by understanding attacks 
@@ -17,31 +30,44 @@ defenses (e.g., attack surface reduction, moving target defense), and
 investigating security-relevant artifacts (e.g., digital forensics).
 As new technologies emerge, they introduce novel attack vectors, 
 necessitating additional (and adaptive) layers of defense.
+  </div>
+</div>
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/r2.png" style="max-width:none; width: auto; height: auto;">
-
+<div class="container">
+  <div>
+    <img src="{{ site.url }}{{ site.baseurl }}/images/r2.png" style="max-width:500px;width:auto; height:auto;">
+  </div>
+  <div>
 To achieve our objectives, we investigate the essential processes involved in 
-executable binaries to understand the underlying code semantics. These stages includes
+executable binaries to understand the underlying code semantics. These stages include
 1) code generation that transforms high-level source into machine code; 
 2) obfuscation techniques that intentionally hinder analysis; 
 3) static and dynamic analysis that reasons about structural and behavioral properties;
 4) bug discovery that inspects program behaviors to uncover vulnerabilities;
-5) patching that fixes security flaws directly at the binary level, and 
+5) patching that fixes security flaws directly at the binary level; and 
 6) decompilation that reconstructs higher-level representations to support reversing.
-
 As illustrated above, in the era of artificial intelligence (AI), one of our key research areas envisions
 the unification of traditionally separate tasks into an AI-driven pipeline. 
-Such a holistic approach forms the foundation of robust security analysis, enabling 
-robust, scalable, and resilient security analysis of both benign and malicious software.
+Such a holistic approach enables
+scalable and resilient analysis of both benign and malicious software.
+  </div>
+</div>
 
-<img src="{{ site.url }}{{ site.baseurl }}/images/r3.png" style="max-width:none; width: auto; height: auto;">
-
-Another direction lies in securing AI modelsi as the above illustration. We tackle the security challenges 
+<div class="container">
+  <div>
+    <img src="{{ site.url }}{{ site.baseurl }}/images/r3.png" style="max-width:500px;width:auto; height:auto;">
+  </div>
+  <div>
+Another direction lies in securing AI models as the above illustration. We tackle the security challenges 
 and defenses spanning the AI lifecycle, from data collection and training to deployment 
 and inference. Our research addresses threats such as poisoning, backdoors, evasion, 
 extraction, inversion, and membership inference, and develops holistic defenses 
 including sanitization, adversarial training, unlearning, and watermarking
 to build robust, trustworthy, and privacy-preserving AI systems.
+  </div>
+</div>
+
+#### Fundings (Past to Present)
 
 <div class="mermaid">
 gantt
@@ -53,13 +79,6 @@ gantt
   [11] Binary Micro-patching: 2024-06-01, 33M
   [10] Securing Memory-Safety Languages: 2024-06-01, 48M
 </div>
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true });
-</script>
-
-**Fundings (Past to Present)**
 
 [12] _Research Laboratory for Modular AI Watermarking for Generative AI Compliance_,
 Supported by NRF (National Research Foundation of Korea);
@@ -74,6 +93,11 @@ Supported by IITP (Institute of Information & Communications Technology Planning
 A joint project led by [Yuseok Jeon](https://www.ysjeon.net/) at Korea University.
 
 <hr>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
 
 [9] _Proofs and Responses against Evidence Tampering in the New Digital Environment_,
 Supported by IITP (Institute of Information & Communications Technology Planning & Evaluation);
