@@ -543,7 +543,7 @@ sitemap: true
     <div class="search-container">
         <input type="text" class="search-input" id="search-input" placeholder="Search publications by title, authors, or venue...">
     </div>
-    
+
 
     <div class="filter-buttons">
       <button class="filter-btn active" data-filter="all">All Publications</button>
@@ -552,7 +552,6 @@ sitemap: true
       <button class="filter-btn" data-filter="workshop">Workshop</button>
     </div>
 
-    
 </div>
 
 <div id="publications-content">
@@ -573,7 +572,7 @@ sitemap: true
                         <p class="publication-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display }}</span>{% endif %}</p>
                     </div>
                 </div>
-                
+
                 {% if publi.description %}
                 <div class="abstract-container">
                     <div class="publication-description description-preview" onclick="toggleDescription(this)">
@@ -581,7 +580,7 @@ sitemap: true
                     </div>
                 </div>
                 {% endif %}
-                
+
                 <div class="publication-links">
                     {% if publi.link.url and publi.link.url != "To appear" %}
                     <a href="{{ publi.link.url }}" class="publication-link" target="_blank"> Paper</a>
@@ -672,9 +671,9 @@ sitemap: true
       </div>
       {% endfor %}
     </div>
-  
+
     <div class="year-section" id="workshops-section">
-      <h2 class="section-title">Workshops</h2>
+      <h2 class="section-title">Workshops and Posters</h2>
 
       {% for publi in site.data.publist-workshops %}
       <div class="publication-entry" data-type="workshop">
@@ -705,7 +704,6 @@ sitemap: true
       </div>
       {% endfor %}
     </div>
-
 
 </div>
 
