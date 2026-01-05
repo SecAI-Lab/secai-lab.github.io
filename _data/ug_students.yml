@@ -1,6 +1,7 @@
 - name: Woomin Kim (김우민)
-  photo: profile.jpg
+  photo: woomin.jpg
   info: Undergraduate student
-  email: hoitzza@g.skku.edu
-  # research: Computer security, Machine Learning
+  email: hoitzza AT g.skku.edu
+  research: Reversing, Computer security
+  github: https://github.com/HeoitZza
   joined: Spring 2026
