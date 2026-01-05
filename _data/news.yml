@@ -1,6 +1,10 @@
+- date: Jan 5, 2025
+  headline: "Woomin Kim joined our lab, welcome!"
+  id: 0
+  
 - date: Dec 22, 2025
   headline: "Our paper, Fool Me If You Can: On the Robustness of Binary Code Similarity Detection Models against Semantic-preserving Transformations, has been accepted to FSE 26!"
-  id: 0
+  id: 1
 
 - date: Dec 08, 2025
   headline: "Our paper, UnPII: Unlearning Personally Identifiable Information with Quantifiable Exposure Risk, has been accepted to ICSE-SEIP 26!"
