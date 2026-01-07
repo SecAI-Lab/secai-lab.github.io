@@ -10,13 +10,13 @@
 
 - title: "BLens: Contrastive Captioning of Binary Functions using Ensemble Embedding"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-271-benoit.pdf"
-  ppt_link: ""
+  ppt_link: "https://docs.google.com/presentation/d/1P9b6-2fTKX99UtpIriTUNj3O7oX0InGzlFMYIi7YLrI/edit?usp=sharing"
   code_link: ""
   presenter: Mijin
   conference: USENIX
   date: 2026.01.07
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper introduces BLens, a novel approach to predicting function names from stripped binaries by reframing the task as a multimodal captioning problem rather than code-to-text translation. BLens combines multiple complementary binary embeddings into an ensemble representation and aligns binary code and function names in a shared latent space using contrastive captioning pre-training, inspired by image captioning models. It then generates ordered, high-precision function names using a specialized decoder with masked language modeling and confidence-aware autoregression. Experiments on large-scale datasets show that BLens substantially outperforms prior methods, especially in challenging cross-project and strict generalization settings, demonstrating improved robustness to distribution shifts and better handling of word order and semantic nuance in function names. (Shakhzod)"
 
 - title: "ForeDroid: Scenario-Aware Analysis for Android Malware Detection and Explanation"
   link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765207"
