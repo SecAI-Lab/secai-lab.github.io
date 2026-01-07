@@ -6,7 +6,7 @@
   conference: FSE
   date: 2026.01.07
   pub_year: 2024
-  discussion: "(Discussion)"
+  discussion: "(Discussion)Epitome is a multi-task learning framework for binary function name prediction that improves robustness across compilation optimizations and naming diversity by jointly learning function semantics and name structure. It combines a pre-trained assembly language model with fine-grained CFG encoding and an auxiliary semantics-similarity task to align functions compiled under different optimization levels, while a votes-based tokenization method mitigates label sparsity and OOV issues. Experiments show that Epitome consistently outperforms prior approaches such as NFRE and SymLM across architectures, achieving strong overall performance (macro F1 = 71.96%) and markedly better generalization to unseen binaries and firmware. Its main strengths are optimization-level robustness, improved semantic consistency, and more interpretable, meaningful predicted names for reverse engineering. Limitations include sensitivity to large domain shifts, reliance on static analysis that may miss runtime behaviors, and increased system complexity. Overall, the paper is significant because it demonstrates that semantic alignment and linguistically informed tokenization are key to scalable and generalizable binary function name prediction.(Yiyue)"
 
 - title: "BLens: Contrastive Captioning of Binary Functions using Ensemble Embedding"
   link: "https://www.usenix.org/system/files/conference/usenixsecurity25/sec25cycle1-prepub-271-benoit.pdf"
