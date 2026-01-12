@@ -60,7 +60,7 @@
 
 - title: "GASLITEing the Retrieval: Poisoning Knowledge DBs to Mislead Embedding-based Search"
   link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765095"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6i1QlYMcjVh3Yf1p4wZcgJvMNadj/cXFjVJMEwRt6Qem5YeV-_w0AXVDlIyqt--bUAKvLw4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/1113_GASLITE.pdf"
   code_link: "https://github.com/matanbt/gaslite"
   presenter: Minseok
   conference: CCS
@@ -160,7 +160,7 @@
 
 - title: "Make Agent Defeat Agent: Automatic Detection of Taint-Style Vulnerabilities in LLM-based Agents"
   link: "https://www.usenix.org/system/files/usenixsecurity25-liu-fengyu.pdf"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6h3FnySp5FMLOMGCoDAIOqUD0t0r/1L7N6MxI9aR5RLl4WZWNxaS8IAolWuYa-8b3A3wLx4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0911_Make_Agent_Defeat_Agent.pdf"
   code_link: "https://zenodo.org/records/15590097"
   presenter: Minseok
   conference: USENIX
@@ -261,7 +261,7 @@
 
 - title: "An Information Theoretic Approach to Machine Unlearning"
   link: "https://openreview.net/pdf?id=t1utIThKHD"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YHPjHhh7n0g5SBRbfl8wDNukP8Oa0T/ClzE4opl-NIdS3ZlwdGY4HwKVWVSAjZn-VL1gXU3x4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0723_Unelarning_Information_Theory.pdf"
   code_link: "https://github.com/jwf40/Information-Theoretic-Unlearning"
   presenter: Minseok
   conference: TMLR
@@ -363,7 +363,7 @@
 
 - title: "Applying Contrastive Learning to Code Vulnerability Type Classification"
   link: "https://aclanthology.org/2024.emnlp-main.666/"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6UVDIROIsshkVr9igQRlLjkgy3mu/mPcPzON6ErqrkXy2M7U3CLEwNA7USEhu-bL8g91rx4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0513_Contrastive_CVE.pdf"
   code_link: ""
   presenter: Minseok
   conference: EMNLP
@@ -423,7 +423,7 @@
 
 - title: "Mask-based Membership Inference Attacks for Retrieval-Augmented Generation"
   link: "https://openreview.net/forum?id=jBXq5UIov4#discussion"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6U7EBwqspdS7sCshNcKz867KVXEf/yEuO9rqAI71LbW99pGH_INRYC6x_6Trs-lrCA6G3x4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0309_RAG_MIA_Seminar.pdf"
   code_link: ""
   presenter: Minseok
   conference: WWW
@@ -433,7 +433,7 @@
 
 - title: "Generating Is Believing: Membership Inference Attacks against Retrieval-Augmented Generation"
   link: "https://ieeexplore.ieee.org/abstract/document/10889013"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6U7EBwqspdS7sCshNcKz867KVXEf/yEuO9rqAI71LbW99pGH_INRYC6x_6Trs-lrCA6G3x4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0309_RAG_MIA_Seminar.pdf"
   code_link: ""
   presenter: Minseok
   conference: ICASSP
@@ -443,7 +443,7 @@
 
 - title: "Is My Data in Your Retrieval Database? Membership Inference Attacks Against Retrieval Augmented Generation"
   link: "https://arxiv.org/abs/2405.20446"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6U7EBwqspdS7sCshNcKz867KVXEf/yEuO9rqAI71LbW99pGH_INRYC6x_6Trs-lrCA6G3x4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0309_RAG_MIA_Seminar.pdf"
   code_link: ""
   presenter: Minseok
   conference: arXiv
@@ -515,7 +515,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
   
 - title: "Instruction Backdoor Attacks Against Customized LLMs"
   link: "https://www.usenix.org/system/files/usenixsecurity24-zhang-rui.pdf"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6T0OSu4dou1dZrodaDxpJHzDcoLb/3HfbUxnBzRgDtg7JeDfAlOB2krcYxKI7-SrUA_4rx4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0112_Instruction_Backdoor_Attacks_Against_Customized_LLMs.pdf"
   code_link: "https://github.com/zhangrui4041/Instruction_Backdoor_Attack"
   presenter: Minseok
   conference: USENIX
@@ -575,7 +575,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 
 - title: "Teach LLMs to Phish: Stealing Private Information from Language Models"
   link: "https://openreview.net/pdf?id=qo21ZlfNu6"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6iCdvByb8xb4F0gWFBoS3gVFlzND/xa4g-6CNnQqIAoChRNdq1ScVi1GEgrHD-vbeAv5Xx4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/1120_Teach_LLMs_to_Phish.pdf"
   code_link: ""
   presenter: Minseok
   conference: ICLR
@@ -645,7 +645,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 
 - title: "Can I Hear Your Face? Pervasive Attack on Voice Authentication Systems with a Single Face Image"
   link: "https://www.usenix.org/system/files/usenixsecurity24-jiang-nan.pdf"
-  ppt_link: "https://for8821.synology.me:5001/d/s/16YG6hOXijMUTP0gxG78HuMLiIQsyKd8/yAGM04FdakIYxm-M91qWaCb9XzT1vpeQ-5bggNqfx4Aw"
+  ppt_link: "https://deniskim1.com/lab-meeting/0912_CanIHearYourFace.pdf"
   code_link: "https://github.com/SeCATrity/Foice"
   presenter: Minseok
   conference: USENIX
@@ -705,7 +705,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
   
 - title: "On Large Language Models’ Resilience to Coercive Interrogation"
   link: "https://www.computer.org/csdl/proceedings-article/sp/2024/313000a252/1WPcZ9B0jCg"
-  ppt_link: "https://bit.ly/4fJN0cU"
+  ppt_link: "https://deniskim1.com/lab-meeting/0814_LINT.pdf"
   code_link: "https://github.com/ZhangZhuoSJTU/LINT"
   presenter: Minseok
   conference: S&P
@@ -755,7 +755,7 @@ While ERASAN makes notable strides in improving Rust’s memory safety tools, it
 
 - title: "Improving Real-world Password Guessing Attacks via Bi-directional Transformers"
   link: "https://www.usenix.org/conference/usenixsecurity23/presentation/xu-ming"
-  ppt_link: "https://drive.google.com/file/d/1O9FE6M3x5XVBqyubhEU8nq3ongwgtS-g/view?usp=sharing"
+  ppt_link: "https://deniskim1.com/lab-meeting/0708_PassBERT.pdf"
   code_link: "https://github.com/snow0011/PassBertStrengthMeter"
   presenter: Minseok
   conference: USENIX
