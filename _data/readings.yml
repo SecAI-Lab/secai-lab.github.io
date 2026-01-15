@@ -1,3 +1,23 @@
+- title: "MOEVIL: Poisoning Experts to Compromise the Safety of Mixture-of-Experts LLMs"
+  link: "https://jaehanwork.github.io/files/moevil.pdf"
+  ppt_link: "https://deniskim1.com/lab-meeting/0114_MoEvil.pdf"
+  code_link: "https://github.com/jaehanwork/MoEvil"
+  presenter: Minseok
+  conference: ACSAC
+  date: 2026.01.14
+  pub_year: 2025
+  discussion: "(Discussion) ()"
+
+- title: "D-LIFT: Improving LLM-based Decompiler Backend via Code Quality-driven Fine-tuning"
+  link: "https://arxiv.org/pdf/2506.10125"
+  ppt_link: ""
+  code_link: ""
+  presenter: Hyoungjun
+  conference: NDSS
+  date: 2026.01.14
+  pub_year: 2026
+  discussion: "(Discussion) ()"
+
 - title: "Enhancing Function Name Prediction using Votes-Based Name Tokenization and Multi-task Learning"
   link: "https://dl.acm.org/doi/pdf/10.1145/3660782"
   ppt_link: "https://docs.google.com/presentation/d/1MUI2bThjd0HaI9j4OrY0KUsaFR8_jQljntvadOLZRKc/edit?slide=id.g3b4f81a68e5_1_45#slide=id.g3b4f81a68e5_1_45"
