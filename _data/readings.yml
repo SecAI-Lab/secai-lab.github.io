@@ -6,7 +6,7 @@
   conference: ACSAC
   date: 2026.01.14
   pub_year: 2025
-  discussion: "(Discussion) ()"
+  discussion: "(Discussion) MOEVIL shows that the safety of Mixture-of-Experts (MoE) large language models can be severely compromised by a single poisoned expert, undermining the assumption that sparse activation inherently provides robustness. By manipulating routing decisions through harmful preference learning and latent representation alignment, the attack effectively steers harmful queries toward the poisoned expert without access to the MoE training process. Experimental results across models and gating mechanisms demonstrate that MOEVIL significantly outperforms existing harmful fine-tuning baselines in MoE settings while largely preserving overall task performance. The findings further highlight that early-token routing plays a critical role in determining response safety, indicating that MoE architectures inherit superficial alignment weaknesses of autoregressive LLMs. Overall, this work is important because it reframes MoE safety as a routing-level alignment problem and exposes fundamental safety risks in efficiency-driven MoE development using untrusted experts. (Mijin)"
 
 - title: "D-LIFT: Improving LLM-based Decompiler Backend via Code Quality-driven Fine-tuning"
   link: "https://arxiv.org/pdf/2506.10125"
