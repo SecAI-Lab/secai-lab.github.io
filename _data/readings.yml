@@ -1,3 +1,13 @@
+- title: "REx86: A Local Large Language Model for Assisting in x86 Assembly Reverse Engineering"
+  link: "https://arxiv.org/pdf/2510.20975"
+  ppt_link: "https://docs.google.com/presentation/d/1KbAIKCJSEDEPAIDEiMZLh96P5N8kPKdN5L2G3DI-LXM/edit?usp=sharing"
+  code_link: "https://github.com/dlea8/REx86"
+  presenter: Shakhzod
+  conference: ACSAC
+  date: 2026.01.21
+  pub_year: 2025
+  discussion: "(Discussion)"
+
 - title: "MOEVIL: Poisoning Experts to Compromise the Safety of Mixture-of-Experts LLMs"
   link: "https://jaehanwork.github.io/files/moevil.pdf"
   ppt_link: "https://deniskim1.com/lab-meeting/0114_MoEvil.pdf"
