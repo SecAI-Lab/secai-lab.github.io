@@ -1,3 +1,13 @@
+- title: "Decompiling the Synergy: An Empirical Study of Human–LLM Teaming in Software Reverse Engineering"
+  link: "https://www.zionbasque.com/files/papers/dec-synergy-study.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_decomsyn_NDSS26"
+  code_link: "https://github.com/mahaloz/dec-synergy-study"
+  presenter: Jiyong
+  conference: NDSS
+  date: 2026.01.21
+  pub_year: 2026
+  discussion: "(Discussion)"
+  
 - title: "REx86: A Local Large Language Model for Assisting in x86 Assembly Reverse Engineering"
   link: "https://arxiv.org/pdf/2510.20975"
   ppt_link: "https://docs.google.com/presentation/d/1KbAIKCJSEDEPAIDEiMZLh96P5N8kPKdN5L2G3DI-LXM/edit?usp=sharing"
