@@ -4,7 +4,7 @@
   code_link: ""
   presenter: Yujeong
   conference: PLDI
-  date: 2026.01.28
+  date: 2026.02.04
   pub_year: 2026
   discussion: "(Discussion)"
 
@@ -16,7 +16,7 @@
   conference: ISSTA
   date: 2026.01.28
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper presents BinDSA, a precise and scalable binary-level pointer analysis that uses field- and context-sensitive unification with heap cloning and jointly recovers data-structure fields and points-to relations, making large stripped binaries analyzable with much lower time and memory while improving field sensitivity without source types; however, the work is weakened by missing related-work comparisons, no ablation or parameter-sensitivity analysis (e.g., type filtering, heap cloning, stride inference, arity thresholds), reliance on profiling-based ground truth that underestimates precision and overestimates recall, and the absence of manual validation on a small subset. (Shakhzod)"
   
 - title: "Decompiling the Synergy: An Empirical Study of Human–LLM Teaming in Software Reverse Engineering"
   link: "https://www.zionbasque.com/files/papers/dec-synergy-study.pdf"
@@ -50,13 +50,13 @@
 
 - title: "D-LIFT: Improving LLM-based Decompiler Backend via Code Quality-driven Fine-tuning"
   link: "https://arxiv.org/pdf/2506.10125"
-  ppt_link: "https://drive.google.com/file/d/1HNtmRqF6mq705XP96hcW5piV3bnBXXr7/view?usp=drive_link"
+  ppt_link: "https://docs.google.com/presentation/d/1fJaKHE8aXCJOf4sdJlPQm_9MGa8oARsw/edit?slide=id.p1#slide=id.p1"
   code_link: ""
   presenter: Hyoungjun
   conference: NDSS
   date: 2026.01.14
   pub_year: 2026
-  discussion: "(Discussion) ()"
+  discussion: "(Discussion) This paper presents D-LIFT, an LLM-based decompilation pipeline that fine-tunes models with GRPO using a new quality metric, D-SCORE, which enforces correctness via recompilation and symbolic checks before rewarding readability, making both the training method and the metric valuable for future binary-focused work. It demonstrates a robust end-to-end pipeline and achieves clear improvements when the original decompilation is accurate. However, its semantic validation is limited (mostly function calls and return behavior rather than rich pointer/memory semantics), and performance drops sharply when the initial decompiler output is already incorrect, since both training and selection rely on that baseline. (Yujeong)"
 
 - title: "Enhancing Function Name Prediction using Votes-Based Name Tokenization and Multi-task Learning"
   link: "https://dl.acm.org/doi/pdf/10.1145/3660782"
