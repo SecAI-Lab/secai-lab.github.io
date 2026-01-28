@@ -36,7 +36,7 @@
   conference: ACSAC
   date: 2026.01.21
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper presents REx86, the first systematic study of locally deployable LLMs fine-tuned for x86 assembly reverse engineering, addressing security and data leakage concerns associated with API-based models. Fine-tuning achieved Cross Entropy reductions of 64–90% and Cosine Similarity improvements up to 34.7%, while the user study showed REx86 attained a 70% higher solve rate (53.33% vs. 31.25%) and statistically significant improvement in line-level understanding compared to the base model. The work also demonstrates that 7B models can outperform larger counterparts and releases both models and datasets for reproducibility. However, the study is limited by a small dataset of only 5,981 samples with just 3 training epochs, potential hallucinations in GPT-4o-generated Q&A pairs, and a user study restricted to 43 undergraduate students rather than professional analysts. Qualitative evaluation further revealed critical failures in interpreting obfuscated XOR swap patterns. Despite these limitations, this research establishes that domain-specific fine-tuning can significantly enhance local models for RE assistance while highlighting that current approaches still lack reasoning depth for complex obfuscated code analysis. (Hyoungjun)"
 
 - title: "MOEVIL: Poisoning Experts to Compromise the Safety of Mixture-of-Experts LLMs"
   link: "https://jaehanwork.github.io/files/moevil.pdf"
@@ -50,7 +50,7 @@
 
 - title: "D-LIFT: Improving LLM-based Decompiler Backend via Code Quality-driven Fine-tuning"
   link: "https://arxiv.org/pdf/2506.10125"
-  ppt_link: ""
+  ppt_link: "https://drive.google.com/file/d/1HNtmRqF6mq705XP96hcW5piV3bnBXXr7/view?usp=drive_link"
   code_link: ""
   presenter: Hyoungjun
   conference: NDSS
