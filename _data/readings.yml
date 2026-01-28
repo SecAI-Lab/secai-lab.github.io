@@ -1,3 +1,23 @@
+- title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: 
+  date: 2026.01.28
+  pub_year: 2026
+  discussion: "(Discussion)"
+
+- title: "BinDSA: Efficient, Precise Binary-Level Pointer Analysis with Context-Sensitive Heap Reconstruction"
+  link: "https://www.cs.ucr.edu/~heng/pubs/BinDSA.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1yoPozSkrsekrIwmZmg-SKB2tatI7__v2E6b7A5pXJ-s/edit?usp=sharing"
+  code_link: "https://github.com/bitsecurerlab/BinDSA"
+  presenter: Yiyue
+  conference: ISSTA
+  date: 2026.01.28
+  pub_year: 2026
+  discussion: "(Discussion)"
+  
 - title: "Decompiling the Synergy: An Empirical Study of Human–LLM Teaming in Software Reverse Engineering"
   link: "https://www.zionbasque.com/files/papers/dec-synergy-study.pdf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_decomsyn_NDSS26"
