@@ -1,9 +1,9 @@
-- title: ""
-  link: ""
+- title: "Polymorphic Type Inference for Machine Code"
+  link: "https://dl.acm.org/doi/pdf/10.1145/2908080.2908119"
   ppt_link: ""
   code_link: ""
   presenter: Yujeong
-  conference: 
+  conference: PLDI
   date: 2026.01.28
   pub_year: 2026
   discussion: "(Discussion)"
@@ -26,7 +26,7 @@
   conference: NDSS
   date: 2026.01.21
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper presents the first systematic empirical study of Human-LLM teaming in Software Reverse Engineering (SRE), combining a practitioner survey with a fine-grained user study to evaluate how LLMs influence static code understanding. While the approach demonstrates clear benefits, such as narrowing the expertise gap by boosting novice comprehension rates by 98% and accelerating the analysis of standard algorithms by 238%, it suffers from critical performance ceilings: experts experienced no significant improvement in understanding rates, and the integration of LLMs often resulted in diminishing returns or slowdowns when applied to complex, custom logic. The work makes meaningful contributions by establishing that LLMs effectively function as \"first-pass\" filters that increase artifact recovery by over 66%, but its practical impact is limited by severe failure modes, where hallucinated vulnerabilities caused analysts to waste 231% more time on non-existent flaws, and by the finding that auto-generated summaries do not replace the cognitive depth required for expert analysis. Despite these limitations, and the study's reliance on static analysis of unobfuscated binaries, the research serves as a foundational critique, highlighting that current LLMs act as powerful accelerators for beginners but lack the reliability and reasoning depth to serve as true collaborative partners for experts. (Minseok)"
   
 - title: "REx86: A Local Large Language Model for Assisting in x86 Assembly Reverse Engineering"
   link: "https://arxiv.org/pdf/2510.20975"
