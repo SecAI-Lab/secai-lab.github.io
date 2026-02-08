@@ -6,7 +6,7 @@
   conference: PLDI
   date: 2026.02.04
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "The compilation process often erases source-level type information. Consequently, stripped binaries contain little to no explicit type information. Recovering types from machine code is known as type reconstruction, a task that plays a crucial role in decompilation and reverse engineering. This paper introduces a novel type system and algorithms for the type reconstruction problem called Retypd. Retypd is a static type inference algorithm for machine code that supports recursive types, polymorphism, and subtyping. Compared to existing approaches such as REWARDS-c, TIE, and SecondWrite, Retypd achieves significantly more accurate type inference. (Jiyong)"
 
 - title: "BinDSA: Efficient, Precise Binary-Level Pointer Analysis with Context-Sensitive Heap Reconstruction"
   link: "https://www.cs.ucr.edu/~heng/pubs/BinDSA.pdf"
