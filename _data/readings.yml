@@ -1,3 +1,23 @@
+- title: "Idioms: A Simple and Effective Framework for Turbo-Charging Local Neural Decompilation with Well-Defined Types"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f795-paper.pdf"
+  ppt_link: "https://deniskim1.com/lab-meeting/0225_Idioms.pdf"
+  code_link: "https://github.com/squaresLab/idioms"
+  presenter: Minseok
+  conference: NDSS
+  date: 2026.02.25
+  pub_year: 2026
+  discussion: "The paper proposes IDIOMS, a simple yet effective neural decompilation framework that jointly predicts function code and complete user-defined type (UDT) definitions by augmenting decompiled input with neighboring call-graph context. Supported by a new realistic dataset, REALTYPE, IDIOMS substantially outperforms prior neural decompilers, especially on code with complex types. Its strengths lie in its architecture-agnostic design, strong ablations, and open release of data and models, while limitations include C/x86-64-only scope, reliance on Hex-Rays output, lack of full semantic guarantees, context-window constraints, and incomplete evaluation coverage. (Shakhzod)"
+
+- title: "BinQuery: A Novel Framework for Natural Language-Based Binary Code Retrieval"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3728927"
+  ppt_link: "later"
+  code_link: "https://github.com/BinQueryGroup/OpenBinQuery"
+  presenter: Mijin
+  conference: ISSTA
+  date: 2026.02.25
+  pub_year: 2025
+  discussion: "(Discussion) This paper presents BinQuery, a Natural Language-based Binary Function Retrieval (BFR) framework that synergizes fine-grained semantic alignment with Large Language Models (LLMs) to bridge the semantic gap between binary code and natural language queries, addressing the rigidity and limited adaptability of traditional heuristic-based methods. While the approach demonstrates clear advantages through a massive 42.55% increase in Recall@1 on the ViC dataset and a 4x performance improvement on the Magma benchmark compared to state-of-the-art methods, it suffers from significant scalability limitations: the reliance on LLMs for query augmentation and description generation introduces substantial computational overhead, the fine-grained alignment process necessitates expensive offline indexing that may not scale to repository-level analysis, and the model's dependence on synthetic 'Virtual Compiler' data risks poor generalization to hand-optimized or obfuscated real-world malware. The work makes meaningful contributions by establishing a snippet-level contrastive learning objective that captures subtle semantic nuances and autonomously refining user queries to resolve ambiguity, but its practical impact is limited by the high inference latency of the LLM components and the lack of robust evaluation against modern binary diversification techniques. Despite these limitations, BinQuery represents important progress in cross-modal binary analysis, though the evaluation would be strengthened by a deeper analysis of failure modes on stripped binaries, a clearer quantification of the computational cost versus retrieval gain, and comparisons against more lightweight neural baselines. (Minseok)"
+
 - title: "Polymorphic Type Inference for Machine Code"
   link: "https://dl.acm.org/doi/pdf/10.1145/2908080.2908119"
   ppt_link: ""
