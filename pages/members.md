@@ -132,6 +132,59 @@ sitemap: true
   }
 }
 
+  .alumni-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+}
+  .alumni-card {
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+}
+  .alumni-card img {
+  width: 120px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto 12px auto;
+}
+  .alumni-card h5 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  line-height: 1.3;
+  font-size: 16px;
+}
+  .alumni-card em {
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.5;
+  display: block;
+}
+
+/* tablet */
+@media (max-width: 900px) {
+  .alumni-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* mobile */
+@media (max-width: 640px) {
+  .alumni-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .alumni-card img {
+    width: 90px;
+    height: 120px;
+  }
+}
+  
 </style>
 <h3> Leader </h3>
 
@@ -337,8 +390,33 @@ sitemap: true
 {% endfor %}
 </div>
 
-<br>
+<!-- <br>
 <h4> Alumni </h4>
 {% for alumni in site.data.alumni_members %}
 <em>{{ alumni.name }}</em>
+{% endfor %} -->
+
+<br>
+<h4> Alumni </h4>
+
+<div class="alumni-grid">
+{% for alumni in site.data.alumni_members %}
+  <div class="alumni-card">
+    <img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ alumni.photo }}" class="img-responsive"/>
+
+    <h5>{{ alumni.name }}</h5>
+
+    {% if alumni.info %}
+      <em><strong>Status:</strong> {{ alumni.info }}</em>
+    {% endif %}
+
+    {% if alumni.joined %}
+      <em><strong>Joined:</strong> {{ alumni.joined }}</em>
+    {% endif %}
+
+    {% if alumni.note %}
+      <em>{{ alumni.note }}</em>
+    {% endif %}
+  </div>
 {% endfor %}
+</div>
