@@ -1,16 +1,51 @@
-- name: Suyeon Lee, Spring 2024 - Master (Graduated; SecAI Lab Intern)
+- name: Suyeon Lee (Graduated; SecAI Lab Intern)
   photo: suyeon2.jpg
-  info: Master
-  email: susan2ee AT g.skku.edu
-  research: Digital Forensics, Machine Learning
-  joined: Spring 2024
+  course: Master
+  left: Spring 2026
+  
 - name: Giuk Kwon, Fall 2025 (Withdrawal)
-- name: Intae Jeon, Spring 2024 - Master (Graduated; Samsung Research)
-- name: Nozima Murodova, Fall 2024 - Master (Graduated; Future Open Technology Group)
-- name: Seoyeon Cho, Spring 2024 - Bachelor (Visiting; M.S. at University of Michigan, Ann Arbor)
-- name: Junhyeong Jo, Spring 2024 - Bachelor (Visiting; SKKU)
-- name: Hohyeon Jang, Fall 2022 - Master (Graduated)
-- name: Wonyoung Cho, Fall 2021 - Master (Discont'd; SKKU)
-- name: Seok Kim, Fall 2022 - Bachelor (Visiting; SKKU)
-- name: Sechang Lim, Spring 2022 - Bachelor (Discont'd; SKKU)
-- name: Suhwan Shin (from SSlab@SKKU), Fall 2021 - Bachelor (Visiting; SKKU)
+  photo: profile.jpg
+  course: Combined Master and Ph.D
+  left: Fall 2025
+  
+- name: Intae Jeon (Graduated; Samsung Research)
+  photo: intae2.jpg
+  course: Master
+  left: Fall 2025
+  
+- name: Nozima Murodova (Graduated; Future Open Technology Group)
+  photo: nozima.jpg
+  course: Master
+  left: Fall 2024
+  
+- name: Seoyeon Cho (Visiting; M.S. at University of Michigan, Ann Arbor)
+  photo: seoyeon.png
+  course: Bachelor
+  left: Spring 2024
+  
+- name: Junhyeong Jo (Visiting; SKKU)
+  photo: junhyoung.jpg
+  course: Bachelor
+  left: Spring 2024
+  
+- name: Hohyeon Jang (Graduated)
+  photo: hohyeon.jpg
+  course: Master
+  left: Fall 2022
+  
+- name: Wonyoung Cho (Discont'd; SKKU)
+  photo: profile.jpg
+  course: Master
+  left: Fall 2021
+  
+- name: Seok Kim (Visiting; SKKU)
+  photo: profile.jpg
+  left: Fall 2022
+  
+- name: Sechang Lim (Discont'd; SKKU)
+  photo: profile.jpg
+  left: Spring 2022
+  
+- name: Suhwan Shin from SSlab@SKKU (Visiting; SKKU)
+  photo: profile.jpg
+  left: Fall 2021
