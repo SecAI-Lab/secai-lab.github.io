@@ -406,16 +406,12 @@ sitemap: true
 
     <h5>{{ alumni.name }}</h5>
 
-    {% if alumni.info %}
-      <em><strong>Status:</strong> {{ alumni.info }}</em>
+    {% if alumni.course %}
+      <em><strong>Course:</strong> {{ alumni.course }}</em>
     {% endif %}
 
-    {% if alumni.joined %}
-      <em><strong>Joined:</strong> {{ alumni.joined }}</em>
-    {% endif %}
-
-    {% if alumni.note %}
-      <em>{{ alumni.note }}</em>
+    {% if alumni.left %}
+      <em><strong>Left:</strong> {{ alumni.left }}</em>
     {% endif %}
   </div>
 {% endfor %}
