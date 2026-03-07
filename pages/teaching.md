@@ -48,6 +48,11 @@ li:has(details) {
 }
 </style>
 
+#### Spring 2026
+
+- [DASF004] <a href="/pages/classes/dasf004-spring26-c.html">Basis and Practice in Programming (프로그래밍기초와실습; C Programming)</a>
+- [SWE3025] Introduction to Computer Security (Undergraduate)
+
 #### Fall 2025
 
 - [SWE3025] Introduction to Computer Security (Undergraduate)
@@ -56,7 +61,7 @@ li:has(details) {
 
 - [ESW4020] Computer Security (Graduate)
 - [SWE3025] Introduction to Computer Security (Undergraduate)
-- [DFS5005] Information Security
+- [DFS5005] Information Security (Gradudate)
 
 ##### Fall 2024
 

@@ -1,0 +1,694 @@
+---
+layout: default
+title: "[DASF004] 프로그래밍기초와실습 (C Programming)"
+---
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface2: #f1f3f7;
+    --border: #e2e6ee;
+    --border2: #d0d6e2;
+    --accent: #1a6ef5;
+    --accent2: #e05a1a;
+    --text: #1a1d26;
+    --text-dim: #8a92a6;
+    --text-mid: #4a5068;
+    --exam: #d94a1a;
+    --hw: #1e8c35;
+    --holiday: #c0182e;
+    --lecture: #1a6ef5;
+    --lab: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+
+
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 52px 0 32px;
+    border-bottom: 0px solid var(--border);
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.1s;
+    display: flex;
+    align-items: left;
+    gap: 10px;
+  }
+
+  .course-code {
+    background: var(--accent);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  h1 {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.18s;
+  }
+
+  h1 .sub {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(13px, 2vw, 17px);
+    font-weight: 400;
+    color: var(--text-mid);
+    margin-top: 5px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.28s;
+  }
+
+  .meta-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: left;
+    gap: 7px;
+  }
+
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.36s;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: left;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-mid);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.44s;
+  }
+
+  .stat-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px 18px;
+    text-align: left;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .stat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 5px;
+    letter-spacing: 0.08em;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  /* ── FILTER TABS ── */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.52s;
+  }
+
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border2);
+    background: var(--surface);
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.17s;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .filter-btn.active {
+    border-color: var(--accent);
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 2px 8px rgba(26,110,245,0.22);
+  }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.6s;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 60px;
+    background: var(--surface);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+
+  #sched-table { width: 100%; border-collapse: collapse; table-layout: auto; margin: 0; }
+
+  #sched-table thead tr {
+    background: var(--surface2);
+    border-bottom: 0px solid var(--border);
+  }
+
+  #sched-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 13px 16px;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 600;
+    border-bottom: none !important;
+  }
+
+  #sched-table tbody tr {
+    border-bottom: 0px solid var(--border);
+    transition: background 0.12s;
+    opacity: 3;
+    animation: rowIn 0.32s ease forwards;
+  }
+
+  #sched-table tbody tr:last-child { border-bottom: none; }
+  #sched-table tbody tr:hover { background: #f4f7ff; }
+
+  #sched-table td { padding: 10px 16px; font-size: 13px; vertical-align: middle; border-bottom: none !important; }
+
+  /* Alignment */
+  #sched-table th, #sched-table td { text-align: left; }
+
+  /* Week */
+  #sched-table .td-week { font-family: 'IBM Plex Mono', monospace; width: 60px; text-align: center; white-space: nowrap; }
+
+  .week-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--text-mid);
+    border: 1.5px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .week-badge.exam-wk  { background: rgba(217,74,26,0.08); color: var(--exam);    border-color: rgba(217,74,26,0.25); }
+  .week-badge.curr-wk  { background: rgba(26,110,245,0.1); color: var(--accent);  border-color: rgba(26,110,245,0.3); }
+
+  /* Date */
+  #sched-table .td-date { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-mid); white-space: nowrap; width: 110px; }
+  #sched-table .td-date.holiday-dt  { color: var(--holiday); }
+  #sched-table .td-date.current-dt  { color: var(--accent); font-weight: 600; }
+
+  /* Type badge */
+  .type-badge {
+    display: inline-flex;
+    align-items: left;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tb-lecture { background: rgba(26,110,245,0.09);  color: var(--lecture); border: 0px solid rgba(26,110,245,0.18); }
+  .tb-lab     { background: rgba(124,58,237,0.09);  color: var(--lab);     border: 0px solid rgba(124,58,237,0.18); }
+  .tb-exam    { background: rgba(217,74,26,0.09);   color: var(--exam);    border: 0px solid rgba(217,74,26,0.25);  font-weight: 700; }
+  .tb-intro   { background: rgba(30,140,53,0.09);   color: var(--hw);      border: 0px solid rgba(30,140,53,0.18); }
+  .tb-holiday { background: rgba(192,24,46,0.07);   color: var(--holiday); border: 0px solid rgba(192,24,46,0.18); }
+
+  /* Topic */
+  #sched-table .td-topic { max-width: 340px; }
+
+  .lec-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .topic-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  .topic-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: rgba(26,110,245,0.07);
+    color: var(--accent);
+    border: 1px solid rgba(26,110,245,0.14);
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+
+  /* Note */
+  .note-badge {
+    display: inline-flex;
+    align-items: left;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .nb-handson { background: rgba(124,58,237,0.08); color: var(--lab);     border: 1px solid rgba(124,58,237,0.2); }
+  .nb-hwout   { background: rgba(30,140,53,0.08);  color: var(--hw);      border: 1px solid rgba(30,140,53,0.2); }
+  .nb-exam    { background: rgba(217,74,26,0.08);  color: var(--exam);    border: 1px solid rgba(217,74,26,0.2); font-size: 12px; }
+  .nb-holiday { background: rgba(192,24,46,0.07);  color: var(--holiday); border: 1px solid rgba(192,24,46,0.18); }
+  .nb-dim     { color: var(--text-dim); }
+
+  /* Row tints */
+  #sched-table tr.rx-exam    td { background: rgba(217,74,26,0.025); }
+  #sched-table tr.rx-holiday td { background: rgba(192,24,46,0.025); }
+  #sched-table tr.rx-current td { background: rgba(26,110,245,0.03); }
+
+  /* ── HW VIEW ── */
+  .hw-section-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hw-section-header td {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 8px 18px;
+    letter-spacing: 0.06em;
+  }
+
+  .hw-main-row td { vertical-align: top; padding: 18px 16px 20px; }
+
+  .hw-id-badge {
+    display: inline-block;
+    background: rgba(30,140,53,0.1);
+    color: var(--hw);
+    border: 1.5px solid rgba(30,140,53,0.22);
+    padding: 3px 11px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .hw-title-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .hw-meta-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 3px;
+  }
+
+  .hw-topics-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: left;
+    gap: 6px;
+  }
+
+  .hw-pills-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: flex-start; }
+
+  .hw-week-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--border2);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .hw-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid rgba(26,110,245,0.17);
+    background: rgba(26,110,245,0.06);
+    color: var(--accent);
+    margin-top: 2px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 20px 0 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-4px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    #sched-table .td-topic { max-width: 140px; }
+    #sched-table td { padding: 8px 10px; }
+    #sched-table th { padding: 10px; }
+  }
+</style>
+
+<div class="container">
+  <header>
+    <div class="header-tag">
+      <span class="course-code">DASF004</span>
+      2026 Spring Semester
+    </div>
+    <h1>
+      프로그래밍기초와실습
+      <span class="sub">C Programming</span>
+    </h1>
+    <div class="header-meta">
+      <div class="meta-item"><span class="meta-dot" style="background:var(--border2)"></span>2026.03.03 — 2026.06.16</div>
+      <div class="meta-item"><span class="meta-dot" style="background:var(--accent)"></span>16주 과정</div>
+      <div class="meta-item"><span class="meta-dot" style="background:var(--lab)"></span>강의 + 실습</div>
+    </div>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--lecture)"></span>강의</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--lab)"></span>실습</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--exam)"></span>시험</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--hw)"></span>HW 출제</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--holiday)"></span>강의 (공휴일)</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-cell"><div class="stat-num">16</div><div class="stat-label">Weeks</div></div>
+    <div class="stat-cell"><div class="stat-num">13</div><div class="stat-label">Lab Sessions</div></div>
+    <div class="stat-cell"><div class="stat-num">2</div><div class="stat-label">Exams</div></div>
+    <div class="stat-cell"><div class="stat-num">2</div><div class="stat-label">Homeworks</div></div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterRows('all',this)">전체</button>
+    <button class="filter-btn" onclick="filterRows('lecture',this)">강의</button>
+    <button class="filter-btn" onclick="filterRows('lab',this)">실습</button>
+    <button class="filter-btn" onclick="filterRows('exam',this)">시험</button>
+    <button class="filter-btn" onclick="filterRows('hw',this)">과제</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="sched-table">
+      <thead id="sched-thead">
+        <tr>
+          <th>Week</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Topics</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody id="sched-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const data = [
+  { week:1,  date:'2026.03.03', type:'intro',   lec:'강의 (Sessions 01-02)',        topic:'course intro',                                                    note:'' },
+  { week:1,  date:'2026.03.05', type:'lab',     lec:'실습',               topic:'환경설정, 구름가입',                                               note:'WSL, VS Code' },
+  { week:2,  date:'2026.03.10', type:'lecture', lec:'강의 (Sessions 03-05)',        topic:'syntax vs semantics, data representations',                        note:'' },
+  { week:2,  date:'2026.03.12', type:'lab',     lec:'실습1; 구름1',              topic:'',                                                                 note:'Hands-on#1' },
+  { week:3,  date:'2026.03.17', type:'lecture', lec:'강의 (Sessions 06-08)',        topic:'variables, standard IO, operators',                                note:'' },
+  { week:3,  date:'2026.03.19', type:'lab',     lec:'실습2; 구름2',        topic:'',                                                                 note:'Hands-on#2' },
+  { week:4,  date:'2026.03.24', type:'lecture', lec:'강의 (Sessions 09-11)',        topic:'control statements, if-else, switch-case',                         note:'' },
+  { week:4,  date:'2026.03.26', type:'lab',     lec:'실습3; 구름3',        topic:'',                                                                 note:'Hands-on#3' },
+  { week:5,  date:'2026.03.31', type:'lecture', lec:'강의 (Sessions 12-14)',        topic:'do-while, for loop, getchar-puts',                                 note:'Hw#1 out' },
+  { week:5,  date:'2026.04.02', type:'lab',     lec:'실습4; 구름4',        topic:'',                                                                 note:'Hands-on#4' },
+  { week:6,  date:'2026.04.07', type:'lecture', lec:'강의 (Sessions 15-17)',        topic:'functions, scopes, recursions',                                    note:'' },
+  { week:6,  date:'2026.04.09', type:'lab',     lec:'실습5; 구름5',        topic:'',                                                                 note:'Hands-on#5' },
+  { week:7,  date:'2026.04.14', type:'lecture', lec:'강의 (Sessions 18-19)',        topic:'arrays',                                                           note:'' },
+  { week:7,  date:'2026.04.16', type:'lab',     lec:'실습6; 구름6',              topic:'',                                                                 note:'Hands-on#6' },
+  { week:8,  date:'2026.04.21', type:'midterm', lec:'중간고사',            topic:'2개 강의실',                                                       note:'오프라인' },
+  { week:9,  date:'2026.04.28', type:'lecture', lec:'강의 (Sessions 20-22)',        topic:'advanced operators, multidimensional arrays',                      note:'' },
+  { week:9,  date:'2026.04.30', type:'lab',     lec:'실습7; 구름7',        topic:'',                                                                 note:'Hands-on#7' },
+  { week:10, date:'2026.05.05', type:'holiday', lec:'강의 (Sessions 23-24)',        topic:'C library, pointers',                                              note:'어린이날' },
+  { week:10, date:'2026.05.07', type:'lab',     lec:'실습8; 구름8',        topic:'',                                                                 note:'Hands-on#8' },
+  { week:11, date:'2026.05.12', type:'lecture', lec:'강의 (Sessions 25-26)',        topic:'call by references, advanced arrays',                              note:'' },
+  { week:11, date:'2026.05.14', type:'lab',     lec:'실습9; 구름9',        topic:'',                                                                 note:'Hands-on#9' },
+  { week:12, date:'2026.05.19', type:'lecture', lec:'강의 (Sessions 27-28)',        topic:'pointers and arrays, multidimensional array pointers',             note:'' },
+  { week:12, date:'2026.05.21', type:'lab',     lec:'실습10; 구름10',       topic:'',                                                                 note:'Hands-on#10' },
+  { week:13, date:'2026.05.26', type:'lecture', lec:'강의 (Sessions 29-30)',        topic:'file IO, binary stream IO',                                        note:'Hw#2 out' },
+  { week:13, date:'2026.05.28', type:'lab',     lec:'실습11; 구름11',       topic:'',                                                                 note:'Hands-on#11' },
+  { week:14, date:'2026.06.02', type:'lecture', lec:'강의 (Sessions 31-33)',        topic:'C strings, dynamic memory allocation, advanced pointers',          note:'' },
+  { week:14, date:'2026.06.04', type:'lab',     lec:'실습12; 구름12',      topic:'',                                                                 note:'Hands-on#12' },
+  { week:15, date:'2026.06.09', type:'lecture', lec:'강의 (Sessions 34-37)',        topic:'structures, typedefs, unions, enums, preprocessors, macros',       note:'' },
+  { week:15, date:'2026.06.11', type:'lab',     lec:'실습13; 구름13',             topic:'',                                                                 note:'Hands-on#13' },
+  { week:16, date:'2026.06.16', type:'final',   lec:'기말고사',            topic:'2개 강의실',                                                       note:'오프라인' },
+];
+
+const homeworks = [
+  { id:'Hw#1', label:'Homework #1', outDate:'2026.03.31', outWeek:5 },
+  { id:'Hw#2', label:'Homework #2', outDate:'2026.05.26', outWeek:13 },
+];
+
+function typeBadge(type) {
+  const m = {
+    intro:   ['tb-intro',   '◈ 오리엔테이션'],
+    lecture: ['tb-lecture', '▸ 강의'],
+    lab:     ['tb-lab',     '◎ 실습'],
+    midterm: ['tb-exam',    '★ 중간고사'],
+    final:   ['tb-exam',    '★ 기말고사'],
+    holiday: ['tb-holiday', '▸ 강의'],
+  };
+  const [cls, label] = m[type] || m.lecture;
+  return `<span class="type-badge ${cls}">${label}</span>`;
+}
+
+function noteBadge(note, type) {
+  if (type==='midterm'||type==='final') return `<span class="note-badge nb-exam">📍 ${note}</span>`;
+  if (!note) return `<span class="nb-dim">—</span>`;
+  if (note.includes('Hands-on')) return `<span class="note-badge nb-handson">${note}</span>`;
+  if (note.includes('out'))      return `<span class="note-badge nb-hwout">📤 ${note}</span>`;
+  if (note==='어린이날')          return `<span class="note-badge nb-holiday">🎈 어린이날</span>`;
+  return `<span class="note-badge nb-handson">${note}</span>`;
+}
+
+function isCurrentWeek(dateStr) {
+  const today = new Date();
+  const d = new Date(dateStr.replace(/\./g,'-'));
+  const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  return today >= mon && today <= sun;
+}
+
+// Collect lecture topics by week up to a given week
+function topicsByWeek(untilWeek) {
+  const map = {};
+  data.forEach(r => {
+    if (!r.topic || ['midterm','final','lab'].includes(r.type)) return;
+    if (r.week > untilWeek) return;
+    if (!map[r.week]) map[r.week] = [];
+    r.topic.split(',').forEach(t => { t=t.trim(); if(t) map[r.week].push(t); });
+  });
+  return map;
+}
+
+function buildNormal(filter) {
+  const tbody = document.getElementById('sched-body');
+  tbody.innerHTML = '';
+  document.getElementById('sched-thead').style.display = '';
+
+  const visible = data.filter(r => {
+    if (filter==='lecture' && !['lecture','intro','holiday'].includes(r.type)) return false;
+    if (filter==='lab'     && r.type!=='lab') return false;
+    if (filter==='exam'    && !['midterm','final'].includes(r.type)) return false;
+    return true;
+  });
+
+  const weekCount = {};
+  visible.forEach(r => { weekCount[r.week] = (weekCount[r.week] || 0) + 1; });
+  const weekSeen = {};
+
+  visible.forEach((r, delay) => {
+    const curr = isCurrentWeek(r.date);
+    const isExam = ['midterm','final'].includes(r.type);
+
+    const tr = document.createElement('tr');
+    tr.className = [
+      isExam             ? 'rx-exam'    : '',
+      r.type==='holiday' ? 'rx-holiday' : '',
+      curr               ? 'rx-current' : '',
+    ].filter(Boolean).join(' ');
+    tr.style.animationDelay = `${0.6 + delay*0.024}s`;
+
+    const dtCls = r.type==='holiday' ? 'holiday-dt' : curr ? 'current-dt' : '';
+    const pills = r.topic
+      ? `<div class="topic-pills">${r.topic.split(',').map(t=>`<span class="topic-pill">${t.trim()}</span>`).join('')}</div>`
+      : '';
+
+    let weekCell = '';
+    if (!weekSeen[r.week]) {
+      weekSeen[r.week] = true;
+      const count = weekCount[r.week];
+      const rowspan = count > 1 ? ` rowspan="${count}"` : '';
+      weekCell = `<td class="td-week"${rowspan}><div class="week-badge ${isExam?'exam-wk':curr?'curr-wk':''}">${r.week}</div></td>`;
+    }
+
+    tr.innerHTML = `
+      ${weekCell}
+      <td class="td-date ${dtCls}">${r.date}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td class="td-topic">
+        <div class="lec-label">${r.lec}</div>
+        ${pills}
+      </td>
+      <td>${noteBadge(r.note, r.type)}</td>`;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function buildHw() {
+  const tbody = document.getElementById('sched-body');
+  tbody.innerHTML = '';
+  document.getElementById('sched-thead').style.display = 'none';
+
+  homeworks.forEach((hw, idx) => {
+    // section header
+    const hdr = document.createElement('tr');
+    hdr.className = 'hw-section-header' + (idx>0?' week-start':'');
+    hdr.style.cssText = `opacity:0;animation:rowIn 0.32s ease forwards ${0.6+idx*0.18}s`;
+    hdr.innerHTML = `<td colspan="5">📋 ${hw.label} — 출제일: ${hw.outDate} / 범위: Week 1 ~ Week ${hw.outWeek}</td>`;
+    tbody.appendChild(hdr);
+
+    // main row
+    const tr = document.createElement('tr');
+    tr.className = 'hw-main-row';
+    tr.style.cssText = `opacity:0;animation:rowIn 0.32s ease forwards ${0.6+idx*0.18+0.1}s`;
+
+    const tmap = topicsByWeek(hw.outWeek);
+    let pillsHtml = '';
+    Object.keys(tmap).sort((a,b)=>+a-+b).forEach(w => {
+      pillsHtml += `<span class="hw-week-tag">Week ${w}</span>`;
+      tmap[w].forEach(t => { pillsHtml += `<span class="hw-pill">${t}</span>`; });
+    });
+
+    tr.innerHTML = `
+      <td colspan="2">
+        <div class="hw-id-badge">${hw.id}</div>
+        <div class="hw-title-text">${hw.label}</div>
+        <div class="hw-meta-line">출제일: ${hw.outDate}</div>
+        <div class="hw-meta-line">누적 강의 범위: Week 1 ~ Week ${hw.outWeek}</div>
+      </td>
+      <td colspan="3">
+        <div class="hw-topics-label">📚 과제 Topic 범위 (Week 1 ~ Week ${hw.outWeek}까지 배운 모든 강의 내용)</div>
+        <div class="hw-pills-wrap">${pillsHtml}</div>
+      </td>`;
+
+    tbody.appendChild(tr);
+  });
+}
+
+function filterRows(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (f==='hw') buildHw();
+  else buildNormal(f);
+}
+
+buildNormal('all');
+</script>
