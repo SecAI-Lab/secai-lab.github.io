@@ -3,10 +3,10 @@
   course: Master
   left: Spring 2026
   
-- name: Giuk Kwon, Fall 2025 (Withdrawal)
-  photo: alumni/giuk3.jpg
-  course: Combined Master and Ph.D
-  left: Fall 2025
+#- name: Giuk Kwon, Fall 2025 (Withdrawal)
+#  photo: alumni/giuk3.jpg
+#  course: Combined Master and Ph.D
+#  left: Fall 2025
   
 - name: Intae Jeon (Graduated; Samsung Research)
   photo: alumni/intae2.jpg
@@ -33,20 +33,20 @@
   course: Master
   left: Fall 2022
   
-- name: Wonyoung Cho (Discont'd; SKKU)
-  photo: profile.jpg
-  course: Master
-  left: Fall 2021
+#- name: Wonyoung Cho (Discont'd; SKKU)
+#  photo: profile.jpg
+#  course: Master
+#  left: Fall 2021
   
 - name: Seok Kim (Visiting; SKKU)
   photo: profile.jpg
   course: Bachelor
   left: Fall 2022
   
-- name: Sechang Lim (Discont'd; SKKU)
-  photo: profile.jpg
-  course: Bachelor
-  left: Spring 2022
+#- name: Sechang Lim (Discont'd; SKKU)
+#  photo: profile.jpg
+#  course: Bachelor
+#  left: Spring 2022
   
 - name: Suhwan Shin from SSlab@SKKU (Visiting; SKKU)
   photo: profile.jpg
