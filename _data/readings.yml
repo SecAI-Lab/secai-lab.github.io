@@ -6,7 +6,7 @@
   conference: NDSS
   date: 2026.03.09
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper presents an effective defense against indirect prompt injection by leveraging the target LLM’s internal attention patterns instead of external classifiers or retraining. By introducing a token-level detector with 2-step attentive pooling, RENNERVATE captures fine-grained injection signals and enables direct sanitization of malicious content. The framework is also practical, showing strong performance across multiple target LLMs and good transferability to unseen attacks. However, the method requires access to internal attention weights, which limits use in closed API settings. Its threshold-based identification may also be weaker when malicious tokens are short or scattered. Overall, RENNERVATE shows that attention-based detection and sanitization can provide a robust foundation for defending LLM applications against indirect prompt injection. (Mijin)"
 
 - title: "VSIM: Semantics-Aware Value Extraction for Efficient Binary Code Similarity Analysis"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f213-paper.pdf"
