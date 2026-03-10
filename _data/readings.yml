@@ -1,3 +1,13 @@
+- title: "VSIM: Semantics-Aware Value Extraction for Efficient Binary Code Similarity Analysis"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f213-paper.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1kI0zX6XyfzdoCECB9KmIwi9SkZpJPvEWf4ZlzD-ZBDw/edit?usp=sharing"
+  code_link: "https://github.com/OSUSecLab/vSim"
+  presenter: Yiyue
+  conference: NDSS
+  date: 2026.03.09
+  pub_year: 2026
+  discussion:"(Discussion) VSIM presents a compelling alternative to machine learning–based approaches for Binary Code Similarity Analysis (BCSA) by leveraging semantics-aware value extraction from register and memory operations. By using under-constrained symbolic execution at the basic-block level, VSIM captures meaningful intermediate values while avoiding the state explosion problem associated with full-path symbolic execution, enabling scalable analysis across large binary datasets.  The framework further improves robustness through heuristic-based filtering that removes semantically irrelevant values (such as addresses), followed by normalization and concretization to allow efficient comparison without expensive theorem proving. Experimental results show that this design achieves strong accuracy across cross-optimization, cross-compiler, and cross-architecture scenarios, sometimes outperforming state-of-the-art tools.  However, the approach still relies on heuristic filtering and approximate concretization, which may occasionally miss or misclassify semantic information, and the basic-block-level analysis may overlook broader control-flow context. Overall, VSIM demonstrates that carefully engineered value-based semantic representations can provide a robust and interpretable foundation for scalable binary similarity analysis. (Minseok)"
+
 - title: "Idioms: A Simple and Effective Framework for Turbo-Charging Local Neural Decompilation with Well-Defined Types"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f795-paper.pdf"
   ppt_link: "https://deniskim1.com/lab-meeting/0225_Idioms.pdf"
@@ -6,7 +16,7 @@
   conference: NDSS
   date: 2026.02.25
   pub_year: 2026
-  discussion: "The paper proposes IDIOMS, a simple yet effective neural decompilation framework that jointly predicts function code and complete user-defined type (UDT) definitions by augmenting decompiled input with neighboring call-graph context. Supported by a new realistic dataset, REALTYPE, IDIOMS substantially outperforms prior neural decompilers, especially on code with complex types. Its strengths lie in its architecture-agnostic design, strong ablations, and open release of data and models, while limitations include C/x86-64-only scope, reliance on Hex-Rays output, lack of full semantic guarantees, context-window constraints, and incomplete evaluation coverage. (Shakhzod)"
+  discussion: "(Discussion) The paper proposes IDIOMS, a simple yet effective neural decompilation framework that jointly predicts function code and complete user-defined type (UDT) definitions by augmenting decompiled input with neighboring call-graph context. Supported by a new realistic dataset, REALTYPE, IDIOMS substantially outperforms prior neural decompilers, especially on code with complex types. Its strengths lie in its architecture-agnostic design, strong ablations, and open release of data and models, while limitations include C/x86-64-only scope, reliance on Hex-Rays output, lack of full semantic guarantees, context-window constraints, and incomplete evaluation coverage. (Shakhzod)"
 
 - title: "BinQuery: A Novel Framework for Natural Language-Based Binary Code Retrieval"
   link: "https://dl.acm.org/doi/pdf/10.1145/3728927"
@@ -26,7 +36,7 @@
   conference: PLDI
   date: 2026.02.04
   pub_year: 2026
-  discussion: "The compilation process often erases source-level type information. Consequently, stripped binaries contain little to no explicit type information. Recovering types from machine code is known as type reconstruction, a task that plays a crucial role in decompilation and reverse engineering. This paper introduces a novel type system and algorithms for the type reconstruction problem called Retypd. Retypd is a static type inference algorithm for machine code that supports recursive types, polymorphism, and subtyping. Compared to existing approaches such as REWARDS-c, TIE, and SecondWrite, Retypd achieves significantly more accurate type inference. (Jiyong)"
+  discussion: "(Discussion) The compilation process often erases source-level type information. Consequently, stripped binaries contain little to no explicit type information. Recovering types from machine code is known as type reconstruction, a task that plays a crucial role in decompilation and reverse engineering. This paper introduces a novel type system and algorithms for the type reconstruction problem called Retypd. Retypd is a static type inference algorithm for machine code that supports recursive types, polymorphism, and subtyping. Compared to existing approaches such as REWARDS-c, TIE, and SecondWrite, Retypd achieves significantly more accurate type inference. (Jiyong)"
 
 - title: "BinDSA: Efficient, Precise Binary-Level Pointer Analysis with Context-Sensitive Heap Reconstruction"
   link: "https://www.cs.ucr.edu/~heng/pubs/BinDSA.pdf"
