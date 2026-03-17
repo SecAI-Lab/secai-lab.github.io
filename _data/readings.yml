@@ -6,7 +6,7 @@
   conference: ACSAC
   date: 2026.03.16
   pub_year: 2025
-  discussion: "(Discusiion)"
+  discussion: "(Discussion)"
 
 - title: "Trust Me, I Know This Function: Hijacking LLM Static Analysis using Bias"
   link: "https://arxiv.org/pdf/2508.17361"
@@ -16,7 +16,7 @@
   conference: NDSS
   date: 2026.03.16
   pub_year: 2026
-  discussion: "(Discusiion)"
+  discussion: "(Discussion)"
 
 - title: "Attention is All You Need to Defend Against Indirect Prompt Injection Attacks in LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f394-paper.pdf"
