@@ -1,3 +1,23 @@
+- title: "Clouseau: A Hierarchical Multi-Agent Approach For Autonomous Attack Investigation"
+  link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11391875"
+  ppt_link: "https://docs.google.com/presentation/d/17qUJZN8jJDGJo0QOX2QywNy6Zv-v_bRplVIl5xqUIic/edit?usp=sharing"
+  code_link: ""
+  presenter: Shakhzod
+  conference: ACSAC
+  date: 2026.03.16
+  pub_year: 2025
+  discussion: "(Discusiion)"
+
+- title: "Trust Me, I Know This Function: Hijacking LLM Static Analysis using Bias"
+  link: "https://arxiv.org/pdf/2508.17361"
+  ppt_link: ""
+  code_link: ""
+  presenter: Gahyun
+  conference: NDSS
+  date: 2026.03.16
+  pub_year: 2026
+  discussion: "(Discusiion)"
+
 - title: "Attention is All You Need to Defend Against Indirect Prompt Injection Attacks in LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f394-paper.pdf"
   ppt_link: "https://drive.google.com/file/d/1Z4j_C_YPeFaggnhvXzDs-HZx3DWlCpFJ/view?usp=sharing"
