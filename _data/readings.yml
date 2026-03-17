@@ -6,7 +6,7 @@
   conference: ACSAC
   date: 2026.03.16
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion)This paper presents CLOUSEAU, a hierarchical multi-agent system that leverages Large Language Models (LLMs) to automate cyberattack investigation from system logs. The key contribution lies in replacing traditional heuristic-based or learning-based investigation pipelines with an agentic reasoning framework, where specialized LLM agents collaborate to iteratively reconstruct an attack narrative from a Point-of-Interest (POI). Compared with prior systems such as ATLAS and AIRTAG, which rely on handcrafted heuristics or trained classifiers, CLOUSEAU uses in-context learning and targeted queries to explore logs dynamically, eliminating the need for labeled datasets and predefined attack boundaries. Experimental results on the ATLAS and DARPA OpTC datasets show substantial improvements in investigation accuracy, achieving near-perfect F1 scores in several scenarios. However, the approach also introduces limitations typical of LLM-based systems, including potential hallucinations, susceptibility to prompt injection, and reliance on the underlying model’s reasoning capability. Moreover, the architecture assumes trustworthy logging infrastructure and may incur higher runtime costs due to repeated LLM inference. Overall, the work demonstrates that structured multi-agent reasoning with LLMs can significantly enhance automated attack investigation, while also highlighting important challenges regarding robustness, privacy, and deployment practicality in real-world security environments.(Yiyue)"
 
 - title: "Trust Me, I Know This Function: Hijacking LLM Static Analysis using Bias"
   link: "https://arxiv.org/pdf/2508.17361"
