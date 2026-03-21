@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Security — 2026 Spring Semester</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fb;
+    --surface: #ffffff;
+    --surface2: #f1f3f7;
+    --border: #e2e6ee;
+    --border2: #d0d6e2;
+    --accent: #1a6ef5;
+    --text: #1a1d26;
+    --text-dim: #8a92a6;
+    --text-mid: #4a5068;
+    --exam: #d94a1a;
+    --hw: #1e8c35;
+    --holiday: #c0182e;
+    --lecture: #1a6ef5;
+    --flip: #7c3aed;
+    --noclass: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 52px 0 32px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .course-code {
+    background: var(--accent);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  h1 {
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.18s;
+  }
+
+  h1 .sub {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(13px, 2vw, 17px);
+    font-weight: 400;
+    color: var(--text-mid);
+    margin-top: 5px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.28s;
+  }
+
+  .meta-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.36s;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-mid);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.44s;
+  }
+
+  .stat-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 15px 18px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .stat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 5px;
+    letter-spacing: 0.08em;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  /* ── FILTER TABS ── */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.52s;
+  }
+
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border2);
+    background: var(--surface);
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.17s;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .filter-btn.active {
+    border-color: var(--accent);
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 2px 8px rgba(26,110,245,0.22);
+  }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.6s;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 60px;
+    background: var(--surface);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+  }
+
+  th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 13px 14px;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+    opacity: 0;
+    animation: rowIn 0.32s ease forwards;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f4f7ff; }
+
+  td { padding: 10px 14px; font-size: 13px; vertical-align: middle; }
+
+  /* Week */
+  .td-week { font-family: 'IBM Plex Mono', monospace; width: 56px; text-align: center; }
+
+  .week-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--surface2);
+    color: var(--text-mid);
+    border: 1.5px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .week-badge.exam-wk    { background: rgba(217,74,26,0.08);  color: var(--exam);    border-color: rgba(217,74,26,0.25); }
+  .week-badge.curr-wk    { background: rgba(26,110,245,0.1);  color: var(--accent);  border-color: rgba(26,110,245,0.3); }
+  .week-badge.noclass-wk { background: rgba(100,116,139,0.08); color: var(--noclass); border-color: rgba(100,116,139,0.2); }
+
+  /* Date */
+  .td-date { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-mid); white-space: nowrap; width: 108px; }
+  .td-date.holiday-dt { color: var(--holiday); }
+  .td-date.current-dt { color: var(--accent); font-weight: 600; }
+
+  /* Type badge */
+  .type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tb-lecture  { background: rgba(26,110,245,0.09);   color: var(--lecture); border: 1px solid rgba(26,110,245,0.18); }
+  .tb-flip     { background: rgba(124,58,237,0.09);   color: var(--flip);    border: 1px solid rgba(124,58,237,0.2); }
+  .tb-exam     { background: rgba(217,74,26,0.09);    color: var(--exam);    border: 1px solid rgba(217,74,26,0.25); font-weight: 700; }
+  .tb-holiday  { background: rgba(192,24,46,0.07);    color: var(--holiday); border: 1px solid rgba(192,24,46,0.18); }
+  .tb-noclass  { background: rgba(100,116,139,0.07);  color: var(--noclass); border: 1px solid rgba(100,116,139,0.18); }
+
+  /* Topic cell */
+  .td-topic { max-width: 200px; }
+
+  .topic-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+
+  .topic-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: rgba(26,110,245,0.07);
+    color: var(--accent);
+    border: 1px solid rgba(26,110,245,0.14);
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+
+  /* File cell */
+  .td-file {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-mid);
+    max-width: 190px;
+  }
+
+  .file-entry {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 3px;
+    display: inline-block;
+    margin: 2px 2px 0 0;
+    white-space: nowrap;
+  }
+
+  /* Slides cell */
+  .td-slides {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-align: center;
+    width: 60px;
+  }
+
+  .slides-num {
+    display: inline-block;
+    font-weight: 700;
+    color: var(--text-mid);
+  }
+
+  /* Type label */
+  .td-vtype { width: 80px; }
+
+  .vtype-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    display: inline-block;
+    margin: 1px 1px 0 0;
+  }
+
+  /* Reading / Activities cell */
+  .td-reading {
+    font-size: 12px;
+    max-width: 280px;
+  }
+
+  .reading-link {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+    margin-bottom: 2px;
+  }
+
+  .reading-link:hover { text-decoration: underline; }
+
+  .reading-text {
+    font-size: 12px;
+    color: var(--text-mid);
+  }
+
+  .quiz-pill {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(30,140,53,0.08);
+    color: var(--hw);
+    border: 1px solid rgba(30,140,53,0.2);
+    margin-bottom: 3px;
+  }
+
+  .optional-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* HW / Note */
+  .note-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .nb-hwout     { background: rgba(30,140,53,0.08);  color: var(--hw);      border: 1px solid rgba(30,140,53,0.2); }
+  .nb-hwdue     { background: rgba(217,74,26,0.08);  color: var(--exam);    border: 1px solid rgba(217,74,26,0.2); }
+  .nb-exam      { background: rgba(217,74,26,0.08);  color: var(--exam);    border: 1px solid rgba(217,74,26,0.2); font-size: 12px; }
+  .nb-holiday   { background: rgba(192,24,46,0.07);  color: var(--holiday); border: 1px solid rgba(192,24,46,0.18); }
+  .nb-dim       { color: var(--text-dim); }
+  .nb-offline   { background: rgba(217,74,26,0.08);  color: var(--exam);    border: 1px solid rgba(217,74,26,0.2); }
+
+  /* Row tints */
+  tr.rx-exam    td { background: rgba(217,74,26,0.025); }
+  tr.rx-holiday td { background: rgba(192,24,46,0.025); }
+  tr.rx-noclass td { background: rgba(100,116,139,0.03); }
+  tr.rx-current td { background: rgba(26,110,245,0.03); }
+  tr.rx-flip    td { background: rgba(124,58,237,0.025); }
+  tr.week-start td { border-top: 2px solid var(--border2); }
+
+  /* ── HW VIEW ── */
+  .hw-section-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hw-section-header td {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 8px 18px;
+    letter-spacing: 0.06em;
+  }
+
+  .hw-main-row td { vertical-align: top; padding: 18px 16px 20px; }
+
+  .hw-id-badge {
+    display: inline-block;
+    background: rgba(30,140,53,0.1);
+    color: var(--hw);
+    border: 1.5px solid rgba(30,140,53,0.22);
+    padding: 3px 11px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .hw-title-text { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .hw-meta-line  { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 3px; }
+  .hw-pills-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: flex-start; }
+
+  .hw-week-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    border: 1px solid var(--border2);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .hw-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid rgba(26,110,245,0.17);
+    background: rgba(26,110,245,0.06);
+    color: var(--accent);
+    margin-top: 2px;
+  }
+
+  /* ── REFERENCES ── */
+  .references-box {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards 0.5s;
+  }
+
+  .references-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .references-list {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ref-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    transition: all 0.15s;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .ref-link:hover {
+    border-color: var(--accent);
+    background: rgba(26,110,245,0.04);
+    color: var(--accent);
+  }
+
+  .ref-icon {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-4px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (max-width: 900px) {
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .td-reading, .td-file { display: none; }
+    td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-tag">
+      <span class="course-code">SWE3025</span>
+      Computer Security · 2026 Spring Semester
+    </div>
+    <h1>
+      정보보호개론 (Computer Security)
+      <span class="sub">Computer Security</span>
+    </h1>
+    <div class="header-meta">
+      <div class="meta-item"><span class="meta-dot" style="background:var(--border2)"></span>2026.03.03 — 2026.06.16</div>
+      <div class="meta-item"><span class="meta-dot" style="background:var(--accent)"></span>16-week course</div>
+      <div class="meta-item"><span class="meta-dot" style="background:var(--flip)"></span>Lecture + Flip Learning</div>
+    </div>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--lecture)"></span>Lecture</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--flip)"></span>Flip Learning</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--exam)"></span>Exam</div>
+
+    <div class="legend-item"><span class="legend-dot" style="background:var(--noclass)"></span>No Class</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--holiday)"></span>Holiday</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-cell"><div class="stat-num">16</div><div class="stat-label">Weeks</div></div>
+    <div class="stat-cell"><div class="stat-num">5</div><div class="stat-label">Flip Learning</div></div>
+    <div class="stat-cell"><div class="stat-num">5</div><div class="stat-label">Quizzes</div></div>
+    <div class="stat-cell"><div class="stat-num">2</div><div class="stat-label">Homeworks</div></div>
+    <div class="stat-cell"><div class="stat-num">2</div><div class="stat-label">Exams</div></div>
+  </div>
+
+  <div class="references-box">
+    <div class="references-title">📚 References</div>
+    <div class="references-list">
+      <a class="ref-link" href="https://www.handsonsecurity.net/resources.html" target="_blank">
+        <span class="ref-icon">↗</span>
+        <strong>Hands-on Security Reference</strong>
+      </a>
+      <a class="ref-link" href="https://www.cl.cam.ac.uk/archive/rja14/book.html" target="_blank">
+        <span class="ref-icon">↗</span>
+        <strong>Security Engineering</strong>
+      </a>
+      <a class="ref-link" href="https://www.amazon.com/Network-Security-Essentials-Applications-Standards/dp/013452733X" target="_blank">
+        <span class="ref-icon">↗</span>
+        <strong>Network Security Essentials</strong>
+      </a>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterRows('all',this)">All</button>
+    <button class="filter-btn" onclick="filterRows('lecture',this)">Lecture</button>
+    <button class="filter-btn" onclick="filterRows('flip',this)">Flip Learning</button>
+    <button class="filter-btn" onclick="filterRows('exam',this)">Exam</button>
+
+  </div>
+
+  <div class="table-wrap">
+    <table id="sched-table">
+      <thead id="sched-thead">
+        <tr>
+          <th>Week</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Topic</th>
+          <th>Reading Materials / Activities</th>
+          <th>Homework</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody id="sched-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────────────────────
+// Keep schedule.json in the same folder as this HTML file.
+// To update the schedule, edit schedule.json only — no need to touch this file.
+const JSON_URL = 'swe3025-spring26-schedule.json';
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function typeBadge(type) {
+  const m = {
+    lecture: ['tb-lecture', '▸ Lecture'],
+    flip:    ['tb-flip',    '↺ Flip Learning'],
+    midterm: ['tb-exam',    '★ Midterm'],
+    final:   ['tb-exam',    '★ Final Exam'],
+    holiday: ['tb-holiday', '▸ Lecture'],
+    noclass: ['tb-noclass', '✕ No Class'],
+  };
+  const [cls, label] = m[type] || m.lecture;
+  return `<span class="type-badge ${cls}">${label}</span>`;
+}
+
+// reading is a JSON array of strings
+function readingContent(lines, type) {
+  if (!lines || lines.length === 0) return `<span style="color:var(--text-dim)">—</span>`;
+  if (type === 'flip') {
+    return lines.map(line => {
+      if (line.startsWith('Quiz')) {
+        const parts = line.split(';');
+        return `<span class="quiz-pill">📋 ${parts[0].trim()}</span> <span class="reading-text">${parts.slice(1).join(';').trim()}</span>`;
+      }
+      if (line.startsWith('Presentation')) {
+        return `<span class="reading-text" style="color:var(--flip)">🎤 ${line}</span>`;
+      }
+      return `<span class="reading-text">${line}</span>`;
+    }).join('<br>');
+  }
+  return lines.map(line => {
+    if (line.startsWith('http')) {
+      const short = line.length > 55 ? line.substring(0, 55) + '…' : line;
+      return `<a class="reading-link" href="${line}" target="_blank" title="${line}">${short}</a>`;
+    }
+    if (line.startsWith('(Optional)')) return `<span class="optional-text">${line}</span>`;
+    return `<span class="reading-text">${line}</span>`;
+  }).join('<br>');
+}
+
+function isCurrentWeek(dateStr) {
+  const today = new Date();
+  const d = new Date(dateStr.replace(/\./g, '-'));
+  const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  return today >= mon && today <= sun;
+}
+
+function topicsByWeek(data, untilWeek) {
+  const map = {};
+  data.forEach(r => {
+    if (['midterm','final','flip','noclass','holiday'].includes(r.type)) return;
+    if (+r.week > untilWeek) return;
+    if (!map[r.week]) map[r.week] = [];
+    r.topic.split(';').forEach(t => { t=t.trim(); if(t) map[r.week].push(t); });
+  });
+  return map;
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+let scheduleData  = [];
+let homeworks     = [];
+
+function buildNormal(filter) {
+  const tbody  = document.getElementById('sched-body');
+  const thead  = document.getElementById('sched-thead');
+  tbody.innerHTML = '';
+  thead.style.display = '';
+
+  let prevWeek = -1, delay = 0;
+
+  scheduleData.forEach(r => {
+    if (filter === 'lecture' && !['lecture','holiday'].includes(r.type)) return;
+    if (filter === 'flip'    && r.type !== 'flip') return;
+    if (filter === 'exam'    && !['midterm','final'].includes(r.type)) return;
+
+    const curr   = isCurrentWeek(r.date);
+    const isExam = ['midterm','final'].includes(r.type);
+    const isFlip = r.type === 'flip';
+    const isNoCl = r.type === 'noclass';
+    const isHol  = r.type === 'holiday';
+
+    const tr  = document.createElement('tr');
+    const cls = [
+      isExam              ? 'rx-exam'    : '',
+      isHol               ? 'rx-holiday' : '',
+      isNoCl              ? 'rx-noclass' : '',
+      isFlip              ? 'rx-flip'    : '',
+      curr                ? 'rx-current' : '',
+      r.week !== prevWeek ? 'week-start' : '',
+    ].filter(Boolean).join(' ');
+    tr.className = cls;
+    tr.style.animationDelay = `${0.6 + delay * 0.022}s`;
+    delay++;
+
+    const wkBadge = r.week !== prevWeek
+      ? `<div class="week-badge ${isExam ? 'exam-wk' : isNoCl ? 'noclass-wk' : curr ? 'curr-wk' : ''}">${r.week}</div>` : '';
+
+    const dtCls     = isHol ? 'holiday-dt' : curr ? 'current-dt' : '';
+    const topicPills = !isExam && !isNoCl && r.topic
+      ? `<div class="topic-pills">${r.topic.split(';').map(t=>`<span class="topic-pill">${t.trim()}</span>`).join('')}</div>` : '';
+
+    tr.innerHTML = `
+      <td class="td-week">${wkBadge}</td>
+      <td class="td-date ${dtCls}">${r.date}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td class="td-topic">
+        ${isExam || isNoCl
+          ? `<span style="font-weight:600;color:var(--text)">${r.topic}</span>`
+          : isFlip
+            ? `<span style="color:var(--flip);font-weight:600">Flip Learning</span>`
+            : topicPills}
+      </td>
+      <td class="td-reading">${readingContent(r.reading, r.type)}</td>
+      <td></td>
+      <td></td>`;
+
+    const cells = tr.querySelectorAll('td');
+    cells[5].innerHTML = r.hw
+      ? (r.hw.includes('out')
+          ? `<span class="note-badge nb-hwout">📤 ${r.hw}</span>`
+          : `<span class="note-badge nb-hwdue">⚑ ${r.hw}</span>`)
+      : `<span class="nb-dim">—</span>`;
+    cells[6].innerHTML = (r.type === 'midterm' || r.type === 'final')
+      ? `<span class="note-badge nb-offline">📍 ${r.note}</span>`
+      : r.note === "Children's Day"
+        ? `<span class="note-badge nb-holiday">🎈 Children's Day</span>`
+        : r.note
+          ? `<span class="nb-dim">${r.note}</span>`
+          : `<span class="nb-dim">—</span>`;
+
+    tbody.appendChild(tr);
+    prevWeek = r.week;
+  });
+}
+
+function buildHw() {
+  const tbody = document.getElementById('sched-body');
+  tbody.innerHTML = '';
+  document.getElementById('sched-thead').style.display = 'none';
+
+  homeworks.forEach((hw, idx) => {
+    const hdr = document.createElement('tr');
+    hdr.className = 'hw-section-header' + (idx > 0 ? ' week-start' : '');
+    hdr.style.cssText = `opacity:0;animation:rowIn 0.32s ease forwards ${0.6+idx*0.18}s`;
+    hdr.innerHTML = `<td colspan="7">📋 ${hw.label} — Out: ${hw.outDate} (Week ${hw.outWeek}) / Deadline: ${hw.deadlineDate} (Week ${hw.deadlineWeek})</td>`;
+    tbody.appendChild(hdr);
+
+    const tr = document.createElement('tr');
+    tr.className = 'hw-main-row';
+    tr.style.cssText = `opacity:0;animation:rowIn 0.32s ease forwards ${0.6+idx*0.18+0.1}s`;
+
+    const tmap = topicsByWeek(scheduleData, hw.outWeek);
+    let pillsHtml = '';
+    Object.keys(tmap).sort((a,b)=>+a-+b).forEach(w => {
+      pillsHtml += `<span class="hw-week-tag">Week ${w}</span>`;
+      tmap[w].forEach(t => { pillsHtml += `<span class="hw-pill">${t}</span>`; });
+    });
+
+    tr.innerHTML = `
+      <td colspan="3">
+        <div class="hw-id-badge">${hw.id}</div>
+        <div class="hw-title-text">${hw.label}</div>
+        <div class="hw-meta-line">Out: ${hw.outDate} (Week ${hw.outWeek})</div>
+        <div class="hw-meta-line">Deadline: ${hw.deadlineDate} (Week ${hw.deadlineWeek})</div>
+      </td>
+      <td colspan="4">
+        <div class="hw-meta-line" style="margin-bottom:10px;">📚 Topic scope: Week 1 – Week ${hw.outWeek} (all lecture topics covered up to this week)</div>
+        <div class="hw-pills-wrap">${pillsHtml}</div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterRows(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = f;
+  if (f === 'hw') buildHw();
+  else buildNormal(f);
+}
+
+// ── LOADING STATE ────────────────────────────────────────────────────────────
+function showLoading() {
+  document.getElementById('sched-body').innerHTML = `
+    <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:12px;">
+      ⏳ Loading schedule…
+    </td></tr>`;
+}
+
+function showError(msg) {
+  document.getElementById('sched-body').innerHTML = `
+    <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--exam);font-family:'IBM Plex Mono',monospace;font-size:12px;">
+      ⚠️ ${msg}
+    </td></tr>`;
+}
+
+// ── FETCH & INIT ─────────────────────────────────────────────────────────────
+async function loadSchedule() {
+  showLoading();
+  try {
+    const res = await fetch(JSON_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    scheduleData = json.schedule;
+    homeworks    = json.homeworks;
+    buildNormal(currentFilter);
+  } catch (err) {
+    showError(`Could not load schedule.json. Make sure it is in the same folder as this HTML file. (${err.message})`);
+    console.error(err);
+  }
+}
+
+loadSchedule();
+</script>
+</body>
+</html>

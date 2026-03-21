@@ -1,0 +1,333 @@
+{
+  "course": {
+    "code": "SWE3025",
+    "title": "정보보호개론 (Computer Security)",
+    "subtitle": "Computer Security",
+    "semester": "2026 Spring Semester",
+    "period": "2026.03.03 — 2026.06.16"
+  },
+  "homeworks": [
+    {
+      "id": "HW#1",
+      "label": "Homework #1",
+      "outDate": "2026.03.31",
+      "outWeek": 5,
+      "deadlineDate": "2026.04.09",
+      "deadlineWeek": 6
+    },
+    {
+      "id": "HW#2",
+      "label": "Homework #2",
+      "outDate": "2026.05.12",
+      "outWeek": 11,
+      "deadlineDate": "2026.05.28",
+      "deadlineWeek": 13
+    }
+  ],
+  "schedule": [
+    {
+      "week": 1,
+      "date": "2026.03.03",
+      "type": "lecture",
+      "topic": "course intro",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 1,
+      "date": "2026.03.05",
+      "type": "lecture",
+      "topic": "cyber security",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 2,
+      "date": "2026.03.10",
+      "type": "lecture",
+      "topic": "basics",
+      "reading": [
+        "https://learn.microsoft.com/en-us/previous-versions/commerce-server/ee825538(v=cs.20)",
+        "https://www.webpronews.com/signal-under-siege-how-russian-linked-hackers-are-targeting-ukraines-front-lines/"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 2,
+      "date": "2026.03.12",
+      "type": "lecture",
+      "topic": "models",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 3,
+      "date": "2026.03.17",
+      "type": "lecture",
+      "topic": "crypto basics; modern crypto",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 3,
+      "date": "2026.03.19",
+      "type": "flip",
+      "topic": "",
+      "reading": [
+        "Quiz1; Hands-on Security: SetUID",
+        "Presentation: Reflections on Trusting Trust"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 4,
+      "date": "2026.03.24",
+      "type": "lecture",
+      "topic": "stream ciphers; block ciphers",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 4,
+      "date": "2026.03.26",
+      "type": "lecture",
+      "topic": "des, aes; modes of operation",
+      "reading": [
+        "(Optional) Hands-on: Secret-key encryption"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 5,
+      "date": "2026.03.31",
+      "type": "lecture",
+      "topic": "number theory; rsa",
+      "reading": [],
+      "hw": "HW#1 out",
+      "note": ""
+    },
+    {
+      "week": 5,
+      "date": "2026.04.02",
+      "type": "flip",
+      "topic": "",
+      "reading": [
+        "Quiz2; Hands-on Security: Public Key Cryptography (RSA)"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 6,
+      "date": "2026.04.07",
+      "type": "lecture",
+      "topic": "key exchange; hash",
+      "reading": [
+        "(Optional) Hands-on: One-way hash function"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 6,
+      "date": "2026.04.09",
+      "type": "lecture",
+      "topic": "digital signature; pki",
+      "reading": [
+        "(Optional) Hands-on: PKI"
+      ],
+      "hw": "HW#1 deadline",
+      "note": ""
+    },
+    {
+      "week": 7,
+      "date": "2026.04.14",
+      "type": "lecture",
+      "topic": "crypto in practice; ssl/tls",
+      "reading": [
+        "(Optional) Hands-on: TLS"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 7,
+      "date": "2026.04.16",
+      "type": "noclass",
+      "topic": "No class (travel)",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 8,
+      "date": "2026.04.23",
+      "type": "midterm",
+      "topic": "Midterm",
+      "reading": ["Covers the lecture content from week 1-7"],
+      "hw": "",
+      "note": "Offline (Thu)"
+    },
+    {
+      "week": 9,
+      "date": "2026.04.28",
+      "type": "lecture",
+      "topic": "sw fundamentals; sw internals",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 9,
+      "date": "2026.04.30",
+      "type": "lecture",
+      "topic": "sw vulnerabilities",
+      "reading": [
+        "(Optional) Hands-on: Heartbleed"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 10,
+      "date": "2026.05.05",
+      "type": "holiday",
+      "topic": "code injection attacks/defenses",
+      "reading": [],
+      "hw": "",
+      "note": "Children's Day"
+    },
+    {
+      "week": 10,
+      "date": "2026.05.07",
+      "type": "flip",
+      "topic": "",
+      "reading": [
+        "Quiz3; Hands-on Security: Buffer Overflow, Ret2libc, ROP"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 11,
+      "date": "2026.05.12",
+      "type": "lecture",
+      "topic": "code reuse attacks/defenses",
+      "reading": [],
+      "hw": "HW#2 out",
+      "note": ""
+    },
+    {
+      "week": 11,
+      "date": "2026.05.14",
+      "type": "lecture",
+      "topic": "network security",
+      "reading": [
+        "(Optional) Hands-on: TCP/UDP and attacks; Firewall"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 12,
+      "date": "2026.05.19",
+      "type": "lecture",
+      "topic": "ipsec; vpn",
+      "reading": [
+        "(Optional) Hands-on: VPN"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 12,
+      "date": "2026.05.21",
+      "type": "flip",
+      "topic": "",
+      "reading": [
+        "Quiz4; Hands-on Security: MAC/IP Layer attacks; Wireshark"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 13,
+      "date": "2026.05.26",
+      "type": "lecture",
+      "topic": "dns security",
+      "reading": [
+        "(Optional) Hands-on: DNS and attacks; DNSSEC"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 13,
+      "date": "2026.05.28",
+      "type": "lecture",
+      "topic": "bgp security",
+      "reading": [
+        "(Optional) Hands-on: BGP and attacks"
+      ],
+      "hw": "HW#2 deadline",
+      "note": ""
+    },
+    {
+      "week": 14,
+      "date": "2026.06.02",
+      "type": "lecture",
+      "topic": "web security",
+      "reading": [
+        "(Optional) Hands-on: CSRF; Clickjacking"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 14,
+      "date": "2026.06.04",
+      "type": "flip",
+      "topic": "",
+      "reading": [
+        "Quiz5; Hands-on Security: XSS, SQL Injection"
+      ],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 15,
+      "date": "2026.06.09",
+      "type": "lecture",
+      "topic": "anonymous networks",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 15,
+      "date": "2026.06.11",
+      "type": "lecture",
+      "topic": "secure design",
+      "reading": [],
+      "hw": "",
+      "note": ""
+    },
+    {
+      "week": 16,
+      "date": "2026.06.16",
+      "type": "final",
+      "topic": "Final Exam",
+      "reading": ["Covers the lecture content from week 9-15"],
+      "hw": "",
+      "note": "Offline (Tue)"
+    }
+  ]
+}

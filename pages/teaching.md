@@ -51,7 +51,7 @@ li:has(details) {
 #### Spring 2026
 
 - [DASF004] <a href="/pages/classes/dasf004-spring26-c.html">Basis and Practice in Programming (프로그래밍기초와실습; C Programming)</a>
-- [SWE3025] Introduction to Computer Security (Undergraduate)
+- [SWE3025] <a href="/pages/classes/swe3025-spring26-v2.html">Introduction to Computer Security (Undergraduate)</a>
 
 #### Fall 2025
 
