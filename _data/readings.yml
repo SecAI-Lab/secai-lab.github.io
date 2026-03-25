@@ -6,7 +6,7 @@
   conference: NDSS
   date: 2026.03.25
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) The key contribution of this paper is to frame variable name  recovery from stripped binaries as a generation task rather than a classification problem. By combining  contextual fine-tuning, call-graph-based inference, and Bias mitigation, GENNM outperforms prior methods and even strong black-box LLM baselines. The strength of GENNM is its ability to recover rare or unseen variable names, which are difficult for closed-vocabulary approaches. However, its gains shrink under heavy compiler optimizations with long inputs, and the generated names are sometimes more contextually plausible than semantically exact. Overall, the paper presents a strong and practical direction for binary analysis, though improving robustness and semantic precision remains an important next step. (Gahyun)"
 
 - title: "SK2Decompile: LLM-based Two-Phase Binary Decompilation from Skeleton to Skin"
   link: "https://arxiv.org/pdf/2509.22114"
