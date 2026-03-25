@@ -1,3 +1,23 @@
+- title: "Unleashing the Power of Generative Model in Recovering Variable Names from Stripped Binary"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: NDSS
+  date: 2026.03.25
+  pub_year: 2025
+  discussion: "(Discussion)"
+
+- title: "SK2Decompile: LLM-based Two-Phase Binary Decompilation from Skeleton to Skin"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: ICLR
+  date: 2026.03.25
+  pub_year: 2026
+  discussion: "(Discussion)"  
+    
 - title: "Clouseau: A Hierarchical Multi-Agent Approach For Autonomous Attack Investigation"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11391875"
   ppt_link: "https://docs.google.com/presentation/d/17qUJZN8jJDGJo0QOX2QywNy6Zv-v_bRplVIl5xqUIic/edit?usp=sharing"
@@ -10,13 +30,13 @@
 
 - title: "Trust Me, I Know This Function: Hijacking LLM Static Analysis using Bias"
   link: "https://arxiv.org/pdf/2508.17361"
-  ppt_link: ""
+  ppt_link: "https://drive.google.com/file/d/1sipjPYa5aDp7gdVKKJUsDFjYQVRHf0FH/view?usp=drive_link"
   code_link: ""
   presenter: Gahyun
   conference: NDSS
   date: 2026.03.16
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper identifies and exploits a critical vulnerability in LLM-based code analysis: an abstraction bias that causes models to overgeneralize familiar programming patterns and overlook small, meaningful bugs. Adversaries can exploit this blind spot to hijack the control flow of the LLM's interpretation with minimal edits and without affecting actual runtime behavior. They refer to this attack as a Familiar Pattern Attack (FPA)."
 
 - title: "Attention is All You Need to Defend Against Indirect Prompt Injection Attacks in LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f394-paper.pdf"
