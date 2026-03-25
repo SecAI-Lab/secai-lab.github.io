@@ -1,22 +1,22 @@
 - title: "Unleashing the Power of Generative Model in Recovering Variable Names from Stripped Binary"
-  link: ""
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2025-276-paper.pdf"
   ppt_link: ""
   code_link: ""
-  presenter: 
+  presenter: Yujeong
   conference: NDSS
   date: 2026.03.25
   pub_year: 2025
   discussion: "(Discussion)"
 
 - title: "SK2Decompile: LLM-based Two-Phase Binary Decompilation from Skeleton to Skin"
-  link: ""
+  link: "https://arxiv.org/pdf/2509.22114"
   ppt_link: ""
   code_link: ""
-  presenter: 
+  presenter: Jiyong
   conference: ICLR
   date: 2026.03.25
   pub_year: 2026
-  discussion: "(Discussion)"  
+  discussion: "(Discussion) SK2Decompile is an LLM-based binary decompilation framework that splits the task into two stages: first recovering a program’s structural “skeleton” as an intermediate representation with obfuscated identifiers, then restoring meaningful identifier names as the “skin,” using separate reinforcement-learning objectives for correctness and readability; across HumanEval, MBPP, ExeBench, and GitHub2025, it reports stronger re-executability and readability than prior baselines such as GPT-5-mini, LLM4Decompile, and Idioms. A key limitation is that the study is still bounded to C programs compiled for x86 Linux and relies on IDA-generated pseudocode plus compiler-based rewards, so its generalization to other languages, architectures, toolchains, and more realistic real-world decompilation settings is not yet established. (Shakhzod)"  
     
 - title: "Clouseau: A Hierarchical Multi-Agent Approach For Autonomous Attack Investigation"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11391875"
@@ -26,7 +26,7 @@
   conference: ACSAC
   date: 2026.03.16
   pub_year: 2025
-  discussion: "(Discussion)This paper presents CLOUSEAU, a hierarchical multi-agent system that leverages Large Language Models (LLMs) to automate cyberattack investigation from system logs. The key contribution lies in replacing traditional heuristic-based or learning-based investigation pipelines with an agentic reasoning framework, where specialized LLM agents collaborate to iteratively reconstruct an attack narrative from a Point-of-Interest (POI). Compared with prior systems such as ATLAS and AIRTAG, which rely on handcrafted heuristics or trained classifiers, CLOUSEAU uses in-context learning and targeted queries to explore logs dynamically, eliminating the need for labeled datasets and predefined attack boundaries. Experimental results on the ATLAS and DARPA OpTC datasets show substantial improvements in investigation accuracy, achieving near-perfect F1 scores in several scenarios. However, the approach also introduces limitations typical of LLM-based systems, including potential hallucinations, susceptibility to prompt injection, and reliance on the underlying model’s reasoning capability. Moreover, the architecture assumes trustworthy logging infrastructure and may incur higher runtime costs due to repeated LLM inference. Overall, the work demonstrates that structured multi-agent reasoning with LLMs can significantly enhance automated attack investigation, while also highlighting important challenges regarding robustness, privacy, and deployment practicality in real-world security environments.(Yiyue)"
+  discussion: "(Discussion) This paper presents CLOUSEAU, a hierarchical multi-agent system that leverages Large Language Models (LLMs) to automate cyberattack investigation from system logs. The key contribution lies in replacing traditional heuristic-based or learning-based investigation pipelines with an agentic reasoning framework, where specialized LLM agents collaborate to iteratively reconstruct an attack narrative from a Point-of-Interest (POI). Compared with prior systems such as ATLAS and AIRTAG, which rely on handcrafted heuristics or trained classifiers, CLOUSEAU uses in-context learning and targeted queries to explore logs dynamically, eliminating the need for labeled datasets and predefined attack boundaries. Experimental results on the ATLAS and DARPA OpTC datasets show substantial improvements in investigation accuracy, achieving near-perfect F1 scores in several scenarios. However, the approach also introduces limitations typical of LLM-based systems, including potential hallucinations, susceptibility to prompt injection, and reliance on the underlying model’s reasoning capability. Moreover, the architecture assumes trustworthy logging infrastructure and may incur higher runtime costs due to repeated LLM inference. Overall, the work demonstrates that structured multi-agent reasoning with LLMs can significantly enhance automated attack investigation, while also highlighting important challenges regarding robustness, privacy, and deployment practicality in real-world security environments.(Yiyue)"
 
 - title: "Trust Me, I Know This Function: Hijacking LLM Static Analysis using Bias"
   link: "https://arxiv.org/pdf/2508.17361"
@@ -36,7 +36,7 @@
   conference: NDSS
   date: 2026.03.16
   pub_year: 2026
-  discussion: "(Discussion) This paper identifies and exploits a critical vulnerability in LLM-based code analysis: an abstraction bias that causes models to overgeneralize familiar programming patterns and overlook small, meaningful bugs. Adversaries can exploit this blind spot to hijack the control flow of the LLM's interpretation with minimal edits and without affecting actual runtime behavior. They refer to this attack as a Familiar Pattern Attack (FPA)."
+  discussion: "(Discussion) (Hyoungjun)"
 
 - title: "Attention is All You Need to Defend Against Indirect Prompt Injection Attacks in LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f394-paper.pdf"
