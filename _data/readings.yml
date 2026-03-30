@@ -1,3 +1,23 @@
+- title: "NeuroStrike: Neuron-Level Attacks on Aligned LLMs"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s660-paper.pdf"
+  ppt_link: ""
+  code_link: ""
+  presenter: Minseok
+  conference: NDSS
+  date: 2026.03.30
+  pub_year: 2026
+  discussion: "(Discussion) "
+  
+- title: "FuncVul: An Effective Function Level Vulnerability Detection Model Using LLM and Code Chunk"
+  link: "https://dl.acm.org/doi/10.1007/978-3-032-07884-1_9"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/260330_FuncVul.pdf"
+  code_link: "https://github.com/sajalhalder/FuncVul"
+  presenter: Mijin
+  conference: ESORICS
+  date: 2026.03.30
+  pub_year: 2025
+  discussion: "(Discussion) "
+
 - title: "Unleashing the Power of Generative Model in Recovering Variable Names from Stripped Binary"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-276-paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1F-sBA5LSAmXIdLo9W2mEbGJj-oZfFdGf7T5eT7PiCIw/edit?slide=id.p9#slide=id.p9"
