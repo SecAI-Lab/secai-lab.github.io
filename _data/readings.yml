@@ -56,7 +56,7 @@
   conference: NDSS
   date: 2026.03.16
   pub_year: 2026
-  discussion: "(Discussion) (Hyoungjun)"
+  discussion: "(Discussion) This paper introduces Familiar Pattern Attacks (FPAs), an adversarial technique that exploits LLMs' tendency to overgeneralize from familiar code patterns — what the authors call abstraction bias. By introducing minimal perturbations to well-known code (e.g., changing for x in nums to for x in nums[:-1]), an attacker can cause an LLM to misinterpret program behavior while leaving actual runtime semantics unchanged. The dual-use framing is compelling: the same mechanism serves both offensive goals (vulnerability scanner evasion, audit bypass) and defensive ones (anti-plagiarism, scraping resistance). Evaluation results are striking, with correct interpretation rates dropping from ~90% on benign code to as low as 6% under attack, and robust prompting offering little resistance. However, the paper leaves some questions open: why exactly conventional static analysis fails against FPAs, and how FPA overhead scales in practice. Overall, this work highlights a structural vulnerability in LLM-based code analysis that cannot be patched at the prompt level alone. (Hyoungjun)"
 
 - title: "Attention is All You Need to Defend Against Indirect Prompt Injection Attacks in LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-f394-paper.pdf"
