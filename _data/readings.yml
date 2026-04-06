@@ -1,3 +1,23 @@
+- title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: HyoungJun
+  conference: 
+  date: 2026.04.06
+  pub_year: 2026
+  discussion: "(Discussion) "
+
+- title: "FidelityGPT: Correcting Decompilation Distortions with Retrieval Augmented Generation"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s989-paper.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/1WX4J3z5NTUSOXxbq4O_ofyXsO3Ofgpbo0WFD5xOrfn8/edit?slide=id.g3d45523c6ee_0_25#slide=id.g3d45523c6ee_0_25"
+  code_link: "https://github.com/ZhouZhiping045/FidelityGPT/tree/main"
+  presenter: Yiyue
+  conference: NDSS
+  date: 2026.04.06
+  pub_year: 2026
+  discussion: "(Discussion) "
+
 - title: "NeuroStrike: Neuron-Level Attacks on Aligned LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s660-paper.pdf"
   ppt_link: ""
