@@ -20,13 +20,13 @@
 
 - title: "NeuroStrike: Neuron-Level Attacks on Aligned LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s660-paper.pdf"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://deniskim1.com/lab-meeting/0330_NeuroStrike.pdf"
+  code_link: "https://github.com/wu-lichao/NeuroStrike-Neuron-Level-Attacks-on-Aligned-LLMs"
   presenter: Minseok
   conference: NDSS
   date: 2026.03.30
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper introduces NeuroStrike, a novel framework that disables LLM safety alignment by identifying and manipulating sparse, specialized safety neurons via activation analysis and GRPO. Evaluation demonstrates strong attack performance, averaging a 76.9% attack success rate and outperforming state-of-the-art baselines by pruning less than 0.6% of neurons. However, critical questions remain: the black-box attack heavily assumes the availability of a structurally similar open-weight surrogate; aggressive neuron pruning noticeably degrades general model utility on complex reasoning tasks; and the identification method relies entirely on a simple linear probe, potentially missing non-linear safety boundaries or mechanisms embedded outside MLP layers. Overall, this work establishes an effective neuron-level exploitation pipeline, underscoring the extreme fragility of current safety mechanisms. (Yujeong)"
   
 - title: "FuncVul: An Effective Function Level Vulnerability Detection Model Using LLM and Code Chunk"
   link: "https://dl.acm.org/doi/10.1007/978-3-032-07884-1_9"
