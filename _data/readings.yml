@@ -16,7 +16,7 @@
   conference: NDSS
   date: 2026.04.06
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper introduces FidelityGPT, a novel framework that detects and corrects distortions in decompiled code by combining Retrieval-Augmented Generation (RAG) with a Variable Dependency Algorithm and a Dynamic Semantic Intensity Retrieval Algorithm. Unlike prior taxonomies requiring source code, FidelityGPT defines six distortion types identifiable directly from decompiled output, making it practical for closed-source reverse engineering. Evaluation demonstrates strong detection and correction performance, substantially outperforming the state-of-the-art DeGPT, with ablation studies confirming that each component — particularly RAG retrieval — contributes meaningfully to reducing false positives. However, questions remain: correction operates on entire functions rather than chunks, raising scalability concerns; the distortion database is manually curated from limited examples; and repaired code cannot be recompiled for semantic verification. Overall, this work establishes the first end-to-end pipeline for LLM-based decompilation distortion correction, showing that retrieval-augmented context is far more effective than prompt engineering alone. (Mijin)"
 
 - title: "NeuroStrike: Neuron-Level Attacks on Aligned LLMs"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s660-paper.pdf"
