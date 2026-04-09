@@ -26,7 +26,7 @@
   conference: NDSS
   date: 2026.03.30
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Large language model (LLM) alignment plays a critical role in ensuring the ethical deployment of these systems. However, this work reveals that safety mechanisms within LLMs may rely on a small subset of specialized neurons, referred to as safety neurons. This concentration introduces a structural weakness: rather than being broadly distributed, safety behavior is localized and potentially fragile. To exploit this, the authors propose NeuroStrike, a novel and generalizable attack framework that targets these sparse safety neurons. By disabling only 0.6% of neurons in a targeted layer, NeuroStrike achieves an average attack success rate (ASR) of 76.9%. Furthermore, the authors extend their approach to black-box settings by training a surrogate model to approximate the target. Using this strategy, they successfully attack multiple black-box models, achieving an average ASR of 63.7% across five models, including Google's Gemini family. (Jiyong)"
   
 - title: "FuncVul: An Effective Function Level Vulnerability Detection Model Using LLM and Code Chunk"
   link: "https://dl.acm.org/doi/10.1007/978-3-032-07884-1_9"
