@@ -6,7 +6,7 @@
   conference: arXiv
   date: 2026.04.06
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper presents a compelling alternative to traditional heuristic and purely statistical LLM-based approaches for binary decompilation by leveraging in-context learning to guide the generation of truly re-executable source code. By conditioning language models on relevant (binary, source) examples alongside optimization-aware rules, ICL4Decomp captures crucial semantic constraints while avoiding the generation of merely plausible but uncompilable code, enabling reliable syntax recovery even in heavily optimized binaries. The framework further improves robustness by explicitly encoding knowledge of semantics-preserving compiler transformations, helping the model systematically recognize and reverse complex optimization patterns without requiring additional parameter updates. Experimental results show that this design achieves roughly a 40% improvement in re-executability rates across multiple datasets, optimization levels (O0 to O3), and compilers, significantly outperforming state-of-the-art decompilation tools. However, the approach fundamentally relies on the quality of the retrieved context examples and predefined rules, which may occasionally fail to cover obscure or highly specific compiler transformations, and the dependency on the LLM's context window may limit its effectiveness on exceptionally large or complex functions. Overall, ICL4Decomp demonstrates that integrating explicit compiler knowledge with example-driven contextual adaptation can provide a robust and highly practical foundation for reliable binary reverse engineering. (Minseok)"
 
 - title: "FidelityGPT: Correcting Decompilation Distortions with Retrieval Augmented Generation"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s989-paper.pdf"
@@ -36,12 +36,12 @@
   conference: ESORICS
   date: 2026.03.30
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper presents a compelling alternative to traditional full-function and repository-level approaches for software vulnerability detection by leveraging a code chunk-based analysis combined with Large Language Models. By using a fine-tuned GraphCodeBERT model at the code-chunk level, FuncVul captures meaningful syntactic and semantic aspects of the source code while avoiding the imprecision associated with full-function analysis, enabling the precise identification of multiple vulnerabilities within a single function. The framework further improves robustness through novel dataset curation techniques that integrate patch information with LLM-guided processing, followed by targeted analysis of smaller, critical code segments to allow security analysts to efficiently pinpoint issues without manually reviewing entire files. Experimental results show that this design achieves strong accuracy and F1 scores across multiple C/C++ and Python datasets, significantly outperforming state-of-the-art full-function baseline models. However, the approach still relies heavily on LLM-driven labeling and patch integration, which may occasionally introduce dataset biases or misclassify vulnerabilities, and the strict code-chunk-level analysis may overlook broader inter-procedural context. Overall, FuncVul demonstrates that carefully targeted, chunk-based semantic representations can provide a robust and precise foundation for automated function-level vulnerability detection. (Yujeong)"
 
 - title: "Unleashing the Power of Generative Model in Recovering Variable Names from Stripped Binary"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-276-paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1F-sBA5LSAmXIdLo9W2mEbGJj-oZfFdGf7T5eT7PiCIw/edit?slide=id.p9#slide=id.p9"
-  code_link: ""
+  code_link: "https://github.com/XZ-X/gennm-ndss-ae"
   presenter: Yujeong
   conference: NDSS
   date: 2026.03.25
@@ -51,7 +51,7 @@
 - title: "SK2Decompile: LLM-based Two-Phase Binary Decompilation from Skeleton to Skin"
   link: "https://arxiv.org/pdf/2509.22114"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_sk2_ICLR26.pdf"
-  code_link: ""
+  code_link: "https://huggingface.co/LLM4Binary/sk2decompile-struct-6.7b"
   presenter: Jiyong
   conference: ICLR
   date: 2026.03.25
