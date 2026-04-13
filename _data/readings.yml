@@ -1,18 +1,18 @@
-- title: "SAFETY LAYERS IN ALIGNED LARGE LANGUAGE MODELS: THE KEY TO LLM SECURITY"
+- title: "Safety Layers in Aligned Large Language Models: The Key to LLM Security"
   link: "https://arxiv.org/pdf/2408.17003"
   ppt_link: "https://drive.google.com/file/d/1vGAuRxNaKZHVC4jXWIz6W3QXyg2YdOQz/view?usp=sharing"
   code_link: ""
   presenter: Gahyun
-  conference: arXiv
+  conference: ICLR
   date: 2026.04.13
   pub_year: 2025
-  discussion: "The paper's discussion argues that aligned LLMs appear to organize their hidden layers into three functional stages: early layers mainly handle preliminary sentence processing and attend to superficial syntactic tokens, middle "safety layers" are where the model begins distinguishing malicious from benign intent, and later layers focus more on semantic reasoning and response generation. The authors support this interpretation with attention heatmaps and layer-wise similarity analyses, showing that the earliest layers do not meaningfully separate harmful from harmless prompts, while the middle layers do; they also note that swapping later layers into a pretrained model improves general semantic performance without giving it refusal ability, which further suggests that safety is concentrated in a specific middle-layer segment rather than spread uniformly across the network. Based on this, the paper positions safety alignment as a localized internal mechanism created by alignment training, and argues that protecting these layers during downstream tuning can preserve security without sacrificing general capability, though the authors frame this as an initial layer-wise account that still needs deeper follow-up work on the exact role of each stage and broader validation across models and settings. (yiyue)"
+  discussion: "(Discussion) The paper's discussion argues that aligned LLMs appear to organize their hidden layers into three functional stages: early layers mainly handle preliminary sentence processing and attend to superficial syntactic tokens, middle "safety layers" are where the model begins distinguishing malicious from benign intent, and later layers focus more on semantic reasoning and response generation. The authors support this interpretation with attention heatmaps and layer-wise similarity analyses, showing that the earliest layers do not meaningfully separate harmful from harmless prompts, while the middle layers do; they also note that swapping later layers into a pretrained model improves general semantic performance without giving it refusal ability, which further suggests that safety is concentrated in a specific middle-layer segment rather than spread uniformly across the network. Based on this, the paper positions safety alignment as a localized internal mechanism created by alignment training, and argues that protecting these layers during downstream tuning can preserve security without sacrificing general capability, though the authors frame this as an initial layer-wise account that still needs deeper follow-up work on the exact role of each stage and broader validation across models and settings. (yiyue)"
 
 - title: ""
   link: ""
   ppt_link: ""
   code_link: ""
-  presenter: Yiyue
+  presenter: Shak
   conference: NDSS
   date: 2026.04.13
   pub_year: 2026
