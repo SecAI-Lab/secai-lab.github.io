@@ -1,3 +1,23 @@
+- title: "Scylla: Translating an Applicative Subset of C to Safe Rust"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3798229"
+  ppt_link: ""
+  code_link: ""
+  presenter: Jiyong
+  conference: OOPSLA
+  date: 2026.04.28
+  pub_year: 2026
+  discussion: "(Discussion)"
+
+ - title: "Density Boosts Everything: A One-stop Strategy for Improving Performance, Robustness, and Sustainability of Malware Detectors"
+  link: "https://www.ndss-symposium.org/wp-content/uploads/2025-336-paper.pdf"
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: NDSS
+  date: 2026.04.28
+  pub_year: 2025
+  discussion: "(Discussion)"
+
 - title: "Safety Layers in Aligned Large Language Models: The Key to LLM Security"
   link: "https://arxiv.org/pdf/2408.17003"
   ppt_link: "https://drive.google.com/file/d/1vGAuRxNaKZHVC4jXWIz6W3QXyg2YdOQz/view?usp=sharing"
