@@ -1,7 +1,7 @@
 - title: "Scylla: Translating an Applicative Subset of C to Safe Rust"
   link: "https://dl.acm.org/doi/pdf/10.1145/3798229"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_Scylla_OOPSLA26.pdf"
-  code_link: ""
+  code_link: "https://github.com/AeneasVerif/scylla"
   presenter: Jiyong
   conference: OOPSLA
   date: 2026.04.28
