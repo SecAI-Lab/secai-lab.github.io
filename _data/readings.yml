@@ -16,7 +16,7 @@
   conference: NDSS
   date: 2026.04.28
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper proposes SCBNN as a density-oriented malware detection model that improves performance, robustness, and sustainability by directly addressing feature-space sparsity. The model can be understood in three main steps. First, each feature in the training set is preprocessed using a box-plot-based method to reduce the influence of extreme or sparse values. Second, the processed feature values are distributed into 100 histogram bins, and bins whose density is lower than a predefined threshold H are iteratively merged with adjacent lower-density bins. Third, the model further increases the target density through value bundling across different features, making the feature space less sparse and less vulnerable to rare, fragile patterns. Through this methodology, SCBNN achieves a much lower attack success rate than state-of-the-art baselines, showing that density boosting can effectively improve robustness against backdoor attacks while maintaining strong malware detection performance. However, the paper also shows that SCBNN is not equally effective against evasion attacks, suggesting that density boosting alone cannot fully handle attackers who intentionally modify malware samples to bypass detection. Overall, the paper presents a practical and unified strategy for improving malware detectors by increasing feature-space density, but its limitations indicate that additional evasion-specific defenses or semantic malware features may still be needed for stronger real-world robustness. (Gahyun)"
 
 - title: "Safety Layers in Aligned Large Language Models: The Key to LLM Security"
   link: "https://arxiv.org/pdf/2408.17003"
