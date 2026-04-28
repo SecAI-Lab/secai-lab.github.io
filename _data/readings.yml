@@ -6,9 +6,9 @@
   conference: OOPSLA
   date: 2026.04.28
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) Scylla presents a semi-automated method for converting a structured subset of C code into fully safe Rust without relying on unsafe. Instead of directly translating arbitrary legacy C, it encourages developers to gradually refactor C programs into a cleaner form that can be compiled into safe Rust while preserving performance and correctness. The system introduces Mini-C, an intermediate representation, plus analyses for pointer arithmetic, borrow mutability, and ownership mapping. Evaluations on real-world libraries such as cryptographic code, parsers, and compression software show that only small source changes are needed, generated Rust performs similarly to the original C, and the process can even uncover undefined behaviors in existing C projects. (Shakhzod)"
 
- - title: "Density Boosts Everything: A One-stop Strategy for Improving Performance, Robustness, and Sustainability of Malware Detectors"
+- title: "Density Boosts Everything: A One-stop Strategy for Improving Performance, Robustness, and Sustainability of Malware Detectors"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2025-336-paper.pdf"
   ppt_link: ""
   code_link: ""
