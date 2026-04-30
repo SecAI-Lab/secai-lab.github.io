@@ -420,17 +420,23 @@ sitemap: true
 <br>
 <h4> Alumni </h4>
 
+<div class="alumni-grid">
 {% for alumni in site.data.alumni_members %}
-  <p>
-    <em>{{ alumni.name }}</em>
+  <div class="alumni-card">
+    <img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ alumni.photo }}" class="img-responsive"/>
+
+    <h5>{{ alumni.name }}</h5>
+
     {% if alumni.course %}
-      — {{ alumni.course }}
+      <em><strong>Course:</strong> {{ alumni.course }}</em>
     {% endif %}
+
     {% if alumni.left %}
-      ({{ alumni.left }})
+      <em><strong>Left:</strong> {{ alumni.left }}</em>
     {% endif %}
-  </p>
+  </div>
 {% endfor %}
+</div>
 
 <br>
 <h4> Visiting </h4>
