@@ -396,7 +396,7 @@ sitemap: true
 <em>{{ alumni.name }}</em>
 {% endfor %} -->
 
-<br>
+<!-- <br>
 <h4> Alumni </h4>
 
 <div class="alumni-grid">
@@ -415,4 +415,34 @@ sitemap: true
     {% endif %}
   </div>
 {% endfor %}
-</div>
+</div> -->
+
+<br>
+<h4> Alumni </h4>
+
+{% for alumni in site.data.alumni_members %}
+  <p>
+    <em>{{ alumni.name }}</em>
+    {% if alumni.course %}
+      — {{ alumni.course }}
+    {% endif %}
+    {% if alumni.left %}
+      ({{ alumni.left }})
+    {% endif %}
+  </p>
+{% endfor %}
+
+<br>
+<h4> Visiting </h4>
+
+{% for visitor in site.data.visiting_members %}
+  <p>
+    <em>{{ visitor.name }}</em>
+    {% if visitor.info %}
+      — {{ visitor.info }}
+    {% endif %}
+    {% if visitor.period %}
+      ({{ visitor.period }})
+    {% endif %}
+  </p>
+{% endfor %}
