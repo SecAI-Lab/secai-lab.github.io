@@ -1,4 +1,4 @@
-- name: Suyeon Lee (Graduated; SecAI Lab Intern)
+- name: Suyeon Lee (SecAI Lab Intern)
   photo: suyeon2.jpg
   course: Master
   left: Spring 2026
@@ -8,12 +8,12 @@
 #  course: Combined Master and Ph.D
 #  left: Fall 2025
   
-- name: Intae Jeon (Graduated; Samsung Research)
+- name: Intae Jeon (Samsung Research)
   photo: alumni/intae2.jpg
   course: Master
   left: Fall 2025
   
-- name: Nozima Murodova (Graduated; Future Open Technology Group)
+- name: Nozima Murodova (Future Open Technology Group)
   photo: alumni/nozima.jpg
   course: Master
   left: Fall 2024
@@ -28,7 +28,7 @@
 #   course: Bachelor
 #   left: Spring 2024
   
-- name: Hohyeon Jang (Graduated)
+- name: Hohyeon Jang
   photo: alumni/hohyeon.jpg
   course: Master
   left: Fall 2022
