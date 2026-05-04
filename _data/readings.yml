@@ -1,3 +1,25 @@
+- title: "Cross-Inlining Binary Function Similarity Detection"
+  link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_Cross-Inlining_260504.pdf"
+  code_link: ""
+  presenter: Mijin
+  conference: ICSE
+  date: 2026.05.04
+  pub_year: 2024
+  discussion: ""
+
+
+  - title: "AI Agent Traps"
+  link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6372438"
+  ppt_link: ""
+  code_link: ""
+  presenter: Minseok
+  conference: arXiv
+  date: 2026.05.04
+  pub_year: 2026
+  discussion: ""
+
+
 - title: "Scylla: Translating an Applicative Subset of C to Safe Rust"
   link: "https://dl.acm.org/doi/pdf/10.1145/3798229"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_Scylla_OOPSLA26.pdf"
