@@ -1,7 +1,7 @@
 - title: "Cross-Inlining Binary Function Similarity Detection"
   link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_Cross-Inlining_260504.pdf"
-  code_link: ""
+  code_link: "https://github.com/island255/cross-inlining_binary_function_similarity"
   presenter: Mijin
   conference: ICSE
   date: 2026.05.04
@@ -11,7 +11,7 @@
 
 - title: "AI Agent Traps"
   link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6372438"
-  ppt_link: ""
+  ppt_link: "https://deniskim1.com/lab-meeting/0504_AI_Agent_Traps.pdf"
   code_link: ""
   presenter: Minseok
   conference: arXiv
@@ -43,7 +43,7 @@
 - title: "Safety Layers in Aligned Large Language Models: The Key to LLM Security"
   link: "https://arxiv.org/pdf/2408.17003"
   ppt_link: "https://drive.google.com/file/d/1vGAuRxNaKZHVC4jXWIz6W3QXyg2YdOQz/view?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/listen0425/Safety-Layers"
   presenter: Gahyun
   conference: ICLR
   date: 2026.04.13
@@ -53,7 +53,7 @@
 - title: "Achieving Interpretable DL-based Web Attack Detection through Malicious Payload Localization"
   link: "https://www.ndss-symposium.org/wp-content/uploads/2026-s1029-paper.pdf"
   ppt_link: "https://docs.google.com/presentation/d/1HheLpqL4oWdJ8JnEl0ZZulTJ90jj1sFo_M_Taxph62A/edit?usp=sharing"
-  code_link: ""
+  code_link: "https://github.com/Sec-AI-research/WebSpotter"
   presenter: Shakhzod
   conference: NDSS
   date: 2026.04.13
