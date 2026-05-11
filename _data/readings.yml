@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2026.05.11
   pub_year: 2024
-  discussion: "
+  discussion: ""
 
 - title: "Cross-Inlining Binary Function Similarity Detection"
   link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
