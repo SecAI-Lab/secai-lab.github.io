@@ -22,12 +22,12 @@
 - title: "AI Agent Traps"
   link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6372438"
   ppt_link: "https://deniskim1.com/lab-meeting/0504_AI_Agent_Traps.pdf"
-  code_link: "(Discussion) The paper clearly shows that AI agent security is not only about protecting the model, but also about protecting the information environment around it. Agent traps can manipulate what agents perceive, reason about, remember, and act on through hidden prompts, biased content, poisoned memory, or malicious tool instructions. This is important because even ordinary-looking web content can become a security threat for autonomous agents. The paper’s framework is useful, but more real-world testing and stronger defenses are needed, especially for systemic and human-in-the-loop traps. Overall, trustworthy AI agents require not only safer models, but also more secure information environments. (Yujeong)"
+  code_link: ""
   presenter: Minseok
   conference: arXiv
   date: 2026.05.04
   pub_year: 2026
-  discussion: ""
+  discussion: "(Discussion) The paper clearly shows that AI agent security is not only about protecting the model, but also about protecting the information environment around it. Agent traps can manipulate what agents perceive, reason about, remember, and act on through hidden prompts, biased content, poisoned memory, or malicious tool instructions. This is important because even ordinary-looking web content can become a security threat for autonomous agents. The paper’s framework is useful, but more real-world testing and stronger defenses are needed, especially for systemic and human-in-the-loop traps. Overall, trustworthy AI agents require not only safer models, but also more secure information environments. (Yujeong)"
 
 
 - title: "Scylla: Translating an Applicative Subset of C to Safe Rust"
