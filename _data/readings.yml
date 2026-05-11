@@ -1,3 +1,13 @@
+- title: "Code is not Natural Language: Unlock the Power of Semantics-Oriented Graph Representation for Binary Code Similarity Detection"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-he-haojie.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/14BrQTRMWZft-ngEiIyd9x0eaC7BFb67BZJCwVJtE8AY/edit?usp=sharing"
+  code_link: "https://github.com/NSSL-SJTU/HermesSim"
+  presenter: Yiyue
+  conference: USENIX
+  date: 2026.05.11
+  pub_year: 2024
+  discussion: "
+
 - title: "Cross-Inlining Binary Function Similarity Detection"
   link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_Cross-Inlining_260504.pdf"
