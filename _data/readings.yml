@@ -6,7 +6,7 @@
   conference: ICSE
   date: 2026.05.04
   pub_year: 2024
-  discussion: ""
+  discussion: "Function inlining is a common compiler optimization that complicates binary analysis. It reduces function call overhead by inserting a callee's body directly into the caller. However, this process obscures the semantics of the caller function, which may weaken the assumption that functions compiled from the same source exhibit identical semantics. This paper highlights the limitation of traditional approaches when semantics become intertwined through inlining. The authors propose CI-Detector, which combines an attributed control flow graph with a graph neural network. The model is trained on a large dataset of cross-inlining functions pairs categorized as leaf (target function is callee), root (target function is caller), and internal (target function is both caller and callee). CI-Detector achieves 81% precision and 97% recall for detecting cross-inlining pairs, out performing existing state-of-the-art methods. (Jiyong)"
 
 
 - title: "AI Agent Traps"
