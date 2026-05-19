@@ -1,3 +1,23 @@
+- title: "Supply Chain Reaction: Enhancing the Precision of Vulnerability Triage using Code Reachability Information"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Shakhzod
+  conference: ACSAC
+  date: 2026.05.18
+  pub_year: 2025
+  discussion: ""
+
+- title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
+  link: "https://www.usenix.org/system/files/usenixsecurity25-qu-watermarking.pdf"
+  ppt_link: "assets/paper-presentation/Gahyun_0518_weekly_meeting.pdf"
+  code_link: ""
+  presenter: Gahyun
+  conference: USENIX 
+  date: 2026.05.18
+  pub_year: 2025
+  discussion: ""
+
 - title: "Code is not Natural Language: Unlock the Power of Semantics-Oriented Graph Representation for Binary Code Similarity Detection"
   link: "https://www.usenix.org/system/files/usenixsecurity24-he-haojie.pdf"
   ppt_link: "https://docs.google.com/presentation/d/14BrQTRMWZft-ngEiIyd9x0eaC7BFb67BZJCwVJtE8AY/edit?usp=sharing"
