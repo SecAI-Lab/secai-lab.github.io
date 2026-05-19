@@ -1,3 +1,33 @@
+- title: "Supply Chain Reaction: Enhancing the Precision of Vulnerability Triage using Code Reachability Information"
+  link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11392037"
+  ppt_link: "https://docs.google.com/presentation/d/1bUUvZAO3kN6QsBidWtNWDIFwjpZZwMSx62nGAskmnSg/edit?usp=sharing"
+  code_link: "https://github.com/harshvp1621/VPChecker"
+  presenter: Shakhzod
+  conference: ACSAC
+  date: 2026.05.18
+  pub_year: 2025
+  discussion: ""
+
+- title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
+  link: "https://www.usenix.org/system/files/usenixsecurity25-qu-watermarking.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/Gahyun_0518_weekly_meeting.pdf"
+  code_link: ""
+  presenter: Gahyun
+  conference: USENIX 
+  date: 2026.05.18
+  pub_year: 2025
+  discussion: ""
+
+- title: "Code is not Natural Language: Unlock the Power of Semantics-Oriented Graph Representation for Binary Code Similarity Detection"
+  link: "https://www.usenix.org/system/files/usenixsecurity24-he-haojie.pdf"
+  ppt_link: "https://docs.google.com/presentation/d/14BrQTRMWZft-ngEiIyd9x0eaC7BFb67BZJCwVJtE8AY/edit?usp=sharing"
+  code_link: "https://github.com/NSSL-SJTU/HermesSim"
+  presenter: Yiyue
+  conference: USENIX
+  date: 2026.05.11
+  pub_year: 2024
+  discussion: ""
+
 - title: "Cross-Inlining Binary Function Similarity Detection"
   link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_Cross-Inlining_260504.pdf"
@@ -6,7 +36,7 @@
   conference: ICSE
   date: 2026.05.04
   pub_year: 2024
-  discussion: ""
+  discussion: "Function inlining is a common compiler optimization that complicates binary analysis. It reduces function call overhead by inserting a callee's body directly into the caller. However, this process obscures the semantics of the caller function, which may weaken the assumption that functions compiled from the same source exhibit identical semantics. This paper highlights the limitation of traditional approaches when semantics become intertwined through inlining. The authors propose CI-Detector, which combines an attributed control flow graph with a graph neural network. The model is trained on a large dataset of cross-inlining functions pairs categorized as leaf (target function is callee), root (target function is caller), and internal (target function is both caller and callee). CI-Detector achieves 81% precision and 97% recall for detecting cross-inlining pairs, out performing existing state-of-the-art methods. (Jiyong)"
 
 
 - title: "AI Agent Traps"
@@ -17,7 +47,7 @@
   conference: arXiv
   date: 2026.05.04
   pub_year: 2026
-  discussion: ""
+  discussion: "(Discussion) The paper clearly shows that AI agent security is not only about protecting the model, but also about protecting the information environment around it. Agent traps can manipulate what agents perceive, reason about, remember, and act on through hidden prompts, biased content, poisoned memory, or malicious tool instructions. This is important because even ordinary-looking web content can become a security threat for autonomous agents. The paper’s framework is useful, but more real-world testing and stronger defenses are needed, especially for systemic and human-in-the-loop traps. Overall, trustworthy AI agents require not only safer models, but also more secure information environments. (Yujeong)"
 
 
 - title: "Scylla: Translating an Applicative Subset of C to Safe Rust"
