@@ -16,7 +16,7 @@
   conference: USENIX 
   date: 2026.05.18
   pub_year: 2025
-  discussion: ""
+  discussion: "This paper proposes a robust multi-bit watermarking method for AI-generated text to support content source tracing. Existing watermarking methods either only detect AI-generated text or struggle to accurately and efficiently extract long embedded messages. The authors introduce pseudo-random segment assignment, where a message is divided into segments and embedded across generated tokens in a balanced way. They further improve robustness using balanced segment assignment and Reed-Solomon error-correction codes. The method achieves high extraction accuracy, robustness against edits, and low extraction time. For example, it reaches a 97.6% match rate for a 20-bit message in 200-token text, compared with 49.2% for Yoo et al., while also tolerating edits and preserving text quality.(Yiyue)"
 
 - title: "Code is not Natural Language: Unlock the Power of Semantics-Oriented Graph Representation for Binary Code Similarity Detection"
   link: "https://www.usenix.org/system/files/usenixsecurity24-he-haojie.pdf"
