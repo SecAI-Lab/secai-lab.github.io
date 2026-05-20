@@ -26,7 +26,7 @@
   conference: USENIX
   date: 2026.05.11
   pub_year: 2024
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper proposes HermesSim, a binary code similarity detection (BCSD) framework based on the Semantics-Oriented Graph (SOG). Unlike previous NLP-based approaches that treat binary code as instruction sequences, SOG explicitly models semantic relations such as data flow, control flow, and effect flow while removing semantics-independent information. Using a GNN with a multi-head softmax aggregator, HermesSim significantly outperforms prior methods like GMN and jTrans in cross-architecture and cross-compiler tasks, showing that semantics-aware graph representations are more effective for BCSD. (Mijin)"
 
 - title: "DecompileBench: A Comprehensive Benchmark for Evaluating Decompilers in Real-World Scenarios"
   link: "https://arxiv.org/pdf/2505.11340"
