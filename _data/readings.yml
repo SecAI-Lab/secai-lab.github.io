@@ -6,7 +6,7 @@
   conference: ACSAC
   date: 2026.05.18
   pub_year: 2025
-  discussion: ""
+  discussion: "(Discussion) "
 
 - title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
   link: "https://www.usenix.org/system/files/usenixsecurity25-qu-watermarking.pdf"
@@ -16,7 +16,7 @@
   conference: USENIX 
   date: 2026.05.18
   pub_year: 2025
-  discussion: "This paper proposes a robust multi-bit watermarking method for AI-generated text to support content source tracing. Existing watermarking methods either only detect AI-generated text or struggle to accurately and efficiently extract long embedded messages. The authors introduce pseudo-random segment assignment, where a message is divided into segments and embedded across generated tokens in a balanced way. They further improve robustness using balanced segment assignment and Reed-Solomon error-correction codes. The method achieves high extraction accuracy, robustness against edits, and low extraction time. For example, it reaches a 97.6% match rate for a 20-bit message in 200-token text, compared with 49.2% for Yoo et al., while also tolerating edits and preserving text quality.(Yiyue)"
+  discussion: "(Discussion) This paper proposes a robust multi-bit watermarking method for AI-generated text to support content source tracing. Existing watermarking methods either only detect AI-generated text or struggle to accurately and efficiently extract long embedded messages. The authors introduce pseudo-random segment assignment, where a message is divided into segments and embedded across generated tokens in a balanced way. They further improve robustness using balanced segment assignment and Reed-Solomon error-correction codes. The method achieves high extraction accuracy, robustness against edits, and low extraction time. For example, it reaches a 97.6% match rate for a 20-bit message in 200-token text, compared with 49.2% for Yoo et al., while also tolerating edits and preserving text quality.(Yiyue)"
 
 - title: "Code is not Natural Language: Unlock the Power of Semantics-Oriented Graph Representation for Binary Code Similarity Detection"
   link: "https://www.usenix.org/system/files/usenixsecurity24-he-haojie.pdf"
@@ -26,7 +26,7 @@
   conference: USENIX
   date: 2026.05.11
   pub_year: 2024
-  discussion: ""
+  discussion: "(Discussion) "
 
 - title: "Cross-Inlining Binary Function Similarity Detection"
   link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
@@ -36,7 +36,7 @@
   conference: ICSE
   date: 2026.05.04
   pub_year: 2024
-  discussion: "Function inlining is a common compiler optimization that complicates binary analysis. It reduces function call overhead by inserting a callee's body directly into the caller. However, this process obscures the semantics of the caller function, which may weaken the assumption that functions compiled from the same source exhibit identical semantics. This paper highlights the limitation of traditional approaches when semantics become intertwined through inlining. The authors propose CI-Detector, which combines an attributed control flow graph with a graph neural network. The model is trained on a large dataset of cross-inlining functions pairs categorized as leaf (target function is callee), root (target function is caller), and internal (target function is both caller and callee). CI-Detector achieves 81% precision and 97% recall for detecting cross-inlining pairs, out performing existing state-of-the-art methods. (Jiyong)"
+  discussion: "(Discussion) Function inlining is a common compiler optimization that complicates binary analysis. It reduces function call overhead by inserting a callee's body directly into the caller. However, this process obscures the semantics of the caller function, which may weaken the assumption that functions compiled from the same source exhibit identical semantics. This paper highlights the limitation of traditional approaches when semantics become intertwined through inlining. The authors propose CI-Detector, which combines an attributed control flow graph with a graph neural network. The model is trained on a large dataset of cross-inlining functions pairs categorized as leaf (target function is callee), root (target function is caller), and internal (target function is both caller and callee). CI-Detector achieves 81% precision and 97% recall for detecting cross-inlining pairs, out performing existing state-of-the-art methods. (Jiyong)"
 
 
 - title: "AI Agent Traps"
@@ -88,7 +88,7 @@
   conference: NDSS
   date: 2026.04.13
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) "
 
 - title: "Context-Guided Decompilation: A Step Towards Re-executability"
   link: "https://arxiv.org/abs/2511.01763"
