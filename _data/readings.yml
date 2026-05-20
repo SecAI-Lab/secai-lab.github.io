@@ -6,7 +6,7 @@
   conference: ACSAC
   date: 2026.05.18
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper's discussion frames VPChecker less as a finished product and more as evidence that function-level reachability should become a standard ingredient of SBOMs for C/C++ binaries, and uses this section to mark the three places where the current pipeline is still incomplete. The authors argue that traditional SBOMs stop at the package or ELF level, which is why so many CVEs end up flagged against binaries that never actually touch the vulnerable code, and they propose that integrating function call graphs directly into SBOM standards would let downstream scanners reason about real caller-callee paths instead of name-based matching. They acknowledge that the precision of these call graphs is the main lever for the whole approach, since Sysfilter over-approximates indirect calls and Angr misses them entirely, and the AICT comparison with LLVM IR shows that better indirect-call resolution can shrink the set of vulnerable exported functions without losing reachable CVEs. On the CVE side, they concede that their localization pipeline treats every function touched by a security patch as vulnerable, which is a known over-approximation because patches often modify helper or refactored functions that were never the root cause, so further refinement of the CVE-to-function mapping is left as future work. The authors position these as natural follow-ups rather than blocking issues, since the empirical results already show a 28 to 30 percent false-positive reduction even with imperfect call graphs and imperfect patch parsing, which they treat as a lower bound on what function-level triage can deliver once these pieces improve. (Hyoungjun)"
 
 - title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
   link: "https://www.usenix.org/system/files/usenixsecurity25-qu-watermarking.pdf"
@@ -26,6 +26,16 @@
   conference: USENIX
   date: 2026.05.11
   pub_year: 2024
+  discussion: "(Discussion) "
+
+- title: "DecompileBench: A Comprehensive Benchmark for Evaluating Decompilers in Real-World Scenarios"
+  link: "https://arxiv.org/pdf/2505.11340"
+  ppt_link: "https://drive.google.com/file/d/13oVzMbvWAesBinnns_VlOli5vZ0YZSBf/view?usp=sharing"
+  code_link: "https://github.com/vul337/DecompileBench"
+  presenter: Hyoungjun
+  conference: ACL
+  date: 2026.05.11
+  pub_year: 2025
   discussion: "(Discussion) "
 
 - title: "Cross-Inlining Binary Function Similarity Detection"
@@ -88,7 +98,7 @@
   conference: NDSS
   date: 2026.04.13
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) The paper's discussion frames WebSpotter as an interpretability layer that sits on top of any black-box DL-based web attack detector, and scopes where the method works versus where its assumptions break down. The authors acknowledge that the current pipeline only handles form-encoded and JSON HTTP bodies, so encrypted payloads, custom protocols, and opaque binary encodings fall outside the Minimal Semantic Unit decomposition that the whole approach depends on. They also concede that WebSpotter is parasitic on the upstream detector, since the importance signal comes from integrated gradients of the detection model, meaning a weak detector will propagate noisy gradients into the localization stage and the explanation can only be as faithful as the model being explained. On robustness, they evaluate data poisoning and show the localization head degrades more gracefully than the detector itself, but they leave gradient-targeted adversarial perturbations, where an attacker keeps the malicious behavior while flattening saliency at the malicious MSU, as future work. The takeaway they emphasize is the labeling-efficiency result: with only about 1% of attack requests labeled at the MSU level, WebSpotter already approaches its 100%-labeling ceiling across all four datasets, which the authors argue makes the method deployable in real SOC settings where per-field annotation is expensive. They position these limitations as a roadmap rather than fatal flaws, flagging broader body-format coverage, detector-agnostic importance signals, and adversarial-aware training as natural next steps. (Hyoungjun)"
 
 - title: "Context-Guided Decompilation: A Step Towards Re-executability"
   link: "https://arxiv.org/abs/2511.01763"
