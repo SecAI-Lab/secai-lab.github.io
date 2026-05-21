@@ -11,7 +11,7 @@
 - title: "Provably Robust Multi-bit Watermarking for AI-generated Text"
   link: "https://www.usenix.org/system/files/usenixsecurity25-qu-watermarking.pdf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/Gahyun_0518_weekly_meeting.pdf"
-  code_link: ""
+  code_link: "https://zenodo.org/records/14729410"
   presenter: Gahyun
   conference: USENIX 
   date: 2026.05.18
@@ -36,7 +36,7 @@
   conference: ACL
   date: 2026.05.11
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) DecompileBench introduces a practical benchmark for evaluating decompilers using real-world programs, runtime validation, and human-centric readability metrics. Its main strength is that it evaluates both functional correctness and analyst usefulness, showing that LLM-based decompilers often produce more readable code but remain much less semantically reliable than traditional tools. The benchmark is valuable because it uses 23,400 functions from 130 real-world programs and compares both industrial and LLM-based decompilers.  However, its limitations are that runtime validation still depends on test/fuzzing coverage, LLM-as-Judge may favor readable-looking code over truly correct code, and the benchmark may not fully reflect harder security scenarios such as obfuscated malware, packed binaries, stripped binaries, or anti-analysis techniques. Overall, DecompileBench is a strong contribution for realistic decompiler evaluation, but its results should not be treated as a complete guarantee of correctness in security-critical reverse engineering. (Minseok)"
 
 - title: "Cross-Inlining Binary Function Similarity Detection"
   link: "https://dl.acm.org/doi/10.1145/3597503.3639080"
