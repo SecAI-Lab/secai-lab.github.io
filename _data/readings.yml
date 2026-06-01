@@ -1,3 +1,23 @@
+- title: "Rumono: Fuzz driver synthesis for rust generic apis"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3709359"
+  ppt_link: ""
+  code_link: "https://dl.acm.org/doi/pdf/10.1145/3709359"
+  presenter: Jiyong
+  conference: TOSEM
+  date: 2026.06.01
+  pub_year: 2025
+  discussion: "(Discussion)"
+
+- title: "Enhanced Web Application Security Through Proactive Dead Drop Resolver Remediation"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3744860"
+  ppt_link: "https://docs.google.com/presentation/d/1_w76sZwD_s41_CttGMkY_F0JRhwjdDX8iJU6ue5EHCA/edit?usp=sharing"
+  code_link: "https://github.com/CyFI-Lab-Public/VADER"
+  presenter: Shakhzod
+  conference: CCS
+  date: 2026.06.01
+  pub_year: 2025
+  discussion: "(Discussion)"
+
 - title: "Supply Chain Reaction: Enhancing the Precision of Vulnerability Triage using Code Reachability Information"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11392037"
   ppt_link: "https://docs.google.com/presentation/d/1bUUvZAO3kN6QsBidWtNWDIFwjpZZwMSx62nGAskmnSg/edit?usp=sharing"
