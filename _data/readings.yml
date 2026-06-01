@@ -6,7 +6,7 @@
   conference: TOSEM
   date: 2026.06.01
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper presents RuMono, a tool for automatically generating fuzz drivers for Rust generic APIs by finding valid concrete versions of generic functions and pruning redundant ones. Across 29 Rust libraries, RuMono generated 2,566 fuzz targets with a 96% validity rate and found 23 new bugs, 18 involving generic APIs. Its main limitations are reliance on rustdoc, limited support for third-party types and some Rust generic features, an unsound trait-bound checker, and a pruning heuristic that may miss behavioral differences. (Shakhzod)"
 
 - title: "Enhanced Web Application Security Through Proactive Dead Drop Resolver Remediation"
   link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3744860"
