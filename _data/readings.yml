@@ -1,6 +1,6 @@
 - title: "Rumono: Fuzz driver synthesis for rust generic apis"
   link: "https://dl.acm.org/doi/pdf/10.1145/3709359"
-  ppt_link: ""
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_RuMono_TOSEM25.pdf"
   code_link: "https://dl.acm.org/doi/pdf/10.1145/3709359"
   presenter: Jiyong
   conference: TOSEM
