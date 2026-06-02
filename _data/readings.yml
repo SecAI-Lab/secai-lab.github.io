@@ -16,7 +16,7 @@
   conference: CCS
   date: 2026.06.01
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) The paper’s discussion presents VADER as a way to fix dead-drop resolver abuse before attackers can easily reuse it. Instead of only deleting one known dead drop, VADER analyzes the malware, finds how it hides or encodes the C&C address, and extracts a recipe for decoding similar dead drops. This lets web service providers search their platforms for other hidden dead drops that use the same logic. The authors also explain some limits. VADER may struggle with very strong obfuscation, advanced packers, or fully custom encoding methods, and some cases may still need human help. However, the results show that this approach is useful in practice: VADER found 8,906 DDR malware samples from 110 families and helped discover more dead drops that simple matching would miss. (Gahyun)"
 
 - title: "Supply Chain Reaction: Enhancing the Precision of Vulnerability Triage using Code Reachability Information"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11392037"
