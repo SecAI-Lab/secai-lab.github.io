@@ -1,3 +1,23 @@
+- title: "Transforming Generic Coder LLMs to Effective Binary Code Embedding Models for Similarity Detection"
+  link: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/f91e08629ca87a20bf4634aabeb2999b-Abstract-Conference.html"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_EBM_260608.pdf"
+  code_link: ""
+  presenter: Mijin
+  conference: NeurIPS
+  date: 2026.06.08
+  pub_year: 2025
+  discussion: "(Discussion)"
+
+- title: "Safety Alignment Should be Made More Than Just a Few Tokens Deep"
+  link: "https://proceedings.iclr.cc/paper_files/paper/2025/file/88be023075a5a3ff3dc3b5d26623fa22-Paper-Conference.pdf"
+  ppt_link: ""
+  code_link: '"
+  presenter: Minseok
+  conference: ICLR
+  date: 2026.06.08
+  pub_year: 2025
+  discussion: "(Discussion)"
+
 - title: "Rumono: Fuzz driver synthesis for rust generic apis"
   link: "https://dl.acm.org/doi/pdf/10.1145/3709359"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_RuMono_TOSEM25.pdf"
