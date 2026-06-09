@@ -8,10 +8,10 @@
   pub_year: 2025
   discussion: "(Discussion)"
   
-- title: "RuMono: Fuzz Driver Synthesis for Rust Generic APIs"
+- title: "Safety Alignment Should Be Made More Than Just a Few Tokens Deep"
   link: "https://proceedings.iclr.cc/paper_files/paper/2025/file/88be023075a5a3ff3dc3b5d26623fa22-Paper-Conference.pdf"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://deniskim1.com/lab-meeting/0608_alignment_token_deep.pdf"
+  code_link: "https://github.com/Unispac/shallow-vs-deep-alignment"
   presenter: Minseok
   conference: ICLR
   date: 2026.06.08
