@@ -6,7 +6,7 @@
   conference: NeurIPS
   date: 2026.06.08
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) Binary code similarity detection (BCSD) aims to infer similarities between compiled code snippets. It is a challenging task due to information sparsity, loss of semantics and structures, and restricted syntax compared to source code. Since the advent of large language models (LLMs), there has been a surge of popularity in applying their capability for various binary analysis domains. This paper specifically tackles applications of LLMS in BCSD. They introduce several supervised fine-tuning method that, when combined, significantly outperform both zero-shot LLMs and current state-of-the-art BCSD techniques. (jiyong)"
   
 - title: "Safety Alignment Should Be Made More Than Just a Few Tokens Deep"
   link: "https://proceedings.iclr.cc/paper_files/paper/2025/file/88be023075a5a3ff3dc3b5d26623fa22-Paper-Conference.pdf"
