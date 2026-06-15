@@ -16,7 +16,7 @@
   conference: ICLR
   date: 2026.06.08
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper introduces the concept of shallow safety alignment, arguing that many aligned LLMs mainly learn to generate safe refusal tokens at the beginning of a response rather than deeply suppressing harmful behavior. The authors show that this weakness helps explain the success of jailbreaks, prefilling attacks, decoding attacks, and harmful fine-tuning. To address this issue, they propose data augmentation techniques for deep safety alignment and a constrained fine-tuning objective that protects the model's initial token distributions. Their experiments demonstrate improved robustness against several attacks while maintaining model utility. However, the study is limited to a small set of open-source models and attack scenarios, leaving the generalizability of the findings to larger frontier models uncertain. (Shakhzod)"
 
 - title: "Rumono: Fuzz driver synthesis for rust generic apis"
   link: "https://dl.acm.org/doi/pdf/10.1145/3709359"
