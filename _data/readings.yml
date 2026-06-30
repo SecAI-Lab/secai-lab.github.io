@@ -1,3 +1,43 @@
+- title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: 
+  date: 
+  pub_year: 
+  discussion: "(Discussion)"
+  
+- title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: 
+  date: 
+  pub_year: 
+  discussion: "(Discussion)"
+
+  - title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: 
+  date: 
+  pub_year: 
+  discussion: "(Discussion)"
+  
+- title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: 
+  date: 
+  pub_year: 
+  discussion: "(Discussion)"
+
 - title: "Transforming Generic Coder LLMs to Effective Binary Code Embedding Models for Similarity Detection"
   link: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/f91e08629ca87a20bf4634aabeb2999b-Abstract-Conference.html"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_EBM_260608.pdf"
