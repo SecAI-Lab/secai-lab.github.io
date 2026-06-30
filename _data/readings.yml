@@ -28,14 +28,14 @@
   pub_year: 
   discussion: "(Discussion)"
   
-- title: ""
-  link: ""
-  ppt_link: ""
-  code_link: ""
-  presenter: 
-  conference: 
-  date: 
-  pub_year: 
+- title: "ReSym: Harnessing LLMs to Recover Variable and Data Structure Symbols from Stripped Binaries"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3658644.3670340"
+  ppt_link: "https://drive.google.com/file/d/14skVsaco-3x0amQSBKZsAolmECrYddzM/view?usp=sharing"
+  code_link: "https://github.com/ergrelet/resym"
+  presenter: Hyoungjun
+  conference: CCS
+  date: 2026.06.22
+  pub_year: 2024
   discussion: "(Discussion)"
 
 - title: "Transforming Generic Coder LLMs to Effective Binary Code Embedding Models for Similarity Detection"
