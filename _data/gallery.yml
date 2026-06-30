@@ -1,3 +1,22 @@
+- title: "한국 컴퓨터 종합 학술대회 (KCC 2026)"
+  images:
+    - filename: 260625_1.jpg
+      date: "2026-06-25"
+    - filename: 260624_1.jpg
+      date: "2026-06-24"
+    - filename: 260624_2.jpg
+      date: "2026-06-24"
+    - filename: 260625_1.jpg
+      date: "2026-06-25"
+    - filename: 260625_2.jpg
+      date: "2026-06-25"
+    - filename: 260625_3.jpg
+      date: "2026-06-25"
+    - filename: 260626_1.jpg
+      date: "2026-06-26"
+    - filename: 260626_2.jpg
+      date: "2026-06-26"
+
 - title: "AI시스템연구회 및 데이터 보안 & 프라이버시 연구회 공동 워크샵"
   images:
     - filename: 260618.jpg
@@ -9,7 +28,6 @@
       date: "2026-04-16"
     - filename: /ICSE_SEIP_26/20260415_120017.jpg
       date: "2026-04-16"
-  
 
 - title: "The Network and Distributed System Security Symposium (NDSS'26)"
   images:
@@ -30,7 +48,6 @@
       date: "2025-12-12"
     - filename: /ACSAC_25/IMG_0805.jpg
       date: "2025-12-12"
-
 
 - title: "한국정보보호학회 동계학술대회 (CISC-W'25)"
   images:
