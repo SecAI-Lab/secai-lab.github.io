@@ -5,13 +5,16 @@
   type: conference
   tier: T1
   link: https://sp2027.ieee-security.org/
+  abstract_deadline:
+    - "2026-06-04 23:59"
+    - "2026-11-10 23:59"
   deadline:
     - "2026-06-11 23:59"
     - "2026-11-17 23:59"
   timezone: UTC-12
   place: "Montreal, Canada"
   date: TBA
-  note: "Abstract deadline 1 week before paper deadline."
+  note: "Two submission cycles; abstract registration deadlines are one week before paper deadlines. Conference dates are not announced on the official page yet."
 
 - title: "USENIX Security"
   year: 2027
@@ -20,15 +23,18 @@
   type: conference
   tier: T2
   link: https://www.usenix.org/conference/usenixsecurity27
+  registration_deadline:
+    - "2026-08-18"
+    - "2027-01-19"
   deadline:
-    - "2026-08-25 23:59"
-    - "2027-01-26 23:59"
-  timezone: UTC-12
+    - "2026-08-25"
+    - "2027-01-26"
+  timezone: TBA
   place: "Denver, CO, USA"
   date: "August 11-13, 2027"
   start: 2027-08-11
   end: 2027-08-13
-  note: "Abstract deadline 1 week before paper deadline."
+  note: "Official page lists paper registration and submission dates only; exact cutoff time/timezone is not yet published."
 
 - title: "NDSS"
   year: 2027
@@ -264,7 +270,7 @@
   tier: "N/A"
   link: https://www.usenix.org/conferences
   deadline: TBA
-  timezone: UTC-12
+  timezone: TBA
   place: TBA
   date: TBA
   note: "WOOT 2027 CFP not announced yet. WOOT is typically co-located with USENIX Security."
@@ -276,12 +282,12 @@
   tier: "N/A"
   link: https://www.ndss-symposium.org/ndss2027/
   deadline: TBA
-  timezone: AoE
-  place: "Seoul, South Korea"
-  date: "March 22-26, 2027"
-  start: 2027-03-22
-  end: 2027-03-26
-  note: "Co-located with NDSS. BAR 2027 CFP not announced yet."
+  timezone: TBA
+  place: TBA
+  date: TBA
+  start: null
+  end: null
+  note: "Official BAR 2027 CFP/page not announced yet; NDSS 2027 is announced, but BAR 2027 workshop details are not."
 
 - title: "DFRWS EU"
   year: 2027
@@ -305,7 +311,7 @@
   tier: "N/A"
   link: https://aisec.cc/
   deadline: TBA
-  timezone: AoE
+  timezone: TBA
   place: TBA
   date: TBA
   note: "Co-located with ACM CCS. AISec 2027 CFP not announced yet."
@@ -318,7 +324,7 @@
   tier: "N/A"
   link: https://lamps-ccs.github.io/home/
   deadline: TBA
-  timezone: AoE
+  timezone: TBA
   place: TBA
   date: TBA
   note: "Co-located with ACM CCS. CCS-LAMPS 2027 CFP not announced yet."

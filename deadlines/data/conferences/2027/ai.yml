@@ -3,12 +3,12 @@
   id: ijcai27
   full_name: "International Joint Conference on Artificial Intelligence"
   tier: T2
-  link: https://2027.ijcai.org/
-  deadline: "2027-01-19 23:59:59"
-  timezone: UTC-12
+  link: https://www.ijcai.org/future_conferences
+  deadline: TBA
+  timezone: TBA
   place: TBA
-  date: "August 2027"
-  note: "Predicted deadline based on historical pattern. Verify from official CFP."
+  date: TBA
+  note: "Official IJCAI page says IJCAI-2027 host will be announced at the preceding conference; CFP, dates, place, and deadlines are not announced yet."
 
 - title: "AAAI"
   year: 2027
@@ -29,9 +29,9 @@
   id: www27
   full_name: "The Web Conference"
   tier: T1
-  link: https://www2027.thewebconf.org/calls/research-tracks.html
+  link: https://archives.iw3c2.org/
   deadline: TBA
-  timezone: AoE
+  timezone: TBA
   place: TBA
   date: TBA
-  note: "Verify from official CFP."
+  note: "Official TheWebConf/IW3C2 archive lists conferences only through 2025 and no official WWW 2027 CFP/page was found yet."
