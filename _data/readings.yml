@@ -18,6 +18,17 @@
   pub_year: 2025
   discussion: "(Discussion)"
   
+  - title: "Agents Are All You Need for LLM Unlearning"
+  link: "https://arxiv.org/pdf/2502.00406"
+  ppt_link: "https://docs.google.com/presentation/d/1Lab3A-m4lKPunZ0a5BD5uDiMkkpgXtwS9ntinXvgHmY/edit?slide=id.p1#slide=id.p1"
+  code_link: ""
+  presenter: Yujeong
+  conference: COLM
+  date: 2026.06.22
+  pub_year: 2025
+  discussion: "(Discussion)"
+  
+  
 - title: "ReSym: Harnessing LLMs to Recover Variable and Data Structure Symbols from Stripped Binaries"
   link: "https://dl.acm.org/doi/pdf/10.1145/3658644.3670340"
   ppt_link: "https://drive.google.com/file/d/14skVsaco-3x0amQSBKZsAolmECrYddzM/view?usp=sharing"
