@@ -1,3 +1,33 @@
+# - title: "JBShield: Defending Large Language Models from Jailbreak Attacks through Activated Concept Analysis and Manipulation"
+#   link: "https://www.usenix.org/system/files/usenixsecurity25-zhang-shenyi.pdf"
+#   ppt_link: ""
+#   code_link: ""
+#   presenter: Gahyun
+#   conference: USENIX
+#   date: 2026.06.30
+#   pub_year: 2025
+#   discussion: "(Discussion)"
+  
+- title: "PseudoFix: Refactoring Distorted Structures in Decompiled C Pseudocode"
+  link: "https://dl.acm.org/doi/pdf/10.1109/ASE63991.2025.00075"
+  ppt_link: "https://docs.google.com/presentation/d/1mNSay5lTUG7yFQip7fghXbEL7TJp1g2czteexYhkFTI/edit?usp=sharing"
+  code_link: "https://github.com/giles-one/PseudoFix"
+  presenter: Yiyue
+  conference: ASE
+  date: 2026.06.30
+  pub_year: 2025
+  discussion: "(Discussion)"
+  
+- title: "ReSym: Harnessing LLMs to Recover Variable and Data Structure Symbols from Stripped Binaries"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3658644.3670340"
+  ppt_link: "https://drive.google.com/file/d/14skVsaco-3x0amQSBKZsAolmECrYddzM/view?usp=sharing"
+  code_link: "https://github.com/ergrelet/resym"
+  presenter: Hyoungjun
+  conference: CCS
+  date: 2026.06.22
+  pub_year: 2024
+  discussion: "(Discussion) Recovering symbols from stripped binaries is challenging because compilation removes meaningful variable names, types, and user-defined data structure information. This paper proposes ReSym, a hybrid system that combines fine-tuned LLMs with program analysis to recover variable and data structure symbols from decompiled code. ReSym divides the problem into variable recovery and field access recovery, then uses Prolog-based reasoning to reduce hallucinations and improve consistency. The experiments show that ReSym improves decompiled code readability and outperforms prior methods in variable and structure recovery. However, the approach still has limitations, as structure layout recall remains relatively low due to token limits and incomplete data-flow information, which can cause missed field accesses. Overall, ReSym is a meaningful step toward LLM-assisted reverse engineering, but it is better viewed as an aid for analysts rather than a fully reliable replacement for manual reverse engineering. (Mijin)"
+
 - title: "Transforming Generic Coder LLMs to Effective Binary Code Embedding Models for Similarity Detection"
   link: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/f91e08629ca87a20bf4634aabeb2999b-Abstract-Conference.html"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_EBM_260608.pdf"
