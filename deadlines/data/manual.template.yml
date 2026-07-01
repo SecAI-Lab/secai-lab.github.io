@@ -1,0 +1,467 @@
+# Manual CFP template for target conferences.
+# Copy needed blocks into data/manual.yml and fill verified values from the official CFP.
+# Date format: YYYY-MM-DD HH:mm:ss. Timezone examples: UTC-12, UTC-7, America/Los_Angeles, Asia/Seoul, AoE.
+
+# - title: "OSDI"
+#   year: 2026
+#   id: osdi26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: system
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "SOSP"
+#   year: 2026
+#   id: sosp26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: system
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "EuroSys"
+#   year: 2026
+#   id: eurosys26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: system
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ATC"
+#   year: 2026
+#   id: atc26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: system
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "NSDI"
+#   year: 2026
+#   id: nsdi26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: system
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "DSN"
+#   year: 2026
+#   id: dsn26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: system
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ICSE"
+#   year: 2026
+#   id: icse26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: software
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "FSE"
+#   year: 2026
+#   id: fse26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: software
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ASE"
+#   year: 2026
+#   id: ase26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: software
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ISSTA"
+#   year: 2026
+#   id: issta26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: software
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "IJCAI"
+#   year: 2026
+#   id: ijcai26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: ai
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "AAAI"
+#   year: 2026
+#   id: aaai26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: ai
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "WWW"
+#   year: 2026
+#   id: www26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: ai
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "S&P"
+#   year: 2026
+#   id: sspp26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "CCS"
+#   year: 2026
+#   id: ccs26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "USENIX Security"
+#   year: 2026
+#   id: usenix-security26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "NDSS"
+#   year: 2026
+#   id: ndss26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ACSAC"
+#   year: 2026
+#   id: acsac26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "RAID"
+#   year: 2026
+#   id: raid26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ASIACCS"
+#   year: 2026
+#   id: asiaccs26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ESORICS"
+#   year: 2026
+#   id: esorics26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "EuroS&P"
+#   year: 2026
+#   id: eurosspp26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "CODASPY"
+#   year: 2026
+#   id: codaspy26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "DIMVA"
+#   year: 2026
+#   id: dimva26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "SecureComm"
+#   year: 2026
+#   id: securecomm26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "SAC"
+#   year: 2026
+#   id: sac26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "IFIP-Sec"
+#   year: 2026
+#   id: ifip-sec26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "WOOT"
+#   year: 2026
+#   id: woot26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.
+
+# - title: "ACNS"
+#   year: 2026
+#   id: acns26-manual
+#   full_name:
+#   link:
+#   abstract_deadline:
+#   deadline:
+#   timezone: UTC-12
+#   place:
+#   date:
+#   start:
+#   end:
+#   category: security
+#   sub: []
+#   note: Manually verified from official CFP.

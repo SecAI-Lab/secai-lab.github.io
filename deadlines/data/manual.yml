@@ -1,0 +1,4 @@
+# Manual overrides have the highest priority.
+# Add confirmed CFP data here before relying on external deadline trackers.
+# Copy entries from manual.template.yml and fill only the fields you know.
+[]

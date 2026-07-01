@@ -1,0 +1,37 @@
+- title: "IJCAI"
+  year: 2027
+  id: ijcai27
+  full_name: "International Joint Conference on Artificial Intelligence"
+  tier: T2
+  link: https://2027.ijcai.org/
+  deadline: "2027-01-19 23:59:59"
+  timezone: UTC-12
+  place: TBA
+  date: "August 2027"
+  note: "Predicted deadline based on historical pattern. Verify from official CFP."
+
+- title: "AAAI"
+  year: 2027
+  id: aaai27
+  full_name: "AAAI Conference on Artificial Intelligence"
+  tier: T1
+  link: https://aaai.org/conference/aaai/aaai-27/
+  abstract_deadline: "2026-07-21 23:59:59"
+  deadline: "2026-07-28 23:59:59"
+  timezone: UTC-12
+  place: "Montréal, Canada"
+  date: "February 16-23, 2027"
+  start: 2027-02-16
+  end: 2027-02-23
+
+- title: "WWW"
+  year: 2027
+  id: www27
+  full_name: "The Web Conference"
+  tier: T1
+  link: https://www2027.thewebconf.org/calls/research-tracks.html
+  deadline: TBA
+  timezone: AoE
+  place: TBA
+  date: TBA
+  note: "Verify from official CFP."

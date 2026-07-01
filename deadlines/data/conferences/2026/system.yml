@@ -1,0 +1,105 @@
+- title: "OSDI"
+  year: 2026
+  id: osdi26
+  full_name: "USENIX Symposium on Operating Systems Design and Implementation"
+  link: https://www.usenix.org/conference/osdi26
+  abstract_deadline: "2025-12-04 17:59:59"
+  deadline: "2025-12-11 17:59:59"
+  timezone: UTC-5
+  place: "Seattle, WA, USA"
+  date: "July 13-15, 2026"
+  start: 2026-07-13
+  end: 2026-07-15
+
+- title: "SOSP"
+  year: 2026
+  id: sosp26
+  full_name: "ACM Symposium on Operating Systems Principles"
+  link: https://sigops.org/s/conferences/sosp/2026/cfp.html
+  abstract_deadline: "2026-03-26 23:59:59"
+  deadline: "2026-04-01 23:59:59"
+  timezone: UTC-12
+  place: "Prague, Czechia"
+  date: "September 29 - October 2, 2026"
+  start: 2026-09-29
+  end: 2026-10-02
+
+- title: "EuroSys"
+  year: 2026
+  id: eurosys26
+  full_name: "ACM European Conference on Computer Systems"
+  tier: T2
+  link: https://2026.eurosys.org/cfp.html
+  abstract_deadline:
+    - "2025-05-08 23:59:59"
+    - "2025-09-18 23:59:59"
+  deadline:
+    - "2025-05-15 23:59:59"
+    - "2025-09-25 23:59:59"
+  timezone: UTC-12
+  place: "Edinburgh, UK"
+  date: "April 27-30, 2026"
+  start: 2026-04-27
+  end: 2026-04-30
+  note: "Two submission rounds: Spring and Fall."
+
+- title: "ATC"
+  year: 2026
+  id: atc26
+  full_name: "ACM SIGOPS Annual Technical Conference"
+  tier: T2
+  link: https://sigops.org/s/conferences/atc/2026/
+  deadline: "2026-06-10 23:59:59"
+  timezone: UTC-12
+  place: "Shatin, Hong Kong"
+  date: "November 15-18, 2026"
+  start: 2026-11-15
+  end: 2026-11-18
+  note: "No separate abstract registration period; abstracts, extended abstracts, and full papers are submitted together."
+
+- title: "NSDI"
+  year: 2026
+  id: nsdi26
+  full_name: "USENIX Symposium on Networked Systems Design and Implementation"
+  tier: T1
+  link: https://www.usenix.org/conference/nsdi26/call-for-papers
+  abstract_deadline:
+    - "2025-04-18 23:59:59"
+    - "2025-09-11 23:59:59"
+  deadline:
+    - "2025-04-25 23:59:59"
+    - "2025-09-18 23:59:59"
+  timezone: UTC-7
+  place: "Renton, WA, USA"
+  date: "May 4-6, 2026"
+  start: 2026-05-04
+  end: 2026-05-06
+  note: "Two submission rounds: Spring and Fall. Official timezone was US PDT."
+
+- title: "DSN"
+  year: 2026
+  id: dsn26
+  full_name: "IEEE/IFIP International Conference on Dependable Systems and Networks"
+  link: https://dsn2026.github.io/
+  abstract_deadline: "2025-11-27 23:59:59"
+  deadline: "2025-12-04 23:59:59"
+  timezone: UTC-12
+  place: "Charlotte, North Carolina, USA"
+  date: "June 22-25, 2026"
+  start: 2026-06-22
+  end: 2026-06-25
+
+- title: "EuroSec"
+  year: 2026
+  id: eurosec26
+  full_name: "European Workshop on Systems Security"
+  link: https://eurosec-workshop.github.io/
+  abstract_deadline: null
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  tba: true
+  note: "Official EuroSec 2026 CFP/page not yet available."

@@ -1,0 +1,325 @@
+- title: "S&P"
+  year: 2027
+  id: sp27
+  full_name: "IEEE Symposium on Security and Privacy"
+  type: conference
+  tier: T1
+  link: https://sp2027.ieee-security.org/
+  deadline:
+    - "2026-06-11 23:59"
+    - "2026-11-17 23:59"
+  timezone: UTC-12
+  place: "Montreal, Canada"
+  date: TBA
+  note: "Abstract deadline 1 week before paper deadline."
+
+- title: "USENIX Security"
+  year: 2027
+  id: usenix-security27
+  full_name: "USENIX Security Symposium"
+  type: conference
+  tier: T2
+  link: https://www.usenix.org/conference/usenixsecurity27
+  deadline:
+    - "2026-08-25 23:59"
+    - "2027-01-26 23:59"
+  timezone: UTC-12
+  place: "Denver, CO, USA"
+  date: "August 11-13, 2027"
+  start: 2027-08-11
+  end: 2027-08-13
+  note: "Abstract deadline 1 week before paper deadline."
+
+- title: "NDSS"
+  year: 2027
+  id: ndss27
+  full_name: "ISOC Network and Distributed System Security Symposium"
+  type: conference
+  tier: T2
+  link: https://www.ndss-symposium.org/ndss2027/submissions/call-for-papers/
+  deadline:
+    - "2026-05-06 23:59"
+    - "2026-08-19 23:59"
+  timezone: UTC-12
+  place: "Seoul, South Korea"
+  date: "March 22-26, 2027"
+  start: 2027-03-22
+  end: 2027-03-26
+
+- title: "ASIACCS"
+  year: 2027
+  id: asiaccs27
+  full_name: "ACM Asia Conference on Computer and Communications Security"
+  type: conference
+  tier: T3
+  link: https://asiaccs2027.cityu.edu.mo/home/index.html
+  deadline:
+    - "2026-08-21 23:59"
+    - "2026-12-11 23:59"
+  timezone: UTC-12
+  place: "Macau"
+  date: "July 12-16, 2027"
+  start: 2027-07-12
+  end: 2027-07-16
+
+- title: "SAC"
+  year: 2027
+  id: sac27
+  full_name: "ACM/SIGAPP Symposium on Applied Computing"
+  type: conference
+  tier: T4
+  link: https://www.sigapp.org/sac/sac2027/
+  deadline: "2026-10-02 23:59"
+  timezone: UTC-5
+  place: "Gwangju, South Korea"
+  date: "April 5-9, 2027"
+  start: 2027-04-05
+  end: 2027-04-09
+
+- title: "ACNS"
+  year: 2027
+  id: acns27
+  full_name: "International Conference on Applied Cryptography and Network Security"
+  type: conference
+  tier: "N/A"
+  link: https://acns2027.isg.rhul.ac.uk/
+  deadline:
+    - "2026-09-24 23:59"
+    - "2027-01-21 23:59"
+  timezone: UTC-12
+  place: "Egham, Surrey, UK"
+  date: "June 28 - July 1, 2027"
+  start: 2027-06-28
+  end: 2027-07-01
+
+- title: "CCS"
+  year: 2027
+  id: ccs27
+  full_name: "ACM Conference on Computer and Communications Security"
+  type: conference
+  tier: TBA
+  link: https://www.sigsac.org/ccs.html
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official CCS 2027 conference page/CFP not publicly available yet."
+
+- title: "ASE"
+  year: 2027
+  id: ase27
+  full_name: "IEEE/ACM International Conference on Automated Software Engineering"
+  type: conference
+  tier: TBA
+  link: https://ase-conferences.org/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official ASE 2027 conference page/CFP not publicly available yet."
+
+- title: "ISSTA"
+  year: 2027
+  id: issta27
+  full_name: "ACM SIGSOFT International Symposium on Software Testing and Analysis"
+  type: conference
+  tier: TBA
+  link: https://www.issta.org/
+  deadline: null
+  timezone: TBA
+  place: "Singapore, Singapore"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official ISSTA page lists ISSTA 2027 in Singapore; dates and deadlines are not yet available."
+
+- title: "ACSAC"
+  year: 2027
+  id: acsac27
+  full_name: "IEEE Annual Computer Security Applications Conference"
+  type: conference
+  tier: TBA
+  link: https://www.acsac.org/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official ACSAC 2027 conference page/CFP not publicly available yet."
+
+- title: "RAID"
+  year: 2027
+  id: raid27
+  full_name: "International Symposium on Research in Attacks, Intrusions and Defenses"
+  type: conference
+  tier: TBA
+  link: https://raid2026.org/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official RAID 2027 conference page/CFP not publicly available yet; link points to the latest official RAID page found."
+
+- title: "ESORICS"
+  year: 2027
+  id: esorics27
+  full_name: "European Symposium on Research in Computer Security"
+  type: conference
+  tier: TBA
+  link: https://sites.google.com/di.uniroma1.it/esorics2026/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official ESORICS 2027 conference page/CFP not publicly available yet; link points to the latest official ESORICS page found."
+
+- title: "EuroS&P"
+  year: 2027
+  id: eurosp27
+  full_name: "IEEE European Symposium on Security and Privacy"
+  type: conference
+  tier: TBA
+  link: https://www.ieee-security.org/TC/SP-Index.html
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official EuroS&P 2027 conference page/CFP not publicly available yet."
+
+- title: "CODASPY"
+  year: 2027
+  id: codaspy27
+  full_name: "ACM Conference on Data and Application Security and Privacy"
+  type: conference
+  tier: TBA
+  link: https://www.codaspy.org/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official CODASPY 2027 conference page/CFP not publicly available yet."
+
+- title: "DIMVA"
+  year: 2027
+  id: dimva27
+  full_name: "Conference on Detection of Intrusions and Malware & Vulnerability Assessment"
+  type: conference
+  tier: TBA
+  link: https://www.dimva.org/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official DIMVA 2027 conference page/CFP not publicly available yet."
+
+- title: "SecureComm"
+  year: 2027
+  id: securecomm27
+  full_name: "EAI International Conference on Security and Privacy in Communication Networks"
+  type: conference
+  tier: TBA
+  link: https://securecomm.eai-conferences.org/
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official SecureComm 2027 conference page/CFP not publicly available yet."
+
+- title: "IFIP SEC"
+  year: 2027
+  id: ifipsec27
+  full_name: "IFIP International Information Security and Privacy Conference"
+  type: conference
+  tier: TBA
+  link: https://ifipsec.org/
+  deadline: null
+  timezone: TBA
+  place: "Linköping, Sweden"
+  date: "TBA"
+  start: null
+  end: null
+  note: "Official IFIP SEC page indicates the next SEC after 2026 will be in Linköping, Sweden; dates and deadlines are not yet available."
+
+- title: "WOOT"
+  year: 2027
+  id: woot27
+  full_name: "USENIX WOOT Conference on Offensive Technologies"
+  tier: "N/A"
+  link: https://www.usenix.org/conferences
+  deadline: TBA
+  timezone: UTC-12
+  place: TBA
+  date: TBA
+  note: "WOOT 2027 CFP not announced yet. WOOT is typically co-located with USENIX Security."
+
+- title: "BAR"
+  year: 2027
+  id: bar27
+  full_name: "Workshop on Binary Analysis Research"
+  tier: "N/A"
+  link: https://www.ndss-symposium.org/ndss2027/
+  deadline: TBA
+  timezone: AoE
+  place: "Seoul, South Korea"
+  date: "March 22-26, 2027"
+  start: 2027-03-22
+  end: 2027-03-26
+  note: "Co-located with NDSS. BAR 2027 CFP not announced yet."
+
+- title: "DFRWS EU"
+  year: 2027
+  id: dfrws-eu27
+  full_name: "Digital Forensics Research Conference Europe"
+  tier: "N/A"
+  link: https://dfrws.org/conferences/dfrws-eu-2027/
+  deadline: TBA
+  timezone: TBA
+  place: "Edinburgh, Scotland"
+  date: "March 30 - April 2, 2027"
+  start: 2027-03-30
+  end: 2027-04-02
+  note: "Paper submission deadline not announced yet."
+
+- title: "AISec"
+  year: 2027
+  id: aisec27
+  full_name: "ACM Workshop on Artificial Intelligence and Security"
+  type: workshop
+  tier: "N/A"
+  link: https://aisec.cc/
+  deadline: TBA
+  timezone: AoE
+  place: TBA
+  date: TBA
+  note: "Co-located with ACM CCS. AISec 2027 CFP not announced yet."
+
+- title: "CCS-LAMPS"
+  year: 2027
+  id: ccs-lamps27
+  full_name: "ACM Workshop on Large AI Systems and Models with Privacy and Safety Analysis"
+  type: workshop
+  tier: "N/A"
+  link: https://lamps-ccs.github.io/home/
+  deadline: TBA
+  timezone: AoE
+  place: TBA
+  date: TBA
+  note: "Co-located with ACM CCS. CCS-LAMPS 2027 CFP not announced yet."
+  

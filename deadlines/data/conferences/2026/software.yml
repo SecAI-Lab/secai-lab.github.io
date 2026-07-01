@@ -1,0 +1,36 @@
+- title: "FSE"
+  year: 2026
+  id: fse26
+  full_name: "ACM International Conference on the Foundations of Software Engineering"
+  tier: T1
+  link: https://conf.researchr.org/home/fse-2026
+  deadline: "2026-01-22 23:59"
+  timezone: UTC-12
+  place: "Montreal, Canada"
+  date: "July 5-9, 2026"
+  start: 2026-07-05
+  end: 2026-07-09
+
+- title: "ASE"
+  year: 2026
+  id: ase26
+  full_name: "IEEE/ACM International Conference on Automated Software Engineering"
+  link: https://conf.researchr.org/home/ase-2026
+  deadline: "2026-03-26 23:59"
+  timezone: UTC-12
+  place: "Munich, Germany"
+  date: "October 12-16, 2026"
+  start: 2026-10-12
+  end: 2026-10-16
+
+- title: "ISSTA"
+  year: 2026
+  id: issta26
+  full_name: "ACM SIGSOFT International Symposium on Software Testing and Analysis"
+  link: https://conf.researchr.org/home/issta-2026
+  deadline: "2026-01-29 23:59"
+  timezone: UTC-12
+  place: "Oakland, CA, USA"
+  date: "October 3-9, 2026"
+  start: 2026-10-03
+  end: 2026-10-09
