@@ -1,53 +1,52 @@
-- name: Suyeon Lee (SecAI Lab Intern)
+- name: Suyeon Lee (Hyundai Autoever)
   photo: suyeon2.jpg
   course: Master
   left: Spring 2026
-  
+
 #- name: Giuk Kwon, Fall 2025 (Withdrawal)
 #  photo: alumni/giuk3.jpg
 #  course: Combined Master and Ph.D
 #  left: Fall 2025
-  
+
 - name: Intae Jeon (Samsung Research)
   photo: alumni/intae2.jpg
   course: Master
   left: Fall 2025
-  
+
 - name: Nozima Murodova (Future Open Technology Group)
   photo: alumni/nozima.jpg
   course: Master
   left: Fall 2024
-  
+
 # - name: Seoyeon Cho (Visiting; M.S. at University of Michigan, Ann Arbor)
 #   photo: alumni/seoyeon.png
 #   course: Bachelor
 #   left: Spring 2024
-  
+
 # - name: Junhyeong Jo (Visiting; SKKU)
 #   photo: alumni/junhyoung.jpg
 #   course: Bachelor
 #   left: Spring 2024
-  
+
 - name: Hohyeon Jang
   photo: alumni/hohyeon.jpg
   course: Master
   left: Fall 2022
-  
 #- name: Wonyoung Cho (Discont'd; SKKU)
 #  photo: profile.jpg
 #  course: Master
 #  left: Fall 2021
-  
+
 # - name: Seok Kim (Visiting; SKKU)
 #   photo: profile.jpg
 #   course: Bachelor
 #   left: Fall 2022
-  
+
 #- name: Sechang Lim (Discont'd; SKKU)
 #  photo: profile.jpg
 #  course: Bachelor
 #  left: Spring 2022
-  
+
 # - name: Suhwan Shin from SSlab@SKKU (Visiting; SKKU)
 #   photo: profile.jpg
 #   course: Bachelor
