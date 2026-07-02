@@ -1,0 +1,40 @@
+- title: "IJCAI"
+  year: 2026
+  id: ijcai26
+  full_name: "International Joint Conference on Artificial Intelligence"
+  tier: T2
+  link: https://2026.ijcai.org/ijcai-ecai-2026-call-for-papers-main-track
+  abstract_deadline: "2026-01-12 23:59:59"
+  deadline: "2026-01-19 23:59:59"
+  timezone: UTC-12
+  place: "Bremen, Germany"
+  date: "August 16-22, 2026"
+  start: 2026-08-16
+  end: 2026-08-22
+  note: "Joint with ECAI 2026."
+
+- title: "AAAI"
+  year: 2026
+  id: aaai26
+  full_name: "AAAI Conference on Artificial Intelligence"
+  tier: T1
+  link: https://aaai.org/conference/aaai/aaai-26/
+  deadline: "2025-07-25 23:59:00"
+  timezone: UTC-12
+  place: "Singapore"
+  date: "January 20-27, 2026"
+  start: 2026-01-20
+  end: 2026-01-27
+
+- title: "WWW"
+  year: 2026
+  id: www26
+  full_name: "The Web Conference"
+  tier: T1
+  link: https://www2026.thewebconf.org/calls/research-tracks.html
+  deadline: "2025-09-30 23:59:59"
+  timezone: AoE
+  place: "Dubaï, UAE"
+  date: "June 29 - July 3, 2026"
+  start: 2026-06-29
+  end: 2026-07-03

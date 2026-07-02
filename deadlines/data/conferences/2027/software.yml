@@ -1,0 +1,26 @@
+- title: "ICSE"
+  year: 2027
+  id: icse27
+  full_name: "International Conference on Software Engineering"
+  tier: T1
+  link: https://conf.researchr.org/home/icse-2027
+  abstract_deadline: "2026-06-23 23:59"
+  deadline: "2026-06-30 23:59"
+  timezone: UTC-12
+  place: "Dublin, Ireland"
+  date: "April 25 - May 1, 2027"
+  start: 2027-04-25
+  end: 2027-05-01
+
+- title: "FSE"
+  year: 2027
+  id: fse27
+  full_name: "ACM International Conference on the Foundations of Software Engineering"
+  tier: T1
+  link: https://conf.researchr.org/home/fse-2027
+  deadline: "2026-10-02 23:59"
+  timezone: UTC-12
+  place: "Shenzhen, China"
+  date: "July 12-16, 2027"
+  start: 2027-07-12
+  end: 2027-07-16

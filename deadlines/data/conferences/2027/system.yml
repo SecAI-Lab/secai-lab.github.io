@@ -1,0 +1,108 @@
+- title: "OSDI"
+  year: 2027
+  id: osdi27
+  full_name: "USENIX Symposium on Operating Systems Design and Implementation"
+  link: https://www.usenix.org/conference/osdi27
+  abstract_deadline: "2026-12-01"
+  deadline: "2026-12-08"
+  timezone: TBA
+  place: "Baltimore, MD, USA"
+  date: "July 7-9, 2027"
+  start: 2027-07-07
+  end: 2027-07-09
+  note: "Official page lists deadline dates only; exact cutoff time/timezone not yet published."
+
+- title: "SOSP"
+  year: 2027
+  id: sosp27
+  full_name: "ACM Symposium on Operating Systems Principles"
+  link: https://www.sosp.org/
+  abstract_deadline: null
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  tba: true
+  note: "Official SOSP 2027 CFP/page not yet available."
+
+- title: "EuroSys"
+  year: 2027
+  id: eurosys27
+  full_name: "ACM European Conference on Computer Systems"
+  tier: T2
+  link: https://2027.eurosys.org/cfp.html
+  abstract_deadline:
+    - "2026-05-07 23:59:59"
+    - "2026-09-17 23:59:59"
+  deadline:
+    - "2026-05-14 23:59:59"
+    - "2026-09-24 23:59:59"
+  timezone: UTC-12
+  place: "Rabat, Morocco"
+  date: "April 19-23, 2027"
+  start: 2027-04-19
+  end: 2027-04-23
+  note: "Two submission rounds: Spring and Fall. All deadlines are AoE."
+
+- title: "ATC"
+  year: 2027
+  id: atc27
+  full_name: "ACM SIGOPS Annual Technical Conference"
+  tier: T2
+  link: https://sigops.org/s/conferences/atc/
+  abstract_deadline: null
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  tba: true
+  note: "Official ATC 2027 CFP/page not yet available."
+
+- title: "NSDI"
+  year: 2027
+  id: nsdi27
+  full_name: "USENIX Symposium on Networked Systems Design and Implementation"
+  tier: T1
+  link: https://www.usenix.org/conference/nsdi27/call-for-papers
+  abstract_deadline:
+    - "2026-04-16 23:59:59"
+    - "2026-09-10 23:59:59"
+  deadline:
+    - "2026-04-23 23:59:59"
+    - "2026-09-17 23:59:59"
+  timezone: UTC-4
+  place: "Providence, RI, USA"
+  date: "May 11-13, 2027"
+  start: 2027-05-11
+  end: 2027-05-13
+  note: "Two submission rounds: Spring and Fall. Official timezone is US EDT."
+
+- title: "DSN"
+  year: 2027
+  id: dsn27
+  full_name: "IEEE/IFIP International Conference on Dependable Systems and Networks"
+  link: https://www.dependability.org/?page_id=327
+  abstract_deadline: null
+  deadline: null
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  start: null
+  end: null
+  tba: true
+  note: "Official DSN 2027 CFP/page not yet available."
+
+- title: "EuroSec"
+  year: 2027
+  id: eurosec27
+  full_name: "European Workshop on Systems Security"
+  link: https://eurosec-workshop.github.io/
+  deadline: TBA
+  timezone: TBA
+  place: TBA
+  date: TBA
+  note: "Official EuroSec 2027 CFP/page not announced yet; dates, place, and deadline are not available."

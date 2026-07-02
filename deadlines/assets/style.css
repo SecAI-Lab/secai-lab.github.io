@@ -1,0 +1,167 @@
+.deadline-page {
+  --dl-bg: #f7f8fb;
+  --dl-card: #ffffff;
+  --dl-text: #182033;
+  --dl-muted: #687084;
+  --dl-line: #e7eaf0;
+  --dl-table-line: #c7d4ea;
+  --dl-accent: #3457d5;
+  --dl-danger: #b42318;
+  --dl-soon: #9a6700;
+  --dl-past: #667085;
+}
+.deadline-page * { box-sizing: border-box; }
+.deadline-page {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--dl-bg);
+  color: var(--dl-text);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.deadline-page .hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 44px 28px 28px;
+  background: var(--dl-card);
+  border-bottom: 1px solid var(--dl-line);
+}
+.deadline-page .eyebrow {
+  margin: 0 0 8px;
+  color: var(--dl-accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.deadline-page h1 { margin: 0; font-size: clamp(30px, 5vw, 48px); }
+.deadline-page .subtitle { margin: 10px 0 0; color: var(--dl-muted); }
+.deadline-page .clock {
+  min-width: 150px;
+  align-self: flex-start;
+  padding: 14px 16px;
+  border: 1px solid var(--dl-line);
+  border-radius: 14px;
+  background: #fafbff;
+  text-align: right;
+}
+.deadline-page .clock span, .deadline-page .clock strong { display: block; }
+.deadline-page .clock span { color: var(--dl-muted); font-size: 14px; }
+.deadline-page .controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 28px;
+  background: var(--dl-card);
+  border-bottom: 1px solid var(--dl-line);
+}
+.deadline-page .controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: center;
+}
+.deadline-page label { display: inline-flex; align-items: center; color: var(--dl-muted); font-size: 14px; }
+.deadline-page input, .deadline-page select {
+  margin-left: 6px;
+  padding: 8px 10px;
+  vertical-align: middle;
+  border: 1px solid var(--dl-line);
+  border-radius: 10px;
+  background: white;
+}
+.deadline-page .status {
+  margin: 22px 28px 0;
+  color: var(--dl-muted);
+  font-size: 14px;
+}
+.deadline-page .deadline-root { padding: 12px 28px 48px; }
+.deadline-page .year-block { margin-top: 22px; }
+.deadline-page .year-title { margin: 0 0 12px; font-size: 26px; }
+.deadline-page .category-block {
+  margin: 0 0 18px;
+  background: var(--dl-card);
+  border: 1px solid var(--dl-line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.deadline-page .category-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--dl-line);
+}
+.deadline-page .category-title h3 { margin: 0; font-size: 18px; }
+.deadline-page .category-title span { color: var(--dl-muted); font-size: 13px; }
+.deadline-page table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 0; }
+.deadline-page .col-conf { width: 20%; }
+.deadline-page .col-category { width: 12%; }
+.deadline-page .col-deadline { width: 26%; }
+.deadline-page .col-days { width: 10%; }
+.deadline-page .col-place { width: 16%; }
+.deadline-page .col-date { width: 16%; }
+.deadline-page th, .deadline-page td {
+  border: 0;
+  border-bottom: 1px solid var(--dl-table-line);
+  padding: 12px 14px;
+  vertical-align: middle;
+  text-align: left;
+  font-size: 14px;
+}
+.deadline-page td.deadline {
+  font-size: 13px;
+}
+.deadline-page .dl-paper-line {
+  font-weight: 700;
+  margin-top: 2px;
+}
+.deadline-page th {
+  color: var(--dl-muted);
+  background: #fbfcff;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.deadline-page tr:last-child td { border-bottom: 0; }
+.deadline-page .conf strong { display: block; font-size: 15px; }
+.deadline-page .conf a { color: var(--dl-accent); text-decoration: none; }
+.deadline-page .conf small { color: var(--dl-muted); }
+.deadline-page .badge {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: var(--dl-accent);
+  font-weight: 700;
+  font-size: 12px;
+}
+.deadline-page .badge-workshop {
+  display: inline-flex;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+  font-size: 11px;
+  vertical-align: middle;
+}
+.deadline-page .conf-name-highlight { color: var(--dl-accent); }
+.deadline-page .conf-name-default { color: var(--dl-text); }
+.deadline-page .days strong { font-size: 15px; }
+.deadline-page .days .past { color: var(--dl-past); }
+.deadline-page .days .soon { color: var(--dl-soon); }
+.deadline-page .days .urgent { color: var(--dl-danger); }
+.deadline-page footer {
+  padding: 22px 28px 34px;
+  color: var(--dl-muted);
+  border-top: 1px solid var(--dl-line);
+}
+@media (max-width: 820px) {
+  .deadline-page .hero, .deadline-page .controls { padding-left: 20px; padding-right: 20px; }
+  .deadline-page .hero { display: block; }
+  .deadline-page .clock { margin-top: 18px; text-align: left; }
+  .deadline-page .status { margin-left: 20px; margin-right: 20px; }
+  .deadline-page .deadline-root { padding-left: 20px; padding-right: 20px; }
+  .deadline-page table { display: block; overflow-x: auto; }
+  .deadline-page footer { padding-left: 20px; padding-right: 20px; }
+}

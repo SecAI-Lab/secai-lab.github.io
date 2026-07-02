@@ -4,10 +4,12 @@ layout: default
 <div class="wrapper">
 <div class="page">
 
+  {% unless page.hide_title %}
   <header class="post-header">
     <h2 class="post-title">{{ page.title }}</h2>
   </header>
   <br>
+  {% endunless %}
   {% comment %} {% include page_divider.html %} {% endcomment %}
 
   <article class="post-content">
