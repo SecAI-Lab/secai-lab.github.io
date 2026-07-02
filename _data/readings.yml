@@ -18,7 +18,7 @@
   pub_year: 2025
   discussion: "(Discussion)"
   
-  - title: "Agents Are All You Need for LLM Unlearning"
+- title: "Agents Are All You Need for LLM Unlearning"
   link: "https://arxiv.org/pdf/2502.00406"
   ppt_link: "https://docs.google.com/presentation/d/1Lab3A-m4lKPunZ0a5BD5uDiMkkpgXtwS9ntinXvgHmY/edit?slide=id.p1#slide=id.p1"
   code_link: ""
