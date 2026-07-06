@@ -7,6 +7,17 @@
 #   date: 2026.06.30
 #   pub_year: 2025
 #   discussion: "(Discussion)"
+
+- title: "Unlearned but Not Forgotten: Data Extraction after Exact Unlearning in LLM"
+  link: "https://arxiv.org/pdf/2505.24379"
+  ppt_link: "https://drive.google.com/drive/folders/1vLygHzjkinBa-J2H4zLLb1611bNZdMmR"
+  code_link: ""
+  presenter: Yujeong
+  conference: NeurIPS Workshop
+  date: 2026.07.06
+  pub_year: 2026
+  discussion: "(Discussion)"
+  
   
 - title: "PseudoFix: Refactoring Distorted Structures in Decompiled C Pseudocode"
   link: "https://dl.acm.org/doi/pdf/10.1109/ASE63991.2025.00075"
