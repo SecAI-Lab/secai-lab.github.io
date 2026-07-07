@@ -27,7 +27,7 @@
   conference: ASE
   date: 2026.06.30
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion)Decompiled C pseudocode is often hard to read because compilation and decompilation distort the original program structure, even when symbolic information is preserved. This paper proposes PseudoFix, a framework that refactors distorted decompiled pseudocode using LLMs and retrieval-based in-context learning. The authors first build a taxonomy of structure distortions, including non-idiomatic goto branches, unaligned loops, inverted conditional logic, predicate decomposition, temporary variables, and compiler-injected stack checks. PseudoFix retrieves similar distortion examples, uses them as few-shot demonstrations, and applies a model checker to verify semantic consistency after refactoring. The experiments show that PseudoFix improves readability, reduces code complexity, and performs better than prior LLM-based and decompiler-based approaches. However, the method still depends on the quality of retrieved examples and LLM outputs, and semantic checking may be limited by path explosion or incomplete execution coverage. Overall, PseudoFix is a useful step toward more readable decompiled code, but it should be considered an assistant for reverse engineers rather than a fully automatic replacement for manual analysis.(Yujeong)"
   
 - title: "Agents Are All You Need for LLM Unlearning"
   link: "https://arxiv.org/pdf/2502.00406"
