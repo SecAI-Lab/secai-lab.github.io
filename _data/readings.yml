@@ -1,12 +1,12 @@
-# - title: "JBShield: Defending Large Language Models from Jailbreak Attacks through Activated Concept Analysis and Manipulation"
-#   link: "https://www.usenix.org/system/files/usenixsecurity25-zhang-shenyi.pdf"
-#   ppt_link: ""
-#   code_link: ""
-#   presenter: Gahyun
-#   conference: USENIX
-#   date: 2026.06.30
-#   pub_year: 2025
-#   discussion: "(Discussion) Jailbreak attacks are dangerous because they can make safety-aligned LLMs ignore harmfulness signals and generate unsafe responses. This paper proposes JBShield, a defense framework based on activated concept analysis and manipulation. The key idea is that jailbreak prompts contain both toxic concepts and jailbreak concepts: the model can still recognize harmful semantics, but jailbreak concepts push it from refusal toward compliance. JBShield uses this insight in two ways: JBShield-D detects jailbreak prompts by checking whether both concepts are activated, and JBShield-M mitigates attacks by strengthening the toxic concept while weakening the jailbreak concept in hidden representations. Experiments show that JBShield achieves strong detection performance and greatly reduces attack success rates across multiple LLMs and jailbreak methods. However, the method requires access to internal hidden representations, so it is less suitable for closed-source models, and its performance may depend on the diversity of calibration jailbreak samples. Overall, JBShield is a meaningful defense because it goes beyond surface-level prompt filtering and directly targets the internal mechanism behind jailbreak behavior. (Yiyue)"
+ - title: "JBShield: Defending Large Language Models from Jailbreak Attacks through Activated Concept Analysis and Manipulation"
+   link: "https://www.usenix.org/system/files/usenixsecurity25-zhang-shenyi.pdf"
+   ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_JBShield0706.pdf"
+   code_link: ""
+   presenter: Gahyun
+   conference: USENIX
+   date: 2026.07.07
+   pub_year: 2025
+   discussion: "(Discussion) Jailbreak attacks are dangerous because they can make safety-aligned LLMs ignore harmfulness signals and generate unsafe responses. This paper proposes JBShield, a defense framework based on activated concept analysis and manipulation. The key idea is that jailbreak prompts contain both toxic concepts and jailbreak concepts: the model can still recognize harmful semantics, but jailbreak concepts push it from refusal toward compliance. JBShield uses this insight in two ways: JBShield-D detects jailbreak prompts by checking whether both concepts are activated, and JBShield-M mitigates attacks by strengthening the toxic concept while weakening the jailbreak concept in hidden representations. Experiments show that JBShield achieves strong detection performance and greatly reduces attack success rates across multiple LLMs and jailbreak methods. However, the method requires access to internal hidden representations, so it is less suitable for closed-source models, and its performance may depend on the diversity of calibration jailbreak samples. Overall, JBShield is a meaningful defense because it goes beyond surface-level prompt filtering and directly targets the internal mechanism behind jailbreak behavior. (Yiyue)"
 
 - title: "Unlearned but Not Forgotten: Data Extraction after Exact Unlearning in LLM"
   link: "https://arxiv.org/pdf/2505.24379"
