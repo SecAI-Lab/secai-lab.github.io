@@ -37,7 +37,7 @@
   conference: COLM
   date: 2026.06.22
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion)Unlearning in LLMs is difficult because removing specific information can reduce overall model utility, and many existing methods require access to model weights or expensive retraining. This paper proposes ALU, an agentic LLM unlearning framework that performs inference-time unlearning without updating model parameters. ALU uses multiple agents, including a Vanilla agent, AuditErase agent, Critic agent, and Composer agent, to detect target information, remove or rewrite it, evaluate the result, and produce a final safe response. The experiments show that ALU outperforms prior optimization-based and post-hoc methods on benchmarks such as TOFU, WMDP, and WPU, while also showing strong robustness against jailbreaks, target masking, multilingual prompts, and large forget sets. However, ALU does not actually erase knowledge from the model weights, so it is better understood as response-level suppression rather than true internal deletion. It can also become conservative when knowledge is highly entangled, sometimes reducing response utility. Overall, ALU is a practical and scalable approach to LLM unlearning, especially for real-world settings where retraining or model-weight access is not feasible.(Yiyue)"
   
   
 - title: "ReSym: Harnessing LLMs to Recover Variable and Data Structure Symbols from Stripped Binaries"
