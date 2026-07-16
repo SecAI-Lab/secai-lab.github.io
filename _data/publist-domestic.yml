@@ -1,3 +1,33 @@
+- title: "A Study of Information Leakage Across Topologies and Languages in LLM-based Multi-Agent Systems"
+  image: 
+  description: ""
+  authors: Gahyun Baek, Minseok Kim and Hyungjoon Koo
+  link:
+    url: https://www.kiise.or.kr/conference/kcc/2026/
+    display: Korea Computer Congress 한국컴퓨터종합학술대회 (2026)
+  highlight: 0
+  news2:
+
+- title: "Analysis on Rust Compiler Logic Bug in Safe Rust"
+  image: 
+  description: ""
+  authors: Jiyong Uhm, Hyoungjun Jeon and Hyungjoon Koo
+  link:
+    url: https://www.kiise.or.kr/conference/kcc/2026/
+    display: Korea Computer Congress 한국컴퓨터종합학술대회 (2026)
+  highlight: 0
+  news2:
+
+- title: "Trends in Model Context Protocol (MCP) Tool Poisoning Attacks and Defenses"
+  image: 
+  description: ""
+  authors: Woomin Kim, Yujeong Kwon and Hyungjoon Koo
+  link:
+    url: https://www.kiise.or.kr/conference/kcc/2026/
+    display: Korea Computer Congress 한국컴퓨터종합학술대회 (2026)
+  highlight: 0
+  news2:
+
 - title: "Security of Autonomous AI Agents: Trust Boundary-Based Attack Surface Analysis and Trends"
   image: 
   description: "Security threats to autonomous AI agents are evolving beyond output-level issues, such as traditional language model jailbreaks or harmful content generation, into behavioral threats that lead to system privilege abuse and host environment tampering. This study reconfigures recent agent security research and technical documentation from a trust boundary perspective, systematizing agent security threats into six distinct attack surfaces: 1) input and execution context, 2) retrieval and knowledge base, 3) external tools and function calling, 4) protocols and agent interworking, 5) privileges and runtime execution, and 6) state and long-term memory. Our analysis reveals that attacks such as indirect prompt injection, RAG-based knowledge poisoning, tool-calling misuse, confused deputy delegation, runtime execution vulnerabilities, and memory poisoning do not occur in isolation. Instead, they sequentially chain across trust boundaries, escalating into system-level compromises. Furthermore, this study demonstrates that the paradigm of agent security is shifting from mere prompt robustness to systemic controls based on least privilege and capability mediation. Finally, moving beyond single-turn text manipulation, we analyze complex threats targeting multi-turn execution flows and persistent states, and propose key future challenges: clarifying authorization delegation models, analyzing module composition-based complex attacks, dynamically evaluating multi-step execution flows, and ensuring memory integrity."

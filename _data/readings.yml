@@ -1,3 +1,23 @@
+- title: "Natural Language Autoencoders: Turning Claude’s thoughts into text"
+  link: "https://transformer-circuits.pub/2026/nla/"
+  ppt_link: "https://deniskim1.com/lab-meeting/0713_NLA.pdf"
+  code_link: "https://github.com/kitft/natural_language_autoencoders"
+  presenter: Minseok
+  conference: Transformer Circuits Thread
+  date: 2026.07.13
+  pub_year: 2026
+  discussion: "(Discussion) Later:) ()"
+
+- title: "Ruby: Unmasking Unsafe Rust in Stripped Binaries via Machine Learning"
+  link: "https://arxiv.org/pdf/2211.00111v3"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_RUBY_Unsafe_Rust_Binaries.pdf"
+  code_link: "https://zenodo.org/records/14217066"
+  presenter: Jiyong
+  conference: DSN
+  date: 2026.07.13
+  pub_year: 2026
+  discussion: "(Discussion) Later :) ()"
+
 - title: "JBShield: Defending Large Language Models from Jailbreak Attacks through Activated Concept Analysis and Manipulation"
   link: "https://www.usenix.org/system/files/usenixsecurity25-zhang-shenyi.pdf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_JBShield0706.pdf"
@@ -16,7 +36,7 @@
   conference: NeurIPS Workshop
   date: 2026.07.06
   pub_year: 2026
-  discussion: "(Discussion) Exact unlearning is often considered the safest way to remove private or harmful training data from LLMs, but this paper shows that it can still create privacy risks when attackers have access to both pre- and post-unlearning models or logits. The paper proposes a data extraction attack that uses reversed model guidance, where the pre-unlearning model helps guide the post-unlearning model toward the removed data distribution. It also applies token filtering to avoid low-quality or irrelevant generations. Experiments on MUSE, TOFU, WMDP, and a simulated medical dataset show that the method improves extraction success compared to using only the pre-unlearning model, sometimes significantly. This is important because it challenges the assumption that exact unlearning alone is enough for privacy protection. However, the attack depends on a strong threat model, including access to earlier checkpoints or saved logits and partial knowledge of the target data. Overall, this paper shows that unlearning evaluation should consider not only the final model, but also previous model states that adversaries may have saved. (Yiyue)"
+  discussion: "(Discussion) Exact unlearning is often considered the safest way to remove private or harmful training data from LLMs, but this paper shows that it can still create privacy risks when attackers have access to both pre- and post-unlearning models or logits. The paper proposes a data extraction attack that uses reversed model guidance, where the pre-unlearning model helps guide the post-unlearning model toward the removed data distribution. It also applies token filtering to avoid low-quality or irrelevant generations. Experiments on MUSE, TOFU, WMDP, and a simulated medical dataset show that the method improves extraction success compared to using only the pre-unlearning model, sometimes significantly. This is important because it challenges the assumption that exact unlearning alone is enough for privacy protection. However, the attack depends on a strong threat model, including access to earlier checkpoints or saved logits and partial knowledge of the target data. Overall, this paper shows that unlearning evaluation should consider not only the final model, but also previous model states that adversaries may have saved. (Hyoungjun)"
   
   
 - title: "PseudoFix: Refactoring Distorted Structures in Decompiled C Pseudocode"
