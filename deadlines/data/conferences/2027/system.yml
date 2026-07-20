@@ -3,9 +3,9 @@
   id: osdi27
   full_name: "USENIX Symposium on Operating Systems Design and Implementation"
   link: https://www.usenix.org/conference/osdi27
-  abstract_deadline: "2026-12-01"
-  deadline: "2026-12-08"
-  timezone: TBA
+  abstract_deadline: "2026-12-01 17:59"
+  deadline: "2026-12-08 17:59"
+  timezone: UTC-5
   place: "Baltimore, MD, USA"
   date: "July 7-9, 2027"
   start: 2027-07-07
