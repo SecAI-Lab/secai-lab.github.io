@@ -22,14 +22,14 @@
   full_name: "USENIX Security Symposium"
   type: conference
   tier: T2
-  link: https://www.usenix.org/conference/usenixsecurity27
+  link: https://www.usenix.org/conference/usenixsecurity27/call-for-papers
   registration_deadline:
     - "2026-08-18"
     - "2027-01-19"
   deadline:
     - "2026-08-25"
     - "2027-01-26"
-  timezone: TBA
+  timezone: UTC-12
   place: "Denver, CO, USA"
   date: "August 11-13, 2027"
   start: 2027-08-11
