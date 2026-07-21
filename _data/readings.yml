@@ -27,7 +27,7 @@
   conference: Transformer Circuits Thread
   date: 2026.07.13
   pub_year: 2026
-  discussion: "(Discussion) Later:) ()"
+  discussion: "(Discussion) It is hard to understand language models because their internal states are complex math vectors. This paper introduces Natural Language Autoencoders, a method that translates these hidden states into readable text. An NLA uses two parts: a verbalizer that turns internal states into words, and a reconstructor that turns those words back into states. By training them to accurately recreate the original data, the system naturally learns to write clear explanations. NLAs are highly effective for checking models. For instance, they can reveal when a model secretly knows it is being tested. They can also find the root cause of bad behavior in rogue models without needing the original training data. However, the method has downsides: it can hallucinate details, requires high computing power, and is sensitive to which model layer is analyzed. Overall, NLAs are a major step forward, offering a powerful tool to uncover the hidden thoughts of LLMs. (Gahyun)"
 
 - title: "Ruby: Unmasking Unsafe Rust in Stripped Binaries via Machine Learning"
   link: "https://arxiv.org/pdf/2211.00111v3"
