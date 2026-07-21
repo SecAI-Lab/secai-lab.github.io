@@ -1,22 +1,22 @@
 - title: "DecLLM: LLM-Augmented Recompilable Decompilation for Enabling Programmatic Use of Decompiled Code"
-  link: ""
-  ppt_link: ""
+  link: "https://dl.acm.org/doi/pdf/10.1145/3728958"
+  ppt_link: "https://docs.google.com/presentation/d/1KnDW37jokxkvv_DibcxqLujQuOMYXwY_/edit?usp=drivesdk&ouid=115472134383580308853&rtpof=true&sd=true"
   code_link: ""
   presenter: Hyoungjun
   conference: ISSTA
   date: 2026.07.20
   pub_year: 2025
-  discussion: "(Discussion) Later :) ()"
+  discussion: "(Discussion) DecLLM presents an iterative, LLM-based framework designed to transform human-readable decompiler outputs into fully recompilable C code. Its main strength is that it bridges the gap between traditional decompilation and programmatic code analysis by combining static compiler error messages with dynamic runtime feedback to systematically guide the LLM in repairing broken code. The approach is highly valuable because it revives the ability to run advanced source-level analysis tools like CodeQL directly on decompiled binaries. The authors demonstrate that DecLLM significantly outperforms existing rule-based and non-iterative LLM methods, achieving up to a 78.3% recompilation success rate on competitive programming datasets and a 55.5% success rate on real-world Coreutils binaries. However, its limitations are that it still fails on roughly 30% of complex cases, highlighting the current boundaries of off-the-shelf LLMs when dealing with severe decompilation artifacts. Furthermore, the reliance on dynamic runtime validation requires the availability of concrete test cases and expected outputs, a constraint that could severely restrict its application in scenarios like malware analysis or proprietary firmware reverse engineering where such inputs are rarely available. Overall, DecLLM is a strong and practical contribution that advances automated vulnerability discovery, but its dependency on functional test suites and the inherent limits of current language models prevent it from providing a universal recompilation guarantee for all real-world binaries. (Minseok)"
 
 - title: "REVDECODE: Enhancing Binary Function Matching with Context-Aware Graph Representations and Relevance Decoding"
   link: "https://www.usenix.org/conference/usenixsecurity25/presentation/ren"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_RevDecode_260720.pdf"
-  code_link: ""
+  code_link: "https://github.com/cake-lab/RevDecode"
   presenter: Mijin
   conference: USENIX
   date: 2026.07.20
   pub_year: 2025
-  discussion: "(Discussion) Later :) ()"
+  discussion: "(Discussion) REVDECODE presents a context-aware framework that improves binary function matching by incorporating surrounding code relationships rather than relying solely on isolated structural similarity. A primary advantage of this work is its design as a meta-framework capable of enhancing the ranking accuracy of existing matchers. It achieves this by applying a Viterbi-inspired graph traversal algorithm to identify the most relevant function matches based on their environment. This approach proves highly practical, utilizing GPU-optimized algorithms to maintain scalability while demonstrating significant improvements across diverse datasets, including open-source libraries and synthetic frankenbinaries. Specifically, the tool successfully improves match rankings for 56.3% to 98.8% of evaluated functions. Despite these strengths, the method introduces notable performance overhead due to the complexity of graph traversal and fundamentally depends on the quality of the reference corpus. Furthermore, the authors acknowledge that the framework is not built to withstand active obfuscation. In adversarial environments like packed malware or code with manipulated call graphs, the contextual signals it requires are easily disrupted. Ultimately, REVDECODE offers a valuable advancement for standard reverse engineering and vulnerability discovery, though its reliance on contextual integrity limits its effectiveness against sophisticated, actively obfuscated threats. (Jiyong)"
 
 
 - title: "Natural Language Autoencoders: Turning Claude’s thoughts into text"
@@ -37,12 +37,12 @@
   conference: DSN
   date: 2026.07.13
   pub_year: 2026
-  discussion: "(Discussion) Later :) ()"
+  discussion: "(Discussion) Ruby introduces a machine learning-based approach to identify unsafe code regions within stripped Rust binaries, operating entirely without source code or debug symbols. Its main strength is its ability to capture subtle, instruction-level differences between safe and unsafe Rust caused by compiler optimizations, successfully identifying 91.75% of unsafe regions with a low false positive rate of 6.16%. The tool is highly valuable because it enables security analysts to pinpoint vulnerable code in proprietary or closed-source Rust applications, such as firmware and kernel drivers, and significantly accelerates downstream analysis tools like symbolic execution and directed fuzzing. However, its limitations are that as a probabilistic machine learning model, it still produces some false positives and misses roughly 8% of unsafe regions. Furthermore, its accuracy inherently depends on how well its training dataset represents diverse compiler toolchains and target architectures. Overall, Ruby is a strong and practical contribution for binary-level Rust vulnerability discovery, but its probabilistic results should be used as an analytical guide rather than an absolute guarantee of pinpointing all unsafe operations. (Yujeong)"
 
 - title: "JBShield: Defending Large Language Models from Jailbreak Attacks through Activated Concept Analysis and Manipulation"
   link: "https://www.usenix.org/system/files/usenixsecurity25-zhang-shenyi.pdf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_JBShield0706.pdf"
-  code_link: ""
+  code_link: "https://github.com/NISPLab/JBShield"
   presenter: Gahyun
   conference: USENIX
   date: 2026.07.07
@@ -52,7 +52,7 @@
 - title: "Unlearned but Not Forgotten: Data Extraction after Exact Unlearning in LLM"
   link: "https://arxiv.org/pdf/2505.24379"
   ppt_link: "https://drive.google.com/drive/folders/1vLygHzjkinBa-J2H4zLLb1611bNZdMmR"
-  code_link: ""
+  code_link: "https://github.com/Nicholas0228/unlearned_data_extraction_llm"
   presenter: Yujeong
   conference: NeurIPS Workshop
   date: 2026.07.06
