@@ -1,3 +1,24 @@
+- title: "DecLLM: LLM-Augmented Recompilable Decompilation for Enabling Programmatic Use of Decompiled Code"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Hyoungjun
+  conference: ISSTA
+  date: 2026.07.20
+  pub_year: 2025
+  discussion: "(Discussion) Later :) ()"
+
+- title: "REVDECODE: Enhancing Binary Function Matching with Context-Aware Graph Representations and Relevance Decoding"
+  link: "https://www.usenix.org/conference/usenixsecurity25/presentation/ren"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_RevDecode_260720.pdf"
+  code_link: ""
+  presenter: Mijin
+  conference: USENIX
+  date: 2026.07.20
+  pub_year: 2025
+  discussion: "(Discussion) Later :) ()"
+
+
 - title: "Natural Language Autoencoders: Turning Claude’s thoughts into text"
   link: "https://transformer-circuits.pub/2026/nla/"
   ppt_link: "https://deniskim1.com/lab-meeting/0713_NLA.pdf"
@@ -244,7 +265,7 @@
   
 - title: "FuncVul: An Effective Function Level Vulnerability Detection Model Using LLM and Code Chunk"
   link: "https://dl.acm.org/doi/10.1007/978-3-032-07884-1_9"
-  ppt_link: "https://secai.skku.edu/assets/paper-presentation/260330_FuncVul.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_FuncVul_260330.pdf"
   code_link: "https://github.com/sajalhalder/FuncVul"
   presenter: Mijin
   conference: ESORICS
