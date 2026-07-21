@@ -1,3 +1,14 @@
+- title: "2026 AI보안 워크샵"
+  images:
+    - filename: 260714.jpg
+      date: "2026-07-14"
+    - filename: 260715_1.jpg
+      date: "2026-07-15"
+    - filename: 260715_2.jpg
+      date: "2026-07-15"
+    - filename: 260715_3.jpg
+      date: "2026-07-15"
+
 - title: "The ACM International Conference on the Foundations of Software Engineering (FSE'26)"
   images:
     - filename: FSE_26/260707_1.png
@@ -95,7 +106,7 @@
     - filename: 250717.jpg
       date: "2025-07-17"
 
-- title: "AI보안 워크샵"
+- title: "2025 AI보안 워크샵"
   images:
     - filename: 250716.jpg
       date: "2025-07-16"
