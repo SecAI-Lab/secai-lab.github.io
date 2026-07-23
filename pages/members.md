@@ -28,7 +28,7 @@ sitemap: true
   padding: 20px;
   display: flex;
   gap: 20px;
-  align-items: flex-start;
+  align-items: center;
   transition: all 0.2s ease;
 }
 
@@ -61,8 +61,8 @@ sitemap: true
 }
 
 .member-info h5 {
-  margin-top: 48px;
-  margin-bottom: 24px;
+  margin-top: 0;
+  margin-bottom: 16px;
   font-weight: 600;
   line-height: 1.3;
 }
@@ -135,14 +135,17 @@ sitemap: true
   .alumni-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 16px;
   margin-top: 20px;
   margin-bottom: 24px;
 }
   .alumni-card {
   border-radius: 16px;
-  padding: 16px;
-  text-align: center;
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
 }
   .alumni-card img {
   width: 120px;
@@ -150,19 +153,33 @@ sitemap: true
   object-fit: cover;
   border-radius: 12px;
   display: block;
-  margin: 0 auto 12px auto;
+  flex-shrink: 0;
+  margin: 0;
+}
+  .alumni-card .alumni-info {
+  flex: 1;
+  min-width: 0;
 }
   .alumni-card h5 {
-  margin-top: 8px;
+  margin-top: 0;
   margin-bottom: 8px;
   font-weight: 600;
   line-height: 1.3;
-  font-size: 16px;
+  font-size: 17px;
+}
+  .alumni-card .alumni-affiliation {
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.4;
+  display: block;
+  margin-bottom: 8px;
+  color: #000000;
+  word-break: break-word;
 }
   .alumni-card em {
   font-style: normal;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   display: block;
 }
 
@@ -179,9 +196,14 @@ sitemap: true
     grid-template-columns: 1fr;
   }
 
+  .alumni-card {
+    gap: 12px;
+    padding: 12px;
+  }
+
   .alumni-card img {
-    width: 90px;
-    height: 120px;
+    width: 70px;
+    height: 90px;
   }
 }
   
@@ -422,18 +444,33 @@ sitemap: true
 
 <div class="alumni-grid">
 {% for alumni in site.data.alumni_members %}
+  {% if alumni.name contains "(" %}
+    {% assign alumni_name_parts = alumni.name | split: " (" %}
+    {% assign alumni_display_name = alumni_name_parts[0] %}
+    {% assign alumni_affiliation = alumni_name_parts[1] | remove: ")" %}
+  {% else %}
+    {% assign alumni_display_name = alumni.name %}
+    {% assign alumni_affiliation = "" %}
+  {% endif %}
   <div class="alumni-card">
     <img src="{{ site.url }}{{ site.baseurl }}/images/members/{{ alumni.photo }}" class="img-responsive"/>
 
-    <h5>{{ alumni.name }}</h5>
+    <div class="alumni-info">
+      <h5>{{ alumni_display_name }}</h5>
 
-    {% if alumni.course %}
-      <em><strong>Course:</strong> {{ alumni.course }}</em>
-    {% endif %}
+      {% if alumni_affiliation != "" %}
+        <em class="alumni-affiliation">{{ alumni_affiliation }}</em>
+      {% endif %}
 
-    {% if alumni.left %}
-      <em><strong>Left:</strong> {{ alumni.left }}</em>
-    {% endif %}
+      {% if alumni.course %}
+        <em><strong>Course:</strong> {{ alumni.course }}</em>
+      {% endif %}
+
+      {% if alumni.left %}
+        <em><strong>Left:</strong> {{ alumni.left }}</em>
+      {% endif %}
+    </div>
+
   </div>
 {% endfor %}
 </div>
@@ -442,6 +479,7 @@ sitemap: true
 <h4> Visiting </h4>
 
 {% for visitor in site.data.visiting_members %}
+
   <p>
     <em>{{ visitor.name }}</em>
     {% if visitor.info %}
