@@ -75,10 +75,15 @@ gantt
   dateFormat  YYYY-MM-DD
   axisFormat  %m/%y
   section Fundings
-  [12] Modular AI Watermarking : 2025-06-01, 36M
+  [13] AI Forensics: 2026-04-01, 45M
+  [12] Modular AI Watermarking: 2025-06-01, 36M
   [11] Binary Micro-patching: 2024-06-01, 33M
   [10] Securing Memory-Safety Languages: 2024-06-01, 48M
 </div>
+
+[13] _Development of Digital Forensics Technologies for On-Premises and On-Device AI Models_,
+Supported by KNPA (Korean National Police Agency); 
+A joint project led by [Taekyoung Kwon](https://seclab.yonsei.ac.kr/) at Yonsei University.
 
 [12] _Research Laboratory for Modular AI Watermarking for Generative AI Compliance_,
 Supported by NRF (National Research Foundation of Korea);
