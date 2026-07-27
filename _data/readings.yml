@@ -1,3 +1,23 @@
+- title: "Evaluating the Robustness of a Production Malware Detection System to Transferable Adversarial Attacks"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765118"
+  ppt_link: "https://docs.google.com/presentation/d/19pgnfJz05sS0gaqtcXdDUDm61tkc9j2-92n91vBw2Us/edit?usp=sharing"
+  code_link: "https://github.com/google/magika"
+  presenter: Shakhzod
+  conference: CCS
+  date: 2026.07.27
+  pub_year: 2025
+  discussion: "(Discussion)"
+
+- title: "Systematic Testing of C++ Abstraction Recovery Systems by Iterative Compiler Model Refinement"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3733822.3764669"
+  ppt_link: "https://docs.google.com/presentation/d/16m9BkTrh4lW5WU35aIgz9nFwh7RakhCcy71lcmKNTCU/edit?usp=sharing"
+  code_link: "https://github.com/sei-eschwartz/emcee"
+  presenter: Yiyue
+  conference: SURE
+  date: 2026.07.27
+  pub_year: 2025
+  discussion: "(Discussion)"
+
 - title: "DecLLM: LLM-Augmented Recompilable Decompilation for Enabling Programmatic Use of Decompiled Code"
   link: "https://dl.acm.org/doi/pdf/10.1145/3728958"
   ppt_link: "https://docs.google.com/presentation/d/1KnDW37jokxkvv_DibcxqLujQuOMYXwY_/edit?usp=drivesdk&ouid=115472134383580308853&rtpof=true&sd=true"
