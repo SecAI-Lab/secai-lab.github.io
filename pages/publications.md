@@ -383,8 +383,20 @@ sitemap: true
     transition: all 0.2s ease;
 }
 
+/* Web button styling */
+.web-link {
+    padding: 0.3rem 0.6rem;
+    background: #f8f9fa;
+    color: #495057;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
 /* Icon spacing */
-.github-link i, .slides-link i {
+.github-link i, .slides-link i, .web-link i {
     margin-right: 0.3rem;
 }
 
@@ -598,6 +610,11 @@ sitemap: true
                          Slides
                     </a>
                     {% endif %}
+                    {% if publi.web %}
+                    <a href="{{ publi.web }}" class="publication-link web-link" target="_blank">
+                         Web
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             {% endif %}
@@ -629,6 +646,11 @@ sitemap: true
                     {% if publi.slides %}
                     <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
                         Slides
+                    </a>
+                    {% endif %}
+                    {% if publi.web %}
+                    <a href="{{ publi.web }}" class="entry-link web-link" target="_blank">
+                        Web
                     </a>
                     {% endif %}
                 </div>

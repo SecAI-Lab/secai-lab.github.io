@@ -63,6 +63,7 @@
   highlight: 1
   github: "https://zenodo.org/records/16869733"
   slides: "https://kevinkoo001.github.io/assets/pdf/ccs25-apt-slides.pdf"
+  web: "https://lngt-apt-study-map.vercel.app/"
   news2:
 
 - title: "BOOTKITTY: A Stealthy Bootkit-Rootkit Against Modern Operating Systems"
