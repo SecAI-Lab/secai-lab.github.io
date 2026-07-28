@@ -16,7 +16,7 @@
   conference: SURE
   date: 2026.07.27
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) EmCee presents a model-based framework for systematically testing C++ abstraction recovery systems through iterative compiler model refinement. Its main strength is that it combines grey-box fuzzing with a simplified compiler model to generate difficult program structures and detect unsound inference rules that may be missed through manual testing. The authors demonstrate its effectiveness by identifying 27 soundness problems in OOAnalyzer and three in VirtAnalyzer. However, the approach only evaluates local soundness under a perfect-knowledge assumption and currently models Microsoft Visual C++ for 32-bit x86 executables, limiting its generalizability to other compilers and architectures. Overall, EmCee is a valuable contribution that improves the reliability of abstraction recovery tools, but broader compiler support and system-level evaluation are needed. (Mijin)"
 
 - title: "DecLLM: LLM-Augmented Recompilable Decompilation for Enabling Programmatic Use of Decompiled Code"
   link: "https://dl.acm.org/doi/pdf/10.1145/3728958"
