@@ -34,7 +34,7 @@
   date: "August 11-13, 2027"
   start: 2027-08-11
   end: 2027-08-13
-  note: "Official page lists paper registration and submission dates only; exact cutoff time/timezone is not yet published."
+  note: "Official CFP lists mandatory registration and paper submission deadlines as AoE. Mandatory registration is mapped to abstract_deadline for site compatibility."
 
 - title: "NDSS"
   year: 2027
@@ -104,14 +104,14 @@
   full_name: "ACM Conference on Computer and Communications Security"
   type: conference
   tier: TBA
-  link: https://www.sigsac.org/ccs.html
+  link: https://www.sigsac.org/ccs/CCS2027/
   deadline: null
   timezone: TBA
-  place: "TBA"
-  date: "TBA"
+  place: "Atlanta, GA, USA"
+  date: "October 2027"
   start: null
   end: null
-  note: "Official CCS 2027 conference page/CFP not publicly available yet."
+  note: "Official CCS 2027 page is available and lists Atlanta, USA in October 2027; CFP and deadlines are not announced yet."
 
 - title: "ASE"
   year: 2027
@@ -292,16 +292,16 @@
 - title: "DFRWS EU"
   year: 2027
   id: dfrws-eu27
-  full_name: "Digital Forensics Research Conference Europe"
+  full_name: "Digital Forensics Conference Europe"
   tier: "N/A"
-  link: https://dfrws.org/conferences/dfrws-eu-2027/
+  link: https://dfrws.org/conferences/dfceurope2027/
   deadline: TBA
   timezone: TBA
   place: "Edinburgh, Scotland"
   date: "March 30 - April 2, 2027"
   start: 2027-03-30
   end: 2027-04-02
-  note: "Paper submission deadline not announced yet."
+  note: "Official page lists participation categories, but the EasyChair link and paper submission deadline are not announced yet."
 
 - title: "AISec"
   year: 2027
