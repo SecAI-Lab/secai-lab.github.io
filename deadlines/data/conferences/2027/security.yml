@@ -23,7 +23,7 @@
   type: conference
   tier: T2
   link: https://www.usenix.org/conference/usenixsecurity27/call-for-papers
-  deadline:
+  abstract_deadline:
     - "2026-08-25"
     - "2027-01-26"
   timezone: UTC-12
