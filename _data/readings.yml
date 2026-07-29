@@ -6,7 +6,7 @@
   conference: CCS
   date: 2026.07.27
   pub_year: 2025
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper shows that the ML file-type router inside a production malware detection pipeline is itself an attack surface. Its main strength is targeting Google's open-source Magika router rather than the malware classifier, combining gradient-guided byte search with format-preserving constraints so modified files stay valid and executable. The authors demonstrate effectiveness by misclassifying 90% of files with five byte changes and delivering a modified malicious PDF end-to-end through Gmail, with the resulting defense deployed to production. However, the defense rests on key secrecy rather than robustness, is capped at one AES round because accuracy falls from 99% to 63%, and is never tested against adaptive attacks; format-preserving experiments cover only 7 of 113 types, and end-to-end validation uses a single sample without measuring actual detection loss. Overall, this is a valuable contribution exposing an underexamined attack surface in production ML pipelines, but adaptive-attack evaluation and broader coverage are needed. (Hyoungjun)"
 
 - title: "Systematic Testing of C++ Abstraction Recovery Systems by Iterative Compiler Model Refinement"
   link: "https://dl.acm.org/doi/pdf/10.1145/3733822.3764669"
