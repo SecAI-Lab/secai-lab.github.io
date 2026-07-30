@@ -1,0 +1,60 @@
+# Auto-updates deadlines/data/conferences/<year>/<category>.yml from upstream
+# community deadline datasets. Runs daily and on manual dispatch.
+#
+# Note: pushes made with the default GITHUB_TOKEN do NOT trigger other GitHub
+# Actions workflows (so this job can never start a self-trigger loop), but
+# GitHub Pages classic branch builds still deploy on bot pushes.
+
+name: Update conference deadlines
+
+on:
+  schedule:
+    # 21:00 UTC == 06:00 KST, daily
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-deadlines
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install 'pyyaml==6.0.*'
+
+      # If the updater exits non-zero (all upstream sources unreachable,
+      # validation failure, ...) this step fails and the whole job fails loudly.
+      # The full change/warning report is mirrored to the job summary so every
+      # automated run is auditable at a glance from the Actions tab.
+      - name: Run deadline updater
+        run: |
+          set -o pipefail
+          python3 deadlines/scripts/update_deadlines.py | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push changes
+        run: |
+          if [ -n "$(git status --porcelain -- deadlines/data/conferences)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -- deadlines/data/conferences
+            git commit -m "Auto-update conference deadlines"
+            # A human may have pushed to master while this job ran; rebase our
+            # single data-only commit instead of failing the push.
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          else
+            echo "No changes to commit."
+          fi

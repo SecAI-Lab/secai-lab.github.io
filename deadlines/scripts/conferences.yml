@@ -1,0 +1,434 @@
+# Mapping config for deadlines/scripts/update_deadlines.py (machine-read).
+#
+# One entry per tracked venue.
+# Fields:
+#   key         canonical title emitted into the data files; must match the
+#               frontend TARGETS keys in deadlines/assets/deadline-tracker.js.
+#   category    output bucket: system | software | security | ai
+#   type        conference | workshop  (used for the `type` field of NEW records)
+#   slug        id prefix; record ids are "<slug><2-digit year>", e.g. ccs26
+#   full_name   long name used for newly created records (existing records keep theirs)
+#   tier        lab-curated tier used for newly created records (T1/T2/T3/T4/"N/A").
+#               null = unknown -> the field is omitted on new records.
+#               NEVER taken from upstream; existing records always keep their own tier.
+#   aliases     titles used to associate records already present in the repo data
+#               files with this target (same matching rule as the frontend).
+#   sources     upstream locators:
+#                 ccfddl: file path under conference/ in github.com/ccfddl/ccf-deadlines
+#                 secdl:  record `name` in sec-deadlines.github.io _data/conferences.yml,
+#                         either a plain string or {name, description_contains}
+#                         (description_contains disambiguates duplicate names).
+#               "manual-only": no reliable machine source; the script never touches
+#               this target - curate it by hand in the data files / manual.yml.
+#
+# Source priority: when both sources cover the same edition year, the first source
+# in source_priority wins (sec-deadlines tracks extensions faster; ccfddl provides
+# multi-year backfill). A per-entry `source_priority` key overrides the default.
+
+defaults:
+  source_priority: [secdl, ccfddl]
+
+conferences:
+  # ---------------- system ----------------
+  - key: "OSDI"
+    category: system
+    type: conference
+    slug: osdi
+    full_name: "USENIX Symposium on Operating Systems Design and Implementation"
+    tier: null
+    aliases: ["OSDI"]
+    sources:
+      ccfddl: "SE/osdi.yml"
+
+  - key: "SOSP"
+    category: system
+    type: conference
+    slug: sosp
+    full_name: "ACM Symposium on Operating Systems Principles"
+    tier: null
+    aliases: ["SOSP"]
+    sources:
+      ccfddl: "SE/sosp.yml"
+
+  - key: "EuroSys"
+    category: system
+    type: conference
+    slug: eurosys
+    full_name: "ACM European Conference on Computer Systems"
+    tier: T2
+    aliases: ["EuroSys"]
+    sources:
+      ccfddl: "DS/eurosys.yml"
+
+  - key: "ATC"
+    category: system
+    type: conference
+    slug: atc
+    full_name: "ACM SIGOPS Annual Technical Conference"
+    tier: T2
+    aliases: ["ATC", "USENIX ATC", "SIGOPS ATC"]
+    sources:
+      # Upstream record was retitled 'USENIX ATC' -> 'SIGOPS ATC' (ACM took ATC
+      # over after 2025); we select by file path, never by title.
+      ccfddl: "DS/atc.yml"
+
+  - key: "NSDI"
+    category: system
+    type: conference
+    slug: nsdi
+    full_name: "USENIX Symposium on Networked Systems Design and Implementation"
+    tier: T1
+    aliases: ["NSDI"]
+    sources:
+      ccfddl: "NW/nsdi.yml"
+
+  - key: "DSN"
+    category: system
+    type: conference
+    slug: dsn
+    full_name: "IEEE/IFIP International Conference on Dependable Systems and Networks"
+    tier: null
+    aliases: ["DSN", "Dependable Systems and Networks"]
+    sources:
+      # ccfddl files DSN under SC (security), not DS.
+      ccfddl: "SC/dsn.yml"
+      secdl: "DSN"
+
+  # ---------------- software ----------------
+  - key: "ICSE"
+    category: software
+    type: conference
+    slug: icse
+    full_name: "International Conference on Software Engineering"
+    tier: T1
+    aliases: ["ICSE"]
+    sources:
+      ccfddl: "SE/icse.yml"
+
+  - key: "FSE"
+    category: software
+    type: conference
+    slug: fse
+    full_name: "ACM International Conference on the Foundations of Software Engineering"
+    tier: T1
+    aliases: ["FSE", "ESEC/FSE", "Foundations of Software Engineering"]
+    sources:
+      # TRAP: ccfddl SC/fse.yml and the sec-deadlines 'FSE' record are Fast
+      # Software Encryption (crypto). Only the SE-path file is ours.
+      ccfddl: "SE/fse.yml"
+
+  - key: "ASE"
+    category: software
+    type: conference
+    slug: ase
+    full_name: "IEEE/ACM International Conference on Automated Software Engineering"
+    tier: null
+    aliases: ["ASE", "Automated Software Engineering"]
+    sources:
+      ccfddl: "SE/ase.yml"
+
+  - key: "ISSTA"
+    category: software
+    type: conference
+    slug: issta
+    full_name: "ACM SIGSOFT International Symposium on Software Testing and Analysis"
+    tier: null
+    aliases: ["ISSTA"]
+    sources:
+      ccfddl: "SE/issta.yml"
+
+  # ---------------- ai ----------------
+  - key: "IJCAI"
+    category: ai
+    type: conference
+    slug: ijcai
+    full_name: "International Joint Conference on Artificial Intelligence"
+    tier: T2
+    aliases: ["IJCAI", "IJCAI-ECAI"]
+    sources:
+      ccfddl: "AI/ijcai.yml"
+
+  - key: "AAAI"
+    category: ai
+    type: conference
+    slug: aaai
+    full_name: "AAAI Conference on Artificial Intelligence"
+    tier: T1
+    aliases: ["AAAI"]
+    sources:
+      ccfddl: "AI/aaai.yml"
+
+  - key: "WWW"
+    category: ai
+    type: conference
+    slug: www
+    full_name: "The Web Conference"
+    tier: T1
+    aliases: ["WWW", "The Web Conference", "World Wide Web"]
+    sources:
+      # ccfddl files WWW under MX (interdisciplinary).
+      ccfddl: "MX/www.yml"
+
+  # ---------------- security ----------------
+  - key: "S&P"
+    category: security
+    type: conference
+    slug: sp
+    full_name: "IEEE Symposium on Security and Privacy"
+    tier: T1
+    aliases: ["S&P", "S&P (Oakland)", "Oakland", "IEEE Symposium on Security and Privacy"]
+    sources:
+      ccfddl: "SC/sp.yml"
+      secdl: "S&P (Oakland)"
+
+  - key: "CCS"
+    category: security
+    type: conference
+    slug: ccs
+    full_name: "ACM Conference on Computer and Communications Security"
+    tier: T1
+    aliases: ["CCS", "Computer and Communications Security"]
+    sources:
+      ccfddl: "SC/ccs.yml"
+      secdl: "CCS"
+
+  - key: "USENIX Security"
+    category: security
+    type: conference
+    slug: usenix-security
+    full_name: "USENIX Security Symposium"
+    tier: T2
+    aliases: ["USENIX Security", "USENIX Security Symposium"]
+    sources:
+      ccfddl: "SC/uss.yml"
+      secdl: "USENIX Security"
+
+  - key: "NDSS"
+    category: security
+    type: conference
+    slug: ndss
+    full_name: "ISOC Network and Distributed System Security Symposium"
+    tier: T2
+    aliases: ["NDSS", "Network and Distributed System Security"]
+    sources:
+      ccfddl: "SC/ndss.yml"
+      secdl: "NDSS"
+
+  - key: "ACSAC"
+    category: security
+    type: conference
+    slug: acsac
+    full_name: "Annual Computer Security Applications Conference"
+    tier: T3
+    aliases: ["ACSAC", "Annual Computer Security Applications Conference"]
+    sources:
+      ccfddl: "SC/acsac.yml"
+      secdl: "ACSAC"
+
+  - key: "RAID"
+    category: security
+    type: conference
+    slug: raid
+    full_name: "International Symposium on Research in Attacks, Intrusions and Defenses"
+    tier: "N/A"
+    aliases: ["RAID", "Research in Attacks, Intrusions and Defenses"]
+    sources:
+      ccfddl: "SC/raid.yml"
+      secdl: "RAID"
+
+  - key: "ASIACCS"
+    category: security
+    type: conference
+    slug: asiaccs
+    full_name: "ACM Asia Conference on Computer and Communications Security"
+    tier: T3
+    aliases: ["ASIACCS", "Asia CCS", "AsiaCCS", "ASIA CCS"]
+    sources:
+      ccfddl: "SC/asiaccs.yml"
+      secdl: "ASIA CCS"
+
+  - key: "ESORICS"
+    category: security
+    type: conference
+    slug: esorics
+    full_name: "European Symposium on Research in Computer Security"
+    tier: "N/A"
+    aliases: ["ESORICS", "European Symposium on Research in Computer Security"]
+    sources:
+      ccfddl: "SC/esorics.yml"
+      secdl: "ESORICS"
+
+  - key: "EuroS&P"
+    category: security
+    type: conference
+    slug: eurosp
+    full_name: "IEEE European Symposium on Security and Privacy"
+    tier: "N/A"
+    aliases: ["Euro S&P", "EuroS&P", "EuroSP", "European Symposium on Security and Privacy"]
+    sources:
+      ccfddl: "SC/eurosp.yml"
+      secdl: "Euro S&P"
+
+  - key: "CODASPY"
+    category: security
+    type: conference
+    slug: codaspy
+    full_name: "ACM Conference on Data and Application Security and Privacy"
+    tier: "N/A"
+    aliases: ["CODASPY", "Data and Application Security and Privacy"]
+    sources:
+      ccfddl: "SC/codaspy.yml"
+      secdl: "CODASPY"
+
+  - key: "DIMVA"
+    category: security
+    type: conference
+    slug: dimva
+    full_name: "Conference on Detection of Intrusions and Malware & Vulnerability Assessment"
+    tier: "N/A"
+    aliases: ["DIMVA", "Detection of Intrusions and Malware"]
+    sources:
+      ccfddl: "SC/dimva.yml"
+      secdl: "DIMVA"
+
+  - key: "SecureComm"
+    category: security
+    type: conference
+    slug: securecomm
+    full_name: "EAI International Conference on Security and Privacy in Communication Networks"
+    tier: "N/A"
+    aliases: ["SecureComm", "Security and Privacy in Communication Networks"]
+    sources:
+      # Known freshness conflict observed on SecureComm 2026 (extension);
+      # sec-deadlines was fresher -> default priority already prefers it.
+      ccfddl: "SC/securecomm.yml"
+      secdl: "SecureComm"
+
+  - key: "SAC"
+    category: security
+    type: conference
+    slug: sac
+    full_name: "ACM/SIGAPP Symposium on Applied Computing"
+    tier: T4
+    aliases: ["SAC", "Symposium on Applied Computing"]
+    sources:
+      # TRAP: ccfddl SC/sac.yml is 'Selected Areas in Cryptography' - NOT ours,
+      # so no ccfddl locator. sec-deadlines has TWO records named 'SAC'; the
+      # description filter is mandatory to pick ACM/SIGAPP Applied Computing.
+      secdl:
+        name: "SAC"
+        description_contains: "Applied Computing"
+
+  - key: "IFIP-Sec"
+    category: security
+    type: conference
+    slug: ifip-sec
+    full_name: "IFIP International Information Security and Privacy Conference"
+    tier: "N/A"
+    aliases: ["IFIP SEC", "IFIP-Sec", "IFIP Sec"]
+    sources:
+      # ccfddl file is titled just 'SEC' (collision with DS/sec.yml, the
+      # ACM/IEEE Symposium on Edge Computing) - we select by file path only.
+      ccfddl: "SC/sec.yml"
+      secdl: "IFIP SEC"
+
+  - key: "ACNS"
+    category: security
+    type: conference
+    slug: acns
+    full_name: "International Conference on Applied Cryptography and Network Security"
+    tier: "N/A"
+    aliases: ["ACNS", "Applied Cryptography and Network Security"]
+    sources:
+      ccfddl: "SC/acns.yml"
+      secdl: "ACNS"
+
+  # ---------------- workshops ----------------
+  - key: "WOOT"
+    category: security
+    type: workshop
+    slug: woot
+    full_name: "USENIX WOOT Conference on Offensive Technologies"
+    tier: "N/A"
+    aliases: ["WOOT", "Workshop on Offensive Technologies", "USENIX WOOT Conference on Offensive Technologies"]
+    sources:
+      # Not in ccfddl. Note: sec-deadlines lists the 'up-and-coming track'
+      # deadline as a second cycle.
+      secdl: "WOOT"
+
+  - key: "BAR"
+    category: security
+    type: workshop
+    slug: bar
+    full_name: "Workshop on Binary Analysis Research"
+    tier: "N/A"
+    aliases: ["BAR", "Workshop on Binary Analysis Research"]
+    # In neither dataset; the NDSS co-located-events page is prose-only HTML.
+    sources: manual-only
+
+  - key: "AISec"
+    category: security
+    type: workshop
+    slug: aisec
+    full_name: "ACM Workshop on Artificial Intelligence and Security"
+    tier: "N/A"
+    aliases: ["AISec", "Workshop on Artificial Intelligence and Security"]
+    sources:
+      secdl: "AISec"
+
+  - key: "CCS-LAMPS"
+    category: security
+    type: workshop
+    slug: ccs-lamps
+    full_name: "ACM Workshop on Large AI Systems and Models with Privacy and Safety Analysis"
+    tier: "N/A"
+    aliases: ["CCS-LAMPS", "LAMPS", "Workshop on Large AI Systems and Models with Privacy and Safety Analysis"]
+    # In neither dataset; watch https://lamps-ccs.github.io/home/ by hand.
+    sources: manual-only
+
+  - key: "EuroSec"
+    category: system
+    type: workshop
+    slug: eurosec
+    full_name: "European Workshop on Systems Security"
+    tier: "N/A"
+    aliases: ["EuroSec", "European Workshop on Systems Security"]
+    sources:
+      # Not in ccfddl. sec-deadlines files it under security; our category is
+      # system (co-located with EuroSys), matching the frontend.
+      secdl: "EuroSec"
+
+  - key: "DFRWS EU"
+    category: security
+    type: workshop
+    slug: dfrws-eu
+    full_name: "Digital Forensics Research Conference Europe"
+    tier: "N/A"
+    aliases: ["DFRWS EU", "Digital Forensics Research Conference Europe", "Digital Forensics Conference Europe"]
+    sources:
+      # ccfddl record is titled just 'DFRWS' but tracks only EU editions
+      # (all links are dfrws.org/conferences/dfrws-eu-*).
+      ccfddl: "SC/dfrws.yml"
+
+  - key: "DFRWS US"
+    category: security
+    type: workshop
+    slug: dfrws-us
+    full_name: "Digital Forensics Research Conference USA"
+    tier: "N/A"
+    aliases: ["DFRWS US", "DFRWS USA", "Digital Forensics Research Conference USA"]
+    # In neither dataset; dfrws.org WAF-blocks scripted fetches. WikiCFP has
+    # date-only data - not reliable enough to automate.
+    sources: manual-only
+
+  - key: "DFRWS APAC"
+    category: security
+    type: workshop
+    slug: dfrws-apac
+    full_name: "Digital Forensics Research Conference APAC"
+    tier: "N/A"
+    aliases: ["DFRWS APAC", "Digital Forensics Research Conference APAC"]
+    sources:
+      # ccfddl coverage is stale (2025 edition only); current-cycle data must
+      # go into manual.yml by hand.
+      ccfddl: "SC/dfrws-apac.yml"
