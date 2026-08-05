@@ -6,7 +6,7 @@
   conference: ICML
   date: 2026.08.03
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper challenges the common view that LLM refusal is controlled by a single activation direction, showing instead that safety fine-tuning creates a low-rank, multi-dimensional residual space. Its main strength is combining mechanistic interpretation with causal validation: the authors identify a dominant direction that predicts refusal, use Partial Layer-wise Relevance Propagation to connect secondary directions to features such as hypothetical framing and role-playing, and selectively remove one direction to weaken resistance to PAIR jailbreaks without equally affecting other attacks. The trigger-removal experiment further demonstrates practical relevance, maintaining a 42% attack pass rate after exposure to 80 training examples, while the tested baseline jailbreaks fall close to zero. However, most mechanistic findings are demonstrated on Llama 3.1 8B and a constructed 2,600-sample dataset centered on refusal, so it is unclear whether the same directions generalize across model families, larger-scale alignment data, or safety behaviors beyond refusal. Direction interpretations also depend partly on GPT-4o labels generated from top-attributed tokens, without systematic human validation, and the attack requires internal activations and a large model to iteratively rephrase prompts. Overall, this is a strong contribution that provides a richer and causally supported account of safety alignment, but broader cross-model evaluation and more rigorous validation of direction semantics are needed. (Yiyue)"
 
 - title: "Extracting Unlearned Information from LLMs with Activation Steering"
   link: "https://arxiv.org/abs/2411.02631"
