@@ -15,8 +15,8 @@
   presenter: Yujeong
   conference: NeurIPS Workshop
   date: 2026.08.03
-  pub_year: 
-  discussion: "(Discussion) "
+  pub_year: 2024
+  discussion: "(Discussion) This paper introduces AnonAct, a method that uses anonymized versions of a query to generate activation steering vectors, aiming to extract information that has been unlearned from LLMs. Unlike prior attacks that only surface a set of candidate answers, AnonAct combined with a word-frequency scoring method can pinpoint the exact correct answer. The authors test this approach across three unlearning techniques and datasets: WhoIsHarryPotter, TOFU, and ROME. Results show the method is highly effective at recovering broad, richly interconnected knowledge, such as Harry Potter facts, improving the AUC score from 0.75 to 0.92. However, a key limitation is that it fails to generalize to narrower unlearning settings, such as single-author facts (TOFU) or single-fact edits (ROME), since these lack the dense web of associations the method relies on to reconstruct erased information. (Shakhzod)"
   
 - title: "Evaluating the Robustness of a Production Malware Detection System to Transferable Adversarial Attacks"
   link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765118"
