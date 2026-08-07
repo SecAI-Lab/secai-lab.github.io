@@ -506,11 +506,18 @@ def enforce_cfg_fields(merged, target, year):
 
 def apply_manual_override(merged, man):
     """Copy every override field manual.yml sets into the generated record;
-    returns the fields whose value materially changed."""
+    a field EXPLICITLY set to null deletes it (for values fabricated
+    upstream, e.g. an abstract deadline the official CFP does not have).
+    Returns the fields whose value materially changed."""
     changed = []
     for field in MANUAL_FIELDS:
-        value = man.get(field)
+        if field not in man:
+            continue
+        value = man[field]
         if value is None:
+            if canon_record({field: merged.get(field)}):
+                changed.append(field)
+            merged.pop(field, None)
             continue
         if canon_record({field: merged.get(field)}) != canon_record({field: value}):
             changed.append(field)
@@ -536,7 +543,7 @@ def manual_matches_upstream(man, cand):
         "link": lambda: clean(man.get("link")) == clean(cand.get("link")),
     }
     for field, check in checks.items():
-        if man.get(field) is not None and not check():
+        if field in man and not check():
             return False
     return True
 
@@ -855,7 +862,7 @@ def main() -> int:
             item = index.get((target["key"], year))
             existing = item["data"] if item else None
             man = manual.get((target["key"], year))
-            owned = frozenset(f for f in MANUAL_FIELDS if man and man.get(f) is not None)
+            owned = frozenset(f for f in MANUAL_FIELDS if man and f in man)
             merged, railed = build_merged(target, year, existing, winner, owned)
             if man is None or man.get("note") is None:
                 maybe_clear_stale_note(merged, existing, target["key"], year)

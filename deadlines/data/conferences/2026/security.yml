@@ -13,7 +13,7 @@
     - "2025-09-26 23:59"
     - "2026-01-23 23:59"
   timezone: AoE
-  place: "New York, United States"
+  place: "Stony Brook, NY, USA"
   date: "June 22-25, 2026"
   start: 2026-06-22
   end: 2026-06-25
@@ -42,9 +42,9 @@
   deadline: "2026-07-24 23:59"
   timezone: AoE
   place: "The Hague, The Netherlands"
-  date: "November 15-19, 2026"
+  date: "November 15, 2026"
   start: 2026-11-15
-  end: 2026-11-19
+  end: 2026-11-15
 
 - title: "ASIACCS"
   year: 2026
@@ -117,9 +117,9 @@
   tier: "N/A"
   link: https://www.dimva.org/dimva2026/
   deadline:
-    - "2025-12-03 23:59"
-    - "2026-02-11 23:59"
-  timezone: UTC-12
+    - "2025-12-10 23:59"
+    - "2026-02-18 23:59"
+  timezone: AoE
   place: "Chania, Greece"
   date: "July 01-03, 2026"
   start: 2026-07-01
@@ -177,9 +177,6 @@
   type: conference
   tier: T2
   link: https://www.ndss-symposium.org/ndss2026/
-  abstract_deadline:
-    - "2025-04-16 23:59"
-    - "2025-07-30 23:59"
   deadline:
     - "2025-04-23 23:59"
     - "2025-08-06 23:59"
@@ -228,7 +225,7 @@
   tier: T4
   link: https://www.sigapp.org/sac/sac2026/
   deadline: "2025-10-17 23:59"
-  timezone: UTC-12
+  timezone: UTC-4
   place: "Thessaloniki, Greece"
   date: "March 23-27, 2026"
   start: 2026-03-23
@@ -241,7 +238,9 @@
   type: conference
   tier: "N/A"
   link: https://securecomm.eai-conferences.org/2026/
-  deadline: "2026-01-15 23:59"
+  deadline:
+    - "2026-01-15 23:59"
+    - "2026-02-15 23:59"
   timezone: UTC-12
   place: "Lancaster, United Kingdom"
   date: "July 21-24, 2026"

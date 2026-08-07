@@ -47,8 +47,12 @@
   id: issta27
   full_name: "ACM SIGSOFT International Symposium on Software Testing and Analysis"
   type: conference
-  link: https://www.issta.org/
-  timezone: TBA
+  link: https://conf.researchr.org/home/issta-2027
+  abstract_deadline: "2027-01-08 23:59"
+  deadline: "2027-01-11 23:59"
+  timezone: UTC-12
   place: "Singapore, Singapore"
-  date: "TBA"
-  note: "Official ISSTA page lists ISSTA 2027 in Singapore; dates and deadlines are not yet available."
+  date: "September 7-10, 2027"
+  start: 2027-09-07
+  end: 2027-09-10
+  note: "Mandatory abstract Jan 8, full paper Jan 11, 2027. Verified 2026-08-07 against https://conf.researchr.org/home/issta-2027"

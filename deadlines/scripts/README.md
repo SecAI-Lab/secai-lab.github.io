@@ -92,6 +92,8 @@ Never hand-edit files under `deadlines/data/conferences/` — the next cron run
 overwrites them. Human corrections (wrong deadline, date, place, ...) go in
 `deadlines/data/manual.yml`. The updater propagates those overrides into the
 generated files on every run, so a manual entry beats upstream on every field
-it sets — in either direction — and stays in effect until you delete it. The
+it sets — in either direction — and stays in effect until you delete it. A
+field explicitly set to `null` deletes it from the generated record (for
+values fabricated upstream, e.g. an abstract deadline the CFP never had). The
 run summary tells you when upstream has caught up and an entry can be removed.
 Manual titles must be the canonical key, or the run goes red.

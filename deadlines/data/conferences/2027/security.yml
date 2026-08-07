@@ -115,7 +115,7 @@
   full_name: "Digital Forensics Research Conference Europe"
   type: workshop
   tier: "N/A"
-  link: https://dfrws.org/conferences/dfceurope2027/
+  link: https://dfrws.org/conferences/dfrws-eu-2027/
   deadline: "TBA"
   timezone: TBA
   place: "Edinburgh, Scotland"
@@ -154,11 +154,12 @@
   full_name: "IEEE European Symposium on Security and Privacy"
   type: conference
   tier: "N/A"
-  link: https://www.ieee-security.org/TC/SP-Index.html
+  link: https://eurosp2027.ieee-security.org/
+  deadline: "2026-11-20 23:59"
   timezone: TBA
   place: "TBA"
   date: "TBA"
-  note: "Official EuroS&P 2027 conference page/CFP not publicly available yet."
+  note: "Deadline per the IEEE S&P TC CFP calendar (verified 2026-08-07 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); official site is still a placeholder and the venue city is not confirmed yet."
 
 - title: "IFIP-Sec"
   year: 2027
@@ -226,7 +227,7 @@
   tier: T4
   link: https://www.sigapp.org/sac/sac2027
   deadline: "2026-10-02 23:59"
-  timezone: AoE
+  timezone: UTC-5
   place: "Gwangju, South Korea"
   date: "April 5-9, 2027"
   start: 2027-04-05
@@ -238,11 +239,14 @@
   full_name: "EAI International Conference on Security and Privacy in Communication Networks"
   type: conference
   tier: "N/A"
-  link: https://securecomm.eai-conferences.org/
+  link: https://securecomm.eai-conferences.org/2027/
+  deadline: "2027-03-01 23:59"
   timezone: TBA
-  place: "TBA"
-  date: "TBA"
-  note: "Official SecureComm 2027 conference page/CFP not publicly available yet."
+  place: "Hefei, China"
+  date: "October 15-18, 2027"
+  start: 2027-10-15
+  end: 2027-10-18
+  note: "Verified 2026-08-07 against https://securecomm.eai-conferences.org/2027/ (notification 2027-05-01, camera-ready 2027-07-15); deadline timezone not stated on the official page."
 
 - title: "USENIX Security"
   year: 2027

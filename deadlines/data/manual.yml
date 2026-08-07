@@ -8,7 +8,9 @@
 # direction. Titles must be the canonical key from
 # deadlines/scripts/conferences.yml (the run goes red otherwise). An override
 # stays active until you delete the entry — the run summary says when upstream
-# has caught up and an entry can be removed.
+# has caught up and an entry can be removed. A field EXPLICITLY set to null
+# deletes that field from the generated record (use it to remove values
+# fabricated upstream, e.g. an abstract deadline the official CFP never had).
 
 # ccfddl carries WWW 2026's original April schedule; the conference moved.
 # Verified 2026-07-30 against https://www2026.thewebconf.org/ :
@@ -52,3 +54,94 @@
   deadline: "2026-02-10 23:59"
   timezone: AoE
   note: "Deadline extended from February 3 to February 10, 2026."
+
+# The official NDSS 2026 CFP lists ONLY paper deadlines and no abstract
+# deadline at all; both upstream trackers carry a fabricated "one week
+# before" abstract date. Explicit null deletes the field.
+# Verified 2026-08-07 against
+# https://www.ndss-symposium.org/ndss2026/submissions/call-for-papers/
+- title: "NDSS"
+  year: 2026
+  abstract_deadline: null
+  deadline:
+    - "2025-04-23 23:59"
+    - "2025-08-06 23:59"
+  timezone: UTC-12
+
+# sec-deadlines carries DIMVA 2026's pre-extension dates. The official page
+# shows both cycles extended: "10 December 2025 (extended!)" and
+# "18 February 2026 (extended!)", AoE.
+# Verified 2026-08-07 against https://www.dimva.org/dimva2026/
+- title: "DIMVA"
+  year: 2026
+  deadline:
+    - "2025-12-10 23:59"
+    - "2026-02-18 23:59"
+  timezone: AoE
+
+# Upstream lists only cycle 1; the official page has a second submission
+# cycle on 15 February 2026.
+# Verified 2026-08-07 against https://securecomm.eai-conferences.org/2026/
+- title: "SecureComm"
+  year: 2026
+  deadline:
+    - "2026-01-15 23:59"
+    - "2026-02-15 23:59"
+  timezone: UTC-12
+
+# AISec is a one-day workshop on November 15, 2026; upstream carries the
+# full CCS 2026 week as its date span.
+# Verified 2026-08-07 against https://aisec.cc
+- title: "AISec"
+  year: 2026
+  deadline: "2026-07-24 23:59"
+  timezone: AoE
+  date: "November 15, 2026"
+  start: 2026-11-15
+  end: 2026-11-15
+
+# Venue is the Wang Center at Stony Brook University, not New York City.
+# Verified 2026-08-07 against https://acns2026.github.io/index.html
+- title: "ACNS"
+  year: 2026
+  deadline:
+    - "2025-09-26 23:59"
+    - "2026-01-23 23:59"
+  timezone: AoE
+  place: "Stony Brook, NY, USA"
+
+# Official FSE 2026 dates are Sun 5 - Thu 9 July 2026; upstream is one day
+# late on both ends.
+# Verified 2026-08-07 against https://conf.researchr.org/home/fse-2026
+- title: "FSE"
+  year: 2026
+  abstract_deadline: "2025-09-04 23:59"
+  deadline: "2025-09-11 23:59"
+  timezone: UTC-12
+  date: "July 5-9, 2026"
+  start: 2026-07-05
+  end: 2026-07-09
+
+# Official EuroSys 2027 dates are April 19-23, 2027; upstream ends one day
+# late.
+# Verified 2026-08-07 against https://2027.eurosys.org/
+- title: "EuroSys"
+  year: 2027
+  abstract_deadline:
+    - "2026-05-07 23:59"
+    - "2026-09-17 23:59"
+  deadline:
+    - "2026-05-14 23:59"
+    - "2026-09-24 23:59"
+  timezone: UTC-12
+  date: "April 19-23, 2027"
+  start: 2027-04-19
+  end: 2027-04-23
+
+# The official SAC 2027 page states the deadline timezone as EST (UTC-5),
+# not AoE as upstream assumes.
+# Verified 2026-08-07 against https://www.sigapp.org/sac/sac2027
+- title: "SAC"
+  year: 2027
+  deadline: "2026-10-02 23:59"
+  timezone: UTC-5

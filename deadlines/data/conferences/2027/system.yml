@@ -57,9 +57,9 @@
     - "2026-09-24 23:59"
   timezone: UTC-12
   place: "Rabat, Morocco"
-  date: "April 19-24, 2027"
+  date: "April 19-23, 2027"
   start: 2027-04-19
-  end: 2027-04-24
+  end: 2027-04-23
   note: "Two submission rounds: Spring and Fall. All deadlines are AoE."
 
 - title: "NSDI"

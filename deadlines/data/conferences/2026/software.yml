@@ -26,9 +26,9 @@
   deadline: "2025-09-11 23:59"
   timezone: UTC-12
   place: "Montréal, Canada"
-  date: "July 6-10, 2026"
-  start: 2026-07-06
-  end: 2026-07-10
+  date: "July 5-9, 2026"
+  start: 2026-07-05
+  end: 2026-07-09
 
 - title: "ICSE"
   year: 2026
