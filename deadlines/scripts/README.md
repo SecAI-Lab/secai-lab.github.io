@@ -55,6 +55,48 @@ Operational notes:
   [ccfddl/ccf-deadlines](https://github.com/ccfddl/ccf-deadlines) upstream,
   then switching the mapping from `manual-only` to the new file path.
 
+## Weekly verification audit (Tier 2)
+
+`.github/workflows/audit-deadlines.yml` runs weekly (Sunday 21:00 UTC =
+Monday 06:00 KST, plus manual dispatch). It builds a **watchlist** — the
+small subset of records worth verifying against official conference pages
+(`update_deadlines.py --watchlist`): upcoming-cycle TBAs, deadlines within
+45 days, active manual overrides, cross-source disagreements, stale
+placeholder notes, coverage gaps. Then, depending on configuration:
+
+- **Claude mode** (the `CLAUDE_CODE_OAUTH_TOKEN` secret exists): Claude Code
+  verifies each watchlist record against the venue's official page
+  (instructions pinned in `deadlines/scripts/AUDITOR.md`) and leaves
+  corrections in the working tree. Deterministic steps then enforce the
+  guardrails — only `deadlines/data/**` may change, every manual.yml entry
+  needs a `Verified <date> against <URL>` citation (`audit_lint.py`), and the
+  updater must converge healthy — and open/update a pull request on the
+  `deadline-audit` branch for human review. Claude never pushes anything
+  itself; merging the PR is the human decision.
+- **Human mode** (no secret): the watchlist is filed/updated as a GitHub
+  issue (label `deadline-audit`) with a checkbox per record — a lab member
+  verifies by hand, ~5-10 minutes weekly.
+
+### Setting up Claude mode (Max subscription, no API billing)
+
+1. Any lab member with the Claude Max account runs `claude setup-token` in a
+   terminal (requires Claude Code installed; it opens a browser to
+   authorize) and copies the generated token. The token is valid for about a
+   year and consumes the **subscription quota** — no API billing account is
+   needed.
+2. In the GitHub repo: **Settings → Secrets and variables → Actions →
+   New repository secret** (the *Actions* tab specifically — not Codespaces,
+   not Dependabot, and not the "Agents" section). Name it exactly
+   `CLAUDE_CODE_OAUTH_TOKEN`, paste the token as the value.
+3. That's it — the next scheduled run (or Actions tab → "Audit conference
+   deadlines" → Run workflow) uses Claude mode automatically.
+4. Renewal: the token expires after ~1 year with no warning in CI — put a
+   calendar reminder to re-run `claude setup-token` and update the secret.
+
+Whoever generates the token pays with their personal Max quota (a weekly
+watchlist-sized audit is a small fraction of a Max 20x budget); commits and
+PRs are still authored by `github-actions[bot]`, not that person.
+
 ## Running locally
 
 ```sh

@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import os
 import re
 import sys
@@ -785,6 +786,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dry-run", action="store_true",
                         help="print the would-be changes without writing files")
+    parser.add_argument("--watchlist", metavar="FILE",
+                        help="also write a JSON audit watchlist of records worth "
+                             "verifying against official sources (written even "
+                             "with --dry-run; it is an audit artifact, not data)")
     args = parser.parse_args()
 
     try:
@@ -836,6 +841,7 @@ def main() -> int:
     new_items = []
     kept, updated, created = [], [], []
     candidate_done = set()
+    disagreements = set()
     for target in targets:
         # Never fall back past a source whose FETCH failed (vs. has no record):
         # its stale lower-priority sibling must not clobber data it owns.
@@ -854,6 +860,7 @@ def main() -> int:
             winner = dict(ordered[0])
             for other in ordered[1:]:
                 if sources_disagree(winner, other):
+                    disagreements.add((target["key"], year))
                     warn(f"CROSS-SOURCE DISAGREEMENT {target['key']} {year}: "
                          f"{winner['source']}={winner['deadlines']} vs "
                          f"{other['source']}={other['deadlines']}; using {winner['source']} "
@@ -948,12 +955,59 @@ def main() -> int:
     covered = {key for (key, year) in index if year >= next_year}
     covered |= {it["record"]["title"] for it in new_items
                 if it["record"]["year"] >= next_year}
+    gap_targets = []
     for target in targets:
         if target["key"] not in covered:
+            gap_targets.append(target["key"])
             hint = ("manual-only source; add it to deadlines/data/manual.yml "
                     "or the data files by hand"
                     if target.get("manual_only") else "no upstream edition yet")
             warn(f"coverage gap: {target['key']} has no {next_year} entry ({hint})")
+
+    # Audit watchlist: the small subset of records a verification pass (human
+    # or agent) should check against OFFICIAL conference pages this week.
+    if args.watchlist:
+        horizon = TODAY + dt.timedelta(days=45)
+        watchlist = []
+        final_records = [(key, year, item["new_data"] or item["data"])
+                         for (key, year), item in sorted(index.items())]
+        final_records += [(it["record"]["title"], it["record"]["year"], it["record"])
+                          for it in new_items]
+        for key, year, rec in final_records:
+            concrete = [d for d in (parse_dl_date(v) for v in as_list(rec.get("deadline")))
+                        if d is not None]
+            # Past editions with concrete, passed deadlines are frozen history:
+            # only future-relevant records earn weekly verification effort.
+            relevant = not concrete or any(d >= TODAY for d in concrete)
+            reasons = []
+            if year >= TODAY.year and not concrete:
+                reasons.append("tba-upcoming-cycle")
+            if any(TODAY <= d <= horizon for d in concrete):
+                reasons.append("deadline-within-45-days")
+            if relevant and (key, year) in disagreements:
+                reasons.append("cross-source-disagreement")
+            if year >= TODAY.year and rec.get("note") and STALE_NOTE_RE.search(str(rec["note"])):
+                reasons.append("stale-placeholder-note")
+            if relevant and (key, year) in manual:
+                reasons.append("manual-override-active")
+            if reasons:
+                watchlist.append({
+                    "title": key, "year": year,
+                    "category": by_key[key]["category"],
+                    "file": f"deadlines/data/conferences/{year}/{by_key[key]['category']}.yml",
+                    "reasons": reasons,
+                    "record": {f: (str(rec[f]) if isinstance(rec.get(f), (dt.date, dt.datetime))
+                                   else rec.get(f))
+                               for f in ("deadline", "abstract_deadline", "timezone",
+                                         "place", "date", "link", "note")
+                               if rec.get(f) is not None},
+                })
+        for key in gap_targets:
+            watchlist.append({"title": key, "year": next_year,
+                              "category": by_key[key]["category"], "file": None,
+                              "reasons": ["coverage-gap"], "record": {}})
+        Path(args.watchlist).write_text(
+            json.dumps(watchlist, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     # Assemble output files (records land in their computed bucket, so a
     # re-filed record moves between files atomically in the same run).
@@ -1016,6 +1070,8 @@ def main() -> int:
             tmp.write_text(new_text, encoding="utf-8")
             os.replace(tmp, path)  # atomic: a crash mid-write can't truncate live data
             print(f"  {state}d {rel} ({len(new_text.splitlines())} lines)")
+    if args.watchlist:
+        print(f"\n== Watchlist ==\n  {len(watchlist)} record(s) -> {args.watchlist}")
     if health:
         print(f"\nHEALTH: DEGRADED - {len(health)} issue(s) marked [!] above "
               "need human attention (exit 2)")

@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Deterministic gate for the weekly audit workflow.
+
+Fails (exit 1) unless:
+  * every modified tracked file is inside the audit allowlist
+    (deadlines/data/manual.yml or deadlines/data/conferences/**), and
+  * every manual.yml entry is preceded by a comment block containing
+    'Verified' and an http(s) URL (the citation rule).
+
+Run from anywhere inside the repo. Read-only.
+"""
+
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+ALLOWED_RE = re.compile(
+    r"^deadlines/data/(manual\.yml|conferences/\d{4}/[a-z]+\.yml)$")
+
+
+def fail(msg: str) -> None:
+    print(f"AUDIT LINT FAIL: {msg}")
+    sys.exit(1)
+
+
+def main() -> int:
+    diff = subprocess.run(
+        ["git", "diff", "--name-only", "HEAD"],
+        cwd=REPO_ROOT, capture_output=True, text=True, check=True)
+    changed = [line.strip().replace("\\", "/")
+               for line in diff.stdout.splitlines() if line.strip()]
+    bad = [p for p in changed if not ALLOWED_RE.match(p)]
+    if bad:
+        fail(f"files outside the audit allowlist were modified: {bad}")
+
+    manual = (REPO_ROOT / "deadlines" / "data" / "manual.yml").read_text(encoding="utf-8")
+    # Split into (comment block, entry) pairs: every '- title:' line must be
+    # preceded by a comment run that cites a verification URL.
+    lines = manual.split("\n")
+    comment_run: list[str] = []
+    for i, line in enumerate(lines):
+        if line.startswith("#"):
+            comment_run.append(line)
+            continue
+        if line.startswith("- title:"):
+            blob = "\n".join(comment_run)
+            if "Verified" not in blob or not re.search(r"https?://", blob):
+                fail(f"manual.yml entry at line {i + 1} ({line.strip()}) lacks a "
+                     "'Verified <date> against <official URL>' citation comment")
+            comment_run = []
+        elif line.strip() == "":
+            comment_run = []
+    print(f"audit lint ok ({len(changed)} changed file(s), all allowlisted; "
+          "all manual.yml entries cited)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
