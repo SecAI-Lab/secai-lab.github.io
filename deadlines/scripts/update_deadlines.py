@@ -6,22 +6,34 @@ Sources (see deadlines/scripts/conferences.yml for the per-venue mapping):
   * sec-deadlines.github.io - single _data/conferences.yml (latest edition only)
 
 Merge policy (per target venue and edition year):
-  * no upstream record            -> the existing repo entry is kept byte-for-byte
+  * no upstream record            -> the existing repo entry is kept (byte-for-byte
+    unless the normalization rules below change it)
   * upstream record exists        -> upstream wins for deadline / abstract_deadline /
     timezone / place / date / link (only where upstream has a real, non-TBA value);
-    start / end are re-derived from the winning date string when it parses, so they
-    can never contradict it; the existing entry always wins for tier, note, id,
-    full_name, type
-  * existing entries are never deleted; manual.yml (frontend priority 0) is never touched
+    start / end are re-derived from the winning date string when it parses, and
+    dropped when it does not, so they never contradict it
+  * manual.yml overrides beat upstream on every field they set, in either
+    direction, and are propagated into the generated files on every run so the
+    frontend's two sources always agree; manual.yml itself is never written
+  * conferences.yml owns title / id / full_name / type / tier: they are enforced
+    on current and future editions (past editions keep their historical values)
+  * records are re-filed into the year/category bucket conferences.yml assigns
+  * a placeholder note ("CFP not announced yet", ...) is cleared automatically
+    the moment the record gains its first concrete deadline
+  * existing entries are never deleted
   * safety rail: an existing concrete FUTURE deadline is never moved by more than
-    90 days by upstream data - such candidates are ignored with a warning
+    90 days by upstream data - such records are kept untouched and the run is
+    marked degraded for human review
 
 Usage:
   python3 deadlines/scripts/update_deadlines.py            # update files in place
   python3 deadlines/scripts/update_deadlines.py --dry-run  # print changes only
 
-Exit codes: 0 = success (with or without changes), 1 = fatal (config unreadable,
-every upstream source unreachable, ...). Nothing is written on a fatal error.
+Exit codes: 0 = healthy (with or without changes); 2 = degraded - files were
+still written where safe, but something needs human attention (a source fetch
+failed or changed shape, validation rejected a record, the safety rail fired,
+manual.yml has a bad entry, ...); 1 = fatal (config unreadable, every upstream
+source unreachable, ...) - nothing is written on a fatal error.
 """
 
 from __future__ import annotations
@@ -41,6 +53,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = Path(__file__).resolve().parent / "conferences.yml"
 DATA_DIR = REPO_ROOT / "deadlines" / "data" / "conferences"
+MANUAL_PATH = REPO_ROOT / "deadlines" / "data" / "manual.yml"
 
 CATEGORIES = ["system", "software", "security", "ai"]
 TODAY = dt.date.today()
@@ -66,13 +79,27 @@ FIELD_ORDER = ["title", "year", "id", "full_name", "type", "tier", "link",
                "abstract_deadline", "deadline", "timezone", "place", "date",
                "start", "end", "note"]
 SAFETY_RAIL_DAYS = 90
+# Fields a manual.yml entry may override; propagated verbatim into generated data.
+MANUAL_FIELDS = ("abstract_deadline", "deadline", "timezone", "place", "date",
+                 "link", "note", "start", "end")
+# Placeholder notes auto-cleared once the record gains a concrete deadline.
+STALE_NOTE_RE = re.compile(
+    r"not (?:yet |publicly )?(?:available|announced)|announced yet|not yet available", re.I)
+CFG_ENFORCE_FROM = TODAY.year  # cfg-owned fields enforced on editions >= this year
 
 warnings: list[str] = []
+health: list[str] = []  # degraded-run reasons; non-empty -> exit code 2
 actions: list[tuple[str, str]] = []  # (action, description)
 
 
 def warn(msg: str) -> None:
     warnings.append(msg)
+
+
+def degrade(msg: str) -> None:
+    """A warning that additionally marks the whole run degraded (exit 2)."""
+    warnings.append("[!] " + msg)
+    health.append(msg)
 
 
 def as_list(value):
@@ -137,7 +164,9 @@ def map_ccfddl_tz(value):
     if s in ("UTC", "UTC+0"):
         return "UTC+0"
     if s == "PT":
-        return "PST"
+        # IANA name, not fixed "PST": the frontend resolves IANA zones
+        # DST-correctly, while its PST branch is pinned to -08:00 year-round.
+        return "America/Los_Angeles"
     if re.fullmatch(r"UTC[+-]\d{1,2}", s):
         return s
     return None
@@ -156,21 +185,31 @@ def map_secdl_tz(value):
 
 
 def convert_ccfddl(doc, key):
-    """ccfddl per-conference file -> {year: candidate}."""
+    """ccfddl per-conference file -> {year: candidate}.
+
+    A structural surprise raises (counted as a failed fetch by the caller):
+    a silently-empty conversion after an upstream format change would freeze
+    the data forever behind a green checkmark.
+    """
     out = {}
-    if not isinstance(doc, list) or not doc:
-        warn(f"ccfddl {key}: unexpected file structure, skipped")
-        return out
+    if not isinstance(doc, list) or not doc or not isinstance(doc[0], dict):
+        raise RuntimeError("unexpected file structure")
     if len(doc) > 1:
         warn(f"ccfddl {key}: {len(doc)} records in file, using the first")
-    for conf in doc[0].get("confs") or []:
+    confs = doc[0].get("confs")
+    if not isinstance(confs, list):
+        raise RuntimeError("unexpected file structure (no confs list)")
+    for conf in confs:
         year = conf.get("year")
         if not isinstance(year, int) or not FROM_YEAR <= year <= TO_YEAR:
             continue
         deadlines, abstracts = [], []
         for entry in conf.get("timeline") or []:
             comment = clean(entry.get("comment"))
-            if SKIP_COMMENT_RE.search(comment):
+            # An entry carrying its own abstract_deadline is a real paper cycle
+            # no matter what its comment mentions.
+            if (SKIP_COMMENT_RE.search(comment)
+                    and norm_dt(entry.get("abstract_deadline")) is None):
                 warn(f"ccfddl {key} {year}: skipped non-cycle timeline entry ({comment!r})")
                 continue
             deadline = norm_dt(entry.get("deadline"))
@@ -202,10 +241,12 @@ def convert_secdl(records, locator, key):
                if clean(r.get("name")) == name
                and (not needle or needle.lower() in clean(r.get("description")).lower())]
     if not matches:
-        warn(f"secdl {key}: no record named {name!r}")
+        degrade(f"secdl {key}: no record named {name!r} - the upstream record was "
+                "likely renamed or removed; fix the locator in conferences.yml")
         return {}
     if len(matches) > 1:
-        warn(f"secdl {key}: {len(matches)} ambiguous records named {name!r}, skipped")
+        degrade(f"secdl {key}: {len(matches)} ambiguous records named {name!r}, skipped "
+                "- add a description_contains filter in conferences.yml")
         return {}
     rec = matches[0]
     year = rec.get("year")
@@ -397,44 +438,164 @@ def norm_kept_deadlines(value):
     return norm_dt(value) or value
 
 
-def build_merged(target, year, existing, cand):
-    """Apply the merge policy; returns (merged_record, railed)."""
+def load_manual(targets):
+    """manual.yml -> {(canonical key, year): record}.
+
+    The overrides are propagated into the generated files every run so both
+    frontend sources agree byte-for-byte - this is what lets a manual entry
+    move a deadline in either direction without any frontend merge heuristics
+    getting in the way. A malformed entry degrades the run: a hand-typed row
+    the frontend would silently drop must never go unnoticed.
+    """
+    if not MANUAL_PATH.exists():
+        return {}
+    try:
+        records = yaml.safe_load(MANUAL_PATH.read_text(encoding="utf-8")) or []
+    except yaml.YAMLError as exc:
+        degrade(f"manual.yml: YAML parse error ({exc}); overrides skipped this run")
+        return {}
+    if not isinstance(records, list):
+        degrade("manual.yml: unexpected structure (not a list); overrides skipped")
+        return {}
+    out = {}
+    for rec in records:
+        if not isinstance(rec, dict):
+            continue
+        title, year = rec.get("title"), rec.get("year")
+        target = match_target(title, targets)
+        if target is None:
+            degrade(f"manual.yml: title {title!r} matches no target; "
+                    "the frontend silently drops such rows - fix the title")
+            continue
+        if clean(title) != target["key"]:
+            degrade(f"manual.yml: title {title!r} must be the canonical key "
+                    f"{target['key']!r} (alias matching differs between the script "
+                    "and the frontend; non-canonical titles can merge wrongly)")
+            continue
+        if not isinstance(year, int):
+            degrade(f"manual.yml: {target['key']} entry has no integer year; skipped")
+            continue
+        if (target["key"], year) in out:
+            degrade(f"manual.yml: duplicate entry for {target['key']} {year}; "
+                    "using the first")
+            continue
+        out[(target["key"], year)] = rec
+    return out
+
+
+def enforce_cfg_fields(merged, target, year):
+    """conferences.yml owns title-adjacent metadata: enforce id / full_name /
+    type / tier on current and future editions so a mapping fix self-corrects
+    in the data. Past editions keep their historical values."""
+    if year < CFG_ENFORCE_FROM:
+        if not merged.get("id"):
+            merged["id"] = f"{target['slug']}{year % 100:02d}"
+        merged.setdefault("full_name", target["full_name"])
+        merged.setdefault("type", target.get("type", "conference"))
+        if target.get("tier") and not merged.get("tier"):
+            merged["tier"] = target["tier"]
+        return
+    merged["id"] = f"{target['slug']}{year % 100:02d}"
+    merged["full_name"] = target["full_name"]
+    merged["type"] = target.get("type", "conference")
+    if str(merged.get("tier", "")).upper() in ("TBA", "TBD"):
+        merged.pop("tier", None)  # placeholder, not a curated tier
+    if target.get("tier"):
+        merged["tier"] = target["tier"]
+
+
+def apply_manual_override(merged, man):
+    """Copy every override field manual.yml sets into the generated record;
+    returns the fields whose value materially changed."""
+    changed = []
+    for field in MANUAL_FIELDS:
+        value = man.get(field)
+        if value is None:
+            continue
+        if canon_record({field: merged.get(field)}) != canon_record({field: value}):
+            changed.append(field)
+        merged[field] = value
+    if man.get("date") and not (man.get("start") and man.get("end")):
+        parsed = parse_date_range(man["date"])
+        if parsed:
+            merged["start"], merged["end"] = parsed
+    return changed
+
+
+def manual_matches_upstream(man, cand):
+    """True when upstream now agrees with every value manual.yml overrides -
+    the entry is obsolete and can be removed."""
+    checks = {
+        "deadline": lambda: (canon_deadline_field(man.get("deadline"))
+                             == canon_deadline_field(cand["deadlines"])),
+        "abstract_deadline": lambda: (canon_deadline_field(man.get("abstract_deadline"))
+                                      == canon_deadline_field([a for a in cand["abstracts"] if a])),
+        "timezone": lambda: canon_tz(man.get("timezone")) == canon_tz(cand.get("timezone")),
+        "place": lambda: clean(man.get("place")) == clean(cand.get("place")),
+        "date": lambda: clean(man.get("date")) == clean(cand.get("date")),
+        "link": lambda: clean(man.get("link")) == clean(cand.get("link")),
+    }
+    for field, check in checks.items():
+        if man.get(field) is not None and not check():
+            return False
+    return True
+
+
+def maybe_clear_stale_note(merged, existing, key, year):
+    """Placeholder notes ('CFP not announced yet', ...) are cleared the moment
+    the record gains its first concrete deadline."""
+    note = merged.get("note")
+    if not existing or not note:
+        return
+    had = bool(canon_deadline_field(existing.get("deadline")))
+    has = bool(canon_deadline_field(merged.get("deadline")))
+    if not had and has and STALE_NOTE_RE.search(str(note)):
+        warn(f"{key} {year}: dropped stale placeholder note ({note!r})")
+        merged.pop("note", None)
+
+
+def build_merged(target, year, existing, cand, owned=frozenset()):
+    """Apply the merge policy; `owned` names the fields a manual.yml override
+    controls - upstream never touches those. Returns (merged_record, railed)."""
     merged = dict(existing) if existing else {}
     merged["title"] = target["key"]
     merged["year"] = year
-    if not existing:
-        merged["id"] = f"{target['slug']}{year % 100:02d}"
-        merged["full_name"] = target["full_name"]
-        merged["type"] = target.get("type", "conference")
-        if target.get("tier"):
-            merged["tier"] = target["tier"]
-    for field in ("link", "place", "date"):
-        if cand.get(field):
-            merged[field] = cand[field]
-    if (existing and cand.get("date") and clean(existing.get("date")).upper() not in ("", "TBA")):
-        old_range, new_range = parse_date_range(existing["date"]), parse_date_range(cand["date"])
-        if old_range and new_range and old_range != new_range:
-            warn(f"CONFERENCE DATE CHANGED {target['key']} {year}: "
-                 f"{existing['date']!r} -> {cand['date']!r} (source {cand['source']}) "
-                 "- verify against the official page; override in manual.yml if upstream is wrong")
-    if cand.get("date"):
-        # Keep start/end consistent with the (upstream-won) date string.
-        parsed = parse_date_range(cand["date"])
-        if parsed:
-            merged["start"], merged["end"] = parsed
-    railed = rail_triggered(existing, cand["deadlines"])
+    railed = "deadline" not in owned and rail_triggered(existing, cand["deadlines"])
     if railed:
-        warn(f"SAFETY RAIL {target['key']} {year}: upstream ({cand['source']}) would move a "
-             f"future deadline by > {SAFETY_RAIL_DAYS} days "
-             f"({as_list(existing.get('deadline'))} -> {cand['deadlines']}); kept existing")
+        degrade(f"SAFETY RAIL {target['key']} {year}: upstream ({cand['source']}) would move a "
+                f"future deadline by > {SAFETY_RAIL_DAYS} days "
+                f"({as_list(existing.get('deadline'))} -> {cand['deadlines']}); "
+                "existing record kept untouched pending human review")
     else:
-        merged["deadline"] = (cand["deadlines"][0] if len(cand["deadlines"]) == 1
-                              else list(cand["deadlines"]))
-        if any(cand["abstracts"]):
-            abstracts = (cand["abstracts"] + [None] * len(cand["deadlines"]))[:len(cand["deadlines"])]
-            merged["abstract_deadline"] = abstracts[0] if len(abstracts) == 1 else abstracts
-        # else: the existing abstract_deadline (if any) stays untouched
-        if cand.get("timezone") and canon_tz(cand["timezone"]) != canon_tz(merged.get("timezone")):
+        for field in ("link", "place", "date"):
+            if cand.get(field) and field not in owned:
+                merged[field] = cand[field]
+        if (existing and cand.get("date") and "date" not in owned
+                and clean(existing.get("date")).upper() not in ("", "TBA")):
+            old_range, new_range = parse_date_range(existing["date"]), parse_date_range(cand["date"])
+            if old_range and new_range and old_range != new_range:
+                warn(f"CONFERENCE DATE CHANGED {target['key']} {year}: "
+                     f"{existing['date']!r} -> {cand['date']!r} (source {cand['source']}) "
+                     "- verify against the official page; override in manual.yml if upstream is wrong")
+        if cand.get("date") and "date" not in owned:
+            # Keep start/end consistent with the (upstream-won) date string -
+            # and never let stale values sit next to a CHANGED date they may
+            # contradict. An unchanged-but-unparsable date keeps its start/end.
+            parsed = parse_date_range(cand["date"])
+            if parsed:
+                merged["start"], merged["end"] = parsed
+            elif clean(cand["date"]) != clean((existing or {}).get("date")):
+                merged.pop("start", None)
+                merged.pop("end", None)
+        if "deadline" not in owned:
+            merged["deadline"] = (cand["deadlines"][0] if len(cand["deadlines"]) == 1
+                                  else list(cand["deadlines"]))
+            if any(cand["abstracts"]) and "abstract_deadline" not in owned:
+                abstracts = (cand["abstracts"] + [None] * len(cand["deadlines"]))[:len(cand["deadlines"])]
+                merged["abstract_deadline"] = abstracts[0] if len(abstracts) == 1 else abstracts
+            # else: the existing abstract_deadline (if any) stays untouched
+        if ("timezone" not in owned and cand.get("timezone")
+                and canon_tz(cand["timezone"]) != canon_tz(merged.get("timezone"))):
             merged["timezone"] = cand["timezone"]
     merged["deadline"] = norm_kept_deadlines(merged.get("deadline"))
     merged["abstract_deadline"] = norm_kept_deadlines(merged.get("abstract_deadline"))
@@ -443,24 +604,31 @@ def build_merged(target, year, existing, cand):
     merged.pop("tba", None)  # legacy flag: meaningless once a record has real data
     if merged.get("timezone") == "TBA":
         merged.pop("timezone")
+    enforce_cfg_fields(merged, target, year)
     return merged, railed
 
 
-def validate(rec, canonical_keys):
+def validate(rec, canonical_keys, require_deadline=True):
     errors = []
     if rec.get("title") not in canonical_keys:
         errors.append(f"title {rec.get('title')!r} is not a canonical key")
     year = rec.get("year")
     if not isinstance(year, int) or not FROM_YEAR <= year <= TO_YEAR:
         errors.append(f"year {year!r} outside {FROM_YEAR}..{TO_YEAR}")
-    deadlines = [d for d in as_list(rec.get("deadline")) if d is not None]
-    if not deadlines:
+    def is_tba(value):
+        return str(value).upper() in ("TBA", "TBD")
+
+    # "TBA" is the established placeholder convention in this dataset (the
+    # frontend renders it as a TBA row) - tolerated wherever a concrete
+    # deadline is not required.
+    concrete = [d for d in as_list(rec.get("deadline")) if d is not None and not is_tba(d)]
+    if not concrete and require_deadline:
         errors.append("no concrete deadline")
-    errors += [f"bad deadline {d!r}" for d in deadlines if not DEADLINE_RE.match(str(d))]
+    errors += [f"bad deadline {d!r}" for d in concrete if not DEADLINE_RE.match(str(d))]
     errors += [f"bad abstract_deadline {a!r}" for a in as_list(rec.get("abstract_deadline"))
-               if a is not None and not DEADLINE_RE.match(str(a))]
+               if a is not None and not is_tba(a) and not DEADLINE_RE.match(str(a))]
     tz = rec.get("timezone")
-    if tz is not None and not TIMEZONE_RE.match(str(tz)):
+    if tz is not None and not is_tba(tz) and not TIMEZONE_RE.match(str(tz)):
         errors.append(f"bad timezone {tz!r}")
     link = rec.get("link")
     if link is not None and not re.match(r"^https?://", str(link)):
@@ -520,6 +688,7 @@ def load_config():
     default_priority = (cfg.get("defaults") or {}).get("source_priority") or ["secdl", "ccfddl"]
     for target in targets:
         sources = target.get("sources")
+        target["manual_only"] = sources == "manual-only"
         target["sources"] = sources if isinstance(sources, dict) else {}
         priority = target.get("source_priority") or default_priority
         target["priority"] = [s for s in priority if s in target["sources"]]
@@ -549,7 +718,7 @@ def fetch_upstream(targets):
             ok += 1
         except Exception as exc:  # noqa: BLE001
             failed["ccfddl"].add(target["key"])
-            warn(f"ccfddl fetch failed for {target['key']} ({path}): {exc}")
+            degrade(f"ccfddl fetch failed for {target['key']} ({path}): {exc}")
     status.append(f"ccfddl: {ok}/{len(ccfddl_targets)} conference files fetched")
     ccfddl_ok = ok > 0
 
@@ -566,7 +735,7 @@ def fetch_upstream(targets):
         secdl_ok = True
     except Exception as exc:  # noqa: BLE001
         failed["secdl"] = {t["key"] for t in targets if "secdl" in t["sources"]}
-        warn(f"secdl fetch failed: {exc}")
+        degrade(f"secdl fetch failed: {exc}")
         status.append("secdl: FAILED")
 
     return data, failed, status, (ccfddl_ok or secdl_ok)
@@ -603,6 +772,9 @@ def describe_changes(old, new):
 
 
 def main() -> int:
+    # Data and summaries contain non-ASCII (venue names); never let a legacy
+    # console encoding (e.g. cp949) crash the run.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dry-run", action="store_true",
                         help="print the would-be changes without writing files")
@@ -614,6 +786,7 @@ def main() -> int:
         print(f"FATAL: cannot load {CONFIG_PATH}: {exc}")
         return 1
     canonical_keys = {t["key"] for t in targets}
+    by_key = {t["key"]: t for t in targets}
 
     upstream, failed_fetches, fetch_status, any_ok = fetch_upstream(targets)
     if not any_ok:
@@ -622,8 +795,11 @@ def main() -> int:
         return 1
 
     files = load_existing()
+    manual = load_manual(targets)
 
-    # Index existing records by (canonical key, edition year).
+    # Index existing records by (canonical key, edition year) and re-file any
+    # record sitting in the wrong year/category bucket (conferences.yml owns
+    # the category; the record's own year field owns the year).
     index = {}
     for (year, cat), entry in files.items():
         for item in entry["items"]:
@@ -633,15 +809,26 @@ def main() -> int:
             item["bucket"] = (year, cat)
             item["target_key"] = target["key"] if target else None
             if target:
+                home = (rec_year, target["category"])
+                if home != (year, cat):
+                    if home in files and not files[home].get("broken"):
+                        warn(f"{target['key']} {rec_year}: re-filed from "
+                             f"{year}/{cat}.yml into {home[0]}/{home[1]}.yml")
+                        item["bucket"] = home
+                    else:
+                        warn(f"{target['key']} {rec_year}: belongs in "
+                             f"{rec_year}/{target['category']}.yml but that file is "
+                             "unavailable; left in place")
                 if (target["key"], rec_year) in index:
-                    warn(f"duplicate record for {target['key']} {rec_year} in repo data; "
-                         "only the first copy is auto-updated")
+                    degrade(f"duplicate record for {target['key']} {rec_year} in repo data; "
+                            "only the first copy is auto-updated")
                 else:
                     index[(target["key"], rec_year)] = item
 
     # Merge upstream candidates into existing records / create new ones.
     new_items = []
     kept, updated, created = [], [], []
+    candidate_done = set()
     for target in targets:
         # Never fall back past a source whose FETCH failed (vs. has no record):
         # its stale lower-priority sibling must not clobber data it owns.
@@ -667,14 +854,27 @@ def main() -> int:
             cross_fill_abstracts(winner, ordered[1:])
             item = index.get((target["key"], year))
             existing = item["data"] if item else None
-            merged, railed = build_merged(target, year, existing, winner)
+            man = manual.get((target["key"], year))
+            owned = frozenset(f for f in MANUAL_FIELDS if man and man.get(f) is not None)
+            merged, railed = build_merged(target, year, existing, winner, owned)
+            if man is None or man.get("note") is None:
+                maybe_clear_stale_note(merged, existing, target["key"], year)
+            if man is not None:
+                if manual_matches_upstream(man, winner):
+                    warn(f"manual.yml override for {target['key']} {year} matches "
+                         "upstream now; the entry can be removed")
+                changed_fields = apply_manual_override(merged, man)
+                if changed_fields:
+                    warn(f"manual override applied for {target['key']} {year}: "
+                         + ", ".join(changed_fields))
             errors = validate(merged, canonical_keys)
             if errors:
-                warn(f"validation failed for {target['key']} {year} "
-                     f"({'; '.join(errors)}); kept existing entry" if existing
-                     else f"validation failed for new {target['key']} {year} "
-                          f"({'; '.join(errors)}); record dropped")
+                degrade(f"validation failed for {target['key']} {year} "
+                        f"({'; '.join(errors)}); kept existing entry" if existing
+                        else f"validation failed for new {target['key']} {year} "
+                             f"({'; '.join(errors)}); record dropped")
                 continue
+            candidate_done.add((target["key"], year))
             if existing is not None:
                 if canon_record(merged) == canon_record(existing):
                     kept.append(f"{target['key']} {year}")
@@ -690,6 +890,42 @@ def main() -> int:
                 new_items.append({"bucket": (year, target["category"]),
                                   "record": merged, "sort_title": merged["title"]})
 
+    # Records with no upstream candidate this run still get cfg-field
+    # normalization and manual overrides applied (they would otherwise
+    # round-trip byte-for-byte and never self-correct).
+    for (key, year), item in sorted(index.items()):
+        if item["new_data"] is not None or (key, year) in candidate_done:
+            continue
+        target = by_key[key]
+        existing = item["data"]
+        merged = dict(existing)
+        merged["title"] = key
+        merged["year"] = year
+        merged["deadline"] = norm_kept_deadlines(merged.get("deadline"))
+        merged["abstract_deadline"] = norm_kept_deadlines(merged.get("abstract_deadline"))
+        if merged["abstract_deadline"] is None:
+            merged.pop("abstract_deadline")
+        enforce_cfg_fields(merged, target, year)
+        man = manual.get((key, year))
+        if man is not None:
+            changed_fields = apply_manual_override(merged, man)
+            if changed_fields:
+                warn(f"manual override applied for {key} {year}: "
+                     + ", ".join(changed_fields))
+            if man.get("note") is None:
+                maybe_clear_stale_note(merged, existing, key, year)
+        if canon_record(merged) == canon_record(existing):
+            continue
+        errors = validate(merged, canonical_keys, require_deadline=False)
+        if errors:
+            degrade(f"validation failed for normalized {key} {year} "
+                    f"({'; '.join(errors)}); kept existing entry")
+            continue
+        item["new_data"] = merged
+        updated.append(f"{key} {year} (normalized/manual): "
+                       + "; ".join(describe_changes(canon_record(existing),
+                                                    canon_record(merged))))
+
     # Existing matched records with no upstream candidate are implicitly kept.
     for (key, year), item in sorted(index.items()):
         if item["new_data"] is None and f"{key} {year}" not in kept:
@@ -698,13 +934,32 @@ def main() -> int:
             if not has_candidate:
                 kept.append(f"{key} {year} (no upstream)")
 
-    # Assemble output files.
+    # Coverage: every target should have some record for the upcoming cycle
+    # year, or it silently never appears on the page (manual-only venues are
+    # exactly the ones nobody notices going missing).
+    next_year = TODAY.year + 1
+    covered = {key for (key, year) in index if year >= next_year}
+    covered |= {it["record"]["title"] for it in new_items
+                if it["record"]["year"] >= next_year}
+    for target in targets:
+        if target["key"] not in covered:
+            hint = ("manual-only source; add it to deadlines/data/manual.yml "
+                    "or the data files by hand"
+                    if target.get("manual_only") else "no upstream edition yet")
+            warn(f"coverage gap: {target['key']} has no {next_year} entry ({hint})")
+
+    # Assemble output files (records land in their computed bucket, so a
+    # re-filed record moves between files atomically in the same run).
+    bucket_items = {}
+    for entry in files.values():
+        for item in entry["items"]:
+            bucket_items.setdefault(item["bucket"], []).append(item)
     results = []  # (path, old_text, new_text)
     for (year, cat), entry in sorted(files.items()):
         if entry.get("broken"):
             continue
         blocks = []
-        for item in entry["items"]:
+        for item in bucket_items.get((year, cat), []):
             rec = item["new_data"] or item["data"]
             if item["new_data"] is not None or item["raw"] is None:
                 text = render_record(rec)
@@ -716,7 +971,13 @@ def main() -> int:
                 blocks.append({"text": render_record(item["record"]),
                                "sort_title": item["sort_title"]})
         if not blocks:
-            continue  # never write empty files
+            if entry["text"] is not None:
+                # Every record moved elsewhere: leave a valid empty list so
+                # the frontend fetch still parses.
+                new_text = HEADER + "\n[]\n"
+                if new_text != entry["text"]:
+                    results.append((entry["path"], entry["text"], new_text))
+            continue  # never create empty files
         new_text = assemble_file(blocks)
         if new_text != entry["text"]:
             results.append((entry["path"], entry["text"], new_text))
@@ -748,9 +1009,14 @@ def main() -> int:
             tmp.write_text(new_text, encoding="utf-8")
             os.replace(tmp, path)  # atomic: a crash mid-write can't truncate live data
             print(f"  {state}d {rel} ({len(new_text.splitlines())} lines)")
+    if health:
+        print(f"\nHEALTH: DEGRADED - {len(health)} issue(s) marked [!] above "
+              "need human attention (exit 2)")
+    else:
+        print("\nHEALTH: ok")
     if args.dry_run:
         print("\n(dry run: nothing was written)")
-    return 0
+    return 2 if health else 0
 
 
 if __name__ == "__main__":

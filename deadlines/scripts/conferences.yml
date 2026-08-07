@@ -7,10 +7,11 @@
 #   category    output bucket: system | software | security | ai
 #   type        conference | workshop  (used for the `type` field of NEW records)
 #   slug        id prefix; record ids are "<slug><2-digit year>", e.g. ccs26
-#   full_name   long name used for newly created records (existing records keep theirs)
-#   tier        lab-curated tier used for newly created records (T1/T2/T3/T4/"N/A").
-#               null = unknown -> the field is omitted on new records.
-#               NEVER taken from upstream; existing records always keep their own tier.
+#   full_name   long name for records; enforced on current/future editions
+#               (past editions keep their historical values)
+#   tier        lab-curated tier (T1/T2/T3/T4/"N/A"). null = unknown -> omitted.
+#               NEVER taken from upstream; enforced from this file onto current
+#               and future editions, so fixing a tier here self-corrects the data.
 #   aliases     titles used to associate records already present in the repo data
 #               files with this target (same matching rule as the frontend).
 #   sources     upstream locators:
@@ -18,8 +19,10 @@
 #                 secdl:  record `name` in sec-deadlines.github.io _data/conferences.yml,
 #                         either a plain string or {name, description_contains}
 #                         (description_contains disambiguates duplicate names).
-#               "manual-only": no reliable machine source; the script never touches
+#               "manual-only": no reliable machine source; the script never fetches
 #               this target - curate it by hand in the data files / manual.yml.
+#               The script warns on every run when any target (manual-only or
+#               not) has no entry for the upcoming cycle year.
 #
 # Source priority: when both sources cover the same edition year, the first source
 # in source_priority wins (sec-deadlines tracks extensions faster; ccfddl provides

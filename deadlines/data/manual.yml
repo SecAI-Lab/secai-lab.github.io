@@ -2,10 +2,13 @@
 # Add confirmed CFP data here when upstream trackers are wrong or missing;
 # every entry MUST cite the official source it was verified against.
 #
-# NOTE: to override a conference that also exists in the generated files, copy
-# its deadline / abstract_deadline / timezone values verbatim — the frontend
-# merges rows by deadline proximity, so a matching deadline makes your entry
-# land on the same row (your date/place/link then win by priority).
+# NOTE: the updater (deadlines/scripts/update_deadlines.py) propagates these
+# overrides into the generated files on every run, so the generated data and
+# this file always agree and an override can move a deadline in EITHER
+# direction. Titles must be the canonical key from
+# deadlines/scripts/conferences.yml (the run goes red otherwise). An override
+# stays active until you delete the entry — the run summary says when upstream
+# has caught up and an entry can be removed.
 
 # ccfddl carries WWW 2026's original April schedule; the conference moved.
 # Verified 2026-07-30 against https://www2026.thewebconf.org/ :

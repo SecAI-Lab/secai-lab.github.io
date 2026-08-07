@@ -6,6 +6,7 @@
   year: 2026
   id: atc26
   full_name: "ACM SIGOPS Annual Technical Conference"
+  type: conference
   tier: T2
   link: https://sigops.org/s/conferences/atc/2026/index.html
   deadline: "2026-06-11 11:59"
@@ -20,6 +21,7 @@
   year: 2026
   id: dsn26
   full_name: "IEEE/IFIP International Conference on Dependable Systems and Networks"
+  type: conference
   link: https://dsn2026.github.io
   abstract_deadline: "2025-11-27 23:59"
   deadline: "2025-12-04 23:59"
@@ -33,18 +35,22 @@
   year: 2026
   id: eurosec26
   full_name: "European Workshop on Systems Security"
+  type: workshop
+  tier: "N/A"
   link: https://eurosec-workshop.github.io/
-  deadline: "2026-02-03 23:59"
+  deadline: "2026-02-10 23:59"
   timezone: AoE
   place: "Edinburgh, UK"
   date: "April 27, 2026"
   start: 2026-04-27
   end: 2026-04-27
+  note: "Deadline extended from February 3 to February 10, 2026."
 
 - title: "EuroSys"
   year: 2026
   id: eurosys26
   full_name: "ACM European Conference on Computer Systems"
+  type: conference
   tier: T2
   link: https://2026.eurosys.org/
   abstract_deadline:
@@ -55,15 +61,16 @@
     - "2025-09-25 23:59"
   timezone: UTC-12
   place: "Edinburgh, UK"
-  date: "April 13-16, 2026"
-  start: 2026-04-13
-  end: 2026-04-16
+  date: "April 27-30, 2026"
+  start: 2026-04-27
+  end: 2026-04-30
   note: "Two submission rounds: Spring and Fall."
 
 - title: "NSDI"
   year: 2026
   id: nsdi26
   full_name: "USENIX Symposium on Networked Systems Design and Implementation"
+  type: conference
   tier: T1
   link: https://www.usenix.org/conference/nsdi26
   abstract_deadline:
@@ -83,6 +90,7 @@
   year: 2026
   id: osdi26
   full_name: "USENIX Symposium on Operating Systems Design and Implementation"
+  type: conference
   link: https://www.usenix.org/conference/osdi26
   abstract_deadline: "2025-12-04 22:59"
   deadline: "2025-12-11 22:59"
@@ -96,6 +104,7 @@
   year: 2026
   id: sosp26
   full_name: "ACM Symposium on Operating Systems Principles"
+  type: conference
   link: https://sigops.org/s/conferences/sosp/2026/index.html
   abstract_deadline: "2026-03-26 23:59"
   deadline: "2026-04-01 23:59"

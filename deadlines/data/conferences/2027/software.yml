@@ -2,10 +2,22 @@
 # Human corrections belong in deadlines/data/manual.yml (it overrides this file).
 # Sources: ccfddl/ccf-deadlines, sec-deadlines.github.io (mapping: deadlines/scripts/conferences.yml)
 
+- title: "ASE"
+  year: 2027
+  id: ase27
+  full_name: "IEEE/ACM International Conference on Automated Software Engineering"
+  type: conference
+  link: https://ase-conferences.org/
+  timezone: TBA
+  place: "TBA"
+  date: "TBA"
+  note: "Official ASE 2027 conference page/CFP not publicly available yet."
+
 - title: "FSE"
   year: 2027
   id: fse27
   full_name: "ACM International Conference on the Foundations of Software Engineering"
+  type: conference
   tier: T1
   link: https://conf.researchr.org/home/fse-2027
   deadline: "2026-10-02 23:59"
@@ -19,6 +31,7 @@
   year: 2027
   id: icse27
   full_name: "International Conference on Software Engineering"
+  type: conference
   tier: T1
   link: https://conf.researchr.org/home/icse-2027
   abstract_deadline: "2026-06-23 23:59"
@@ -28,3 +41,14 @@
   date: "April 25-May 01, 2027"
   start: 2027-04-25
   end: 2027-05-01
+
+- title: "ISSTA"
+  year: 2027
+  id: issta27
+  full_name: "ACM SIGSOFT International Symposium on Software Testing and Analysis"
+  type: conference
+  link: https://www.issta.org/
+  timezone: TBA
+  place: "Singapore, Singapore"
+  date: "TBA"
+  note: "Official ISSTA page lists ISSTA 2027 in Singapore; dates and deadlines are not yet available."

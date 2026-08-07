@@ -6,6 +6,7 @@
   year: 2027
   id: aaai27
   full_name: "AAAI Conference on Artificial Intelligence"
+  type: conference
   tier: T1
   link: https://aaai.org/conference/aaai/aaai-27/
   abstract_deadline: "2026-07-21 23:59"
@@ -20,18 +21,20 @@
   year: 2027
   id: ijcai27
   full_name: "International Joint Conference on Artificial Intelligence"
+  type: conference
   tier: T2
   link: https://www.ijcai.org/future_conferences
-  deadline: TBA
+  deadline: "TBA"
   timezone: TBA
-  place: TBA
-  date: TBA
+  place: "TBA"
+  date: "TBA"
   note: "Official IJCAI page says IJCAI-2027 host will be announced at the preceding conference; CFP, dates, place, and deadlines are not announced yet."
 
 - title: "WWW"
   year: 2027
   id: www27
   full_name: "The Web Conference"
+  type: conference
   tier: T1
   link: https://acmweb2027.org/
   abstract_deadline: "2026-10-11 23:59"

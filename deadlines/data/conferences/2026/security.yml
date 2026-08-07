@@ -223,9 +223,9 @@
 - title: "SAC"
   year: 2026
   id: sac26
-  full_name: "ACM/SIGAPP Symposium On Applied Computing"
+  full_name: "ACM/SIGAPP Symposium on Applied Computing"
   type: conference
-  tier: "N/A"
+  tier: T4
   link: https://www.sigapp.org/sac/sac2026/
   deadline: "2025-10-17 23:59"
   timezone: UTC-12
@@ -237,7 +237,7 @@
 - title: "SecureComm"
   year: 2026
   id: securecomm26
-  full_name: "International Conference on Security and Privacy in Communication Networks"
+  full_name: "EAI International Conference on Security and Privacy in Communication Networks"
   type: conference
   tier: "N/A"
   link: https://securecomm.eai-conferences.org/2026/
@@ -272,7 +272,7 @@
   year: 2026
   id: woot26
   full_name: "USENIX WOOT Conference on Offensive Technologies"
-  type: conference
+  type: workshop
   tier: "N/A"
   link: https://www.usenix.org/conference/woot26/call-for-papers
   deadline:

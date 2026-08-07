@@ -15,6 +15,8 @@ on:
 
 permissions:
   contents: write
+  issues: write   # failure alerts are filed as issues (label: deadline-pipeline)
+  actions: write  # keepalive: re-enabling the workflow resets GitHub's 60-day auto-disable timer
 
 concurrency:
   group: update-deadlines
@@ -23,6 +25,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -35,14 +38,25 @@ jobs:
       - name: Install dependencies
         run: pip install 'pyyaml==6.0.*'
 
-      # If the updater exits non-zero (all upstream sources unreachable,
-      # validation failure, ...) this step fails and the whole job fails loudly.
-      # The full change/warning report is mirrored to the job summary so every
-      # automated run is auditable at a glance from the Actions tab.
+      # Updater exit codes: 0 = healthy, 2 = degraded (files were still written
+      # where safe, but something needs human attention), 1 = fatal (nothing
+      # written). 0 and 2 both proceed to the commit step so good data is never
+      # held hostage by a partial failure; 2 then fails the job afterwards so
+      # the run shows red and the alert issue gets filed. The full report is
+      # mirrored to the job summary either way.
       - name: Run deadline updater
+        id: updater
         run: |
+          set +e
           set -o pipefail
           python3 deadlines/scripts/update_deadlines.py | tee -a "$GITHUB_STEP_SUMMARY"
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 2 ]; then
+            echo "Updater reported degraded health; committing what was written, then failing the job."
+            exit 0
+          fi
+          exit "$code"
 
       - name: Commit and push changes
         run: |
@@ -58,3 +72,34 @@ jobs:
           else
             echo "No changes to commit."
           fi
+
+      - name: Fail the run if the updater reported degraded health
+        if: steps.updater.outputs.exit_code == '2'
+        run: |
+          echo "Updater exit code 2 (degraded) - see the [!] lines in the job summary."
+          exit 1
+
+      # A red run alone is easy to miss; file (or bump) an issue so somebody
+      # actually sees it.
+      - name: File an alert issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          body="The scheduled conference-deadline update failed or reported degraded health. See the run log and job summary: $run_url"
+          existing=$(gh issue list --state open --label deadline-pipeline --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh label create deadline-pipeline --description "Automated deadline pipeline alerts" --color D93F0B --force
+            gh issue create --title "Deadline auto-update needs attention" --label deadline-pipeline --body "$body"
+          fi
+
+      # GitHub auto-disables cron workflows after 60 days without repo
+      # activity; re-enabling on every run resets that timer.
+      - name: Keep the schedule alive
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/update-deadlines.yml/enable" || true

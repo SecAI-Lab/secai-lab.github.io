@@ -6,6 +6,7 @@
   year: 2025
   id: ase25
   full_name: "IEEE/ACM International Conference on Automated Software Engineering"
+  type: conference
   link: https://conf.researchr.org/home/ase-2025
   deadline: "2025-05-30 23:59"
   timezone: UTC-12
@@ -19,10 +20,11 @@
   year: 2025
   id: fse25
   full_name: "ACM International Conference on the Foundations of Software Engineering"
+  type: conference
   tier: T1
   link: https://conf.researchr.org/home/fse-2025
-  abstract_deadline: "2024-09-05 23:59:59"
-  deadline: "2024-09-12 23:59:59"
+  abstract_deadline: "2024-09-05 23:59"
+  deadline: "2024-09-12 23:59"
   timezone: UTC-12
   place: "Trondheim, Norway"
   date: "June 23-27, 2025"
@@ -34,6 +36,7 @@
   year: 2025
   id: icse25
   full_name: "IEEE/ACM International Conference on Software Engineering"
+  type: conference
   tier: T1
   link: https://conf.researchr.org/home/icse-2025
   abstract_deadline:
@@ -53,8 +56,9 @@
   year: 2025
   id: issta25
   full_name: "ACM SIGSOFT International Symposium on Software Testing and Analysis"
+  type: conference
   link: https://conf.researchr.org/home/issta-2025
-  deadline: "2024-10-31 23:59:59"
+  deadline: "2024-10-31 23:59"
   timezone: UTC-12
   place: "Trondheim, Norway"
   date: "June 25-28, 2025"

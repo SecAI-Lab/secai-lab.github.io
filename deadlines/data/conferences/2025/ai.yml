@@ -6,6 +6,7 @@
   year: 2025
   id: aaai25
   full_name: "AAAI Conference on Artificial Intelligence"
+  type: conference
   tier: T1
   link: https://aaai.org/conference/aaai/aaai-25/
   abstract_deadline: "2024-08-07 23:59"
@@ -20,6 +21,7 @@
   year: 2025
   id: ijcai25
   full_name: "International Joint Conference on Artificial Intelligence"
+  type: conference
   tier: T2
   link: https://2025.ijcai.org/
   abstract_deadline: "2025-01-16 23:59"
@@ -34,10 +36,11 @@
   year: 2025
   id: www25
   full_name: "The ACM Web Conference"
+  type: conference
   tier: T1
   link: https://www2025.thewebconf.org/
-  abstract_deadline: "2024-10-07 23:59:59"
-  deadline: "2024-10-14 23:59:59"
+  abstract_deadline: "2024-10-07 23:59"
+  deadline: "2024-10-14 23:59"
   timezone: UTC-12
   place: "Sydney, Australia"
   date: "April 28 - May 2, 2025"
