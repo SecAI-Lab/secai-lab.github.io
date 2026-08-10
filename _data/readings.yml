@@ -1,3 +1,43 @@
+- title: "The Hidden Dimensions of LLM Alignment: A Multi-Dimensional Analysis of Orthogonal Safety Directions"
+  link: "https://arxiv.org/pdf/2502.09674"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_0803_weekly_meeting.pdf"
+  code_link: ""
+  presenter: Gahyun
+  conference: ICML
+  date: 2026.08.03
+  pub_year: 2025
+  discussion: "(Discussion) This paper challenges the common view that LLM refusal is controlled by a single activation direction, showing instead that safety fine-tuning creates a low-rank, multi-dimensional residual space. Its main strength is combining mechanistic interpretation with causal validation: the authors identify a dominant direction that predicts refusal, use Partial Layer-wise Relevance Propagation to connect secondary directions to features such as hypothetical framing and role-playing, and selectively remove one direction to weaken resistance to PAIR jailbreaks without equally affecting other attacks. The trigger-removal experiment further demonstrates practical relevance, maintaining a 42% attack pass rate after exposure to 80 training examples, while the tested baseline jailbreaks fall close to zero. However, most mechanistic findings are demonstrated on Llama 3.1 8B and a constructed 2,600-sample dataset centered on refusal, so it is unclear whether the same directions generalize across model families, larger-scale alignment data, or safety behaviors beyond refusal. Direction interpretations also depend partly on GPT-4o labels generated from top-attributed tokens, without systematic human validation, and the attack requires internal activations and a large model to iteratively rephrase prompts. Overall, this is a strong contribution that provides a richer and causally supported account of safety alignment, but broader cross-model evaluation and more rigorous validation of direction semantics are needed. (Yiyue)"
+
+- title: "Extracting Unlearned Information from LLMs with Activation Steering"
+  link: "https://arxiv.org/abs/2411.02631"
+  ppt_link: ""
+  code_link: ""
+  presenter: Yujeong
+  conference: NeurIPS Workshop
+  date: 2026.08.03
+  pub_year: 2024
+  discussion: "(Discussion) This paper introduces AnonAct, a method that uses anonymized versions of a query to generate activation steering vectors, aiming to extract information that has been unlearned from LLMs. Unlike prior attacks that only surface a set of candidate answers, AnonAct combined with a word-frequency scoring method can pinpoint the exact correct answer. The authors test this approach across three unlearning techniques and datasets: WhoIsHarryPotter, TOFU, and ROME. Results show the method is highly effective at recovering broad, richly interconnected knowledge, such as Harry Potter facts, improving the AUC score from 0.75 to 0.92. However, a key limitation is that it fails to generalize to narrower unlearning settings, such as single-author facts (TOFU) or single-fact edits (ROME), since these lack the dense web of associations the method relies on to reconstruct erased information. (Shakhzod)"
+  
+- title: "Evaluating the Robustness of a Production Malware Detection System to Transferable Adversarial Attacks"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3719027.3765118"
+  ppt_link: "https://docs.google.com/presentation/d/19pgnfJz05sS0gaqtcXdDUDm61tkc9j2-92n91vBw2Us/edit?usp=sharing"
+  code_link: "https://github.com/google/magika"
+  presenter: Shakhzod
+  conference: CCS
+  date: 2026.07.27
+  pub_year: 2025
+  discussion: "(Discussion) This paper shows that the ML file-type router inside a production malware detection pipeline is itself an attack surface. Its main strength is targeting Google's open-source Magika router rather than the malware classifier, combining gradient-guided byte search with format-preserving constraints so modified files stay valid and executable. The authors demonstrate effectiveness by misclassifying 90% of files with five byte changes and delivering a modified malicious PDF end-to-end through Gmail, with the resulting defense deployed to production. However, the defense rests on key secrecy rather than robustness, is capped at one AES round because accuracy falls from 99% to 63%, and is never tested against adaptive attacks; format-preserving experiments cover only 7 of 113 types, and end-to-end validation uses a single sample without measuring actual detection loss. Overall, this is a valuable contribution exposing an underexamined attack surface in production ML pipelines, but adaptive-attack evaluation and broader coverage are needed. (Hyoungjun)"
+
+- title: "Systematic Testing of C++ Abstraction Recovery Systems by Iterative Compiler Model Refinement"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3733822.3764669"
+  ppt_link: "https://docs.google.com/presentation/d/16m9BkTrh4lW5WU35aIgz9nFwh7RakhCcy71lcmKNTCU/edit?usp=sharing"
+  code_link: "https://github.com/sei-eschwartz/emcee"
+  presenter: Yiyue
+  conference: SURE
+  date: 2026.07.27
+  pub_year: 2025
+  discussion: "(Discussion) EmCee presents a model-based framework for systematically testing C++ abstraction recovery systems through iterative compiler model refinement. Its main strength is that it combines grey-box fuzzing with a simplified compiler model to generate difficult program structures and detect unsound inference rules that may be missed through manual testing. The authors demonstrate its effectiveness by identifying 27 soundness problems in OOAnalyzer and three in VirtAnalyzer. However, the approach only evaluates local soundness under a perfect-knowledge assumption and currently models Microsoft Visual C++ for 32-bit x86 executables, limiting its generalizability to other compilers and architectures. Overall, EmCee is a valuable contribution that improves the reliability of abstraction recovery tools, but broader compiler support and system-level evaluation are needed. (Mijin)"
+
 - title: "DecLLM: LLM-Augmented Recompilable Decompilation for Enabling Programmatic Use of Decompiled Code"
   link: "https://dl.acm.org/doi/pdf/10.1145/3728958"
   ppt_link: "https://docs.google.com/presentation/d/1KnDW37jokxkvv_DibcxqLujQuOMYXwY_/edit?usp=drivesdk&ouid=115472134383580308853&rtpof=true&sd=true"

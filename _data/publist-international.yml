@@ -1,4 +1,4 @@
-- title: "Fool Me If You Can: On the Robustness of Binary Code Similarity Detection Models against Semantics-preserving Transformations (To appear)"
+- title: "Fool Me If You Can: On the Robustness of Binary Code Similarity Detection Models against Semantics-preserving Transformations"
   image: asmfooler.png
   description: "Binary analysis plays an essential role in cybersecurity, facilitating reverse engineering to reveal the inner workings of programs in the absence of source code. Traditional approaches, such as static and dynamic analysis, extract valuable insights from stripped binaries, but often demand substantial expertise and manual effort. Recent advances in deep learning have opened promising opportunities to enhance binary analysis by capturing latent features and disclosing underlying code semantics. Despite the growing number of binary analysis models based on machine learning, their robustness to adversarial code transformations remains underexplored. In this work, we evaluate the robustness of deep learning models for the task of binary code similarity detection (BCSD) under semantics-preserving transformations. The unique nature of machine instructions presents distinct challenges compared to the typical input perturbations found in other domains. To achieve our goal, we introduce asmFooler, a system that evaluates the resilience of BCSD models using a diverse set of adversarial code transformations that preserve functional semantics. We construct a dataset of 9,565 binary variants from 620 baseline samples by applying eight semantics-preserving transformations across six representative BCSD models. Our major findings highlight several key insights: i) model robustness highly relies on the design of the processing pipeline, including code pre-processing, model architecture, and internal feature selection, which collectively determine how code semantics are captured; ii) the effectiveness of adversarial transformations is bounded by a transformation budget, shaped by model-specific constraints such as input size limits and the expressive capacity of semantically equivalent instructions; iii) well-crafted adversarial transformations can be highly effective, even when introducing minimal perturbations; and iv) such transformations disrupt the model’s ability to recognize and focus on semantically significant instructions." 
   authors: Jiyong Uhm, Minseok Kim, Michalis Polychronakis and Hyungjoon Koo
@@ -7,6 +7,7 @@
     arXiv: http://arxiv.org/abs/2602.12681
     display: In ACM International Conference on Foundations of Software Engineering, 2026 (FSE '26)
   github: https://zenodo.org/records/17116512
+  slides: https://wldyd423.github.io/assets/3336_JiyongUhm_asmFooler_FSE2026.pdf
   highlight: 1
   news2:
 
@@ -63,6 +64,7 @@
   highlight: 1
   github: "https://zenodo.org/records/16869733"
   slides: "https://kevinkoo001.github.io/assets/pdf/ccs25-apt-slides.pdf"
+  web: "https://lngt-apt-study-map.vercel.app/"
   news2:
 
 - title: "BOOTKITTY: A Stealthy Bootkit-Rootkit Against Modern Operating Systems"

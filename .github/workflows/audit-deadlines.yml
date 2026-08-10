@@ -1,0 +1,171 @@
+# Weekly verification audit of the deadline tracker data against OFFICIAL
+# conference sources (Tier 2 of the pipeline; Tier 1 is the daily
+# update-deadlines.yml sync from community datasets).
+#
+# Two modes, decided by whether the CLAUDE_CODE_OAUTH_TOKEN secret exists:
+#   * Claude mode: Claude Code (billed to the lab's Max subscription via the
+#     OAuth token — no API billing) verifies the watchlist against official
+#     pages and leaves corrections in the working tree; deterministic steps
+#     then lint the diff (path allowlist + citation rule) and open/update a
+#     pull request for human review. Claude never pushes anything itself.
+#   * Human mode (no secret): the watchlist is filed as a GitHub issue for a
+#     lab member to check by hand (~5-10 minutes).
+
+name: Audit conference deadlines
+
+on:
+  schedule:
+    # 21:00 UTC Sunday == 06:00 KST Monday, weekly
+    - cron: '0 21 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: write  # keepalive: re-enabling the workflow resets the 60-day auto-disable timer
+
+concurrency:
+  group: audit-deadlines
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install 'pyyaml==6.0.*'
+
+      # Exit 2 (degraded fetch) still produces a usable watchlist; only a
+      # fatal exit 1 aborts the audit.
+      - name: Build watchlist
+        id: watchlist
+        run: |
+          set +e
+          python3 deadlines/scripts/update_deadlines.py --dry-run --watchlist watchlist.json
+          code=$?
+          if [ "$code" -eq 1 ]; then exit 1; fi
+          count=$(python3 -c "import json; print(len(json.load(open('watchlist.json'))))")
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Watchlist: $count record(s)"
+
+      - name: Detect auditor token
+        id: token
+        env:
+          TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Run Claude auditor
+        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Use the workflow's own token instead of the Claude Code GitHub
+          # App (which is deliberately not installed on this repo). Claude
+          # only edits the working tree; branch/PR operations are done by
+          # the deterministic steps below as github-actions[bot].
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            Read deadlines/scripts/AUDITOR.md and follow it exactly. The
+            watchlist is in watchlist.json at the repository root. Today's
+            date is in the run environment; trust fetched pages, not memory.
+          claude_args: |
+            --allowedTools "Read,Edit,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
+
+      # Deterministic gate: converge the data (propagates any manual.yml
+      # edits), require a healthy updater, and enforce the audit allowlist +
+      # citation rule. A failure here means no PR is opened.
+      - name: Converge and lint
+        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        run: |
+          set -o pipefail
+          python3 deadlines/scripts/update_deadlines.py | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 deadlines/scripts/update_deadlines.py --dry-run | tail -5
+          python3 deadlines/scripts/audit_lint.py
+
+      - name: Open or update audit pull request
+        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain -- deadlines/data)" ]; then
+            echo "Audit found nothing to correct."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B deadline-audit
+          git add -- deadlines/data
+          git commit -m "Deadline audit: verified corrections"
+          git push -f origin deadline-audit
+          if [ ! -f audit-summary.md ]; then
+            echo "Automated deadline audit corrections; every change carries an inline citation — see the diff." > audit-summary.md
+          fi
+          gh label create deadline-pipeline --description "Automated deadline pipeline alerts" --color D93F0B --force
+          existing=$(gh pr list --head deadline-audit --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh pr edit "$existing" --body-file audit-summary.md
+            echo "Updated existing audit PR #$existing."
+          else
+            gh pr create --base master --head deadline-audit \
+              --title "Deadline audit: verified corrections" \
+              --body-file audit-summary.md --label deadline-pipeline
+          fi
+
+      - name: File watchlist issue (human mode, no auditor token)
+        if: steps.token.outputs.present == 'false' && steps.watchlist.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import datetime as dt
+          import json
+
+          items = json.load(open("watchlist.json"))
+          lines = [
+              "No `CLAUDE_CODE_OAUTH_TOKEN` secret is configured, so this week's",
+              "verification watchlist needs a human (~5-10 minutes): open each",
+              "venue's official page and check the values below. Corrections go",
+              "in `deadlines/data/manual.yml` (with a `Verified <date> against",
+              "<URL>` comment) or, for records with no upstream, directly in the",
+              "data file. See `deadlines/scripts/AUDITOR.md` for the full rules.",
+              "",
+          ]
+          for it in items:
+              rec = it["record"]
+              lines.append(f"- [ ] **{it['title']} {it['year']}** ({', '.join(it['reasons'])})")
+              if rec.get("link"):
+                  lines.append(f"      link: {rec['link']}")
+              for f in ("deadline", "abstract_deadline", "timezone", "place", "date"):
+                  if rec.get(f) is not None:
+                      lines.append(f"      {f}: {rec[f]}")
+          open("watchlist.md", "w", encoding="utf-8").write("\n".join(lines) + "\n")
+          PY
+          title="Weekly deadline audit: $(date -u +%F) — ${{ steps.watchlist.outputs.count }} record(s) to verify"
+          gh label create deadline-audit --description "Weekly human verification watchlist" --color FBCA04 --force
+          existing=$(gh issue list --state open --label deadline-audit --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --title "$title" --body-file watchlist.md
+            echo "Updated existing watchlist issue #$existing."
+          else
+            gh issue create --title "$title" --label deadline-audit --body-file watchlist.md
+          fi
+
+      # GitHub auto-disables cron workflows after 60 days without repo
+      # activity; re-enabling on every run resets that timer.
+      - name: Keep the schedule alive
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/audit-deadlines.yml/enable" || true
