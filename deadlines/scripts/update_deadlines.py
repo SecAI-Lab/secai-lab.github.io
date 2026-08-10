@@ -749,6 +749,13 @@ def fetch_upstream(targets):
     return data, failed, status, (ccfddl_ok or secdl_ok)
 
 
+def edition_is_past(*cands):
+    """True when every concrete deadline across the candidates has passed -
+    the edition is frozen history and not worth a recurring warning."""
+    dates = [d for c in cands for d in (parse_dl_date(v) for v in c["deadlines"]) if d]
+    return bool(dates) and all(d < TODAY for d in dates)
+
+
 def sources_disagree(a, b):
     """True if two candidates for the same edition differ materially (> 1 day on
     any cycle, or a different cycle count). 1-day tolerance absorbs equivalent
@@ -861,10 +868,14 @@ def main() -> int:
             for other in ordered[1:]:
                 if sources_disagree(winner, other):
                     disagreements.add((target["key"], year))
-                    warn(f"CROSS-SOURCE DISAGREEMENT {target['key']} {year}: "
-                         f"{winner['source']}={winner['deadlines']} vs "
-                         f"{other['source']}={other['deadlines']}; using {winner['source']} "
-                         "- verify against the official CFP")
+                    # Past editions are frozen history: the disagreement stays
+                    # visible in the watchlist machinery but no longer clutters
+                    # every run summary.
+                    if not edition_is_past(winner, other):
+                        warn(f"CROSS-SOURCE DISAGREEMENT {target['key']} {year}: "
+                             f"{winner['source']}={winner['deadlines']} vs "
+                             f"{other['source']}={other['deadlines']}; using {winner['source']} "
+                             "- verify against the official CFP")
             cross_fill_abstracts(winner, ordered[1:])
             item = index.get((target["key"], year))
             existing = item["data"] if item else None
