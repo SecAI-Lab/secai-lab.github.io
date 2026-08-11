@@ -1,3 +1,23 @@
+- title: "Detecting Bugs in Rust Compiler Fix Suggestions via Constraint-Violation-Guided Mutation"
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: Jiyong
+  conference: FSE
+  date: 2026.08.10
+  pub_year: 2026
+  discussion: ""
+
+- title: "Understanding Binary Code Similarity for Real-World Vulnerability Detection: A Large-Scale Empirical Study"
+  link: "https://arxiv.org/pdf/2502.09674"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_FSE_260810.pdf"
+  code_link: ""
+  presenter: Mijin
+  conference: FSE
+  date: 2026.08.10
+  pub_year: 2026
+  discussion: ""
+
 - title: "The Hidden Dimensions of LLM Alignment: A Multi-Dimensional Analysis of Orthogonal Safety Directions"
   link: "https://arxiv.org/pdf/2502.09674"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_0803_weekly_meeting.pdf"
