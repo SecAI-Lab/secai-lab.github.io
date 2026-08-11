@@ -1,12 +1,12 @@
 - title: "Detecting Bugs in Rust Compiler Fix Suggestions via Constraint-Violation-Guided Mutation"
-  link: ""
-  ppt_link: ""
+  link: "https://dl.acm.org/doi/10.1145/3797128"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_SugBreaker_FSE26.pdf"
   code_link: ""
   presenter: Jiyong
   conference: FSE
   date: 2026.08.10
   pub_year: 2026
-  discussion: ""
+  discussion: ":D"
 
 - title: "Understanding Binary Code Similarity for Real-World Vulnerability Detection: A Large-Scale Empirical Study"
   link: "https://arxiv.org/pdf/2502.09674"
