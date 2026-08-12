@@ -9,7 +9,7 @@
   discussion: ":D"
 
 - title: "Understanding Binary Code Similarity for Real-World Vulnerability Detection: A Large-Scale Empirical Study"
-  link: "https://arxiv.org/pdf/2502.09674"
+  link: "https://dl.acm.org/doi/pdf/10.1145/3797125"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_FSE_260810.pdf"
   code_link: ""
   presenter: Mijin
