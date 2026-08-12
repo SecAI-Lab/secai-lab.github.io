@@ -16,7 +16,7 @@
   conference: FSE
   date: 2026.08.10
   pub_year: 2026
-  discussion: ""
+  discussion: "This paper shows that binary code similarity is useful, but real-world vulnerability detection depends on many practical factors. A small difference in the library version can lower detection accuracy, so choosing the right version is important. Limiting the search space to the correct third-party library also improves the results because it removes many unrelated functions. Function size is also important, and medium-sized functions were harder to detect than small or large functions. The paper also shows that different build settings can change binary code a lot, even when the source code is the same. Overall, this study is useful because real-world vulnerability detection needs not only a good similarity model, but also good query selection and build information. (Gahyun)"
 
 - title: "The Hidden Dimensions of LLM Alignment: A Multi-Dimensional Analysis of Orthogonal Safety Directions"
   link: "https://arxiv.org/pdf/2502.09674"
