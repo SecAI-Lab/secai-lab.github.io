@@ -116,13 +116,14 @@
   type: workshop
   tier: "N/A"
   link: https://dfrws.org/conferences/dfrws-eu-2027/
-  deadline: "TBA"
-  timezone: TBA
+  abstract_deadline: "2026-09-18 23:59"
+  deadline: "2026-09-25 23:59"
+  timezone: AoE
   place: "Edinburgh, Scotland"
   date: "March 30 - April 2, 2027"
   start: 2027-03-30
   end: 2027-04-02
-  note: "Official page lists participation categories, but the EasyChair link and paper submission deadline are not announced yet."
+  note: "Verified 2026-08-16 against https://dfrws.org/conferences/dfrws-eu-2027/ (site returns HTTP 403 to direct fetches; confirmed via two independent search-engine-indexed snapshots of the official page, per AUDITOR.md guidance for bot-blocked dfrws.org). Title/abstract deadline September 18, 2026 (AoE); full-paper deadline September 25, 2026 (AoE)."
 
 - title: "DIMVA"
   year: 2027
