@@ -1,6 +1,6 @@
 # Tier 2 auto-apply: design
 
-Status: **§8 fixed and tested (2026-08-18). §2–§7 are still a proposal.**
+Status: **§8 fixed and tested (2026-08-18). The rest is a proposal, revised the same day against a probe of all 36 tracked venues.**
 
 Step 1 of the build order in §11 is done: every bug in §8 is fixed on the
 existing PR-based pipeline, with regression tests under
@@ -97,27 +97,77 @@ Calibrated against real entries already in `manual.yml`:
 | "Paper Submission Deadline: February 10" vs page's "Notification of acceptance: February 10" | 0.50 | UNCONFIRMED |
 | quote absent from page (hallucinated) | fails (1) | UNCONFIRMED |
 
-### Field-label vocabulary (check 4)
+### Check 4 — label association
 
 Checks 1–3 catch *dishonest* quoting. They do not catch honest quoting of the
 wrong thing: an auditor that faithfully quotes
 `"Notification of acceptance: February 10, 2026"` and proposes it as `deadline`
-grounds perfectly — verbatim quote, date in window, all tokens present — and
-would be VERIFIED. Since the matrix auto-applies VERIFIED + UNSURE for R0/R1,
-and R0 (`tba-upcoming-cycle`) is the highest-volume path in the system, that gap
-sits directly under the busiest auto-apply route.
+grounds perfectly and would be VERIFIED. Since the matrix auto-applies
+VERIFIED + UNSURE for R0/R1, and R0 (`tba-upcoming-cycle`) is the highest-volume
+path in the system, that gap sits under the busiest auto-apply route.
 
-So the grounded window must also carry a label appropriate to the field:
+The value must therefore be **paired** with a field-appropriate label, not merely
+near one. Windowing cannot do this, because real CFPs put the label on either
+side of the date — `<li>Wed, 23 April 2025: Paper submission deadline</li>`
+(NDSS, date first) and `<li><strong>Paper Submission Deadline</strong>: Feb
+10</li>` (EuroSec, label first) are both real, in the same element type, with the
+same separator. Pairing is resolved by the first rule that applies, and a refusal
+by that rule is final:
 
-| field | window must contain | window must not contain |
+**A. Declarative table.** A `<table>` whose header row names a date column and a
+label column yields pairs directly; ordering is never inferred. Extra columns
+become named scopes (tracks), and a proposal not naming its track is refused.
+
+**B. Separator-split container.** Within one `<li>`/`<tr>`/`<dd>`, a single `:`
+(or em/en dash) that splits the text so all live dates fall on one side and the
+label on the other yields the pair. Order-agnostic by construction, so NDSS and
+EuroSec take the same code path.
+
+**C. Block-inferred ordering.** For containers with no separator, infer
+date-first vs label-first from the enclosing block and require **unanimity**
+across at least two items carrying both. Any dissent refuses the whole block.
+
+**D. Flat text.** Associate a date with the nearest label only when it is within
+8 tokens, decisively closer than the other side (difference ≥ 3), separated from
+it by no other date, and not competing with another date for the same label.
+Otherwise UNCONFIRMED. This is the explicit ambiguity-refusal condition.
+
+Dates inside `<s>`/`<del>`/`line-through` are marked superseded: excluded as
+candidates, and a proposal matching one is **REFUTED** rather than merely
+unconfirmed — positive evidence the value is stale. Two unconnected live dates
+under one label refuse; two joined by `to`/`–` form a range, valid for `date` and
+refused for `deadline`.
+
+Per-field label vocabulary:
+
+| field | label must match | must not match |
 |---|---|---|
-| `deadline` | one of: submission deadline, paper deadline, papers due, full paper, submission due | notification, acceptance, camera-ready, rebuttal, workshop, poster, demo, tutorial, doctoral, SRC |
+| `deadline` | submission deadline, paper deadline, papers due, full paper, submission due, **submission of regular papers** | notification, acceptance, camera-ready, rebuttal, workshop, poster, demo, tutorial, doctoral, SRC |
 | `abstract_deadline` | abstract (registration/submission/due) | — |
 | `date` | — | submission, deadline, due |
 
-Same normalized-window machinery as checks 1–3; no extra fetch. This is the
-positive-claim counterpart of the label vocabulary §6 already uses for absence
-tests — the two must stay in one table.
+**The vocabulary must not require the word "deadline".** SAC 2027 publishes
+`IMPORTANT DATES … October 2, 2026 (EST) Submission of regular papers` and never
+writes "deadline" anywhere on the page; DSN publishes under "Call for
+Contributions". Both are fully explicit, and both were false-negatived by a
+first-pass classifier that keyed on that one word — which is how SAC was briefly
+misdiagnosed as unverifiable.
+
+**Rationale for the ordering rules:** DSN 2027's CFP is a real `<table>` with
+`<th>Date</th><th>Milestone</th>` and rows reading
+`December 2, 2026 | Paper Submission Deadline`. A label-then-date reading verifies
+`January 26, 2027` — the Early Reject Notification, 55 days **late**, the
+direction that costs a researcher their paper. Ordering must come from structure,
+never from assumption.
+
+### Numeric dates
+
+The surface-form generator must emit **two-digit-year** variants, and resolve a
+numeric date deterministically when any component exceeds 12 (`11/20/26` can only
+be Nov 20 2026). Where no component disambiguates, the form stays `ambiguous` and
+cannot verify alone. Without this the strongest available evidence for EuroS&P
+2027 — the IEEE TC calendar's `Submission deadline: 11/20/26` — fails to parse at
+all.
 
 ### Normalization order is load-bearing
 
@@ -262,27 +312,252 @@ The load-bearing cells:
 ### Never auto-applied
 
 - **`timezone: null`.** Deleting a timezone silently moves the deadline to the
-  latest possible reading. No exceptions.
+  latest possible reading. Permanent, no exceptions — see below.
 - **Risk-direction changes that miss the §5 extension bar.**
-- **Field `null` deletions inside 45 days.** A deletion's justification is a
-  universal negative; the bounded absence test below is good, but not good enough
-  to spend near a deadline.
 
-### Deletions, by kind
+### Deletions
 
-`delete_manual` — retiring an override upstream has caught up on — is not a claim
-about a page. It is a computation the updater already performs
-(`manual_matches_upstream`). It would be the one free auto-apply in the system,
-**except that the function is wrong in two independent ways** (§8.1, §8.2). Until
-both are fixed it must not auto-apply at all; afterwards, require the same verdict
-across two consecutive runs, and never auto-delete a `null`-valued override.
+Earlier drafts refused all deletions, on the argument that a deletion's
+justification is a universal negative and quote-grounding proves presence, never
+absence. That argument is beatable, and beating it removes the last structural
+reason to keep a human in the loop.
 
-Field `null` deletions (the real `NDSS 2026 abstract_deadline: null` case) use a
-bounded absence test: the proposal supplies an `absence_scope_quote` — the verbatim
-block that *would* contain the field, e.g. the whole "Important Dates" list — and
-gate 1 checks that block is on the page and that no date-like token sits within 200
-characters of the field's label vocabulary. That converts an unfalsifiable claim
-into a checkable one, erring conservative.
+The claim a deletion actually needs is not *"this page has no abstract
+deadline"*. CFPs do not scatter milestones through prose — they publish an
+**enumeration**. The real claim is:
+
+> The milestone enumeration containing the paper deadline we independently
+> verified contains no abstract entry.
+
+That is bounded and decidable. The verified paper deadline proves *which* list is
+authoritative, and that step is what converts the universal negative into a finite
+one.
+
+**Structural support (S).** Extract enumerations from the DOM (`<table>`, `<dl>`,
+`<ul>`, `<ol>`), qualifying a block only when ≥3 items each carry exactly one date
+span and ≥2 distinct dates appear. A block is *authoritative* iff one item carries
+a date equal to our independently verified `deadline` with a matching label (the
+anchor), the block holds ≥3 recognised CFP milestones, and all its dates fall
+inside `[deadline − 18 months, conference end + 6 months]`. Deletion of field `F`
+is structurally supported iff an authoritative block exists, **no** item in **any**
+qualifying block on the page carries an `F` label, and no `F`-vocabulary
+occurrence outside the enumerations sits within 200 characters of a date.
+
+**Cross-edition prior (P).** Computed from *upstream candidates*, not merged data
+— the merged record already has the override applied, which would be circular —
+and restricted to the same source. With `E` = other editions where that source
+gave a concrete deadline and `A ⊆ E` those where it also gave an abstract:
+`SUPPORTS` if `|E| ≥ 3` and `|A| = 0`; `OPPOSES` if `|A|/|E| ≥ 0.5`; else
+`NEUTRAL`. The `|A| = 0` threshold is deliberate: "never, across ≥3 editions" is
+categorically different from "usually not".
+
+**Corroborators.** Cross-source absence (only one tracker supplies the value), and
+a synthetic-offset fingerprint (every cycle's `deadline − abstract` identical and
+in {7, 14} days, consistent with mechanical derivation rather than transcription).
+Corroborating only, never decisive.
+
+```
+auto-apply a field-null deletion iff
+    S and P                          (both mandatory, no substitute)
+    and (cross-source or fingerprint)
+    and field != "timezone"
+    and the affected deadline is > 45 days away
+    and evidence is T0/T1 (6.1 - a publisher stub cannot bound an absence)
+    and no breaker / quarantine / cooldown applies
+```
+
+S and P are independent in kind — one reads the world, one reads history.
+Requiring both means a deletion needs a page that structurally lacks the field
+*and* a venue that has never had it.
+
+Worked on the live case: NDSS 2026's CFP has **0 tables, 15 date-bearing `<li>`
+items across two cycle blocks, each anchored by a verified paper deadline**, and
+the word "abstract" appears **exactly once on the page** — in prose, advising
+authors how to write one. ccfddl reports no abstract for NDSS 2024, 2025 and
+2027, fabricating only for 2026 at exactly deadline − 7 for both cycles. So
+S ∧ P ∧ (cross-source ∧ fingerprint) → auto-applies. The same machinery
+**refuses** DSN 2027, whose table row reads `November 25, 2026 | Abstract
+Submission Deadline`.
+
+**`timezone` deletion stays permanently manual.** Not caution: the frontend
+renders a missing timezone as AoE, so a correct-but-unverifiable deletion and a
+wrong one fail identically, both in the direction that costs a paper. The
+structural test barely applies anyway — timezones live in footers and
+parentheses, not enumerated milestones, so the anchor has nothing to bind to.
+
+**`delete_manual`** — retiring an override upstream has caught up on — is a
+repo-state computation, not a page claim. Now that `manual_matches_upstream`
+returns False for vacuous and `null`-valued matches (§8.1, §8.2), its True is
+finally meaningful. Auto-retire needs no model gate at all, but does require the
+same verdict on two consecutive runs, since one run's agreement can reflect a
+transient upstream state and waiting a week costs nothing.
+
+### 6.1 The evidence ladder
+
+A binary "official page or nothing" rule refuses whenever the front door is shut,
+even when the venue's own words are available by another permitted route.
+
+| Tier | Source |
+|---|---|
+| **T0** | the venue's own site, fetched live, robots-permitted |
+| **T1** | the venue's own content by another permitted transport: GitHub Pages **source repo**, RSS/Atom, sitemap-discovered CFP subpage, JSON-LD |
+| **T2** | the publisher's own CFP record: `ieee-security.org/Calendar/cfps/`, `sigapp.org`, `usenix.org`, `sigsac.org`, `conf.researchr.org` |
+| **T3** | an archived snapshot of the venue's **own** T0 URL |
+| **T4** | community trackers — context only, never evidence |
+
+T3 answers the red team's archive objection by construction: a snapshot keyed to
+the exact T0 URL is a timestamped observation of the official page, not a mirror,
+and the classifier verifies that URL identity mechanically. A snapshot of an
+aggregator never reaches T3, because its original does not classify as T0.
+
+T1 carries something no other tier does: a source repo has commit history, so it
+can distinguish "this value is new" from "this value has been stable for a year"
+— the signal the extension rule in §5 needs.
+
+**Independence.** T1 *substitutes* for an unreachable T0; it never corroborates
+it, because a repo and the page it renders are one source. Likewise T3 against its
+own T0. Two sources also fail independence on a shared registrable domain or ≥0.9
+text similarity. Real independence means T0/T1 + T2, or T2 + T3 from a different
+original.
+
+**Corroboration required, by risk tier:**
+
+| tier | safe-direction | risk-direction |
+|---|---|---|
+| R0 / R1 | 1× T0/T1/T2, or 1× T3 in bound | 1× T0/T1, or T2+T3 independent + extension token |
+| R2 | 1× T0/T1, or T2 + one independent corroborator | T0/T1 required + refuter CONFIRMED |
+| R3 | 1× T0/T1, or T2 + blind-extractor agreement | T0/T1 required + blind extractor + ≤30d shift |
+| R4 deletion | **T0/T1 only** | never |
+
+**Staleness bounds** (T1 by last commit touching the file, T2 by listing mtime, T3
+by snapshot timestamp), as R0-R1 / R2 / R3: T1 90/30/14 days · T2 120/45/reject ·
+T3 180/60/reject.
+
+Archive staleness is *safe-direction-biased*, which is the whole reason T3 is
+admissible. A snapshot can only lag the live page, and the change it most often
+misses is an extension — which moves a deadline later. So a stale snapshot
+systematically errs toward showing an *earlier* deadline than truth, the harmless
+direction. That is exactly why T3 is allowed for safe-direction work and refused
+for risk-direction: there, the staleness that makes it safe elsewhere becomes the
+failure mode.
+
+**Conflict:** lower tier wins, except that a *newer, weaker* source disagreeing in
+the risk direction forces HOLD — that is the signature of a just-announced
+extension, and we cannot tell whether T0 is stale or T2 is wrong. Any conflict at
+all on an R3 record holds. Every conflict is logged with both quotes, because a
+recurring T0/T2 disagreement is how you discover a publisher record gone stale.
+
+**Quote-grounding applies at every tier, unconditionally.** Tier answers "is this
+page entitled to speak for the venue"; grounding answers "did the model read it,
+or invent the value". Hallucination is tier-independent, so dropping grounding at
+T2 would give the most authority-laden sources the least verification. Two
+tier-specific additions: at T2 the quote must come from the per-venue file, never
+the index (the TC calendar index lists 1,761 CFPs), and the URL must match
+`^cfp-<venue><year>\.html$` **anchored** — as a substring, `DSN` matches
+`cfp-DSN-WACS.html`. At T3, ground against the archived bytes and record the
+snapshot timestamp and a digest, which makes T3 the most auditable tier after the
+fact.
+
+### 6.2 Corroboration state, for records nothing can verify
+
+Verification is not the only decision available. We cannot automatically *verify*
+an uncorroborated deadline, but we can automatically *observe* that it is
+uncorroborated, classify the record, and act on that. The fact stays unverified;
+the decision stops being a human's.
+
+Per `(title, year)` each run: `NOT_APPLICABLE` (no concrete deadline) ·
+`VERIFIED_OFFICIAL` (T0/T1 grounds it) · `CORROBORATED_SECONDARY` (T2/T3 grounds
+it) · `TRACKER_ONLY` · `NO_SOURCE` (not even a tracker) · `CONTRADICTED` (a source
+grounds a *different* value, which feeds the normal proposal path).
+
+State lives in a machine-owned sidecar, `deadlines/data/corroboration.json`, read
+as a **fourth input** to `update_deadlines.py`. Not in `manual.yml`: that is the
+human override channel, and machine bookkeeping there would be indistinguishable
+from a verified human decision, would be swept by `manual_matches_upstream`, and
+would mark `note` as `owned`, permanently disabling `maybe_clear_stale_note`. As
+an input, generated files stay a pure function of their inputs and there is
+exactly one writer. The file is committed, so `git log` on it is the metrics
+history.
+
+A `TRACKER_ONLY` / `NO_SOURCE` record gets a bracketed suffix appended to whatever
+note it already has (57 of 123 records have one):
+
+```
+<existing note> [unconfirmed: deadline from community trackers; no official CFP page found]
+```
+
+A single strip rule (`\s*\[unconfirmed:[^\]]*\]\s*$`) governs the lifecycle: the
+annotator strips, recomputes and re-appends every run, so it is idempotent and can
+never mangle the human half. **No date in the text**, or every annotated record
+diffs weekly.
+
+Two constraints on the wording, both verified against the code:
+
+- It must not match `STALE_NOTE_RE`. "CFP not yet announced" and "official CFP
+  not available" both match, and a matching note re-nominates that record to the
+  watchlist *every run, forever*.
+- It must not match `deriveAbstractFromComment` (`deadline-tracker.js:131`),
+  which **fabricates** an abstract deadline at paper − 7 days when a note matches
+  `/abstract.*1 week before|1 week before.*abstract/i`. The annotation avoids the
+  word "abstract" entirely.
+
+**Hysteresis:** demotion needs 2 consecutive confirming observations, promotion
+takes 1. The asymmetry is the point — promotion carries proof (a grounded quote),
+demotion is merely an absence of proof. An UNREACHABLE observation never promotes
+and never removes an annotation. Annotations are added at most once per record per
+21 days and removed immediately, always. A record whose state changes 3+ times in
+56 days is frozen at the more cautious state until stable for 28 days.
+
+**Inside 45 days, escalate effort, not severity.** Never suppress the value:
+showing nothing reads as *not announced*, which is more wrong and less actionable
+than an unverified date. Instead the note switches to an imperative form, the
+probe moves to daily cadence in the Tier-1 run so a newly published CFP clears it
+within a day rather than a week, and auto-apply is refused for that record.
+
+### 6.3 Fetch policy
+
+Reach depends entirely on fetching correctly, and three traps here are each
+capable of silently disabling large parts of the ladder.
+
+**One honest user agent, always.** `secai-lab-deadline-auditor/1.0
+(+https://secai-lab.github.io/deadlines/)`, never a browser string. Retrying a
+refusal with a different identity is both a circumvention of the host's stated
+wishes and — as DFRWS proved — counterproductive: it reads as abuse to a rate
+limiter and turns a transient 403 into a persistent one. A verifier that lies
+about who it is cannot be the foundation of a system whose purpose is
+establishing truth.
+
+**Spaced retries, and `Disallow` ≠ blocked.** Back off 0 / 5 / 30 s and honor
+`Retry-After`. Then distinguish two things that look alike and mean opposite
+things:
+
+- a `robots.txt` **Disallow** is the owner's *policy*. Stable, final, maps to
+  `REJECTED_SOURCE`. Retrying is a violation.
+- a **403/429 while robots permits** is an *operational* condition — rate
+  limiting, a WAF heuristic. Transient, maps to `UNREACHABLE`, retried later.
+
+Conflating them is exactly what produced the false "dfrws blocks bots" belief
+that was written into `AUDITOR.md` and had to be retracted.
+
+**`urllib.robotparser` fails dangerously closed.** `RobotFileParser.read()`
+fetches with the default `python-urllib` UA. USENIX's WAF 403s that, and the
+parser then sets `disallow_all = True`, so **every** USENIX path reports as
+forbidden. Verified: with the default UA,
+`can_fetch(".../conference/osdi27/call-for-papers")` returns `False`; fetching
+`robots.txt` with our own UA and calling `parse()` returns `True` with
+`Crawl-delay: 10`. A naive integration would silently lock the auditor out of
+OSDI, ATC, NSDI, USENIX Security and WOOT while reporting a policy that does not
+exist. **Fetch `robots.txt` with the same honest UA, and treat a 403 on
+`robots.txt` itself as "unknown", never as "disallow all".**
+
+**Honor `Crawl-delay`.** It is not decorative and it is not uniform:
+`usenix.org` asks 10 s, `sigapp.org` asks **20 s**. Per-host pacing must read the
+declared value rather than assume a floor.
+
+**Conditional requests.** Store `ETag` / `Last-Modified` per URL. A **304** is
+evidence, not just saved bandwidth: it proves the page has not changed since the
+last verification, so a previously VERIFIED value is still current and the record
+can be skipped entirely this run.
 
 ---
 
@@ -429,16 +704,40 @@ causes exactly one data-file change and then stabilises.
 
 ## 10. What this does not automate
 
-Roughly one case in ten still reaches a human, and the list is short:
+Every venue that looked unautomatable turned out to be a defect in our own
+checking tools rather than a property of the world. All 36 tracked venues were
+probed on 2026-08-18; the three that failed were:
 
-- risk-direction changes that miss the extension bar;
-- `timezone` deletions and near-deadline deletions;
-- override retirements (until §8.1 and §8.2 are fixed, then two-run confirmation);
-- pages that are JS-only, PDF-scanned, or bot-blocked;
-- anything a circuit breaker or quarantine trips.
+| venue | looked like | actually was |
+|---|---|---|
+| **SAC 2027** | no CFP; own links 404 | its landing page carries `IMPORTANT DATES … October 2, 2026 (EST) Submission of regular papers`, grounding both the stored deadline and the `UTC-5` override. Missed because the classifier's label vocabulary required the word "deadline", which that page never uses |
+| **DFRWS EU** | bot-blocked (403) | `robots.txt` is `User-agent: * / Disallow:` — everything permitted. The 403 was rate limiting provoked by retrying immediately with a different user agent. One honest UA and spaced retries returns 200 with the deadline table |
+| **EuroS&P 2027** | tracker-only, official site is "Coming soon" | already corroborated at T2: `ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html` states `Submission deadline: 11/20/26`, matching the stored value — and the record's own `note` already said so |
 
-Held items still land as a PR on `deadline-audit`, written out by the applier — so
-the human reads a diff and clicks merge rather than hand-editing YAML. The PR body
+That is the honest headline: **the residue was our bugs, not the web.** Every
+"unautomatable" case was a false negative of a label vocabulary, a fetch policy,
+or a source classifier. Which is worth remembering the next time something looks
+structurally impossible — check the tool before concluding it about the world.
+
+What genuinely stays manual, after all of the above:
+
+- **`timezone` deletion**, permanently. The frontend renders a missing timezone
+  as AoE, so a correct-but-unverifiable deletion and a wrong one fail
+  identically, in the direction that costs a paper.
+- **A field no authoritative source has stated.** EuroS&P 2027's timezone is the
+  live example: the T2 stub gives a date and no zone, and the design forbids
+  defaulting one. This is not a tooling limit — there is nothing to verify yet.
+- **Risk-direction changes that miss the §5 extension bar**, and anything a
+  circuit breaker, cooldown or quarantine trips.
+- **Deadlines published only in prose or in an image**, where no enumeration
+  exists to anchor against; and **venues with fewer than 3 prior editions**,
+  where the cross-edition prior cannot form.
+- **Genuinely varying venues.** CCS, ESORICS and EuroS&P have added and dropped
+  abstract deadlines between editions, so the prior correctly refuses — and
+  correctly keeps refusing.
+
+Held items still land as a PR on `deadline-audit`, written out by the applier, so
+a human reads a diff and clicks merge rather than hand-editing YAML. The PR body
 is regenerated wholesale each week, so stale items disappear on their own and no
 dedup state is needed.
 
