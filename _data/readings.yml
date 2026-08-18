@@ -1,3 +1,13 @@
+- title: "Verbalizable Representations Form a Global Workspace in Language Models"
+  link: "https://arxiv.org/pdf/2607.15495"
+  ppt_link: "https://drive.google.com/file/d/1oE-sFedBW2UZYAiHEVKNrUfGTVzZFHVQ/view?usp=drive_link"
+  ppt_link: "https://deniskim1.com/lab-meeting/0817_workspace_global_workspace.pdf"
+  presenter: Minseok
+  conference: Transformer Circuits Thread
+  date: 2026.08.18
+  pub_year: 2026
+  discussion: ""
+
 - title: "SoK: Attack and Defense Landscape of Agentic AI Systems"
   link: "https://www.usenix.org/conference/usenixsecurity26/presentation/kim-juhee-agentic"
   ppt_link: "https://drive.google.com/file/d/1oE-sFedBW2UZYAiHEVKNrUfGTVzZFHVQ/view?usp=drive_link"
