@@ -54,10 +54,29 @@ and only where — you have fetched evidence.
 ## Web access
 
 Prefer WebFetch/WebSearch. If they are unavailable in this environment, use
-`curl -sL` via Bash. Some sites (usenix.org, dfrws.org) block bots — try the
-IEEE S&P TC CFP calendar (ieee-security.org/Calendar/cfps/), search-result
-snippets, or an official mirror before giving up; if nothing official is
-reachable, the record is UNVERIFIABLE.
+`curl -sL` via Bash.
+
+`usenix.org` serves automated requests fine — always go to the USENIX page
+itself for OSDI / NSDI / ATC / USENIX Security / WOOT rather than a
+second-hand calendar. (Measured 2026-08-18: the OSDI 27 and USENIX Security
+27 CFPs both return 200.)
+
+`dfrws.org` really does refuse automated requests (403, measured the same
+day). For DFRWS, and for any other host that blocks, try the IEEE S&P TC CFP
+calendar (ieee-security.org/Calendar/cfps/) or an official mirror; if nothing
+official is reachable, the record is UNVERIFIABLE — say so rather than citing
+a tracker.
+
+Two more things the probe found, worth knowing before you give up on a page:
+
+- **The stored `link` is often a homepage, not the CFP.** EuroSys, OSDI, S&P,
+  WWW, RAID and IFIP-Sec all look empty at their landing page and verify fine
+  one click in (`/cfp.html`, `/call-for-papers`, `/cfpapers.html`,
+  `/important-dates/`, `/call.html`, `/dates.html`). Follow the site's own
+  navigation before concluding anything.
+- **Not every CFP link says "call for papers".** DSN publishes under "Call for
+  Contributions"; SAC under "Regular Paper". Read the nav, do not pattern-match
+  one phrase.
 
 ## After your edits
 
