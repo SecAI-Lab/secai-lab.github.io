@@ -15,8 +15,10 @@ name: Audit conference deadlines
 
 on:
   schedule:
-    # 21:00 UTC Sunday == 06:00 KST Monday, weekly
-    - cron: '0 21 * * 0'
+    # 23:00 UTC Sunday == 08:00 KST Monday, weekly. Deliberately NOT 21:00:
+    # the daily Tier-1 sync runs at 21:00 every day, so a Sunday audit at the
+    # same instant started from a tree Tier 1 was concurrently rewriting.
+    - cron: '0 23 * * 0'
   workflow_dispatch:
 
 permissions:
@@ -26,8 +28,10 @@ permissions:
   id-token: write
   actions: write  # keepalive: re-enabling the workflow resets the 60-day auto-disable timer
 
+# Shared with update-deadlines.yml: both write deadlines/data, so they must
+# never run at once regardless of what the schedules say.
 concurrency:
-  group: audit-deadlines
+  group: deadline-pipeline
   cancel-in-progress: false
 
 jobs:
@@ -45,6 +49,17 @@ jobs:
 
       - name: Install dependencies
         run: pip install 'pyyaml==6.0.*'
+
+      - name: Record today's date
+        id: today
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      # The pipeline's own correctness tests. If these fail the gates cannot be
+      # trusted, so the audit does not run at all.
+      - name: Run pipeline tests
+        run: |
+          python3 deadlines/scripts/tests/test_update_deadlines.py
+          python3 deadlines/scripts/tests/test_audit_lint.py
 
       # Exit 2 (degraded fetch) still produces a usable watchlist; only a
       # fatal exit 1 aborts the audit.
@@ -76,22 +91,81 @@ jobs:
           # only edits the working tree; branch/PR operations are done by
           # the deterministic steps below as github-actions[bot].
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Today's date is interpolated, not merely alluded to: AUDITOR.md
+          # requires a "Verified YYYY-MM-DD" citation comment, and nothing else
+          # in the environment tells the model what today is.
           prompt: |
             Read deadlines/scripts/AUDITOR.md and follow it exactly. The
-            watchlist is in watchlist.json at the repository root. Today's
-            date is in the run environment; trust fetched pages, not memory.
+            watchlist is in watchlist.json at the repository root.
+            Today's date is ${{ steps.today.outputs.date }} (UTC). Use it for
+            every "Verified <date>" citation comment you write. Trust pages you
+            fetch this run, not memory.
           claude_args: |
             --allowedTools "Read,Edit,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
 
-      # Deterministic gate: converge the data (propagates any manual.yml
-      # edits), require a healthy updater, and enforce the audit allowlist +
-      # citation rule. A failure here means no PR is opened.
-      - name: Converge and lint
+      # AUDITOR.md rule 3 lets the auditor edit deadlines/data and nothing
+      # else. This has to be checked from OUTSIDE the gate: audit_lint.py
+      # cannot police itself - a tampered copy just approves everything - and
+      # it is run below with Bash(python3:*) already granted to the model.
+      - name: Assert the auditor touched only data
         if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
         run: |
-          set -o pipefail
-          python3 deadlines/scripts/update_deadlines.py | tee -a "$GITHUB_STEP_SUMMARY"
-          python3 deadlines/scripts/update_deadlines.py --dry-run | tail -5
+          tampered=$(git status --porcelain -- deadlines/scripts deadlines/assets .github)
+          if [ -n "$tampered" ]; then
+            echo "::error::auditor modified pipeline code, which AUDITOR.md forbids"
+            # Preserve what it wrote rather than reverting. The job fails here,
+            # so nothing reaches master either way - and this is the one failure
+            # mode where seeing the attempted change is the whole point.
+            {
+              echo "## Audit aborted: pipeline code was modified"
+              echo
+              echo '```'
+              echo "$tampered"
+              echo '```'
+              echo
+              echo '<details><summary>Attempted diff</summary>'
+              echo
+              echo '```diff'
+              git diff -- deadlines/scripts deadlines/assets .github | head -400
+              echo '```'
+              echo
+              echo '</details>'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      # Deterministic gate: converge the data (propagating any manual.yml
+      # edits), confirm the run is idempotent, and enforce the audit allowlist
+      # + citation rule.
+      #
+      # Exit 2 (degraded) is NOT fatal here. It usually means an unrelated
+      # upstream fetch failed, while everything that could be written safely
+      # was. The previous `set -o pipefail` with no `set +e` turned any such
+      # degrade into a silent no-PR, no-alert week - the audit's findings were
+      # simply lost. Convergence is now asserted on output, not on exit code,
+      # for the same reason.
+      - name: Converge and lint
+        id: converge
+        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        run: |
+          set +e
+          python3 deadlines/scripts/update_deadlines.py 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+          code=${PIPESTATUS[0]}
+          set -e
+          if [ "$code" -eq 1 ]; then
+            echo "::error::updater failed fatally (exit 1); nothing was written"
+            exit 1
+          fi
+          if [ "$code" -eq 2 ]; then
+            echo "degraded=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::updater reported a degraded run (exit 2); continuing so this week's audit is not silently discarded"
+          fi
+          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1 || true)
+          echo "$out" | tail -5
+          if ! echo "$out" | grep -q "no file changes"; then
+            echo "::error::updater did not converge: a second run still wants to change files"
+            exit 1
+          fi
           python3 deadlines/scripts/audit_lint.py
 
       - name: Open or update audit pull request
@@ -111,6 +185,12 @@ jobs:
           git push -f origin deadline-audit
           if [ ! -f audit-summary.md ]; then
             echo "Automated deadline audit corrections; every change carries an inline citation — see the diff." > audit-summary.md
+          fi
+          if [ "${{ steps.converge.outputs.degraded }}" = "true" ]; then
+            { echo; echo "> [!WARNING]"; \
+              echo "> The updater reported a **degraded** run (exit 2) while producing this PR —"; \
+              echo "> usually an upstream source was unreachable. The corrections below are still"; \
+              echo "> citation-checked, but re-read the job summary before merging."; } >> audit-summary.md
           fi
           gh label create deadline-pipeline --description "Automated deadline pipeline alerts" --color D93F0B --force
           existing=$(gh pr list --head deadline-audit --state open --json number --jq '.[0].number // empty')
@@ -134,8 +214,13 @@ jobs:
 
           items = json.load(open("watchlist.json"))
           lines = [
-              "No `CLAUDE_CODE_OAUTH_TOKEN` secret is configured, so this week's",
-              "verification watchlist needs a human (~5-10 minutes): open each",
+              "No usable `CLAUDE_CODE_OAUTH_TOKEN` secret was found. Either it was",
+              "never configured, or **it expired** — tokens from `claude setup-token`",
+              "last about a year and lapse with no warning. Regenerate it and update",
+              "the Actions repository secret to put the auditor back in the loop.",
+              "",
+              "Until then this week's verification watchlist needs a human",
+              "(~5-10 minutes): open each",
               "venue's official page and check the values below. Corrections go",
               "in `deadlines/data/manual.yml` (with a `Verified <date> against",
               "<URL>` comment) or, for records with no upstream, directly in the",

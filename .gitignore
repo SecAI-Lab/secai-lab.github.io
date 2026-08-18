@@ -15,3 +15,12 @@ Gemfile
 Gemfile.lock
 
 .claude/
+
+# Deadline pipeline run artifacts (created in CI, never committed) and the
+# bytecode cache the scripts/tests produce. audit_lint.py inspects untracked
+# files, so anything transient left in the tree must be ignored here or it
+# trips the path allowlist and blocks the audit PR.
+__pycache__/
+/watchlist.json
+/watchlist.md
+/audit-summary.md

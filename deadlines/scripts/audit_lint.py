@@ -28,11 +28,22 @@ def fail(msg: str) -> None:
 
 
 def main() -> int:
-    diff = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD"],
+    # `git diff` does not list UNTRACKED files, but the workflow's
+    # `git add -- deadlines/data` stages them anyway - and the updater
+    # legitimately creates untracked files when a new year directory appears.
+    # An untracked file outside the allowlist would have sailed straight past
+    # this gate and into the commit. `git status --porcelain` sees them.
+    status = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all"],
         cwd=REPO_ROOT, capture_output=True, text=True, check=True)
-    changed = [line.strip().replace("\\", "/")
-               for line in diff.stdout.splitlines() if line.strip()]
+    changed = []
+    for line in status.stdout.splitlines():
+        if not line.strip():
+            continue
+        path = line[3:].strip()
+        if " -> " in path:  # rename: only the destination is written
+            path = path.split(" -> ", 1)[1]
+        changed.append(path.strip('"').replace("\\", "/"))
     bad = [p for p in changed if not ALLOWED_RE.match(p)]
     if bad:
         fail(f"files outside the audit allowlist were modified: {bad}")

@@ -18,8 +18,10 @@ permissions:
   issues: write   # failure alerts are filed as issues (label: deadline-pipeline)
   actions: write  # keepalive: re-enabling the workflow resets GitHub's 60-day auto-disable timer
 
+# Shared with audit-deadlines.yml: both write deadlines/data, so they must
+# never run at once regardless of what the schedules say.
 concurrency:
-  group: update-deadlines
+  group: deadline-pipeline
   cancel-in-progress: false
 
 jobs:

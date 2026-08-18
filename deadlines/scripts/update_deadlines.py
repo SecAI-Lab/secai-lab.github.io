@@ -47,9 +47,21 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import zoneinfo
 from pathlib import Path
 
 import yaml
+
+# An IANA-shaped timezone the frontend cannot resolve does not fail loudly -
+# parseZoneDeadline() falls through to its -12:00 branch and renders the
+# deadline as AoE, i.e. LATER than the truth. Only validate zone names when a
+# tz database is actually present (Windows needs the `tzdata` package); with
+# no database every name would look invalid and the check would be noise.
+try:
+    zoneinfo.ZoneInfo("America/Los_Angeles")
+    TZDB_AVAILABLE = True
+except Exception:  # noqa: BLE001 - any failure means "cannot check"
+    TZDB_AVAILABLE = False
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = Path(__file__).resolve().parent / "conferences.yml"
@@ -345,6 +357,23 @@ def canon_tz(value):
     return s
 
 
+def tz_resolvable(value):
+    """False only for an IANA-shaped name no tz database knows.
+
+    AoE / PST / PDT / UTC+-N are handled by the frontend's own branches, so
+    they need no lookup. A slash-form name that does not resolve is the
+    dangerous case: it passes TIMEZONE_RE, then silently renders as AoE.
+    """
+    s = clean(value)
+    if "/" not in s or not TZDB_AVAILABLE:
+        return True
+    try:
+        zoneinfo.ZoneInfo(s)
+        return True
+    except Exception:  # noqa: BLE001 - ZoneInfoNotFoundError and friends
+        return False
+
+
 def canon_deadline_field(value):
     values = [norm_dt(v) or (str(v) if v is not None else None) for v in as_list(value)]
     while values and values[-1] is None:
@@ -530,9 +559,41 @@ def apply_manual_override(merged, man):
     return changed
 
 
+def warn_manual_big_move(existing, merged, key, year):
+    """The 90-day safety rail only guards against UPSTREAM: build_merged skips
+    it entirely once manual.yml owns `deadline` (an override is assumed to be
+    a considered human decision). Nothing then reports a large move, so a
+    mistyped or machine-written override lands silently. Say it out loud."""
+    if not existing:
+        return
+    old = [d for d in (parse_dl_date(v) for v in as_list(existing.get("deadline")))
+           if d is not None]
+    new = [d for d in (parse_dl_date(v) for v in as_list(merged.get("deadline")))
+           if d is not None]
+    if not old or not new:
+        return
+    shift = max(min(abs((n - o).days) for n in new) for o in old)
+    if shift > SAFETY_RAIL_DAYS:
+        warn(f"MANUAL OVERRIDE MOVED {key} {year} BY {shift} DAYS "
+             f"({as_list(existing.get('deadline'))} -> {as_list(merged.get('deadline'))}); "
+             "the safety rail does not apply to manual.yml - verify against the "
+             "official page")
+
+
 def manual_matches_upstream(man, cand):
     """True when upstream now agrees with every value manual.yml overrides -
-    the entry is obsolete and can be removed."""
+    the entry is obsolete and can be removed.
+
+    Two ways this must NOT say "obsolete", both of which it used to:
+
+    * An entry that overrides only fields this function cannot compare
+      (note / start / end) has nothing to check, and an empty check set is
+      not agreement.
+    * A field pinned to null exists precisely to SUPPRESS a value upstream
+      fabricates. Upstream happening to omit that value on this run is what
+      the override is for, not evidence it can go - the fabrication returns
+      on the next sync.
+    """
     checks = {
         "deadline": lambda: (canon_deadline_field(man.get("deadline"))
                              == canon_deadline_field(cand["deadlines"])),
@@ -543,10 +604,12 @@ def manual_matches_upstream(man, cand):
         "date": lambda: clean(man.get("date")) == clean(cand.get("date")),
         "link": lambda: clean(man.get("link")) == clean(cand.get("link")),
     }
-    for field, check in checks.items():
-        if field in man and not check():
-            return False
-    return True
+    comparable = [f for f in checks if f in man]
+    if not comparable:
+        return False
+    if any(man.get(f) is None for f in comparable):
+        return False
+    return all(checks[f]() for f in comparable)
 
 
 def maybe_clear_stale_note(merged, existing, key, year):
@@ -636,8 +699,11 @@ def validate(rec, canonical_keys, require_deadline=True):
     errors += [f"bad abstract_deadline {a!r}" for a in as_list(rec.get("abstract_deadline"))
                if a is not None and not is_tba(a) and not DEADLINE_RE.match(str(a))]
     tz = rec.get("timezone")
-    if tz is not None and not is_tba(tz) and not TIMEZONE_RE.match(str(tz)):
-        errors.append(f"bad timezone {tz!r}")
+    if tz is not None and not is_tba(tz):
+        if not TIMEZONE_RE.match(str(tz)):
+            errors.append(f"bad timezone {tz!r}")
+        elif not tz_resolvable(tz):
+            errors.append(f"unresolvable timezone {tz!r} (renders as AoE on the page)")
     link = rec.get("link")
     if link is not None and not re.match(r"^https?://", str(link)):
         errors.append(f"bad link {link!r}")
@@ -892,6 +958,7 @@ def main() -> int:
                 if changed_fields:
                     warn(f"manual override applied for {target['key']} {year}: "
                          + ", ".join(changed_fields))
+                warn_manual_big_move(existing, merged, target["key"], year)
             errors = validate(merged, canonical_keys)
             if errors:
                 degrade(f"validation failed for {target['key']} {year} "
@@ -937,6 +1004,7 @@ def main() -> int:
             if changed_fields:
                 warn(f"manual override applied for {key} {year}: "
                      + ", ".join(changed_fields))
+            warn_manual_big_move(existing, merged, key, year)
             if man.get("note") is None:
                 maybe_clear_stale_note(merged, existing, key, year)
         if canon_record(merged) == canon_record(existing):
@@ -959,13 +1027,34 @@ def main() -> int:
             if not has_candidate:
                 kept.append(f"{key} {year} (no upstream)")
 
+    # manual.yml entries that match neither an existing record nor an upstream
+    # candidate never reach a generated file - both merge loops skip them - so
+    # they never pass validate() either. But the frontend fetches manual.yml
+    # DIRECTLY at priority 0 (deadline-tracker.js), so such an entry still
+    # renders on the live page. Unvalidated. Validate them here or nothing does.
+    emitted = set(index) | {(it["record"]["title"], it["record"]["year"])
+                            for it in new_items}
+    manual_only_rows = sorted(set(manual) - emitted)
+    for key, year in manual_only_rows:
+        errors = validate(manual[(key, year)], canonical_keys)
+        if errors:
+            degrade(f"manual.yml-only row {key} {year} is invalid "
+                    f"({'; '.join(errors)}); it reaches the page via manual.yml "
+                    "even though it is in no generated file - fix or remove it")
+        else:
+            warn(f"{key} {year}: rendered from manual.yml only (no generated "
+                 "record); it is not covered by the data files")
+
     # Coverage: every target should have some record for the upcoming cycle
     # year, or it silently never appears on the page (manual-only venues are
-    # exactly the ones nobody notices going missing).
+    # exactly the ones nobody notices going missing). A manual.yml-only row
+    # counts as covered - it does render - or the gap warning and its
+    # coverage-gap watchlist entry would never clear once filled that way.
     next_year = TODAY.year + 1
     covered = {key for (key, year) in index if year >= next_year}
     covered |= {it["record"]["title"] for it in new_items
                 if it["record"]["year"] >= next_year}
+    covered |= {key for (key, year) in manual if year >= next_year}
     gap_targets = []
     for target in targets:
         if target["key"] not in covered:

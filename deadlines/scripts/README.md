@@ -57,8 +57,12 @@ Operational notes:
 
 ## Weekly verification audit (Tier 2)
 
-`.github/workflows/audit-deadlines.yml` runs weekly (Sunday 21:00 UTC =
-Monday 06:00 KST, plus manual dispatch). It builds a **watchlist** — the
+`.github/workflows/audit-deadlines.yml` runs weekly (Sunday 23:00 UTC =
+Monday 08:00 KST, plus manual dispatch). The hour is deliberate: Tier 1 runs
+daily at 21:00 UTC, so an audit at 21:00 Sunday started from a tree Tier 1 was
+rewriting at that moment. Both workflows also share one `deadline-pipeline`
+concurrency group, so they can never overlap whatever the schedules say.
+It builds a **watchlist** — the
 small subset of records worth verifying against official conference pages
 (`update_deadlines.py --watchlist`): upcoming-cycle TBAs, deadlines within
 45 days, active manual overrides, cross-source disagreements, stale
@@ -68,11 +72,20 @@ placeholder notes, coverage gaps. Then, depending on configuration:
   verifies each watchlist record against the venue's official page
   (instructions pinned in `deadlines/scripts/AUDITOR.md`) and leaves
   corrections in the working tree. Deterministic steps then enforce the
-  guardrails — only `deadlines/data/**` may change, every manual.yml entry
-  needs a `Verified <date> against <URL>` citation (`audit_lint.py`), and the
-  updater must converge healthy — and open/update a pull request on the
-  `deadline-audit` branch for human review. Claude never pushes anything
-  itself; merging the PR is the human decision.
+  guardrails and open/update a pull request on the `deadline-audit` branch for
+  human review. Claude never pushes anything itself; merging the PR is the
+  human decision. The guardrails, in order:
+  1. a check that only `deadlines/data/**` changed, run *before* the lint —
+     `audit_lint.py` executes from the working tree and so cannot police
+     itself, and the auditor holds `Bash(python3:*)`;
+  2. the updater must converge (a second run reports `no file changes`);
+  3. every manual.yml entry needs a `Verified <date> against <URL>` citation,
+     and no file outside the allowlist may be touched (`audit_lint.py`).
+
+  A **degraded** updater run (exit 2 — typically one upstream source
+  unreachable) no longer discards the audit. The PR still opens, carrying a
+  warning banner, because losing a week of verified corrections to an
+  unrelated fetch failure is the worse outcome.
 - **Human mode** (no secret): the watchlist is filed/updated as a GitHub
   issue (label `deadline-audit`) with a checkbox per record — a lab member
   verifies by hand, ~5-10 minutes weekly.
@@ -107,6 +120,28 @@ python3 deadlines/scripts/update_deadlines.py             # write files in place
 
 Works from any CWD; exit 0 = healthy, 2 = degraded (see above), 1 = fatal.
 
+## Tests
+
+```sh
+python3 deadlines/scripts/tests/test_update_deadlines.py
+python3 deadlines/scripts/tests/test_audit_lint.py
+```
+
+No network, no fixtures to maintain; the audit-lint tests build throwaway git
+repos in a temp dir. The audit workflow runs both before it does anything else
+— if the gates are broken, the audit does not run. Each test pins a specific
+way the pipeline could have published a wrong deadline, so a failure here is
+worth reading rather than deleting:
+
+- an obsolete-looking override being auto-declared removable when it is not
+  (a `null` override suppressing an upstream fabrication is the live case);
+- an IANA-shaped timezone no tz database knows, which the frontend silently
+  renders as AoE — i.e. *later* than the truth;
+- a manual override moving a deadline by more than the 90-day safety rail,
+  which the rail itself does not cover;
+- the audit writing outside `deadlines/data`, including via an **untracked**
+  file, which `git diff` cannot see but `git add` would stage anyway.
+
 ## Adding a new target conference
 
 1. Add an entry to `deadlines/scripts/conferences.yml` (canonical key,
@@ -137,5 +172,13 @@ generated files on every run, so a manual entry beats upstream on every field
 it sets — in either direction — and stays in effect until you delete it. A
 field explicitly set to `null` deletes it from the generated record (for
 values fabricated upstream, e.g. an abstract deadline the CFP never had). The
-run summary tells you when upstream has caught up and an entry can be removed.
+run summary tells you when upstream has caught up and an entry can be removed
+— it will not say that about a `null` override, since upstream omitting the
+fabricated value on one run is exactly what the override is there for.
+
+One asymmetry worth knowing: a `manual.yml` entry for a venue/year that has
+neither an existing record nor an upstream candidate never reaches a generated
+file, but the frontend loads `manual.yml` **directly** at priority 0, so it
+still renders on the page. The updater validates those rows explicitly and
+degrades on a bad one — nothing else would catch them.
 Manual titles must be the canonical key, or the run goes red.
