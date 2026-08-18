@@ -61,11 +61,23 @@ itself for OSDI / NSDI / ATC / USENIX Security / WOOT rather than a
 second-hand calendar. (Measured 2026-08-18: the OSDI 27 and USENIX Security
 27 CFPs both return 200.)
 
-`dfrws.org` really does refuse automated requests (403, measured the same
-day). For DFRWS, and for any other host that blocks, try the IEEE S&P TC CFP
-calendar (ieee-security.org/Calendar/cfps/) or an official mirror; if nothing
-official is reachable, the record is UNVERIFIABLE — say so rather than citing
-a tracker.
+`dfrws.org` does not block either. Its robots.txt is `User-agent: * /
+Disallow:` — everything permitted — and the DFRWS EU 2027 page returns 200
+with the deadline text (measured 2026-08-18). An earlier 403 turned out to be
+rate limiting caused by retrying immediately with a different user agent.
+
+So before concluding that a host blocks you: **space your retries** (wait
+5-30s, not instantly) and keep the same honest user agent. Do not retry with
+a browser-like user agent to get past a refusal — if a site declines
+automated access, use a different permitted source or record the venue as
+UNVERIFIABLE. Check `robots.txt` first; a `Disallow` for the path is the
+owner's decision and is final, whereas a 403 or 429 with robots permitting is
+usually transient and worth one spaced retry.
+
+If a host genuinely refuses, try the IEEE S&P TC CFP calendar
+(ieee-security.org/Calendar/cfps/) or an official mirror; if nothing official
+is reachable, the record is UNVERIFIABLE — say so rather than citing a
+tracker.
 
 Two more things the probe found, worth knowing before you give up on a page:
 
