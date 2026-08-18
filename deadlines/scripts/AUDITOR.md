@@ -89,6 +89,16 @@ Two more things the probe found, worth knowing before you give up on a page:
 - **Not every CFP link says "call for papers".** DSN publishes under "Call for
   Contributions"; SAC under "Regular Paper". Read the nav, do not pattern-match
   one phrase.
+- **Not every CFP says "deadline" either.** SAC 2027's page has a full
+  `IMPORTANT DATES` block — "October 2, 2026 (EST) Submission of regular
+  papers" — and the word "deadline" appears nowhere on it. A dates block with
+  milestone labels is a CFP whatever it calls itself.
+- **Dates sometimes come before their labels.** DSN 2027's table is
+  `December 2, 2026 | Paper Submission Deadline`; NDSS writes
+  `Wed, 23 April 2025: Paper submission deadline`; EuroSec writes
+  `Paper Submission Deadline: Feb 10`. Read the row or list item as a unit and
+  work out which way round it is — reading DSN as label-then-date gives a
+  deadline 55 days late.
 
 ## After your edits
 

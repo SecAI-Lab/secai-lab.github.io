@@ -714,10 +714,18 @@ probed on 2026-08-18; the three that failed were:
 | **DFRWS EU** | bot-blocked (403) | `robots.txt` is `User-agent: * / Disallow:` — everything permitted. The 403 was rate limiting provoked by retrying immediately with a different user agent. One honest UA and spaced retries returns 200 with the deadline table |
 | **EuroS&P 2027** | tracker-only, official site is "Coming soon" | already corroborated at T2: `ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html` states `Submission deadline: 11/20/26`, matching the stored value — and the record's own `note` already said so |
 
-That is the honest headline: **the residue was our bugs, not the web.** Every
-"unautomatable" case was a false negative of a label vocabulary, a fetch policy,
-or a source classifier. Which is worth remembering the next time something looks
-structurally impossible — check the tool before concluding it about the world.
+That is the honest headline for these three: **the residue was our bugs, not the
+web.** Each was a false negative of a label vocabulary, a fetch policy, or a
+source classifier — worth remembering next time something looks structurally
+impossible. Check the tool before concluding it about the world.
+
+But do not over-read it. Those are three venues probed on one day. A further 15
+were classified "nothing to verify yet", because their 2027 editions have no CFP
+at all — they were never tested against a real page. When CCS, SOSP, ESORICS and
+the rest publish, some fraction will land in prose, in an image, or in a
+structure rules A–D do not handle, and the residue will grow again. The claim
+established here is that three specific blockers dissolved, not that the web is
+uniformly machine-readable.
 
 What genuinely stays manual, after all of the above:
 
