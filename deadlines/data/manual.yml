@@ -145,3 +145,15 @@
   year: 2027
   deadline: "2026-10-02 23:59"
   timezone: UTC-5
+
+# The TC CFP calendar now names the host city, so the record's TBA place and its
+# "city is not confirmed yet" note are both out of date. The conference's own
+# site is still a placeholder, so the calendar remains the only source.
+# Verified 2026-08-18 against
+# https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html :
+# "IEEE European Symposium on Security and Privacy Lisbon, Portugal Submission
+# deadline: 11/20/26"
+- title: "EuroS&P"
+  year: 2027
+  place: "Lisbon, Portugal"
+  note: "Deadline and host city per the IEEE S&P TC CFP calendar (verified 2026-08-18 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); the conference's own site is still a placeholder."
