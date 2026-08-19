@@ -252,6 +252,14 @@ def phrase_present(flat: str, tokset: set, phrase: str) -> bool:
     return phrase in flat if " " in phrase else phrase in tokset
 
 
+def label_pos(flat: str, phrase: str) -> int:
+    """Character offset of a label in the flattened quote, or -1."""
+    if " " in phrase:
+        return flat.find(phrase)
+    m = re.search(rf"\b{re.escape(phrase)}\b", flat)
+    return m.start() if m else -1
+
+
 def ground_quote(page_toks, quote, forms, labels, single_date=False):
     """Does this quote bind the value to a field-appropriate label, on the page?
 
@@ -283,11 +291,22 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
     if single_date and count_dates(quote) > 1:
         return None, ("the quote contains more than one date, so it does not "
                       "establish which one this value is")
-    if need and not any(phrase_present(qflat, qset, l) for l in need):
+    # A disqualifying term only disqualifies when it OUTRANKS this field's own
+    # label - i.e. leads the row. Rows are routinely combined: SAC's real paper
+    # deadline reads "Submission of regular papers and SRC research abstracts",
+    # and a blanket forbid on 'src' made that line - the only one stating SAC's
+    # deadline - permanently uncitable. "Workshop paper submission deadline"
+    # still fails, because there the disqualifying term comes first.
+    req = [p for p in (label_pos(qflat, l) for l in need) if p >= 0]
+    if need and not req:
         return None, "the quote carries no label identifying this field"
+    lead = min(req) if req else -1
     for bad in forbid:
-        if phrase_present(qflat, qset, bad):
-            return None, f"the quote is labelled '{bad}', which is not this field"
+        p = label_pos(qflat, bad)
+        if p < 0 or (lead >= 0 and p > lead):
+            continue
+        return None, (f"the quote leads with '{bad}', so it is labelling that, "
+                      "not this field")
     size = max(len(qt) + WINDOW_SLACK, int(len(qt) * 1.6))
     best = 0.0
     for form in (forms or [" ".join(qt[:3])]):

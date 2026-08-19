@@ -236,6 +236,50 @@ class AbsenceClaims(unittest.TestCase):
         self.assertFalse(ok, why)
 
 
+class CombinedRows(unittest.TestCase):
+    """CFP rows often cover two things at once. A disqualifying term should only
+    disqualify when it LEADS the row, not merely when it appears in it.
+
+    The first live gate run flagged SAC 2027 UNCONFIRMED because its real paper
+    deadline reads "Submission of regular papers and SRC research abstracts" and
+    'src' was a blanket forbid - making the one line that states SAC's deadline
+    permanently uncitable.
+    """
+
+    def setUp(self):
+        self.pages = {
+            "https://sac.example/": "<li>October 2, 2026 (EST) Submission of "
+                                    "regular papers and SRC research abstracts</li>",
+            "https://ws.example/": "<li>Workshop paper submission deadline: "
+                                   "March 1, 2026</li>",
+            "https://srconly.example/": "<li>SRC research abstracts submission "
+                                        "deadline: October 2, 2026</li>",
+        }
+        self.dir = fixture_dir(self.pages)
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
+        self.f = V.Fetcher(offline=True, fixtures=self.dir)
+
+    def v(self, url, value, quote):
+        return V.verify_proposal(
+            proposal(url, {"deadline": claim(value, quote)}), self.f)["status"]
+
+    def test_combined_row_led_by_the_real_label_verifies(self):
+        self.assertEqual(self.v(
+            "https://sac.example/", "2026-10-02 23:59",
+            "October 2, 2026 (EST) Submission of regular papers and SRC research abstracts"),
+            "VERIFIED")
+
+    def test_row_led_by_a_disqualifying_term_still_fails(self):
+        self.assertEqual(self.v(
+            "https://ws.example/", "2026-03-01 23:59",
+            "Workshop paper submission deadline: March 1, 2026"), "UNCONFIRMED")
+
+    def test_row_about_only_the_disqualifying_thing_still_fails(self):
+        self.assertEqual(self.v(
+            "https://srconly.example/", "2026-10-02 23:59",
+            "SRC research abstracts submission deadline: October 2, 2026"), "UNCONFIRMED")
+
+
 class OrdinalDates(unittest.TestCase):
     """A local dry run found AISec's real published deadline was uncitable by
     ANY quote: tokens("July 24th, 2026") is ['july','24','th','2026'] and the
