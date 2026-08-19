@@ -106,13 +106,30 @@ jobs:
             Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
             audit_date. Trust pages you fetch this run, not memory.
 
-            Write your findings to audit-proposals.json at the repository root
-            and change no other file.
-          # Tool list restored to the one from the run that produced 25
-          # proposals and 30/30 coverage. Do not change it without evidence:
-          # the two runs that deviated from it examined nothing.
+            Work autonomously. Explore the repository, fetch pages, follow a
+            site's own navigation to its CFP page, and keep going until you
+            have addressed every record in the watchlist. Do not stop early to
+            ask anything - there is nobody to ask.
+
+            Write your findings to audit-proposals.json at the repository root,
+            creating or editing it as you go, and change no other file. Update
+            it every few records rather than only at the end, so a run that
+            stops early still reports what it managed to check.
+          # The auditor gets the tools its job actually needs: find, grep, read,
+          # edit, fetch. What keeps it out of repository data is the tamper
+          # check below - an external gate that fails the run on any change
+          # under deadlines/ or .github/ - NOT a starved tool list. Removing
+          # tools only made it stall; 35 permission denials in one run is a
+          # model fighting its allowlist instead of reading conference pages.
+          #
+          # --max-turns matters as much as the tools. A run reported exactly 60
+          # turns, which is a cap rather than a natural stop: roughly two turns
+          # per watchlist record, barely enough to fetch a page, let alone find
+          # the CFP subpage and read it. The 45-minute job timeout is the real
+          # bound, so let turns be generous.
           claude_args: |
-            --allowedTools "Read,Write,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
+            --max-turns 200
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(grep:*),Bash(find:*),Bash(jq:*),Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*)"
 
       # The auditor may now create audit-proposals.json and nothing else - it
       # has no reason to touch deadlines/ at all. Checked from OUTSIDE the
