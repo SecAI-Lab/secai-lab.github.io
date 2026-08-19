@@ -66,6 +66,7 @@ jobs:
           python3 deadlines/scripts/tests/test_update_deadlines.py
           python3 deadlines/scripts/tests/test_audit_lint.py
           python3 deadlines/scripts/tests/test_apply_proposals.py
+          python3 deadlines/scripts/tests/test_verify_citations.py
 
       # Exit 2 (degraded fetch) still produces a usable watchlist; only a
       # fatal exit 1 aborts the audit.
@@ -203,6 +204,17 @@ jobs:
             echo "::error::proposal validation failed (see the summary above)"
             exit 1
           fi
+
+      # Strict evidence gate, report-only for now: re-fetches every cited page
+      # and checks the quote is really there, really contains the value, and
+      # carries a label appropriate to the field. Nothing acts on the verdicts
+      # yet - this run is calibration. Compare its verdicts against what you
+      # actually merge for a few weeks before letting them gate anything.
+      - name: Verify citations (report only)
+        if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
+        run: |
+          python3 deadlines/scripts/verify_citations.py \
+            --out audit-verdicts.json --report-only | tee -a "$GITHUB_STEP_SUMMARY"
 
       # Deterministic applier: the model never writes YAML. --ungated is
       # explicit because no verification gate exists yet - every citation still

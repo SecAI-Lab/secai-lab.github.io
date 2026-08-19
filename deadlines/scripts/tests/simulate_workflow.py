@@ -91,12 +91,18 @@ def main():
     import json
     d = json.loads((REPO / "audit-proposals.json").read_text(encoding="utf-8"))
     moved = d["unverifiable"][:2]
+    # no_change carries the same evidence as a correction: it is a claim about
+    # a page, and an unevidenced one cannot be told apart from not looking.
     d["proposals"] = [{"id": f"no_change:{m['title']}:{m['year']}", "action": "no_change",
                        "title": m["title"], "year": m["year"],
                        "reason": "Checked against the official CFP; record is correct.",
                        "source_url": "https://example.org/cfp",
                        "watchlist_reasons": ["tba-upcoming-cycle"],
-                       "checked_fields": ["deadline"]} for m in moved]
+                       "fields": {"deadline": {
+                           "value": "2026-02-10 23:59",
+                           "evidence": [{"quote": "Paper Submission Deadline: "
+                                                  "February 10, 2026 (AoE)"}]}}}
+                      for m in moved]
     d["unverifiable"] = d["unverifiable"][2:]
     for u in d["unverifiable"]:
         u["cause"] = "no_official_page"

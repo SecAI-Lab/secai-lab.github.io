@@ -277,11 +277,16 @@ def validate_proposal(p, targets_by_key, errors):
     if p.get("id") != f"{action}:{title}:{year}":
         _err(errors, pid, f"id must be '{action}:{title}:{year}'")
         return False
-    if action in ("no_change", "delete_manual"):
-        if action == "delete_manual" and p.get("obsolete_because") != "upstream_agrees":
+    if action == "delete_manual":
+        # Not a claim about a page: the updater computes upstream agreement.
+        if p.get("obsolete_because") != "upstream_agrees":
             _err(errors, pid, "delete_manual requires obsolete_because: upstream_agrees")
             return False
         return True
+
+    # no_change is validated exactly like a correction. "This record is already
+    # right" is a claim about a page, and an unevidenced one is indistinguishable
+    # from not having looked - which is how a lazy run scores full coverage.
 
     url = p.get("source_url", "")
     if not re.match(r"^https?://", str(url)):

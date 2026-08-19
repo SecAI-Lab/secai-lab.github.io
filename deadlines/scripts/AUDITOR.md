@@ -69,7 +69,11 @@ do not retype it from memory, and do not tidy it up.
   the program checks this itself. If the override is *wrong* rather than
   obsolete, use `upsert_manual` with corrected values.
 - `no_change` — you checked and the record is correct. Emit these; they are how
-  the run shows its coverage.
+  the run shows its coverage. **They carry the same evidence as a correction**:
+  `source_url`, and a `fields` map holding the values you verified — the ones
+  already in the record — each with its quote. "This is already right" is a
+  claim about a page like any other, and an unevidenced one cannot be told
+  apart from not having looked.
 
 ## Field formats
 

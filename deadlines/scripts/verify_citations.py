@@ -1,0 +1,428 @@
+#!/usr/bin/env python3
+"""Deterministic evidence gate for the deadline audit. No model in the loop.
+
+Re-fetches every source_url an auditor cited and checks, mechanically, that the
+quote it gave really appears on that page and really contains the value it is
+offered as evidence for. A hallucinated citation cannot survive step 1; an
+honestly-quoted *wrong* label cannot survive step 3.
+
+    VERIFIED         quote grounded, value inside it, label appropriate
+    UNCONFIRMED      page fetched, evidence did not hold up
+    UNREACHABLE      could not fetch (never treated as verified)
+    REJECTED_SOURCE  not an admissible source (tracker, robots-disallowed)
+    MALFORMED        the proposal itself is unusable
+
+Usage:
+  verify_citations.py --proposals audit-proposals.json --out audit-verdicts.json
+  verify_citations.py ... --offline --fixtures DIR    (tests; never touches the network)
+
+Exit 0 = every proposal decided. 2 = at least one MALFORMED/REJECTED_SOURCE.
+1 = fatal (inputs unreadable).
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import html as htmllib
+import json
+import re
+import sys
+import time
+import unicodedata
+import urllib.error
+import urllib.parse
+import urllib.request
+import urllib.robotparser
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import update_deadlines as U  # noqa: E402
+
+UA = "secai-lab-deadline-auditor/1.0 (+https://secai-lab.github.io/deadlines/)"
+LCS_THRESHOLD = 0.85
+QUOTE_MIN_TOKENS = 4
+WINDOW_SLACK = 10
+FETCH_TIMEOUT = 25
+RETRY_DELAYS = (0, 5, 30)
+PER_HOST_DELAY = 1.0
+MAX_BYTES = 5 * 1024 * 1024
+
+# Community trackers and mirrors: context, never evidence (AUDITOR.md rule 1).
+DENY_HOSTS = (
+    "ccfddl.github.io", "sec-deadlines.github.io", "wikicfp.com", "www.wikicfp.com",
+    "conferencelists.org", "aideadlin.es", "deadlines.cc", "myhuiban.com",
+    "dblp.org", "en.wikipedia.org", "web.archive.org", "webcache.googleusercontent.com",
+)
+DENY_PATH_RE = re.compile(r"raw\.githubusercontent\.com/(ccfddl|sec-deadlines)/", re.I)
+
+MONTHS = ["january", "february", "march", "april", "may", "june", "july",
+          "august", "september", "october", "november", "december"]
+ABBR = {m: (m[:3] if m != "september" else "sept") for m in MONTHS}
+MONTH_TOKENS = set(MONTHS) | {m[:3] for m in MONTHS} | {"sept"}
+
+# A label must be present for the field, and disqualifying labels must not be.
+FIELD_LABELS = {
+    "deadline": (
+        ("submission deadline", "paper deadline", "papers due", "submission due",
+         "full paper", "submission of regular papers", "paper submission",
+         "final submission", "submission"),
+        ("notification", "acceptance", "camera ready", "rebuttal",
+         "workshop", "poster", "demo", "tutorial", "doctoral", "src", "registration"),
+    ),
+    "abstract_deadline": (("abstract",), ("notification", "acceptance", "camera ready")),
+    "date": ((), ("submission", "deadline", "due", "notification")),
+    "place": ((), ()),
+    "timezone": ((), ()),
+    "link": ((), ()),
+    "note": ((), ()),
+}
+
+
+# ------------------------------------------------------------------ normalizing
+
+def strip_html(raw: str) -> str:
+    # Comments FIRST. manual.yml records the real trap: WWW 2026's superseded
+    # April dates live in commented-out HTML. Strip tags first and they come
+    # back as "evidence".
+    s = re.sub(r"<!--.*?-->", " ", raw, flags=re.S)
+    s = re.sub(r"<(script|style|svg|noscript|template)\b.*?</\1>", " ", s,
+               flags=re.S | re.I)
+    # Struck-through text is superseded, not current: drop it entirely.
+    s = re.sub(r"<(s|del|strike)\b[^>]*>.*?</\1>", " ", s, flags=re.S | re.I)
+    s = re.sub(r"<(br|hr)\s*/?>", "\n", s, flags=re.I)
+    s = re.sub(r"</(p|div|li|tr|td|th|h[1-6]|section|article|table|dd|dt)\s*>", "\n",
+               s, flags=re.I)
+    s = re.sub(r"<(b|i|em|strong|span|u|a|sup|sub|small|mark|code|abbr|time|font)\b[^>]*>",
+               "", s, flags=re.I)
+    s = re.sub(r"</(b|i|em|strong|span|u|a|sup|sub|small|mark|code|abbr|time|font)\s*>",
+               "", s, flags=re.I)
+    s = re.sub(r"<[^>]+>", " ", s)
+    return htmllib.unescape(s)
+
+
+def normalize(s: str) -> str:
+    s = unicodedata.normalize("NFKC", s)
+    s = s.translate({0x00a0: " ", 0x202f: " ", 0x2009: " ", 0x2007: " ",
+                     0x200b: None, 0x200c: None, 0x200d: None, 0xfeff: None, 0x00ad: None})
+    s = re.sub(r"[‐-―−]", "-", s)
+    s = re.sub(r"[‘’‛]", "'", s)
+    s = re.sub(r"[“”]", '"', s)
+    return re.sub(r"\s+", " ", s).strip().casefold()
+
+
+def flatten(s: str) -> str:
+    """Alnum-only view: punctuation and markup differences vanish, digits do not."""
+    return re.sub(r"[^a-z0-9]+", " ", normalize(s)).strip()
+
+
+def tokens(s: str) -> list[str]:
+    return re.findall(r"[a-z]+|\d+", flatten(s))
+
+
+# -------------------------------------------------------------- surface forms
+
+def date_forms(d: dt.date) -> list[str]:
+    m, day, y = MONTHS[d.month - 1], d.day, d.year
+    a, yy = ABBR[m], y % 100
+    days = {str(day), f"{day:02d}"}
+    out = set()
+    for dd in days:
+        for name in (m, a):
+            out |= {f"{name} {dd} {y}", f"{dd} {name} {y}",
+                    f"{name} {dd}th {y}", f"{dd}th {name} {y}"}
+        out.add(f"{y} {d.month:02d} {int(dd):02d}")
+        # Numeric forms are admissible only when a component exceeds 12, which
+        # makes the ordering unambiguous (11/20/26 can only be Nov 20).
+        if day > 12:
+            out |= {f"{d.month} {dd} {y}", f"{d.month:02d} {dd} {y}",
+                    f"{dd} {d.month} {y}", f"{d.month} {dd} {yy:02d}"}
+    return sorted(out)
+
+
+def tz_forms(tz: str) -> list[str]:
+    canon = U.canon_tz(tz)
+    table = {
+        "UTC-12": ["aoe", "anywhere on earth", "utc 12", "gmt 12"],
+        "UTC+0": ["utc", "gmt", "utc 0", "zulu"],
+        "UTC-5": ["utc 5", "gmt 5", "est", "eastern standard time"],
+        "UTC-8": ["pst", "pdt", "pacific time", "utc 8"],
+        "America/Los_Angeles": ["pst", "pdt", "pacific time", "america los angeles"],
+    }
+    return table.get(canon, [flatten(canon)])
+
+
+def value_forms(field: str, value) -> tuple[list[str], bool]:
+    """(surface forms, is_required). Returns ([], False) when a field carries no
+    checkable surface form - notes and links are not claims about page text."""
+    if field in ("deadline", "abstract_deadline"):
+        forms = []
+        for v in U.as_list(value):
+            d = U.parse_dl_date(v)
+            if d:
+                forms += date_forms(d)
+        return forms, bool(forms)
+    if field == "timezone":
+        return tz_forms(str(value)), True
+    if field == "place":
+        first = flatten(str(value).split(",")[0])
+        return ([first] if first else []), bool(first)
+    if field == "date":
+        rng = U.parse_date_range(str(value))
+        if not rng:
+            return [], False
+        return date_forms(rng[0]) + date_forms(rng[1]), True
+    return [], False
+
+
+# ------------------------------------------------------------------- matching
+
+def lcs_len(a: list[str], b: list[str]) -> int:
+    if not a or not b:
+        return 0
+    prev = [0] * (len(b) + 1)
+    for x in a:
+        cur = [0]
+        for j, y in enumerate(b):
+            cur.append(prev[j] + 1 if x == y else max(cur[j], prev[j + 1]))
+        prev = cur
+    return prev[-1]
+
+
+def find_windows(page_toks: list[str], form: str, size: int):
+    ft = form.split()
+    if not ft:
+        return
+    n = len(page_toks)
+    for i in range(n - len(ft) + 1):
+        if page_toks[i:i + len(ft)] == ft:
+            lo = max(0, i + len(ft) // 2 - size // 2)
+            yield lo, page_toks[lo:lo + size]
+
+
+def phrase_present(flat: str, tokset: set, phrase: str) -> bool:
+    """Multi-word phrases match as substrings; single words as whole tokens.
+
+    Without the token rule, a short label like 'src' would match inside
+    unrelated words and reject valid evidence.
+    """
+    return phrase in flat if " " in phrase else phrase in tokset
+
+
+def ground_quote(page_toks, quote, forms, labels):
+    """Does this quote bind the value to a field-appropriate label, on the page?
+
+    Label and value are checked inside the QUOTE, not inside the surrounding
+    window. The quote is the contiguous span the auditor claims to have copied,
+    so it is what establishes label-value association; a window wide enough to
+    tolerate quoting slack also spans the neighbouring row, whose label would
+    otherwise poison a perfect match. Grounding then proves the quote is real
+    page text rather than a construction.
+    """
+    need, forbid = labels
+    qt = tokens(quote)
+    if len(qt) < QUOTE_MIN_TOKENS:
+        return None, "quote too short to be evidence"
+    qflat, qset = flatten(quote), set(qt)
+    if forms and not any(f in qflat for f in forms):
+        return None, "the quote does not contain the proposed value"
+    if need and not any(phrase_present(qflat, qset, l) for l in need):
+        return None, "the quote carries no label identifying this field"
+    for bad in forbid:
+        if phrase_present(qflat, qset, bad):
+            return None, f"the quote is labelled '{bad}', which is not this field"
+    size = max(len(qt) + WINDOW_SLACK, int(len(qt) * 1.6))
+    best = 0.0
+    for form in (forms or [" ".join(qt[:3])]):
+        for _, win in find_windows(page_toks, form, size):
+            cov = lcs_len(qt, win) / len(qt)
+            best = max(best, cov)
+            if cov >= LCS_THRESHOLD:
+                return round(cov, 3), None
+    return None, (f"quote not found on the page (best coverage {best:.2f} "
+                  f"< {LCS_THRESHOLD})")
+
+
+# ------------------------------------------------------------------- fetching
+
+class Fetcher:
+    def __init__(self, offline=False, fixtures=None):
+        self.offline, self.fixtures = offline, fixtures
+        self.cache, self.robots, self.last_hit = {}, {}, {}
+
+    def _fixture(self, url):
+        key = hashlib.sha1(url.encode()).hexdigest()
+        for cand in (Path(self.fixtures) / f"{key}.html",
+                     Path(self.fixtures) / f"{urllib.parse.urlparse(url).netloc}.html"):
+            if cand.exists():
+                return cand.read_text(encoding="utf-8")
+        return None
+
+    def _raw(self, url):
+        host = urllib.parse.urlparse(url).netloc
+        gap = time.monotonic() - self.last_hit.get(host, 0)
+        if gap < PER_HOST_DELAY:
+            time.sleep(PER_HOST_DELAY - gap)
+        self.last_hit[host] = time.monotonic()
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as r:
+            return r.read(MAX_BYTES).decode("utf-8", errors="replace"), r.geturl()
+
+    def robots_allows(self, url):
+        """403 on robots.txt means UNKNOWN, never 'disallow all'.
+
+        urllib.robotparser.read() fetches with the default python-urllib UA;
+        USENIX's WAF 403s that and the parser then sets disallow_all, which
+        would silently lock the auditor out of five venues over a policy that
+        does not exist.
+        """
+        p = urllib.parse.urlparse(url)
+        base = f"{p.scheme}://{p.netloc}"
+        if base not in self.robots:
+            rp = urllib.robotparser.RobotFileParser()
+            try:
+                txt, _ = self._raw(base + "/robots.txt")
+                rp.parse(txt.splitlines())
+            except Exception:  # noqa: BLE001 - unknown policy, not a refusal
+                rp = None
+            self.robots[base] = rp
+        rp = self.robots[base]
+        return True if rp is None else rp.can_fetch(UA, url)
+
+    def get(self, url):
+        if url in self.cache:
+            return self.cache[url]
+        if self.offline:
+            txt = self._fixture(url) if self.fixtures else None
+            res = (txt, None) if txt is not None else (None, "offline: no fixture")
+            self.cache[url] = res
+            return res
+        if not self.robots_allows(url):
+            res = (None, "robots.txt disallows this path")
+        else:
+            res, last = (None, "unfetched"), None
+            for delay in RETRY_DELAYS:
+                if delay:
+                    time.sleep(delay)
+                try:
+                    txt, _ = self._raw(url)
+                    res = (txt, None)
+                    break
+                except urllib.error.HTTPError as e:
+                    last = f"HTTP {e.code}"
+                    if e.code not in (403, 429, 500, 502, 503, 504):
+                        break          # 404 and friends: do not retry
+                except Exception as e:  # noqa: BLE001
+                    last = f"{type(e).__name__}"
+            if res[0] is None:
+                res = (None, last or "unreachable")
+        self.cache[url] = res
+        return res
+
+
+def source_ok(url):
+    p = urllib.parse.urlparse(url)
+    if p.scheme not in ("http", "https"):
+        return False, "not an http(s) URL"
+    host = p.netloc.lower()
+    if any(host == d or host.endswith("." + d) for d in DENY_HOSTS):
+        return False, f"{host} is a community tracker or mirror, not an official source"
+    if DENY_PATH_RE.search(url):
+        return False, "community tracker repository"
+    return True, ""
+
+
+# -------------------------------------------------------------------- verdicts
+
+def verify_proposal(p, fetcher):
+    pid = p.get("id", "<no id>")
+    action = p.get("action")
+    if action == "delete_manual":
+        return {"id": pid, "status": "VERIFIED",
+                "reason": "no page claim; upstream agreement is checked by the updater"}
+    fields = p.get("fields") or {}
+    url = p.get("source_url")
+    if not fields:
+        return {"id": pid, "status": "MALFORMED", "reason": "no fields to verify"}
+    if not url:
+        return {"id": pid, "status": "MALFORMED", "reason": "no source_url"}
+    ok, why = source_ok(url)
+    if not ok:
+        return {"id": pid, "status": "REJECTED_SOURCE", "reason": why}
+    page, err = fetcher.get(url)
+    if page is None:
+        return {"id": pid, "status": "UNREACHABLE", "reason": err, "url": url}
+    page_toks = tokens(strip_html(page))
+    results, worst = {}, "VERIFIED"
+    for name, claim in fields.items():
+        value = claim.get("value")
+        quotes = [e.get("quote", "") for e in (claim.get("evidence") or [])]
+        if value is None:
+            quotes += [claim.get("absence_scope_quote", "")]
+        forms, required = value_forms(name, value)
+        if not required:
+            results[name] = {"status": "VERIFIED", "reason": "no page-checkable claim"}
+            continue
+        best_err = "no evidence supplied"
+        status = "UNCONFIRMED"
+        for q in [q for q in quotes if q]:
+            cov, err2 = ground_quote(page_toks, q, forms, FIELD_LABELS.get(name, ((), ())))
+            if cov is not None:
+                results[name] = {"status": "VERIFIED", "coverage": cov}
+                status = "VERIFIED"
+                break
+            best_err = err2
+        if status != "VERIFIED":
+            results[name] = {"status": "UNCONFIRMED", "reason": best_err}
+            worst = "UNCONFIRMED"
+    return {"id": pid, "status": worst, "url": url, "fields": results,
+            "sha256": hashlib.sha256(page.encode("utf-8", "replace")).hexdigest()[:16]}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--proposals", default="audit-proposals.json")
+    ap.add_argument("--out", default="audit-verdicts.json")
+    ap.add_argument("--offline", action="store_true")
+    ap.add_argument("--fixtures")
+    ap.add_argument("--report-only", action="store_true",
+                    help="always exit 0; the verdicts file is still written")
+    args = ap.parse_args()
+
+    try:
+        doc = json.loads(Path(args.proposals).read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        print(f"FATAL: cannot read {args.proposals} ({exc})")
+        return 1
+
+    fetcher = Fetcher(offline=args.offline, fixtures=args.fixtures)
+    verdicts, counts = [], {}
+    for p in doc.get("proposals") or []:
+        v = verify_proposal(p, fetcher)
+        # The applier consumes `status: accepted`; only a full VERIFIED earns it.
+        v["accepted"] = v["status"] == "VERIFIED"
+        verdicts.append(v)
+        counts[v["status"]] = counts.get(v["status"], 0) + 1
+        mark = "ok " if v["accepted"] else "!! "
+        print(f"  {mark}{v['id']}: {v['status']}"
+              + (f" - {v.get('reason')}" if v.get("reason") else ""))
+        for f, r in (v.get("fields") or {}).items():
+            if r["status"] != "VERIFIED":
+                print(f"       {f}: {r['status']} - {r.get('reason', '')}")
+
+    Path(args.out).write_text(json.dumps(
+        {"tool": "verify_citations/1.0", "counts": counts,
+         "verdicts": [{"id": v["id"],
+                       "status": "accepted" if v["accepted"] else "rejected",
+                       "gate": v["status"], "detail": v} for v in verdicts]},
+        indent=2) + "\n", encoding="utf-8")
+    print(f"\n{', '.join(f'{k}={v}' for k, v in sorted(counts.items())) or 'no proposals'}"
+          f" -> {args.out}")
+    if args.report_only:
+        return 0
+    return 2 if counts.get("MALFORMED") or counts.get("REJECTED_SOURCE") else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
