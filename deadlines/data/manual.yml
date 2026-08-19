@@ -157,3 +157,15 @@
   year: 2027
   place: "Lisbon, Portugal"
   note: "Deadline and host city per the IEEE S&P TC CFP calendar (verified 2026-08-18 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); the conference's own site is still a placeholder."
+
+# The official deadlines table now gives both full-paper dates; the record
+# still says TBA. No timezone is proposed: the page's only AoE marking is on
+# the DFDS doctoral symposium row, not the full-paper rows.
+# Verified 2026-08-19 against https://dfrws.org/conferences/dfrws-eu-2027/
+# "September 18, 2026 Full papers: Submission of Abstract & Title via
+# EasyChair"
+- title: "DFRWS EU"
+  year: 2027
+  abstract_deadline: "2026-09-18 23:59"
+  deadline: "2026-09-25 23:59"
+  note: "Full-paper deadlines per the official DFRWS EU 2027 page. That page states no timezone for these two rows - its only AoE marking belongs to the DFDS doctoral symposium track - so the timezone is deliberately left unset."
