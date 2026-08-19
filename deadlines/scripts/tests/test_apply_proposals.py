@@ -251,6 +251,60 @@ class Coverage(unittest.TestCase):
         self.assertIsNone(A.coverage({"proposals": []}, self.tmp / "nope.json"))
 
 
+class Seeding(unittest.TestCase):
+    """The auditor's compliance with "write the file" proved nondeterministic:
+    one run produced a complete 30/30 file, the next produced nothing. Seeding
+    makes the file's existence not the model's problem, and defaults it to the
+    pessimistic claim so an idle run reports idleness."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.wl = self.tmp / "watchlist.json"
+        self.wl.write_text(json.dumps([
+            {"title": "DIMVA", "year": 2027, "reasons": ["tba-upcoming-cycle"]},
+            {"title": "SAC", "year": 2027, "reasons": ["manual-override-active"]},
+        ]), encoding="utf-8")
+        self.out = self.tmp / "audit-proposals.json"
+
+    def seed(self):
+        A.seed_from_watchlist(self.wl, self.out, "2026-08-19")
+        return json.loads(self.out.read_text(encoding="utf-8"))
+
+    def test_seed_marks_every_record_not_checked(self):
+        doc = self.seed()
+        self.assertEqual(doc["proposals"], [])
+        self.assertEqual(len(doc["unverifiable"]), 2)
+        self.assertTrue(all(u["cause"] == "not_checked" for u in doc["unverifiable"]))
+
+    def test_seed_defaults_are_pessimistic_not_optimistic(self):
+        # Seeding no_change would make an idle run look like a clean audit.
+        doc = self.seed()
+        self.assertNotIn("no_change", json.dumps(doc))
+
+    def test_untouched_seed_reports_nothing_examined(self):
+        examined, total, causes = A.audit_effort(self.seed())
+        self.assertEqual((examined, total), (0, 2))
+        self.assertEqual(causes["not_checked"], 2)
+
+    def test_seed_covers_the_whole_watchlist(self):
+        self.assertEqual(A.coverage(self.seed(), self.wl)[1], [])
+
+    def test_examined_counts_records_moved_out_of_not_checked(self):
+        doc = self.seed()
+        doc["proposals"] = [{"title": "DIMVA", "year": 2027, "action": "no_change"}]
+        doc["unverifiable"] = [{"title": "SAC", "year": 2027,
+                                "cause": "no_official_page"}]
+        examined, total, _ = A.audit_effort(doc)
+        self.assertEqual((examined, total), (2, 2))
+
+    def test_a_real_cause_counts_as_examined(self):
+        doc = self.seed()
+        doc["unverifiable"][0]["cause"] = "fetch_blocked"
+        examined, _, _ = A.audit_effort(doc)
+        self.assertEqual(examined, 1)
+
+
 class Validation(unittest.TestCase):
     def setUp(self):
         self.targets = {t["key"]: t for t in U.load_config()}

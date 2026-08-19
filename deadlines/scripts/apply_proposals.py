@@ -189,6 +189,47 @@ def comment_block(reason, url, date, quote, retained):
 
 # ------------------------------------------------------------------ validation
 
+def seed_from_watchlist(watchlist_path, out_path, audit_date):
+    """Write a skeleton audit-proposals.json before the auditor runs.
+
+    Asking a model to create a file at the end of a long run is a soft
+    instruction, and compliance proved nondeterministic: one run produced a
+    complete 30/30 file, the next produced nothing at all. Seeding removes the
+    question - the file always exists, so the run is always legible.
+
+    Every record starts as `not_checked`, which is the PESSIMISTIC claim. An
+    auditor that does nothing therefore reports that it verified nothing, which
+    is both true and visible. Seeding with `no_change` would have the opposite
+    property: doing nothing would look like a clean audit.
+    """
+    items = json.loads(Path(watchlist_path).read_text(encoding="utf-8"))
+    doc = {
+        "audit_date": audit_date,
+        "watchlist_size": len(items),
+        "proposals": [],
+        "unverifiable": [
+            {"title": i.get("title"), "year": i.get("year"),
+             "cause": "not_checked", "attempted": [],
+             "note": "Seeded before the audit; the auditor did not reach this record."}
+            for i in items],
+    }
+    Path(out_path).write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n",
+                              encoding="utf-8")
+    return len(items)
+
+
+def audit_effort(doc):
+    """(examined, total, causes) - how much of the watchlist was actually read."""
+    unver = doc.get("unverifiable") or []
+    causes = {}
+    for u in unver:
+        c = u.get("cause") or "unspecified"
+        causes[c] = causes.get(c, 0) + 1
+    not_checked = causes.get("not_checked", 0)
+    total = len(doc.get("proposals") or []) + len(unver)
+    return total - not_checked, total, causes
+
+
 def coverage(doc, watchlist_path):
     """Which watchlist records did the auditor actually account for?
 
@@ -421,9 +462,19 @@ def main() -> int:
     ap.add_argument("--max-changes", type=int, default=DEFAULT_MAX_CHANGES)
     ap.add_argument("--watchlist",
                     help="report which watchlist records went unaddressed")
+    ap.add_argument("--seed-from-watchlist", metavar="WATCHLIST",
+                    help="write a skeleton proposals file marking every "
+                         "watchlist record not_checked, then exit")
+    ap.add_argument("--audit-date", default=dt.date.today().isoformat())
     ap.add_argument("--validate-only", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+
+    if args.seed_from_watchlist:
+        n = seed_from_watchlist(args.seed_from_watchlist, args.proposals,
+                                args.audit_date)
+        print(f"seeded {args.proposals} with {n} record(s) marked not_checked")
+        return 0
 
     if not args.validate_only and bool(args.verdicts) == bool(args.ungated):
         print("APPLY REFUSED: pass exactly one of --verdicts or --ungated")
@@ -479,17 +530,26 @@ def main() -> int:
         print(f"{len(proposals)} proposal(s) valid, {len(errors)} rejected"
               + (f" ({', '.join(f'{k}={v}' for k, v in sorted(actions.items()))})"
                  if actions else ""))
+        examined, total, causes = audit_effort(doc)
+        if causes:
+            print("unverifiable: " + ", ".join(f"{k}={v}" for k, v in sorted(causes.items())))
         if args.watchlist:
             cov = coverage(doc, args.watchlist)
             if cov:
-                total, missing = cov
-                print(f"coverage: {total - len(missing)}/{total} watchlist record(s) "
-                      "accounted for")
+                wl_total, missing = cov
+                print(f"coverage: {wl_total - len(missing)}/{wl_total} watchlist "
+                      "record(s) accounted for")
                 for title, year in missing[:20]:
                     print(f"  [!] not addressed: {title} {year}")
                 if missing:
                     print("  (a record the auditor neither proposed for nor listed "
                           "as unverifiable was silently skipped)")
+        if total:
+            print(f"examined: {examined}/{total} record(s) actually checked")
+            if examined == 0:
+                print("  [!] the auditor examined nothing: every record is still "
+                      "marked not_checked from the seed")
+                return 1
         return 1 if errors else 0
 
     original = MANUAL_PATH.read_text(encoding="utf-8") if MANUAL_PATH.exists() else ""

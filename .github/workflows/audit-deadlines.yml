@@ -80,6 +80,21 @@ jobs:
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "Watchlist: $count record(s)"
 
+      # Seed the proposals file BEFORE the auditor runs, with every watchlist
+      # record marked not_checked. Asking a model to create a file at the end of
+      # a long run turned out to be nondeterministic - one run produced a
+      # complete 30/30 file, the next produced nothing - so the file's existence
+      # is no longer the model's responsibility. not_checked is the pessimistic
+      # default on purpose: an auditor that does nothing reports that it
+      # verified nothing, which is true and visible. Seeding no_change would
+      # make doing nothing look like a clean audit.
+      - name: Seed proposals file
+        if: steps.watchlist.outputs.count != '0'
+        run: |
+          python3 deadlines/scripts/apply_proposals.py \
+            --seed-from-watchlist watchlist.json \
+            --audit-date "${{ steps.today.outputs.date }}"
+
       - name: Detect auditor token
         id: token
         env:
@@ -105,8 +120,17 @@ jobs:
             watchlist is in watchlist.json at the repository root.
             Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
             audit_date. Trust pages you fetch this run, not memory.
-            Write your findings to audit-proposals.json at the repository root
-            and change no other file.
+
+            audit-proposals.json ALREADY EXISTS at the repository root, listing
+            every watchlist record as unverifiable with cause "not_checked".
+            Your job is to update it in place as you work: each record you
+            examine moves out of "unverifiable" into "proposals" (as a real
+            correction or as no_change), or stays in "unverifiable" with a real
+            cause. Rewrite the whole file each time you update it. Anything
+            still marked not_checked at the end is reported as unexamined, so
+            update it as you go rather than saving it all for the end.
+
+            Change no file other than audit-proposals.json.
           # No Edit tool. The auditor writes exactly one new file and never
           # touches repository data; apply_proposals.py turns proposals into
           # YAML. That is what makes the model's output machine-checkable.
