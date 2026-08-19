@@ -110,6 +110,11 @@ jobs:
           # only edits the working tree; branch/PR operations are done by
           # the deterministic steps below as github-actions[bot].
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # TEMPORARY, for diagnosis: the action hides the model's
+          # transcript by default, which is why five runs have been
+          # diagnosed by inference. Turn this back off once the
+          # bail-at-2m45s cause is known.
+          show_full_output: true
           # Today's date is interpolated, not merely alluded to: nothing else in
           # the environment tells the model what today is, and audit_date drives
           # the citation comments the applier writes.
@@ -119,10 +124,15 @@ jobs:
             Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
             audit_date. Trust pages you fetch this run, not memory.
 
-            Work autonomously. Explore the repository, fetch pages, follow a
-            site's own navigation to its CFP page, and keep going until you
-            have addressed every record in the watchlist. Do not stop early to
-            ask anything - there is nobody to ask.
+            Work autonomously - there is nobody to ask, so never stop to
+            ask a question.
+
+            Do NOT try to verify all ${{ steps.watchlist.outputs.count }}
+            records. Verify the FIRST 10 in watchlist.json properly, with a
+            real fetched quote for each, and list every remaining record under
+            "unverifiable" with cause "not_checked". Ten well-evidenced records
+            beat thirty asserted ones, and the next run picks up where this one
+            stopped. Partial coverage is expected and is reported honestly.
 
             Write your findings to audit-proposals.json at the repository root,
             creating or editing it as you go, and change no other file. Update
@@ -169,6 +179,11 @@ jobs:
           # only edits the working tree; branch/PR operations are done by
           # the deterministic steps below as github-actions[bot].
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # TEMPORARY, for diagnosis: the action hides the model's
+          # transcript by default, which is why five runs have been
+          # diagnosed by inference. Turn this back off once the
+          # bail-at-2m45s cause is known.
+          show_full_output: true
           # Today's date is interpolated, not merely alluded to: nothing else in
           # the environment tells the model what today is, and audit_date drives
           # the citation comments the applier writes.
@@ -178,10 +193,15 @@ jobs:
             Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
             audit_date. Trust pages you fetch this run, not memory.
 
-            Work autonomously. Explore the repository, fetch pages, follow a
-            site's own navigation to its CFP page, and keep going until you
-            have addressed every record in the watchlist. Do not stop early to
-            ask anything - there is nobody to ask.
+            Work autonomously - there is nobody to ask, so never stop to
+            ask a question.
+
+            Do NOT try to verify all ${{ steps.watchlist.outputs.count }}
+            records. Verify the FIRST 10 in watchlist.json properly, with a
+            real fetched quote for each, and list every remaining record under
+            "unverifiable" with cause "not_checked". Ten well-evidenced records
+            beat thirty asserted ones, and the next run picks up where this one
+            stopped. Partial coverage is expected and is reported honestly.
 
             Write your findings to audit-proposals.json at the repository root,
             creating or editing it as you go, and change no other file. Update

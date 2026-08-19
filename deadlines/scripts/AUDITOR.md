@@ -18,10 +18,17 @@ failed: it cannot be told apart from a run that did no work, so it is treated as
 the latter. If you are about to finish without writing the file, stop and write
 it.
 
-**Account for every watchlist record.** Each one must appear exactly once,
-either in `proposals` (with any action, `no_change` included) or in
-`unverifiable`. A record you skipped silently is reported as an error, so say
-what happened to it instead.
+**Do not try to do all of them.** The prompt tells you how many records to
+verify properly this run — usually about ten. Verify those with real fetched
+quotes, and list every record you did not reach under `unverifiable` with cause
+`not_checked`. Ten well-evidenced records are worth more than thirty asserted
+ones, and next week's run continues from where you stopped. Partial coverage is
+expected, reported, and fine.
+
+**Account for every watchlist record.** Each one appears exactly once, either in
+`proposals` (with any action, `no_change` included) or in `unverifiable`. A
+record you skipped silently is reported as an error, so say what happened to it
+— `not_checked` is an honest answer.
 
 ## Input
 
