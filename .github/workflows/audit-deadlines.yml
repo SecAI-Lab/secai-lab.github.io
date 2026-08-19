@@ -88,8 +88,79 @@ jobs:
         run: |
           if [ -n "$TOKEN" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
 
+      # The auditor is unreliable in a way no wording has fixed: with identical
+      # configuration it produced 26 proposals and 30/30 coverage on one run and
+      # wrote nothing at all on the next. Failing runs stop at roughly 2m45s,
+      # successful ones take 11-14m, so it is bailing early rather than working
+      # and losing the result. Seeding the file, changing the tool list and
+      # rewording the instructions all failed to move it.
+      #
+      # So: retry. continue-on-error keeps a bailed attempt from killing the job
+      # before the second one runs, and the attempts are identical - this is a
+      # coin flip, not a configuration problem.
       - name: Run Claude auditor
+        id: auditor1
+        continue-on-error: true
         if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Use the workflow's own token instead of the Claude Code GitHub
+          # App (which is deliberately not installed on this repo). Claude
+          # only edits the working tree; branch/PR operations are done by
+          # the deterministic steps below as github-actions[bot].
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Today's date is interpolated, not merely alluded to: nothing else in
+          # the environment tells the model what today is, and audit_date drives
+          # the citation comments the applier writes.
+          prompt: |
+            Read deadlines/scripts/AUDITOR.md and follow it exactly. The
+            watchlist is in watchlist.json at the repository root.
+            Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
+            audit_date. Trust pages you fetch this run, not memory.
+
+            Work autonomously. Explore the repository, fetch pages, follow a
+            site's own navigation to its CFP page, and keep going until you
+            have addressed every record in the watchlist. Do not stop early to
+            ask anything - there is nobody to ask.
+
+            Write your findings to audit-proposals.json at the repository root,
+            creating or editing it as you go, and change no other file. Update
+            it every few records rather than only at the end, so a run that
+            stops early still reports what it managed to check.
+          # The auditor gets the tools its job actually needs: find, grep, read,
+          # edit, fetch. What keeps it out of repository data is the tamper
+          # check below - an external gate that fails the run on any change
+          # under deadlines/ or .github/ - NOT a starved tool list. Removing
+          # tools only made it stall; 35 permission denials in one run is a
+          # model fighting its allowlist instead of reading conference pages.
+          #
+          # --max-turns matters as much as the tools. A run reported exactly 60
+          # turns, which is a cap rather than a natural stop: roughly two turns
+          # per watchlist record, barely enough to fetch a page, let alone find
+          # the CFP subpage and read it. The 45-minute job timeout is the real
+          # bound, so let turns be generous.
+          claude_args: |
+            --max-turns 200
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(grep:*),Bash(find:*),Bash(jq:*),Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*)"
+
+      # Did attempt 1 actually produce anything?
+      - name: Check for auditor output
+        id: attempt1
+        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        run: |
+          if [ -f audit-proposals.json ]; then
+            echo "have=true" >> "$GITHUB_OUTPUT"
+            echo "Attempt 1 produced audit-proposals.json."
+          else
+            echo "have=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::attempt 1 wrote nothing; retrying the auditor once"
+          fi
+
+      - name: Run Claude auditor (retry)
+        id: auditor2
+        continue-on-error: true
+        if: steps.token.outputs.present == 'true' && steps.attempt1.outputs.have == 'false'
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
