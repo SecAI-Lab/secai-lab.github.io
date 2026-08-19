@@ -121,21 +121,33 @@ jobs:
             Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
             audit_date. Trust pages you fetch this run, not memory.
 
-            audit-proposals.json ALREADY EXISTS at the repository root, listing
-            every watchlist record as unverifiable with cause "not_checked".
-            Your job is to update it in place as you work: each record you
-            examine moves out of "unverifiable" into "proposals" (as a real
-            correction or as no_change), or stays in "unverifiable" with a real
-            cause. Rewrite the whole file each time you update it. Anything
-            still marked not_checked at the end is reported as unexamined, so
-            update it as you go rather than saving it all for the end.
+            audit-proposals.json ALREADY EXISTS at the repository root. It
+            currently lists ${{ steps.watchlist.outputs.count }} records under
+            "unverifiable" with cause "not_checked". That is a TO-DO list, not
+            a finished audit: every one of those records is work you have not
+            done yet.
+
+            Your task is to drive that not_checked count down to zero. For each
+            record: fetch the venue's official page, then move it out of
+            "unverifiable" and into "proposals" — as a real correction if the
+            page disagrees with the record, or as no_change if the record is
+            already right. If you examined it and genuinely could not verify
+            it, leave it in "unverifiable" but replace "not_checked" with a
+            real cause.
+
+            Use Edit to update the file after every few records, so a run that
+            stops early still reports what it managed to check. A run that
+            leaves all ${{ steps.watchlist.outputs.count }} records marked
+            not_checked has done nothing and is failed automatically.
 
             Change no file other than audit-proposals.json.
-          # No Edit tool. The auditor writes exactly one new file and never
-          # touches repository data; apply_proposals.py turns proposals into
-          # YAML. That is what makes the model's output machine-checkable.
+          # Edit is granted because the task is now "update a seeded file in
+          # place", and Edit is the tool for that. A run that had it removed
+          # logged 35 permission denials and then bailed after 2m46s having
+          # examined nothing. What keeps the auditor out of repository data is
+          # the tamper check below, not the absence of an editing tool.
           claude_args: |
-            --allowedTools "Read,Write,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
 
       # The auditor may now create audit-proposals.json and nothing else - it
       # has no reason to touch deadlines/ at all. Checked from OUTSIDE the
@@ -197,10 +209,18 @@ jobs:
             exit 1
           fi
           echo "any=true" >> "$GITHUB_OUTPUT"
+          # PIPESTATUS, not the pipeline's status: `| tee` returns 0 and would
+          # swallow the validator's verdict. An earlier run reported
+          # "examined: 0/30" and still went green for exactly this reason.
           set +e
           python3 deadlines/scripts/apply_proposals.py --validate-only \
             --watchlist watchlist.json | tee -a "$GITHUB_STEP_SUMMARY"
+          code=${PIPESTATUS[0]}
           set -e
+          if [ "$code" -ne 0 ]; then
+            echo "::error::proposal validation failed (see the summary above)"
+            exit 1
+          fi
 
       # Deterministic applier: the model never writes YAML. --ungated is
       # explicit because no verification gate exists yet - every citation still

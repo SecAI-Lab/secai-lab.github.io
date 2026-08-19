@@ -10,9 +10,11 @@ Do not edit anything under `deadlines/`. Do not commit, push, branch, or open a
 pull request. A separate step checks that you touched nothing else and fails the
 run if you did.
 
-**The file already exists when you start.** It is seeded with every watchlist
-record listed under `unverifiable` with cause `not_checked`. You do not create
-it — you *update* it, rewriting the whole file each time.
+**The file already exists when you start, and it is a to-do list.** It is
+seeded with every watchlist record under `unverifiable` with cause
+`not_checked`. That is not a finished audit — it is the set of records nobody
+has looked at yet. Your job is to drive that count to zero. You do not create
+the file; you *update* it, with `Edit`, as you work.
 
 Work record by record. For each one you examine, move it out of `unverifiable`
 and into `proposals`: either a real correction, or `no_change` if the record is
