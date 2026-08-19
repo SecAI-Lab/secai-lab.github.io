@@ -10,26 +10,18 @@ Do not edit anything under `deadlines/`. Do not commit, push, branch, or open a
 pull request. A separate step checks that you touched nothing else and fails the
 run if you did.
 
-**The file already exists when you start, and it is a to-do list.** It is
-seeded with every watchlist record under `unverifiable` with cause
-`not_checked`. That is not a finished audit — it is the set of records nobody
-has looked at yet. Your job is to drive that count to zero. You do not create
-the file; you *update* it, with `Edit`, as you work.
+**Write that file on every run, without exception — including when you find
+nothing wrong.** Finding nothing is a normal, good outcome, but it is reported
+by writing the file with an empty `proposals` array (plus `no_change` entries
+for what you checked), never by writing nothing. A run that produces no file is
+failed: it cannot be told apart from a run that did no work, so it is treated as
+the latter. If you are about to finish without writing the file, stop and write
+it.
 
-Work record by record. For each one you examine, move it out of `unverifiable`
-and into `proposals`: either a real correction, or `no_change` if the record is
-already right. If you examined it and genuinely could not verify it, leave it in
-`unverifiable` but replace `not_checked` with a real cause.
-
-**Update as you go, not at the end.** Anything still marked `not_checked` when
-the run finishes is reported as unexamined, and a run where nothing was examined
-fails. Rewriting the file after each few records means a run that stops early
-still reports honestly what it managed to check.
-
-**Account for every watchlist record.** Each appears exactly once, in
-`proposals` or in `unverifiable`. Never delete a record from the file to make it
-tidy — an unexamined record reported as unexamined is fine; a disappeared one is
-not.
+**Account for every watchlist record.** Each one must appear exactly once,
+either in `proposals` (with any action, `no_change` included) or in
+`unverifiable`. A record you skipped silently is reported as an error, so say
+what happened to it instead.
 
 ## Input
 
@@ -228,15 +220,11 @@ reformatted `2025-12-10` that goes in `value`. The checker reconciles the two.
 `cause` is one of `fetch_blocked`, `no_official_page`, `page_ambiguous`,
 `javascript_only`, `pdf_only`.
 
-`cause` is one of `not_checked` (the seeded default — replace it),
-`fetch_blocked`, `no_official_page`, `page_ambiguous`, `javascript_only`,
-`pdf_only`.
-
-If everything checks out, `proposals` ends up full of `no_change` entries and
-`unverifiable` is empty or holds only genuinely unverifiable records. That is a
-successful audit, not a failed one. Never invent a correction to have something
+If everything checks out, emit an empty `proposals` array — with a `no_change`
+entry per record you verified, so the run shows its coverage. That is a
+successful audit, not a failed one. Never invent a proposal to have something
 to show.
 
-Before you finish, check: does every watchlist record still appear exactly once,
-and is anything still marked `not_checked` genuinely unexamined? Those counts
-are reported, so they should reflect what you actually did.
+Before you finish, check: does `audit-proposals.json` exist, and does every
+watchlist record appear once in `proposals` or `unverifiable`? If not, the run
+fails.

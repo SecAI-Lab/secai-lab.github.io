@@ -80,21 +80,6 @@ jobs:
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "Watchlist: $count record(s)"
 
-      # Seed the proposals file BEFORE the auditor runs, with every watchlist
-      # record marked not_checked. Asking a model to create a file at the end of
-      # a long run turned out to be nondeterministic - one run produced a
-      # complete 30/30 file, the next produced nothing - so the file's existence
-      # is no longer the model's responsibility. not_checked is the pessimistic
-      # default on purpose: an auditor that does nothing reports that it
-      # verified nothing, which is true and visible. Seeding no_change would
-      # make doing nothing look like a clean audit.
-      - name: Seed proposals file
-        if: steps.watchlist.outputs.count != '0'
-        run: |
-          python3 deadlines/scripts/apply_proposals.py \
-            --seed-from-watchlist watchlist.json \
-            --audit-date "${{ steps.today.outputs.date }}"
-
       - name: Detect auditor token
         id: token
         env:
@@ -121,33 +106,13 @@ jobs:
             Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
             audit_date. Trust pages you fetch this run, not memory.
 
-            audit-proposals.json ALREADY EXISTS at the repository root. It
-            currently lists ${{ steps.watchlist.outputs.count }} records under
-            "unverifiable" with cause "not_checked". That is a TO-DO list, not
-            a finished audit: every one of those records is work you have not
-            done yet.
-
-            Your task is to drive that not_checked count down to zero. For each
-            record: fetch the venue's official page, then move it out of
-            "unverifiable" and into "proposals" — as a real correction if the
-            page disagrees with the record, or as no_change if the record is
-            already right. If you examined it and genuinely could not verify
-            it, leave it in "unverifiable" but replace "not_checked" with a
-            real cause.
-
-            Use Edit to update the file after every few records, so a run that
-            stops early still reports what it managed to check. A run that
-            leaves all ${{ steps.watchlist.outputs.count }} records marked
-            not_checked has done nothing and is failed automatically.
-
-            Change no file other than audit-proposals.json.
-          # Edit is granted because the task is now "update a seeded file in
-          # place", and Edit is the tool for that. A run that had it removed
-          # logged 35 permission denials and then bailed after 2m46s having
-          # examined nothing. What keeps the auditor out of repository data is
-          # the tamper check below, not the absence of an editing tool.
+            Write your findings to audit-proposals.json at the repository root
+            and change no other file.
+          # Tool list restored to the one from the run that produced 25
+          # proposals and 30/30 coverage. Do not change it without evidence:
+          # the two runs that deviated from it examined nothing.
           claude_args: |
-            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
+            --allowedTools "Read,Write,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
 
       # The auditor may now create audit-proposals.json and nothing else - it
       # has no reason to touch deadlines/ at all. Checked from OUTSIDE the
