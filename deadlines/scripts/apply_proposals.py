@@ -259,7 +259,12 @@ def coverage(doc, watchlist_path):
     """
     try:
         items = json.loads(Path(watchlist_path).read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001 - no watchlist is not an error here
+    except Exception as exc:  # noqa: BLE001
+        # Do NOT return quietly. A missing watchlist used to make the coverage
+        # line simply vanish from the output while the exit code stayed 0 - the
+        # coverage check disappearing unnoticed is the same "silence reads as
+        # success" failure this program exists to prevent, one layer up.
+        print(f"  [!] coverage NOT checked: {watchlist_path} unreadable ({exc})")
         return None
     want = {(i.get("title"), i.get("year")) for i in items}
     seen = {(p.get("title"), p.get("year")) for p in doc.get("proposals") or []}

@@ -44,8 +44,13 @@ do not retype it from memory, and do not tidy it up.
 
 - A paraphrase fails. "The deadline is Feb 10" when the page says
   "Paper Submission Deadline: February 10, 2026 (AoE)" is a paraphrase.
-- Keep quotes to one line or list item, but long enough to contain the value
-  *and* the label that identifies it — day, month, year.
+- **Quote the whole row — label and value together.** Many CFPs are tables, and
+  once the markup is stripped the label and the date land on separate lines. A
+  quote of just the date is refused ("almost entirely the date itself") and so
+  is a quote of just the label. Quote across the cells: `Paper Submission
+  21 August 2026 (AoE)`.
+- The quote needs at least two words that are not part of the date, so that
+  what the date *is* can be identified from the quote alone.
 - If a value exists only in an image, a scanned PDF, or JavaScript you cannot
   read, you have no quote. Record it under `unverifiable`.
 
@@ -86,7 +91,7 @@ do not retype it from memory, and do not tidy it up.
 
 | Field | Format |
 |---|---|
-| `deadline`, `abstract_deadline` | `"YYYY-MM-DD HH:MM"`, an array for multi-cycle venues, or `"TBA"` |
+| `deadline`, `abstract_deadline` | `"YYYY-MM-DD HH:MM"`, an array for multi-cycle venues, or `"TBA"`. **Each cycle in an array needs its own quote** — one quote cannot evidence two cycles |
 | `timezone` | `AoE`, `UTC+9`, `UTC-5`, `PST`, or an IANA name like `America/Los_Angeles` |
 | `place` | `"City, Country"` |
 | `date` | `"April 27-30, 2026"` or `"June 29 - July 3, 2026"` |
@@ -131,10 +136,13 @@ Prefer WebFetch/WebSearch. If they are unavailable in this environment, use
 files in the repository leaves litter behind; if you must save one, put it in
 `/tmp`, never in the working tree.
 
-`usenix.org` serves automated requests fine — always go to the USENIX page
-itself for OSDI / NSDI / ATC / USENIX Security / WOOT rather than a
-second-hand calendar. (Measured 2026-08-18: the OSDI 27 and USENIX Security 27
-CFPs both return 200.)
+`usenix.org` serves automated requests fine — go to the USENIX page itself for
+OSDI / NSDI / USENIX Security / WOOT rather than a second-hand calendar.
+(Measured 2026-08-18: the OSDI 27 and USENIX Security 27 CFPs both return 200.)
+
+**ATC is no longer a USENIX conference.** It moved to ACM SIGOPS after 2025;
+`conferences.yml` records this and the stored link is `sigops.org`. Do not look
+for ATC on usenix.org.
 
 `dfrws.org` does not block either. Its robots.txt is `User-agent: * /
 Disallow:` — everything permitted — and the DFRWS EU 2027 page returns 200 with
@@ -229,9 +237,21 @@ reformatted `2025-12-10` that goes in `value`. The checker reconciles the two.
 }
 ```
 
-`cause` is one of `not_checked` (you did not reach this record - the honest
-answer for everything beyond the ten you verified), `fetch_blocked`,
-`no_official_page`, `page_ambiguous`, `javascript_only`, `pdf_only`.
+`cause` is one of `not_checked` (you did not reach this record — the honest
+answer for everything beyond the ten you verified), `no_official_page` (the
+venue's site exists but has no page for this edition yet — the most common
+outcome by far, and a perfectly good one), `fetch_blocked`, `page_ambiguous`,
+`javascript_only`, `pdf_only`.
+
+**Finding no page is a normal, successful result.** Most watchlist entries are
+upcoming editions whose CFP has simply not been published. Recording ten
+`no_official_page` entries is a complete, correct audit — not a wasted run, and
+not a reason to write nothing.
+
+**Do not propose a `note` on its own.** A note has no value the gate can check
+against a page, so a note-only proposal can never be accepted. If all you can
+say about a record is that its note is stale, put it in `unverifiable` and move
+on.
 
 If everything checks out, emit an empty `proposals` array — with a `no_change`
 entry per record you verified, so the run shows its coverage. That is a

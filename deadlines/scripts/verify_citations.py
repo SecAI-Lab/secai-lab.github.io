@@ -121,8 +121,16 @@ def normalize(s: str) -> str:
 
 
 def flatten(s: str) -> str:
-    """Alnum-only view: punctuation and markup differences vanish, digits do not."""
-    return re.sub(r"[^a-z0-9]+", " ", normalize(s)).strip()
+    """Alnum-only view: punctuation and markup differences vanish, digits do not.
+
+    Ordinal suffixes are dropped first. Without this, "July 24th, 2026"
+    tokenizes to ['july','24','th','2026'] and the interposed 'th' breaks
+    contiguity with every generated form - so AISec's real, correctly-labelled,
+    published deadline could not be cited by ANY quote, and the auditor was told
+    its perfect quote "was not found on the page".
+    """
+    n = re.sub(r"(\d)(st|nd|rd|th)\b", r"\1", normalize(s))
+    return re.sub(r"[^a-z0-9]+", " ", n).strip()
 
 
 def tokens(s: str) -> list[str]:
@@ -138,8 +146,9 @@ def date_forms(d: dt.date) -> list[str]:
     out = set()
     for dd in days:
         for name in (m, a):
-            out |= {f"{name} {dd} {y}", f"{dd} {name} {y}",
-                    f"{name} {dd}th {y}", f"{dd}th {name} {y}"}
+            # No ordinal variants: flatten() strips the suffix, so "24th" and
+            # "24" are already the same token by the time forms are compared.
+            out |= {f"{name} {dd} {y}", f"{dd} {name} {y}"}
         out.add(f"{y} {d.month:02d} {int(dd):02d}")
         # Numeric forms are admissible only when a component exceeds 12, which
         # makes the ordering unambiguous (11/20/26 can only be Nov 20).

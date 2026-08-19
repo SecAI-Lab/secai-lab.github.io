@@ -236,6 +236,39 @@ class AbsenceClaims(unittest.TestCase):
         self.assertFalse(ok, why)
 
 
+class OrdinalDates(unittest.TestCase):
+    """A local dry run found AISec's real published deadline was uncitable by
+    ANY quote: tokens("July 24th, 2026") is ['july','24','th','2026'] and the
+    interposed 'th' broke contiguity with every generated form. The auditor was
+    told its perfect verbatim quote "was not found on the page" - exactly the
+    input that makes a model conclude its evidence is unusable and give up."""
+
+    def ground(self, line, d):
+        return V.ground_quote(V.tokens(line), line, V.date_forms(d),
+                              V.FIELD_LABELS["deadline"], single_date=True)
+
+    def test_ordinal_suffixes_verify(self):
+        import datetime as dt
+        for line, d in (
+            ("Paper Submission Deadline: July 24th, 2026", dt.date(2026, 7, 24)),
+            ("Paper Submission Deadline: 3rd February 2026", dt.date(2026, 2, 3)),
+            ("Paper Submission Deadline: February 1st, 2026", dt.date(2026, 2, 1)),
+            ("Paper Submission Deadline: May 22nd, 2026", dt.date(2026, 5, 22)),
+        ):
+            with self.subTest(line):
+                self.assertIsNotNone(self.ground(line, d)[0], line)
+
+    def test_plain_dates_still_verify(self):
+        import datetime as dt
+        self.assertIsNotNone(
+            self.ground("Paper Submission Deadline: July 24, 2026", dt.date(2026, 7, 24))[0])
+
+    def test_a_wrong_date_is_still_refused(self):
+        import datetime as dt
+        self.assertIsNone(
+            self.ground("Paper Submission Deadline: July 24th, 2026", dt.date(2026, 7, 25))[0])
+
+
 class SourceAuthority(unittest.TestCase):
     def test_trackers_are_rejected(self):
         for url in ("https://ccfddl.github.io/conference/",

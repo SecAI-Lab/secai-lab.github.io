@@ -7,6 +7,7 @@ Every test here pins a bug that was live in the pipeline and could put a wrong
 deadline - or a deadline that renders LATER than the truth - on the public page.
 """
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -162,6 +163,27 @@ class TbaMetadataNomination(unittest.TestCase):
         self.assertNotIn("deadline", U.tba_metadata_fields(
             {"deadline": "TBA", "place": "Lisbon, Portugal",
              "date": "x", "timezone": "AoE"}))
+
+
+class WatchlistPriority(unittest.TestCase):
+    """The auditor verifies a bounded slice from the top of the watchlist, so
+    the order decides which records ever get checked. Alphabetical order handed
+    it seven venues with no published edition - nothing correctable - which is
+    a large part of why runs concluded there was nothing worth writing."""
+
+    RANK = ["deadline-within-45-days", "tba-upcoming-cycle", "manual-override-active",
+            "cross-source-disagreement", "stale-placeholder-note", "coverage-gap",
+            "tba-metadata"]
+
+    def test_priority_order_matches_auditor_md(self):
+        # Scope to the numbered Priorities section: these reason names also
+        # appear elsewhere in the document (create_record cites coverage-gap).
+        doc = (U.REPO_ROOT / "deadlines" / "scripts" / "AUDITOR.md").read_text(encoding="utf-8")
+        section = doc.split("## Priorities", 1)[1].split("\n## ", 1)[0]
+        order = [m for m in re.findall(r"^\d+\.\s+`([a-z0-9-]+)`", section, re.M)]
+        self.assertEqual(order, self.RANK,
+                         "AUDITOR.md's priority list and the watchlist sort disagree; "
+                         "the sort decides which records the bounded run ever reaches")
 
 
 class RepoDataIsValid(unittest.TestCase):

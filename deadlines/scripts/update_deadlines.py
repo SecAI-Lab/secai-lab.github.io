@@ -1122,6 +1122,17 @@ def main() -> int:
             watchlist.append({"title": key, "year": next_year,
                               "category": by_key[key]["category"], "file": None,
                               "reasons": ["coverage-gap"], "record": {}})
+        # Sort by AUDITOR.md's own priority order, not alphabetically. The
+        # auditor verifies a bounded slice from the top of this file, so an
+        # alphabetical list hands it whatever starts with 'A' - which in
+        # practice was seven venues with no published edition yet, i.e. nothing
+        # correctable. Highest-stakes records must be the ones it reaches.
+        rank = {r: i for i, r in enumerate(
+            ["deadline-within-45-days", "tba-upcoming-cycle", "manual-override-active",
+             "cross-source-disagreement", "stale-placeholder-note", "coverage-gap",
+             "tba-metadata"])}
+        watchlist.sort(key=lambda it: (min(rank.get(r, 99) for r in it["reasons"]),
+                                       it["title"], it["year"]))
         Path(args.watchlist).write_text(
             json.dumps(watchlist, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
