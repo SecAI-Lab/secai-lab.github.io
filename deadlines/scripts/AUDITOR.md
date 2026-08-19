@@ -10,6 +10,19 @@ Do not edit anything under `deadlines/`. Do not commit, push, branch, or open a
 pull request. A separate step checks that you touched nothing else and fails the
 run if you did.
 
+**Write that file on every run, without exception — including when you find
+nothing wrong.** Finding nothing is a normal, good outcome, but it is reported
+by writing the file with an empty `proposals` array (plus `no_change` entries
+for what you checked), never by writing nothing. A run that produces no file is
+failed: it cannot be told apart from a run that did no work, so it is treated as
+the latter. If you are about to finish without writing the file, stop and write
+it.
+
+**Account for every watchlist record.** Each one must appear exactly once,
+either in `proposals` (with any action, `no_change` included) or in
+`unverifiable`. A record you skipped silently is reported as an error, so say
+what happened to it instead.
+
 ## Input
 
 `watchlist.json` at the repo root: the records worth checking this week. Each
@@ -205,5 +218,11 @@ reformatted `2025-12-10` that goes in `value`. The checker reconciles the two.
 `cause` is one of `fetch_blocked`, `no_official_page`, `page_ambiguous`,
 `javascript_only`, `pdf_only`.
 
-If everything checks out, emit an empty `proposals` array. That is a successful
-audit, not a failed one. Never invent a proposal to have something to show.
+If everything checks out, emit an empty `proposals` array — with a `no_change`
+entry per record you verified, so the run shows its coverage. That is a
+successful audit, not a failed one. Never invent a proposal to have something
+to show.
+
+Before you finish, check: does `audit-proposals.json` exist, and does every
+watchlist record appear once in `proposals` or `unverifiable`? If not, the run
+fails.

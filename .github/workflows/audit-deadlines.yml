@@ -150,15 +150,32 @@ jobs:
         id: proposals
         if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
         run: |
+          # A missing file is a CONTRACT VIOLATION, not a quiet week. AUDITOR.md
+          # requires audit-proposals.json on every run - an empty proposals array
+          # is how a clean audit reports itself - so "the model wrote nothing"
+          # and "the model checked everything and found nothing" are different
+          # outcomes and must not look identical. Failing here is what keeps them
+          # distinguishable.
           if [ ! -f audit-proposals.json ]; then
-            echo "The auditor proposed nothing."
             echo "any=false" >> "$GITHUB_OUTPUT"
-            exit 0
+            echo "::error::the auditor exited successfully but wrote no audit-proposals.json"
+            {
+              echo "## Audit produced no output"
+              echo
+              echo "The auditor ran, exited 0, and wrote no \`audit-proposals.json\`."
+              echo
+              echo "\`AUDITOR.md\` requires that file on every run: a clean audit is"
+              echo "reported as an empty \`proposals\` array plus \`no_change\` entries"
+              echo "showing what was checked. No file means the run cannot be"
+              echo "distinguished from one that did nothing, so it is failed here"
+              echo "rather than passed silently."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
           echo "any=true" >> "$GITHUB_OUTPUT"
           set +e
           python3 deadlines/scripts/apply_proposals.py --validate-only \
-            | tee -a "$GITHUB_STEP_SUMMARY"
+            --watchlist watchlist.json | tee -a "$GITHUB_STEP_SUMMARY"
           set -e
 
       # Deterministic applier: the model never writes YAML. --ungated is
@@ -292,6 +309,31 @@ jobs:
             echo "Updated existing watchlist issue #$existing."
           else
             gh issue create --title "$title" --label deadline-audit --body-file watchlist.md
+          fi
+
+      # A red run nobody looks at is a silent failure with extra steps. Tier 1
+      # already files/bumps a deadline-pipeline issue on failure; the audit now
+      # does too, so a broken auditor surfaces without anyone watching Actions.
+      - name: File a pipeline alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create deadline-pipeline \
+            --description "Automated deadline pipeline alerts" --color D93F0B --force
+          title="Deadline audit failed: $(date -u +%F)"
+          body="The weekly audit run failed. See the run for details:
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          Common causes: the auditor wrote no \`audit-proposals.json\` (a contract
+          violation - see AUDITOR.md), the OAuth token expired, or the updater
+          failed fatally."
+          existing=$(gh issue list --state open --label deadline-pipeline \
+            --search "Deadline audit failed" --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --label deadline-pipeline --body "$body"
           fi
 
       # GitHub auto-disables cron workflows after 60 days without repo

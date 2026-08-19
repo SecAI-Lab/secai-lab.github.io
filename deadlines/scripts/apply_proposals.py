@@ -189,6 +189,25 @@ def comment_block(reason, url, date, quote, retained):
 
 # ------------------------------------------------------------------ validation
 
+def coverage(doc, watchlist_path):
+    """Which watchlist records did the auditor actually account for?
+
+    An empty proposals array is a legitimate outcome, but only when the auditor
+    says so explicitly - every watchlist item should turn up as a proposal (of
+    any action, including no_change) or as an `unverifiable` entry. Without
+    this, "checked all 30 and found nothing" and "looked at 3 and gave up" are
+    the same output.
+    """
+    try:
+        items = json.loads(Path(watchlist_path).read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 - no watchlist is not an error here
+        return None
+    want = {(i.get("title"), i.get("year")) for i in items}
+    seen = {(p.get("title"), p.get("year")) for p in doc.get("proposals") or []}
+    seen |= {(u.get("title"), u.get("year")) for u in doc.get("unverifiable") or []}
+    return len(want), sorted(want - seen)
+
+
 def _err(errors, pid, msg):
     errors.append(f"{pid}: {msg}")
 
@@ -400,6 +419,8 @@ def main() -> int:
                     help="apply without a verification gate (PR-reviewed mode)")
     ap.add_argument("--report", default="audit-summary.md")
     ap.add_argument("--max-changes", type=int, default=DEFAULT_MAX_CHANGES)
+    ap.add_argument("--watchlist",
+                    help="report which watchlist records went unaddressed")
     ap.add_argument("--validate-only", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
@@ -451,7 +472,24 @@ def main() -> int:
     if args.validate_only:
         for e in errors:
             print(f"  [!] {e}")
-        print(f"{len(proposals)} proposal(s) valid, {len(errors)} rejected")
+        actions = {}
+        for p in doc["proposals"]:
+            if isinstance(p, dict):
+                actions[p.get("action")] = actions.get(p.get("action"), 0) + 1
+        print(f"{len(proposals)} proposal(s) valid, {len(errors)} rejected"
+              + (f" ({', '.join(f'{k}={v}' for k, v in sorted(actions.items()))})"
+                 if actions else ""))
+        if args.watchlist:
+            cov = coverage(doc, args.watchlist)
+            if cov:
+                total, missing = cov
+                print(f"coverage: {total - len(missing)}/{total} watchlist record(s) "
+                      "accounted for")
+                for title, year in missing[:20]:
+                    print(f"  [!] not addressed: {title} {year}")
+                if missing:
+                    print("  (a record the auditor neither proposed for nor listed "
+                          "as unverifiable was silently skipped)")
         return 1 if errors else 0
 
     original = MANUAL_PATH.read_text(encoding="utf-8") if MANUAL_PATH.exists() else ""

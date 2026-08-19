@@ -9,6 +9,7 @@ matters is that a machine write never disturbs a hand-written entry - and that
 running twice changes nothing the second time.
 """
 
+import json
 import shutil
 import sys
 import tempfile
@@ -212,6 +213,42 @@ class Applying(unittest.TestCase):
                 blob = "\n".join(run)
                 self.assertIn("Verified", blob)
                 self.assertRegex(blob, r"https?://")
+
+
+class Coverage(unittest.TestCase):
+    """A run that examined 3 of 30 records must not look like one that examined
+    all 30 and found nothing. The first live run wrote no file at all and went
+    green, which is the failure this accounting exists to make visible."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.wl = self.tmp / "watchlist.json"
+        self.wl.write_text(json.dumps([
+            {"title": "DIMVA", "year": 2027, "reasons": ["tba-upcoming-cycle"]},
+            {"title": "SAC", "year": 2027, "reasons": ["manual-override-active"]},
+            {"title": "RAID", "year": 2027, "reasons": ["tba-upcoming-cycle"]},
+        ]), encoding="utf-8")
+
+    def test_proposals_and_unverifiable_both_count(self):
+        doc = {"proposals": [{"title": "DIMVA", "year": 2027}],
+               "unverifiable": [{"title": "SAC", "year": 2027}]}
+        total, missing = A.coverage(doc, self.wl)
+        self.assertEqual(total, 3)
+        self.assertEqual(missing, [("RAID", 2027)])
+
+    def test_a_fully_accounted_run_has_no_gaps(self):
+        doc = {"proposals": [{"title": "DIMVA", "year": 2027},
+                             {"title": "RAID", "year": 2027}],
+               "unverifiable": [{"title": "SAC", "year": 2027}]}
+        self.assertEqual(A.coverage(doc, self.wl)[1], [])
+
+    def test_an_empty_audit_is_reported_as_fully_missing(self):
+        total, missing = A.coverage({"proposals": [], "unverifiable": []}, self.wl)
+        self.assertEqual((total, len(missing)), (3, 3))
+
+    def test_absent_watchlist_is_not_an_error(self):
+        self.assertIsNone(A.coverage({"proposals": []}, self.tmp / "nope.json"))
 
 
 class Validation(unittest.TestCase):
