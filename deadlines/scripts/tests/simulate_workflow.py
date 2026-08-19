@@ -3,6 +3,11 @@
 
 Extracts each `run:` block verbatim from the YAML so we are testing the text
 that will actually execute in CI, not a paraphrase of it.
+
+Run: python3 deadlines/scripts/tests/simulate_workflow.py
+
+Requires a CLEAN working tree. The tamper check and audit_lint will correctly
+flag your own uncommitted edits to pipeline files, so commit first, then run.
 """
 import re
 import os
@@ -12,7 +17,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-REPO = Path(r"C:\Users\SecAI\Downloads\secai-lab.github.io")
+REPO = Path(__file__).resolve().parents[3]
 import yaml  # noqa: E402
 
 WF = yaml.safe_load((REPO / ".github/workflows/audit-deadlines.yml").read_text(encoding="utf-8"))
