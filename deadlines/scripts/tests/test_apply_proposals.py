@@ -381,6 +381,44 @@ class Validation(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn("obsolete_because", errors[0])
 
+    def test_note_that_would_fabricate_a_deadline_is_rejected(self):
+        # deadline-tracker.js:131 turns a note matching this into a rendered
+        # abstract deadline at paper-7d - a route from unverifiable prose to a
+        # deadline that appears on no page anywhere.
+        ok, errors = self.check(proposal(fields={"note": claim(
+            "Abstracts are due 1 week before the paper deadline.",
+            quote="Abstracts are due one week before the paper deadline.")}))
+        self.assertFalse(ok)
+        self.assertIn("fabricate", errors[0])
+
+    def test_ordinary_note_still_allowed(self):
+        ok, errors = self.check(proposal(fields={"note": claim(
+            "Deadline extended from February 3 to February 10, 2026.",
+            quote="The submission deadline has been extended to February 10.")}))
+        self.assertTrue(ok, errors)
+
+    def test_start_and_end_are_rejected(self):
+        for f in ("start", "end"):
+            ok, errors = self.check(proposal(fields={f: claim(
+                "2027-06-29", quote="The event runs 29 June to 3 July 2027.")}))
+            self.assertFalse(ok, f)
+            self.assertIn("derived from `date`", errors[-1])
+
+    def test_create_record_needs_a_concrete_deadline(self):
+        ok, errors = self.check(proposal(
+            action="create_record", title="BAR", year=2027,
+            fields={"place": claim("Vienna, Austria",
+                                   quote="The workshop is held in Vienna, Austria.")}))
+        self.assertFalse(ok)
+        self.assertIn("concrete deadline", errors[0])
+
+    def test_create_record_with_a_deadline_passes(self):
+        ok, errors = self.check(proposal(
+            action="create_record", title="BAR", year=2027,
+            fields={"deadline": claim("2027-01-15 23:59",
+                                      quote="Paper submission deadline: January 15, 2027")}))
+        self.assertTrue(ok, errors)
+
     def test_valid_proposal_passes(self):
         ok, errors = self.check(proposal(fields={"deadline": claim("2026-02-17 23:59")}))
         self.assertTrue(ok, errors)

@@ -244,6 +244,56 @@ def ground_quote(page_toks, quote, forms, labels):
                   f"< {LCS_THRESHOLD})")
 
 
+ABSENCE_VOCAB = {
+    "abstract_deadline": ("abstract",),
+    "deadline": ("submission deadline", "paper deadline", "papers due"),
+    "timezone": ("aoe", "utc", "gmt", "timezone"),
+}
+ABSENCE_RADIUS = 25  # tokens between a label and a date, inside the cited block
+
+
+def verify_absence(page_toks, field, scope_quote):
+    """Bound a negative claim instead of trying to prove one.
+
+    "This page has no abstract deadline" is unfalsifiable. What IS decidable is
+    "the block the auditor cited, which really is on this page, contains no
+    abstract entry". So: ground the cited block, then look inside it only.
+    """
+    vocab = ABSENCE_VOCAB.get(field)
+    if not vocab:
+        return False, f"no absence vocabulary defined for {field!r}"
+    qt = tokens(scope_quote)
+    if len(qt) < 8:
+        return False, ("absence_scope_quote too short: it must be the whole block "
+                       "that would contain the field, not a fragment")
+    size = max(len(qt) + WINDOW_SLACK, int(len(qt) * 1.6))
+    best, block = 0.0, None
+    for i in range(max(1, len(page_toks) - size + 1)):
+        win = page_toks[i:i + size]
+        cov = lcs_len(qt, win) / len(qt)
+        if cov > best:
+            best, block = cov, win
+        if cov >= LCS_THRESHOLD:
+            block = win
+            break
+    if best < LCS_THRESHOLD:
+        return False, (f"the cited block is not on the page (best coverage {best:.2f}); "
+                       "an absence cannot be bounded by a block that does not exist")
+    text = " ".join(block)
+    hits = [v for v in vocab if (v in text if " " in v else v in set(block))]
+    if not hits:
+        return True, "the cited block is on the page and contains no such entry"
+    # The label is present - is a date sitting next to it?
+    for idx, tok in enumerate(block):
+        if tok not in {v for v in vocab if " " not in v}:
+            continue
+        near = block[max(0, idx - ABSENCE_RADIUS): idx + ABSENCE_RADIUS]
+        if any(t in MONTH_TOKENS for t in near) and any(t.isdigit() for t in near):
+            return False, (f"the cited block mentions {tok!r} within "
+                           f"{ABSENCE_RADIUS} tokens of a date; absence not established")
+    return True, "the cited block mentions the label but associates no date with it"
+
+
 # ------------------------------------------------------------------- fetching
 
 class Fetcher:
@@ -353,30 +403,52 @@ def verify_proposal(p, fetcher):
     page, err = fetcher.get(url)
     if page is None:
         return {"id": pid, "status": "UNREACHABLE", "reason": err, "url": url}
-    page_toks = tokens(strip_html(page))
-    results, worst = {}, "VERIFIED"
+    page_text = strip_html(page)
+    page_toks = tokens(page_text)
+    results, grounded, refuted = {}, 0, 0
     for name, claim in fields.items():
         value = claim.get("value")
         quotes = [e.get("quote", "") for e in (claim.get("evidence") or [])]
-        if value is None:
-            quotes += [claim.get("absence_scope_quote", "")]
+
+        if value is None:                       # a deletion: a negative claim
+            ok, why = verify_absence(page_toks, name, claim.get("absence_scope_quote", ""))
+            results[name] = {"status": "VERIFIED" if ok else "UNCONFIRMED", "reason": why}
+            grounded += 1 if ok else 0
+            refuted += 0 if ok else 1
+            continue
+
         forms, required = value_forms(name, value)
         if not required:
-            results[name] = {"status": "VERIFIED", "reason": "no page-checkable claim"}
+            # NOT verified. A field with no checkable surface form - a note, a
+            # link, a bare TBA - is one this gate has no opinion about, and
+            # "no opinion" must never read as "checked and fine".
+            results[name] = {"status": "UNCHECKED",
+                             "reason": "no page-checkable surface form for this value"}
             continue
-        best_err = "no evidence supplied"
-        status = "UNCONFIRMED"
+
+        best_err, ok = "no evidence supplied", False
         for q in [q for q in quotes if q]:
             cov, err2 = ground_quote(page_toks, q, forms, FIELD_LABELS.get(name, ((), ())))
             if cov is not None:
                 results[name] = {"status": "VERIFIED", "coverage": cov}
-                status = "VERIFIED"
+                ok = True
                 break
             best_err = err2
-        if status != "VERIFIED":
+        if ok:
+            grounded += 1
+        else:
             results[name] = {"status": "UNCONFIRMED", "reason": best_err}
-            worst = "UNCONFIRMED"
-    return {"id": pid, "status": worst, "url": url, "fields": results,
+            refuted += 1
+
+    # Start pessimistic and earn VERIFIED, rather than starting at VERIFIED and
+    # only degrading: an optimistic default means every gap counts as a pass.
+    if refuted:
+        status = "UNCONFIRMED"
+    elif grounded == 0:
+        status = "UNCHECKED"
+    else:
+        status = "VERIFIED"
+    return {"id": pid, "status": status, "url": url, "fields": results,
             "sha256": hashlib.sha256(page.encode("utf-8", "replace")).hexdigest()[:16]}
 
 

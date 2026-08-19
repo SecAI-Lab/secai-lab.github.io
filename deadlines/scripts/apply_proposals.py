@@ -299,12 +299,26 @@ def validate_proposal(p, targets_by_key, errors):
     if not isinstance(fields, dict) or not fields:
         _err(errors, pid, "fields must be a non-empty object")
         return False
+    if action == "create_record":
+        concrete = [v for v in U.as_list((fields.get("deadline") or {}).get("value"))
+                    if v and str(v).upper() not in ("TBA", "TBD")]
+        if not concrete:
+            _err(errors, pid, "create_record needs a concrete deadline: a new record "
+                              "without one is a permanent TBA row nothing will fill")
+            return False
 
     ok = True
     for name, claim in fields.items():
         if name not in U.MANUAL_FIELDS:
             _err(errors, pid, f"field {name!r} is not overridable "
                               f"(allowed: {', '.join(U.MANUAL_FIELDS)})")
+            ok = False
+            continue
+        if name in ("start", "end"):
+            # AUDITOR.md forbids these and the updater derives them from `date`.
+            # Proposing them directly is how start/end come to contradict the
+            # span they describe.
+            _err(errors, pid, f"{name!r} is derived from `date`; propose `date` instead")
             ok = False
             continue
         if not isinstance(claim, dict) or "value" not in claim:
@@ -331,9 +345,20 @@ def validate_proposal(p, targets_by_key, errors):
             if len(U.clean(ev.get("quote"))) < 8:
                 _err(errors, pid, f"field {name!r} has an empty or trivial quote")
                 ok = False
-        if name == "note" and "\n" in str(value):
-            _err(errors, pid, "note must be a single line")
-            ok = False
+        if name == "note":
+            if "\n" in str(value):
+                _err(errors, pid, "note must be a single line")
+                ok = False
+            # deadline-tracker.js:131 FABRICATES an abstract deadline at
+            # paper-7d from any note matching this pattern. A note is free text
+            # with no checkable surface form, so without this check it is a
+            # route from unverifiable prose to a rendered deadline that appears
+            # on no page anywhere.
+            if re.search(r"abstract.*1 week before|1 week before.*abstract",
+                         str(value), re.I):
+                _err(errors, pid, "this note would make the frontend fabricate an "
+                                  "abstract deadline (deadline-tracker.js:131); reword it")
+                ok = False
         if name in ("deadline", "abstract_deadline"):
             for v in U.as_list(value):
                 if v is not None and str(v).upper() not in ("TBA", "TBD") \

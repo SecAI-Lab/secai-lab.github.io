@@ -162,6 +162,80 @@ class Grounding(unittest.TestCase):
         self.assertEqual(v["status"], "UNCONFIRMED", v)
 
 
+class PessimisticByDefault(unittest.TestCase):
+    """The gate must start at "not checked" and earn VERIFIED.
+
+    It used to start at VERIFIED and only degrade, so every field it could not
+    check counted as a pass: a note-only proposal with a fabricated quote came
+    back accepted against a page containing none of its text.
+    """
+
+    def setUp(self):
+        self.dir = fixture_dir({"https://x.example/": "<p>Nothing relevant here.</p>"})
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
+        self.f = V.Fetcher(offline=True, fixtures=self.dir)
+
+    def v(self, fields):
+        return V.verify_proposal(proposal("https://x.example/", fields), self.f)
+
+    def test_uncheckable_fields_are_not_verified(self):
+        for label, fields in (
+            ("note", {"note": claim("anything", "totally made up text here")}),
+            ("link", {"link": claim("https://y.example", "totally made up text here")}),
+            ("TBA deadline", {"deadline": claim("TBA", "totally made up text here")}),
+        ):
+            with self.subTest(label):
+                self.assertEqual(self.v(fields)["status"], "UNCHECKED")
+
+    def test_a_checked_field_still_verifies(self):
+        d = fixture_dir({"https://y.example/":
+                         "<li>Paper Submission Deadline: February 10, 2026</li>"})
+        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
+        f = V.Fetcher(offline=True, fixtures=d)
+        v = V.verify_proposal(proposal("https://y.example/", {"deadline": claim(
+            "2026-02-10 23:59", "Paper Submission Deadline: February 10, 2026")}), f)
+        self.assertEqual(v["status"], "VERIFIED", v)
+
+    def test_one_bad_field_sinks_the_proposal(self):
+        v = self.v({"deadline": claim("2026-02-10 23:59", "Paper Submission Deadline: "
+                                                          "February 10, 2026")})
+        self.assertEqual(v["status"], "UNCONFIRMED", v)
+
+
+class AbsenceClaims(unittest.TestCase):
+    """A deletion says a field is NOT there. Unfalsifiable in general, but
+    decidable within the block the auditor cited - so the block must be real."""
+
+    BLOCK = ("<h2>Important Dates</h2><ul>"
+             "<li>Wed, 6 August 2025: Paper submission deadline</li>"
+             "<li>Wed, 2 July 2025: Author notification</li></ul>")
+    QUOTE = ("Wed, 6 August 2025: Paper submission deadline "
+             "Wed, 2 July 2025: Author notification")
+
+    def toks(self, html):
+        return V.tokens(V.strip_html(html))
+
+    def test_real_block_without_the_field_establishes_absence(self):
+        ok, why = V.verify_absence(self.toks(self.BLOCK), "abstract_deadline", self.QUOTE)
+        self.assertTrue(ok, why)
+
+    def test_block_containing_the_field_refuses(self):
+        html = self.BLOCK.replace("</ul>", "<li>Wed, 30 July 2025: Abstract registration</li></ul>")
+        ok, why = V.verify_absence(self.toks(html), "abstract_deadline",
+                                   self.QUOTE + " Wed, 30 July 2025: Abstract registration")
+        self.assertFalse(ok, why)
+
+    def test_fabricated_block_refuses(self):
+        ok, why = V.verify_absence(self.toks(self.BLOCK), "abstract_deadline",
+                                   "THIS TEXT IS NOT ON THE PAGE AT ALL ANYWHERE EVER")
+        self.assertFalse(ok, why)
+        self.assertIn("not on the page", why)
+
+    def test_fragment_is_not_a_block(self):
+        ok, why = V.verify_absence(self.toks(self.BLOCK), "abstract_deadline", "Important Dates")
+        self.assertFalse(ok, why)
+
+
 class SourceAuthority(unittest.TestCase):
     def test_trackers_are_rejected(self):
         for url in ("https://ccfddl.github.io/conference/",

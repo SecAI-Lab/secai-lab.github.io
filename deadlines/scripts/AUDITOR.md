@@ -104,8 +104,9 @@ derived from `date`.
 Some CFPs have no abstract deadline while upstream trackers invent one. To
 delete a field, set `"value": null` **and** supply `absence_scope_quote`: the
 verbatim block that *would* contain it — usually the whole "Important Dates"
-list. A program checks that block really is on the page and really lacks the
-date.
+list. verify_citations.py grounds that block on the page and then checks, inside
+that block only, that no date sits near the field's label. A fragment will not
+do - quote the whole block.
 
 `timezone` is never deleted automatically. A missing timezone renders as AoE,
 i.e. later than the truth, so that one stays a human decision.
@@ -228,8 +229,9 @@ reformatted `2025-12-10` that goes in `value`. The checker reconciles the two.
 }
 ```
 
-`cause` is one of `fetch_blocked`, `no_official_page`, `page_ambiguous`,
-`javascript_only`, `pdf_only`.
+`cause` is one of `not_checked` (you did not reach this record - the honest
+answer for everything beyond the ten you verified), `fetch_blocked`,
+`no_official_page`, `page_ambiguous`, `javascript_only`, `pdf_only`.
 
 If everything checks out, emit an empty `proposals` array — with a `no_change`
 entry per record you verified, so the run shows its coverage. That is a

@@ -141,10 +141,16 @@ Works from any CWD; exit 0 = healthy, 2 = degraded (see above), 1 = fatal.
 ```sh
 python3 deadlines/scripts/tests/test_update_deadlines.py
 python3 deadlines/scripts/tests/test_audit_lint.py
+python3 deadlines/scripts/tests/test_apply_proposals.py
+python3 deadlines/scripts/tests/test_verify_citations.py
+python3 deadlines/scripts/tests/simulate_workflow.py   # needs a clean tree
 ```
 
-No network, no fixtures to maintain; the audit-lint tests build throwaway git
-repos in a temp dir. The audit workflow runs both before it does anything else
+No network; the audit-lint tests build throwaway git repos in a temp dir and
+the citation tests use inline HTML fixtures. `simulate_workflow.py` extracts the
+workflow's real `run:` blocks from the YAML and executes them with the Claude
+step stubbed, so shell logic can be checked before it reaches CI. The audit
+workflow runs the four unit suites before it does anything else
 — if the gates are broken, the audit does not run. Each test pins a specific
 way the pipeline could have published a wrong deadline, so a failure here is
 worth reading rather than deleting:

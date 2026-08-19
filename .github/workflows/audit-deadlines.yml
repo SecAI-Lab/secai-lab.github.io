@@ -310,7 +310,9 @@ jobs:
       # Deterministic applier: the model never writes YAML. --ungated is
       # explicit because no verification gate exists yet - every citation still
       # needs a human to open the link, which is what the pull request is for.
-      # When verify_citations.py lands this becomes --verdicts.
+      # verify_citations.py already runs above in report-only mode; this
+      # becomes --verdicts once its verdicts have been calibrated against
+      # what a human actually merges.
       - name: Apply proposals
         if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
         run: |
