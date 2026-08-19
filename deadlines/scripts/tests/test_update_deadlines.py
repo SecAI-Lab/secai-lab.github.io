@@ -134,6 +134,36 @@ class ManualBigMoveWarning(unittest.TestCase):
         self.assertEqual(U.warnings, [])
 
 
+class TbaMetadataNomination(unittest.TestCase):
+    """A record with a real deadline but TBA place/date/timezone matches no
+    other watchlist reason, so the auditor is never asked to look it up.
+    EuroS&P 2027 sat that way with place: TBA until 2026-08-18."""
+
+    def test_tba_place_is_flagged(self):
+        rec = {"deadline": "2026-11-20 23:59", "place": "TBA",
+               "date": "TBA", "timezone": "TBA"}
+        self.assertEqual(U.tba_metadata_fields(rec), ["place", "date", "timezone"])
+
+    def test_absent_field_counts_as_tba(self):
+        self.assertEqual(U.tba_metadata_fields({"deadline": "2026-11-20 23:59"}),
+                         ["place", "date", "timezone"])
+
+    def test_tbd_spelling_and_case(self):
+        self.assertEqual(U.tba_metadata_fields({"place": "tbd", "date": "x", "timezone": "AoE"}),
+                         ["place"])
+
+    def test_fully_populated_record_is_quiet(self):
+        rec = {"place": "Lisbon, Portugal", "date": "June 29 - July 3, 2027",
+               "timezone": "AoE"}
+        self.assertEqual(U.tba_metadata_fields(rec), [])
+
+    def test_deadline_is_not_a_metadata_field(self):
+        # The deadline has its own reasons; this one must not double-report it.
+        self.assertNotIn("deadline", U.tba_metadata_fields(
+            {"deadline": "TBA", "place": "Lisbon, Portugal",
+             "date": "x", "timezone": "AoE"}))
+
+
 class RepoDataIsValid(unittest.TestCase):
     """Guards the checked-in data against the same rules the pipeline enforces."""
 

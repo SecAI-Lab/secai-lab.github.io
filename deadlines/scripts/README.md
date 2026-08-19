@@ -66,7 +66,11 @@ It builds a **watchlist** — the
 small subset of records worth verifying against official conference pages
 (`update_deadlines.py --watchlist`): upcoming-cycle TBAs, deadlines within
 45 days, active manual overrides, cross-source disagreements, stale
-placeholder notes, coverage gaps. Then, depending on configuration:
+placeholder notes, coverage gaps, and records whose deadline is known but
+whose `place`/`date`/`timezone` is still TBA. That last reason exists because
+such a record matches none of the others — it is not a TBA cycle, usually not
+within 45 days, and its note need not look stale — so its city and dates would
+otherwise stay TBA forever. Then, depending on configuration:
 
 - **Claude mode** (the `CLAUDE_CODE_OAUTH_TOKEN` secret exists): Claude Code
   verifies each watchlist record against the venue's official page

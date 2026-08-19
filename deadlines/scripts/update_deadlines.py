@@ -559,6 +559,20 @@ def apply_manual_override(merged, man):
     return changed
 
 
+def tba_metadata_fields(rec):
+    """Descriptive fields still unset on a record that already has a concrete
+    deadline.
+
+    Such a record is invisible to every other watchlist reason - it is not a
+    TBA cycle (it has a deadline), usually not within 45 days, and its note
+    need not look stale - so nobody is ever asked to look up its city or
+    dates. A venue real enough to have published a CFP is real enough for
+    these to be findable.
+    """
+    return [f for f in ("place", "date", "timezone")
+            if clean(rec.get(f)).upper() in ("", "TBA", "TBD")]
+
+
 def warn_manual_big_move(existing, merged, key, year):
     """The 90-day safety rail only guards against UPSTREAM: build_merged skips
     it entirely once manual.yml owns `deadline` (an override is assumed to be
@@ -1090,6 +1104,8 @@ def main() -> int:
                 reasons.append("stale-placeholder-note")
             if relevant and (key, year) in manual:
                 reasons.append("manual-override-active")
+            if relevant and year >= TODAY.year and concrete and tba_metadata_fields(rec):
+                reasons.append("tba-metadata")
             if reasons:
                 watchlist.append({
                     "title": key, "year": year,

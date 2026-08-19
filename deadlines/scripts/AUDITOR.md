@@ -50,6 +50,10 @@ and only where — you have fetched evidence.
 5. `stale-placeholder-note` — refresh notes whose claims have aged out.
 6. `coverage-gap` — if the venue's next edition now has an official page
    with a deadline, create the record by hand in the right data file.
+7. `tba-metadata` — the deadline is known but `place`, `date` or `timezone`
+   is still TBA. Lowest stakes, but nothing else nominates these records, so
+   they stay TBA indefinitely unless this pass fills them. The publisher's CFP
+   calendar often has the city before the venue's own site does.
 
 ## Web access
 
