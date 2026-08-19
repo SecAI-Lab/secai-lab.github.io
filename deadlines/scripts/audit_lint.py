@@ -36,14 +36,27 @@ def main() -> int:
     status = subprocess.run(
         ["git", "status", "--porcelain", "--untracked-files=all"],
         cwd=REPO_ROOT, capture_output=True, text=True, check=True)
-    changed = []
+    changed, litter = [], []
     for line in status.stdout.splitlines():
         if not line.strip():
             continue
-        path = line[3:].strip()
+        code, path = line[:2], line[3:].strip()
         if " -> " in path:  # rename: only the destination is written
             path = path.split(" -> ", 1)[1]
-        changed.append(path.strip('"').replace("\\", "/"))
+        path = path.strip('"').replace("\\", "/")
+        # An UNTRACKED file outside the pipeline's own directories cannot reach
+        # a commit - the workflow stages `git add -- deadlines/data` and nothing
+        # else - so scratch files an auditor leaves lying around are litter, not
+        # a violation. Report them and move on. Untracked files under
+        # deadlines/ or .github/ are still checked: those are the ones that
+        # would be staged, or that signal tampering.
+        if code == "??" and not path.startswith(("deadlines/", ".github/")):
+            litter.append(path)
+            continue
+        changed.append(path)
+    if litter:
+        print(f"note: ignoring {len(litter)} untracked file(s) outside the "
+              f"pipeline's directories: {litter[:10]}")
     bad = [p for p in changed if not ALLOWED_RE.match(p)]
     if bad:
         fail(f"files outside the audit allowlist were modified: {bad}")

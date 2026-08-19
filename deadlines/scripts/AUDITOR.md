@@ -115,7 +115,9 @@ i.e. later than the truth, so that one stays a human decision.
 ## Web access
 
 Prefer WebFetch/WebSearch. If they are unavailable in this environment, use
-`curl -sL` via Bash.
+`curl -sL` via Bash — and pipe it, do not save it. Writing fetched pages to
+files in the repository leaves litter behind; if you must save one, put it in
+`/tmp`, never in the working tree.
 
 `usenix.org` serves automated requests fine — always go to the USENIX page
 itself for OSDI / NSDI / ATC / USENIX Security / WOOT rather than a

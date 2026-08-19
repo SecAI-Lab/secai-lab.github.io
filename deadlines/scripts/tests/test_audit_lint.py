@@ -73,6 +73,16 @@ class AuditLintInTempRepo(unittest.TestCase):
         r = self._lint()
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
 
+    def test_scratch_files_at_the_repo_root_are_litter_not_violations(self):
+        # The first live run failed on exactly this: the auditor used curl and
+        # left *_fetch.html at the repo root. The workflow stages only
+        # `git add -- deadlines/data`, so those files can never reach a commit.
+        for name in ("ndss_fetch.html", "acns_fetch.html"):
+            (self.tmp / name).write_text("<html>", encoding="utf-8")
+        r = self._lint()
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn("ignoring 2 untracked file(s)", r.stdout)
+
     def test_untracked_file_outside_allowlist_is_caught(self):
         # The regression this fix exists for: `git diff` cannot see this file,
         # but `git add -- deadlines/data` in the workflow would stage it.
