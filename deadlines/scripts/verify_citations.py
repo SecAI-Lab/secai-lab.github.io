@@ -42,7 +42,7 @@ import update_deadlines as U  # noqa: E402
 
 UA = "secai-lab-deadline-auditor/1.0 (+https://secai-lab.github.io/deadlines/)"
 LCS_THRESHOLD = 0.85
-QUOTE_MIN_TOKENS = 4
+QUOTE_MIN_TOKENS = 6
 WINDOW_SLACK = 10
 FETCH_TIMEOUT = 25
 RETRY_DELAYS = (0, 5, 30)
@@ -65,11 +65,15 @@ MONTH_TOKENS = set(MONTHS) | {m[:3] for m in MONTHS} | {"sept"}
 # A label must be present for the field, and disqualifying labels must not be.
 FIELD_LABELS = {
     "deadline": (
+        # No bare "submission": it matches "Submission of revised papers" and
+        # "Submission site opens", which are not the paper deadline. Demonstrated
+        # +99 days against a real-shaped page.
         ("submission deadline", "paper deadline", "papers due", "submission due",
          "full paper", "submission of regular papers", "paper submission",
-         "final submission", "submission"),
-        ("notification", "acceptance", "camera ready", "rebuttal",
-         "workshop", "poster", "demo", "tutorial", "doctoral", "src", "registration"),
+         "final submission", "submission of papers"),
+        ("notification", "acceptance", "camera ready", "rebuttal", "revised",
+         "resubmission", "site opens", "workshop", "poster", "demo", "tutorial",
+         "doctoral", "src", "registration"),
     ),
     "abstract_deadline": (("abstract",), ("notification", "acceptance", "camera ready")),
     "date": ((), ("submission", "deadline", "due", "notification")),
@@ -89,8 +93,12 @@ def strip_html(raw: str) -> str:
     s = re.sub(r"<!--.*?-->", " ", raw, flags=re.S)
     s = re.sub(r"<(script|style|svg|noscript|template)\b.*?</\1>", " ", s,
                flags=re.S | re.I)
-    # Struck-through text is superseded, not current: drop it entirely.
+    # Struck-through text is superseded, not current: drop it entirely. CSS
+    # strikethrough counts too - "extended" CFPs use it, and a superseded date
+    # that survives stripping verifies at coverage 1.0.
     s = re.sub(r"<(s|del|strike)\b[^>]*>.*?</\1>", " ", s, flags=re.S | re.I)
+    s = re.sub(r"<(\w+)[^>]*(?:line-through|strikethrough)[^>]*>.*?</\1>", " ", s,
+               flags=re.S | re.I)
     s = re.sub(r"<(br|hr)\s*/?>", "\n", s, flags=re.I)
     s = re.sub(r"</(p|div|li|tr|td|th|h[1-6]|section|article|table|dd|dt)\s*>", "\n",
                s, flags=re.I)
@@ -142,15 +150,40 @@ def date_forms(d: dt.date) -> list[str]:
 
 
 def tz_forms(tz: str) -> list[str]:
+    """Timezone forms are matched against the SIGN-PRESERVING view.
+
+    flatten() turns both 'UTC+12' and 'UTC-12' into 'utc 12', so a page stating
+    UTC+12 would confirm an AoE (UTC-12) claim and the countdown would render a
+    full day late. Offsets therefore keep their sign and are compared against
+    normalize(), which preserves '+' and '-'.
+    """
     canon = U.canon_tz(tz)
     table = {
-        "UTC-12": ["aoe", "anywhere on earth", "utc 12", "gmt 12"],
-        "UTC+0": ["utc", "gmt", "utc 0", "zulu"],
-        "UTC-5": ["utc 5", "gmt 5", "est", "eastern standard time"],
-        "UTC-8": ["pst", "pdt", "pacific time", "utc 8"],
-        "America/Los_Angeles": ["pst", "pdt", "pacific time", "america los angeles"],
+        "UTC-12": ["aoe", "anywhere on earth", "utc-12", "gmt-12"],
+        "UTC+0": ["utc", "gmt", "utc+0", "zulu"],
+        "UTC-5": ["utc-5", "gmt-5", "est", "eastern standard time"],
+        "UTC-8": ["pst", "pdt", "pacific time", "utc-8"],
+        "America/Los_Angeles": ["pst", "pdt", "pacific time", "america/los_angeles"],
     }
-    return table.get(canon, [flatten(canon)])
+    return table.get(canon, [normalize(canon)])
+
+
+def count_dates(text: str) -> int:
+    """How many distinct date-like expressions are in this text?
+
+    A quote spanning two table rows contains two dates, which lets an auditor
+    present either as the value while the quote still grounds perfectly - it is
+    genuine page text. Counting is how that is refused.
+    """
+    flat = flatten(text)
+    toks = flat.split()
+    seen = set()
+    for i, t in enumerate(toks):
+        if t in MONTH_TOKENS:
+            nums = [x for x in toks[max(0, i - 2):i + 3] if x.isdigit()]
+            seen.add((t, tuple(nums)))
+    seen |= {m for m in re.findall(r"\b\d{4} \d{1,2} \d{1,2}\b", flat)}
+    return len(seen)
 
 
 def value_forms(field: str, value) -> tuple[list[str], bool]:
@@ -210,7 +243,7 @@ def phrase_present(flat: str, tokset: set, phrase: str) -> bool:
     return phrase in flat if " " in phrase else phrase in tokset
 
 
-def ground_quote(page_toks, quote, forms, labels):
+def ground_quote(page_toks, quote, forms, labels, single_date=False):
     """Does this quote bind the value to a field-appropriate label, on the page?
 
     Label and value are checked inside the QUOTE, not inside the surrounding
@@ -225,8 +258,13 @@ def ground_quote(page_toks, quote, forms, labels):
     if len(qt) < QUOTE_MIN_TOKENS:
         return None, "quote too short to be evidence"
     qflat, qset = flatten(quote), set(qt)
-    if forms and not any(f in qflat for f in forms):
+    # Signed view for offsets; flat view for everything else (see tz_forms).
+    haystack = qflat + " " + normalize(quote)
+    if forms and not any(f in haystack for f in forms):
         return None, "the quote does not contain the proposed value"
+    if single_date and count_dates(quote) > 1:
+        return None, ("the quote contains more than one date, so it does not "
+                      "establish which one this value is")
     if need and not any(phrase_present(qflat, qset, l) for l in need):
         return None, "the quote carries no label identifying this field"
     for bad in forbid:
@@ -417,6 +455,37 @@ def verify_proposal(p, fetcher):
             refuted += 0 if ok else 1
             continue
 
+        # Each cycle of a multi-value deadline needs its OWN grounded quote.
+        # Checking the union with any() let one real quote validate a whole
+        # list, including a fabricated second cycle - and the venues with lists
+        # (NDSS, DIMVA, EuroSys) are exactly the ones at risk.
+        if name in ("deadline", "abstract_deadline") and isinstance(value, list)                 and len(value) > 1:
+            per, bad = [], None
+            for item in value:
+                f_i, req_i = value_forms(name, item)
+                if not req_i:
+                    bad = f"cycle {item!r} has no checkable form"
+                    break
+                hit = None
+                for q in [q for q in quotes if q]:
+                    cov, err_i = ground_quote(page_toks, q, f_i,
+                                              FIELD_LABELS.get(name, ((), ())),
+                                              single_date=True)
+                    if cov is not None:
+                        hit = cov
+                        break
+                if hit is None:
+                    bad = f"cycle {item!r} has no grounded quote of its own"
+                    break
+                per.append(hit)
+            if bad:
+                results[name] = {"status": "UNCONFIRMED", "reason": bad}
+                refuted += 1
+            else:
+                results[name] = {"status": "VERIFIED", "coverage": min(per)}
+                grounded += 1
+            continue
+
         forms, required = value_forms(name, value)
         if not required:
             # NOT verified. A field with no checkable surface form - a note, a
@@ -428,7 +497,9 @@ def verify_proposal(p, fetcher):
 
         best_err, ok = "no evidence supplied", False
         for q in [q for q in quotes if q]:
-            cov, err2 = ground_quote(page_toks, q, forms, FIELD_LABELS.get(name, ((), ())))
+            cov, err2 = ground_quote(
+                page_toks, q, forms, FIELD_LABELS.get(name, ((), ())),
+                single_date=name in ('deadline', 'abstract_deadline'))
             if cov is not None:
                 results[name] = {"status": "VERIFIED", "coverage": cov}
                 ok = True

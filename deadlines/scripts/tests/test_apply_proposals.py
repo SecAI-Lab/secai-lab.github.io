@@ -187,16 +187,33 @@ class Applying(unittest.TestCase):
         mf = A.parse_manual(self.path.read_text(encoding="utf-8"))
         self.assertEqual(mf.chunks[-1].key, ("DIMVA", 2026))
 
-    def test_delete_manual_removes_the_chunk(self):
+    def test_delete_manual_is_never_applied_automatically(self):
+        # Nothing verifies that upstream really agrees - the gate returns
+        # VERIFIED for delete_manual on the strength of a check no code
+        # performs. Deleting the real NDSS override would let the upstream
+        # FABRICATED abstract deadline back onto the live page.
         p = proposal(action="delete_manual", title="NDSS", year=2026,
                      obsolete_because="upstream_agrees")
-        applied, _, errors = self.run_apply([p])
+        applied, skipped, errors = self.run_apply([p])
         self.assertEqual(errors, [])
-        self.assertEqual(len(applied), 1)
+        self.assertEqual(applied, [])
+        self.assertTrue(any("not applied automatically" in why for _, why in skipped),
+                        skipped)
         text = self.path.read_text(encoding="utf-8")
-        self.assertNotIn("NDSS", text)
-        self.assertIn("EuroSec", text)                    # neighbour intact
-        self.assertIsNone(A.assert_round_trip(text))
+        self.assertIn("NDSS", text)
+        self.assertEqual(text, HUMAN_FILE)                # nothing touched at all
+
+    def test_trailing_human_comment_survives_an_upsert(self):
+        # A comment after the last entry is file epilogue, not part of that
+        # entry. Kept in the chunk body it round-trips but disappears the moment
+        # the entry is upserted, because the body is regenerated from the record.
+        self.path.write_text(HUMAN_FILE + "\n# TODO(alice): keep this reminder.\n",
+                             encoding="utf-8")
+        self.assertIsNone(A.assert_round_trip(self.path.read_text(encoding="utf-8")))
+        self.run_apply([proposal(fields={"deadline": claim("2026-02-17 23:59")})])
+        text = self.path.read_text(encoding="utf-8")
+        self.assertIn("TODO(alice): keep this reminder.", text)
+        self.assertIn('deadline: "2026-02-17 23:59"', text)
 
     def test_result_still_round_trips_and_keeps_citations_adjacent(self):
         self.run_apply([proposal(fields={"deadline": claim("2026-02-17 23:59")})])

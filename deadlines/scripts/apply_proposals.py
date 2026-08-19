@@ -79,9 +79,14 @@ class Chunk:
 
 
 class ManualFile:
-    def __init__(self, preamble, chunks):
+    def __init__(self, preamble, chunks, epilogue=()):
         self.preamble = list(preamble)
         self.chunks = list(chunks)
+        # Trailing comments after the last entry belong to the FILE, not to
+        # that entry. Left in the chunk body they round-trip fine but vanish
+        # the moment that entry is upserted, since the body is regenerated from
+        # the record - silently deleting a human's note.
+        self.epilogue = list(epilogue)
 
     def find(self, key):
         for i, c in enumerate(self.chunks):
@@ -117,13 +122,26 @@ def parse_manual(text):
         while block and not block[-1].strip():
             block.pop()
         split = starts[n] - start
-        chunks.append(Chunk(block[:split], block[split:]))
-    return ManualFile(preamble, chunks)
+        body = block[split:]
+        # For the LAST chunk only, peel a trailing comment run off the body: it
+        # is file epilogue, not part of that entry.
+        epilogue = []
+        if n == len(chunk_starts) - 1:
+            k = len(body)
+            while k > 0 and (body[k - 1].startswith("#") or not body[k - 1].strip()):
+                k -= 1
+            if k < len(body):
+                epilogue = [l for l in body[k:] if l.strip()]
+                body = body[:k]
+        chunks.append(Chunk(block[:split], body))
+    return ManualFile(preamble, chunks, epilogue)
 
 
 def render_manual(mf):
     parts = ["\n".join(mf.preamble).rstrip("\n")] if mf.preamble else []
     parts += ["\n".join(c.comments + c.body) for c in mf.chunks]
+    if mf.epilogue:
+        parts.append("\n".join(mf.epilogue))
     return "\n\n".join(parts) + "\n"
 
 
@@ -423,8 +441,20 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
             if idx is None:
                 skipped.append((pid, "no manual.yml entry to delete"))
                 continue
-            mf.chunks.pop(idx)
-            applied.append((pid, f"removed the {title} {year} override"))
+            # Nothing verifies this. The gate returns VERIFIED for
+            # delete_manual on the grounds that "the updater checks upstream
+            # agreement" - and no code path actually calls
+            # manual_matches_upstream before the chunk is removed. Deleting the
+            # real NDSS override would let the upstream FABRICATED abstract
+            # deadline back onto the live page.
+            #
+            # AUTO-APPLY-DESIGN.md 6 requires agreement on two consecutive runs
+            # from every source covering the venue. Until that exists, removal
+            # stays a human decision.
+            skipped.append((pid, "delete_manual is not applied automatically: "
+                                 "nothing yet verifies that upstream really agrees "
+                                 "(see AUTO-APPLY-DESIGN.md 6). Remove the entry by "
+                                 "hand if the run summary says it is obsolete"))
             continue
 
         new_fields = normalise_fields(p["fields"])
