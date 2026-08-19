@@ -74,17 +74,29 @@ otherwise stay TBA forever. Then, depending on configuration:
 
 - **Claude mode** (the `CLAUDE_CODE_OAUTH_TOKEN` secret exists): Claude Code
   verifies each watchlist record against the venue's official page
-  (instructions pinned in `deadlines/scripts/AUDITOR.md`) and leaves
-  corrections in the working tree. Deterministic steps then enforce the
-  guardrails and open/update a pull request on the `deadline-audit` branch for
-  human review. Claude never pushes anything itself; merging the PR is the
-  human decision. The guardrails, in order:
-  1. a check that only `deadlines/data/**` changed, run *before* the lint —
-     `audit_lint.py` executes from the working tree and so cannot police
-     itself, and the auditor holds `Bash(python3:*)`;
-  2. the updater must converge (a second run reports `no file changes`);
-  3. every manual.yml entry needs a `Verified <date> against <URL>` citation,
+  (instructions pinned in `deadlines/scripts/AUDITOR.md`) and writes findings
+  to `audit-proposals.json`. **It never edits repository data.**
+  `apply_proposals.py` validates the proposals and writes the YAML;
+  deterministic steps then converge, lint, and open/update a pull request on
+  the `deadline-audit` branch. Claude never pushes anything itself; merging the
+  PR is the human decision. The guardrails, in order:
+  1. a check that the auditor touched nothing under `deadlines/` or `.github/`,
+     run *before* the gates — `audit_lint.py` executes from the working tree and
+     so cannot police itself, and the auditor holds `Bash(python3:*)`;
+  2. schema and repo-contract validation of every proposal (canonical title,
+     year in window, overridable fields only, well-formed deadlines, a quote
+     behind every value);
+  3. the applier's own guards — manual.yml must round-trip byte-for-byte before
+     it is touched, records are validated before being written, and the result
+     must not degrade the updater;
+  4. the updater must converge (a second run reports `no file changes`);
+  5. every manual.yml entry needs a `Verified <date> against <URL>` citation,
      and no file outside the allowlist may be touched (`audit_lint.py`).
+
+  Why proposals rather than a diff: a JSON claim carrying a verbatim quote is
+  machine-checkable, a diff is not. Today a human still checks the citations —
+  the applier says so in the PR body — but this is the shape the verification
+  gates in `AUTO-APPLY-DESIGN.md` plug into.
 
   A **degraded** updater run (exit 2 — typically one upstream source
   unreachable) no longer discards the audit. The PR still opens, carrying a

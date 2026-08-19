@@ -5,9 +5,14 @@
 # Two modes, decided by whether the CLAUDE_CODE_OAUTH_TOKEN secret exists:
 #   * Claude mode: Claude Code (billed to the lab's Max subscription via the
 #     OAuth token — no API billing) verifies the watchlist against official
-#     pages and leaves corrections in the working tree; deterministic steps
-#     then lint the diff (path allowlist + citation rule) and open/update a
-#     pull request for human review. Claude never pushes anything itself.
+#     pages and writes findings to audit-proposals.json. It never edits
+#     repository data: apply_proposals.py validates those proposals and writes
+#     the YAML, then deterministic steps converge, lint, and open/update a pull
+#     request for human review. Claude never pushes anything itself.
+#
+#     Keeping the model's output as structured proposals rather than a diff is
+#     what makes it machine-checkable - and is the groundwork for the
+#     verification gates in deadlines/scripts/AUTO-APPLY-DESIGN.md.
 #   * Human mode (no secret): the watchlist is filed as a GitHub issue for a
 #     lab member to check by hand (~5-10 minutes).
 
@@ -60,6 +65,7 @@ jobs:
         run: |
           python3 deadlines/scripts/tests/test_update_deadlines.py
           python3 deadlines/scripts/tests/test_audit_lint.py
+          python3 deadlines/scripts/tests/test_apply_proposals.py
 
       # Exit 2 (degraded fetch) still produces a usable watchlist; only a
       # fatal exit 1 aborts the audit.
@@ -91,33 +97,37 @@ jobs:
           # only edits the working tree; branch/PR operations are done by
           # the deterministic steps below as github-actions[bot].
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Today's date is interpolated, not merely alluded to: AUDITOR.md
-          # requires a "Verified YYYY-MM-DD" citation comment, and nothing else
-          # in the environment tells the model what today is.
+          # Today's date is interpolated, not merely alluded to: nothing else in
+          # the environment tells the model what today is, and audit_date drives
+          # the citation comments the applier writes.
           prompt: |
             Read deadlines/scripts/AUDITOR.md and follow it exactly. The
             watchlist is in watchlist.json at the repository root.
-            Today's date is ${{ steps.today.outputs.date }} (UTC). Use it for
-            every "Verified <date>" citation comment you write. Trust pages you
-            fetch this run, not memory.
+            Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
+            audit_date. Trust pages you fetch this run, not memory.
+            Write your findings to audit-proposals.json at the repository root
+            and change no other file.
+          # No Edit tool. The auditor writes exactly one new file and never
+          # touches repository data; apply_proposals.py turns proposals into
+          # YAML. That is what makes the model's output machine-checkable.
           claude_args: |
-            --allowedTools "Read,Edit,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
+            --allowedTools "Read,Write,Glob,Grep,WebSearch,WebFetch,Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*)"
 
-      # AUDITOR.md rule 3 lets the auditor edit deadlines/data and nothing
-      # else. This has to be checked from OUTSIDE the gate: audit_lint.py
-      # cannot police itself - a tampered copy just approves everything - and
-      # it is run below with Bash(python3:*) already granted to the model.
-      - name: Assert the auditor touched only data
+      # The auditor may now create audit-proposals.json and nothing else - it
+      # has no reason to touch deadlines/ at all. Checked from OUTSIDE the
+      # gates: audit_lint.py cannot police itself (a tampered copy just
+      # approves everything) and the model holds Bash(python3:*).
+      - name: Assert the auditor touched only its proposals file
         if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
         run: |
-          tampered=$(git status --porcelain -- deadlines/scripts deadlines/assets .github)
+          tampered=$(git status --porcelain -- deadlines .github)
           if [ -n "$tampered" ]; then
-            echo "::error::auditor modified pipeline code, which AUDITOR.md forbids"
+            echo "::error::auditor modified repository files, which AUDITOR.md forbids"
             # Preserve what it wrote rather than reverting. The job fails here,
             # so nothing reaches master either way - and this is the one failure
             # mode where seeing the attempted change is the whole point.
             {
-              echo "## Audit aborted: pipeline code was modified"
+              echo "## Audit aborted: the auditor modified repository files"
               echo
               echo '```'
               echo "$tampered"
@@ -126,12 +136,49 @@ jobs:
               echo '<details><summary>Attempted diff</summary>'
               echo
               echo '```diff'
-              git diff -- deadlines/scripts deadlines/assets .github | head -400
+              git diff -- deadlines .github | head -400
               echo '```'
               echo
               echo '</details>'
             } >> "$GITHUB_STEP_SUMMARY"
             exit 1
+          fi
+
+      # Schema and repo-contract check on the model's output, run before
+      # anything is written. Rejected proposals are reported, not applied.
+      - name: Validate proposals
+        id: proposals
+        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+        run: |
+          if [ ! -f audit-proposals.json ]; then
+            echo "The auditor proposed nothing."
+            echo "any=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "any=true" >> "$GITHUB_OUTPUT"
+          set +e
+          python3 deadlines/scripts/apply_proposals.py --validate-only \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          set -e
+
+      # Deterministic applier: the model never writes YAML. --ungated is
+      # explicit because no verification gate exists yet - every citation still
+      # needs a human to open the link, which is what the pull request is for.
+      # When verify_citations.py lands this becomes --verdicts.
+      - name: Apply proposals
+        if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
+        run: |
+          set +e
+          python3 deadlines/scripts/apply_proposals.py --ungated \
+            --report audit-summary.md | tee -a "$GITHUB_STEP_SUMMARY"
+          code=${PIPESTATUS[0]}
+          set -e
+          if [ "$code" -eq 1 ]; then
+            echo "::error::applier refused; nothing was written"
+            exit 1
+          fi
+          if [ "$code" -eq 3 ]; then
+            echo "::warning::some proposals were rejected; see the summary"
           fi
 
       # Deterministic gate: converge the data (propagating any manual.yml

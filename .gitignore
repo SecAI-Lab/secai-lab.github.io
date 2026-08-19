@@ -24,3 +24,5 @@ __pycache__/
 /watchlist.json
 /watchlist.md
 /audit-summary.md
+/audit-proposals.json
+/audit-verdicts.json
