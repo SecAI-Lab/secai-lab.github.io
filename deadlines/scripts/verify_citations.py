@@ -42,7 +42,7 @@ import update_deadlines as U  # noqa: E402
 
 UA = "secai-lab-deadline-auditor/1.0 (+https://secai-lab.github.io/deadlines/)"
 LCS_THRESHOLD = 0.85
-QUOTE_MIN_TOKENS = 6
+QUOTE_MIN_TOKENS = 4
 WINDOW_SLACK = 10
 FETCH_TIMEOUT = 25
 RETRY_DELAYS = (0, 5, 30)
@@ -257,6 +257,15 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
     qt = tokens(quote)
     if len(qt) < QUOTE_MIN_TOKENS:
         return None, "quote too short to be evidence"
+    # A raw token minimum is the wrong instrument: it rejected the IEEE TC
+    # calendar's complete "Submission deadline: 11/20/26" (5 tokens) while
+    # admitting "February 10, 2026 submission", which is three date tokens and
+    # one label word. What matters is that the quote carries real context
+    # around the value, so count the tokens that are NOT part of the date.
+    context = [t for t in qt if not t.isdigit() and t not in MONTH_TOKENS]
+    if len(context) < 2:
+        return None, ("quote is almost entirely the date itself; it needs the "
+                      "surrounding label text to identify what the date is")
     qflat, qset = flatten(quote), set(qt)
     # Signed view for offsets; flat view for everything else (see tz_forms).
     haystack = qflat + " " + normalize(quote)
