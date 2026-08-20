@@ -16,7 +16,7 @@
   conference: USENIX
   date: 2026.08.18
   pub_year: 2026
-  discussion: ""
+  discussion: "With the rapid advancement of agentic AI systems in real-world applications, ensuring their security has become increasingly important. While these systems offer unprecedented capabilities by leveraging diverse tools, data, and the flexibility of LLMs, this flexibility also introduces a wide attack surface. This paper presents the first comprehensive systemization of knowledge on agentic AI security, reviewing 128 papers covering 51 attack methods and 60 defense methods. The authors organize the security landscape around seven key design dimensions, nine security risk categories, and three major types of defense mechanisms, while highlighting their limitations and open challenges. (Jiyong)"
 
 
 - title: "Detecting Bugs in Rust Compiler Fix Suggestions via Constraint-Violation-Guided Mutation"
