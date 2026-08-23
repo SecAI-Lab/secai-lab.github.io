@@ -217,7 +217,9 @@
     - "2026-11-17 23:59"
   timezone: UTC-12
   place: "Montreal, Canada"
-  date: TBA
+  date: "May 17-20, 2027"
+  start: 2027-05-17
+  end: 2027-05-20
   note: "Two submission cycles; abstract registration deadlines are one week before paper deadlines. Conference dates are not announced on the official page yet."
 
 - title: "SAC"
