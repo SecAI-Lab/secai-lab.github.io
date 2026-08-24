@@ -25,7 +25,6 @@
   type: conference
   tier: T3
   link: https://www.acsac.org/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official ACSAC 2027 conference page/CFP not publicly available yet."
@@ -37,10 +36,9 @@
   type: workshop
   tier: "N/A"
   link: https://aisec.cc/
-  deadline: TBA
-  timezone: TBA
-  place: TBA
-  date: TBA
+  deadline: "TBA"
+  place: "TBA"
+  date: "TBA"
   note: "Co-located with ACM CCS. AISec 2027 CFP not announced yet."
 
 - title: "ASIACCS"
@@ -67,7 +65,6 @@
   tier: "N/A"
   link: https://www.ndss-symposium.org/ndss2027/
   deadline: "TBA"
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official BAR 2027 CFP/page not announced yet; NDSS 2027 is announced, but BAR 2027 workshop details are not."
@@ -79,7 +76,6 @@
   type: conference
   tier: T1
   link: https://www.sigsac.org/ccs/CCS2027/
-  timezone: TBA
   place: "Atlanta, GA, USA"
   date: "October 2027"
   note: "Official CCS 2027 page is available and lists Atlanta, USA in October 2027; CFP and deadlines are not announced yet."
@@ -91,10 +87,9 @@
   type: workshop
   tier: "N/A"
   link: https://lamps-ccs.github.io/home/
-  deadline: TBA
-  timezone: TBA
-  place: TBA
-  date: TBA
+  deadline: "TBA"
+  place: "TBA"
+  date: "TBA"
   note: "Co-located with ACM CCS. CCS-LAMPS 2027 CFP not announced yet."
 
 - title: "CODASPY"
@@ -104,7 +99,6 @@
   type: conference
   tier: "N/A"
   link: https://www.codaspy.org/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official CODASPY 2027 conference page/CFP not publicly available yet."
@@ -118,7 +112,7 @@
   link: https://dfrws.org/conferences/dfrws-eu-2027/
   abstract_deadline: "2026-09-18 23:59"
   deadline: "2026-09-25 23:59"
-  timezone: TBA
+  timezone: AoE
   place: "Edinburgh, Scotland"
   date: "March 30 - April 2, 2027"
   start: 2027-03-30
@@ -132,7 +126,6 @@
   type: conference
   tier: "N/A"
   link: https://www.dimva.org/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official DIMVA 2027 conference page/CFP not publicly available yet."
@@ -144,7 +137,6 @@
   type: conference
   tier: "N/A"
   link: https://sites.google.com/di.uniroma1.it/esorics2026/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official ESORICS 2027 conference page/CFP not publicly available yet; link points to the latest official ESORICS page found."
@@ -157,7 +149,7 @@
   tier: "N/A"
   link: https://eurosp2027.ieee-security.org/
   deadline: "2026-11-20 23:59"
-  timezone: TBA
+  timezone: AoE
   place: "Lisbon, Portugal"
   date: "TBA"
   note: "Deadline and host city per the IEEE S&P TC CFP calendar (verified 2026-08-18 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); the conference's own site is still a placeholder."
@@ -169,7 +161,6 @@
   type: conference
   tier: "N/A"
   link: https://ifipsec.org/
-  timezone: TBA
   place: "Linköping, Sweden"
   date: "TBA"
   note: "Official IFIP SEC page indicates the next SEC after 2026 will be in Linköping, Sweden; dates and deadlines are not yet available."
@@ -197,7 +188,6 @@
   type: conference
   tier: "N/A"
   link: https://raid2026.org/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official RAID 2027 conference page/CFP not publicly available yet; link points to the latest official RAID page found."
@@ -245,12 +235,12 @@
   tier: "N/A"
   link: https://securecomm.eai-conferences.org/2027/
   deadline: "2027-03-01 23:59"
-  timezone: TBA
+  timezone: AoE
   place: "Hefei, China"
   date: "October 15-18, 2027"
   start: 2027-10-15
   end: 2027-10-18
-  note: "Verified 2026-08-07 against https://securecomm.eai-conferences.org/2027/ (notification 2027-05-01, camera-ready 2027-07-15); deadline timezone not stated on the official page."
+  note: "Verified 2026-08-07 against https://securecomm.eai-conferences.org/2027/ (notification 2027-05-01, camera-ready 2027-07-15); deadline timezone not stated on the official page. Timezone not stated by the official page; AoE assumed, which is the CFP convention."
 
 - title: "USENIX Security"
   year: 2027
@@ -280,7 +270,6 @@
   tier: "N/A"
   link: https://www.usenix.org/conferences
   deadline: "TBA"
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "WOOT 2027 CFP not announced yet. WOOT is typically co-located with USENIX Security."

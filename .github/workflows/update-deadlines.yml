@@ -98,6 +98,19 @@ jobs:
             gh issue create --title "Deadline auto-update needs attention" --label deadline-pipeline --body "$body"
           fi
 
+      # Nothing ever closed these, so an alert from a failed run stayed open
+      # forever and the next healthy run said nothing about it. An alert that
+      # outlives its cause trains people to ignore alerts.
+      - name: Close stale pipeline alerts on a healthy run
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          for n in $(gh issue list --state open --label deadline-pipeline --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "Resolved by a healthy sync run: $RUN_URL"
+          done
+
       # GitHub auto-disables cron workflows after 60 days without repo
       # activity; re-enabling on every run resets that timer.
       - name: Keep the schedule alive

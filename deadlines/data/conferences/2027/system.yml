@@ -9,7 +9,6 @@
   type: conference
   tier: T2
   link: https://sigops.org/s/conferences/atc/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official ATC 2027 CFP/page not yet available."
@@ -37,7 +36,6 @@
   tier: "N/A"
   link: https://eurosec-workshop.github.io/
   deadline: "TBA"
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official EuroSec 2027 CFP/page not announced yet; dates, place, and deadline are not available."
@@ -103,7 +101,6 @@
   full_name: "ACM Symposium on Operating Systems Principles"
   type: conference
   link: https://www.sosp.org/
-  timezone: TBA
   place: "TBA"
   date: "TBA"
   note: "Official SOSP 2027 CFP/page not yet available."

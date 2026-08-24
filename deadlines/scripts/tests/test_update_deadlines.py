@@ -186,6 +186,56 @@ class WatchlistPriority(unittest.TestCase):
                          "the sort decides which records the bounded run ever reaches")
 
 
+class ExplicitTimezone(unittest.TestCase):
+    """AoE is the CFP convention when a page states no timezone, and it is what
+    the frontend renders anyway. Recording it changes no instant but makes the
+    assumption auditable: an absent field cannot be told apart from an
+    oversight."""
+
+    def test_concrete_deadline_gets_aoe_when_unstated(self):
+        rec = {"deadline": "2026-11-20 23:59"}
+        U.default_timezone(rec)
+        self.assertEqual(rec["timezone"], "AoE")
+        self.assertIn("AoE assumed", rec["note"])
+
+    def test_tba_string_is_treated_as_unstated(self):
+        rec = {"deadline": "2026-11-20 23:59", "timezone": "TBA"}
+        U.default_timezone(rec)
+        self.assertEqual(rec["timezone"], "AoE")
+
+    def test_a_stated_timezone_is_never_overwritten(self):
+        rec = {"deadline": "2026-10-02 23:59", "timezone": "America/New_York"}
+        U.default_timezone(rec)
+        self.assertEqual(rec["timezone"], "America/New_York")
+        self.assertNotIn("note", rec)
+
+    def test_tba_deadline_gets_no_timezone(self):
+        # No instant to place in a zone.
+        rec = {"deadline": "TBA"}
+        U.default_timezone(rec)
+        self.assertNotIn("timezone", rec)
+
+    def test_the_note_is_not_duplicated_on_repeat_runs(self):
+        rec = {"deadline": "2026-11-20 23:59"}
+        U.default_timezone(rec)
+        first = rec["note"]
+        rec.pop("timezone")
+        U.default_timezone(rec)
+        self.assertEqual(rec["note"], first)
+
+    def test_every_repo_record_with_a_deadline_states_its_timezone(self):
+        import yaml
+        bad = []
+        for f in U.DATA_DIR.glob("*/*.yml"):
+            for rec in yaml.safe_load(f.read_text(encoding="utf-8")) or []:
+                concrete = [d for d in U.as_list(rec.get("deadline"))
+                            if d and str(d).upper() not in ("TBA", "TBD")]
+                tz = rec.get("timezone")
+                if concrete and (not tz or str(tz).upper() in ("TBA", "TBD")):
+                    bad.append(f"{rec['title']} {rec['year']}")
+        self.assertEqual(bad, [], "these render as AoE by silent default")
+
+
 class NoFabricatedAbstracts(unittest.TestCase):
     """deadline-tracker.js:131 invents an abstract deadline at paper-7d from any
     note matching this regex, and renders it as fact though no data file holds

@@ -639,6 +639,37 @@ def maybe_clear_stale_note(merged, existing, key, year):
         merged.pop("note", None)
 
 
+TZ_ASSUMED_NOTE = ("Timezone not stated by the official page; AoE assumed, "
+                   "which is the CFP convention.")
+
+
+def default_timezone(merged):
+    """A record with a concrete deadline always carries an explicit timezone.
+
+    AoE is the CFP convention when a page states none, and it is already what
+    gets rendered - deadline-tracker.js does `String(timezone || 'UTC-12')`.
+    Leaving the field absent or TBA does not avoid the assumption, it only
+    hides it: an implicit default is indistinguishable from an oversight, so
+    nobody can audit the data and a reader cannot tell "AoE by convention" from
+    "nobody checked". Writing it down changes no rendered instant and makes the
+    assumption reviewable.
+
+    A TBA deadline gets no timezone: there is no instant to place in a zone.
+    """
+    if clean(merged.get("timezone")).upper() in ("TBA", "TBD"):
+        merged.pop("timezone", None)
+    if merged.get("timezone"):
+        return
+    concrete = [d for d in as_list(merged.get("deadline"))
+                if d is not None and str(d).upper() not in ("TBA", "TBD")]
+    if not concrete:
+        return
+    merged["timezone"] = "AoE"
+    note = clean(merged.get("note"))
+    if TZ_ASSUMED_NOTE not in note:
+        merged["note"] = (note + " " + TZ_ASSUMED_NOTE).strip() if note else TZ_ASSUMED_NOTE
+
+
 def build_merged(target, year, existing, cand, owned=frozenset()):
     """Apply the merge policy; `owned` names the fields a manual.yml override
     controls - upstream never touches those. Returns (merged_record, railed)."""
@@ -687,8 +718,7 @@ def build_merged(target, year, existing, cand, owned=frozenset()):
     if merged["abstract_deadline"] is None:
         merged.pop("abstract_deadline")
     merged.pop("tba", None)  # legacy flag: meaningless once a record has real data
-    if merged.get("timezone") == "TBA":
-        merged.pop("timezone")
+    default_timezone(merged)
     enforce_cfg_fields(merged, target, year)
     return merged, railed
 
@@ -1011,6 +1041,7 @@ def main() -> int:
         merged["abstract_deadline"] = norm_kept_deadlines(merged.get("abstract_deadline"))
         if merged["abstract_deadline"] is None:
             merged.pop("abstract_deadline")
+        default_timezone(merged)
         enforce_cfg_fields(merged, target, year)
         man = manual.get((key, year))
         if man is not None:
