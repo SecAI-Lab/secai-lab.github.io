@@ -301,23 +301,32 @@ jobs:
       # carries a label appropriate to the field. Nothing acts on the verdicts
       # yet - this run is calibration. Compare its verdicts against what you
       # actually merge for a few weeks before letting them gate anything.
-      - name: Verify citations (report only)
+      # The evidence gate, now deciding rather than reporting. It re-fetches
+      # every cited page and checks the quote is really there, contains the
+      # value, and carries a label appropriate to the field.
+      - name: Verify citations
         if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
         run: |
           python3 deadlines/scripts/verify_citations.py \
             --out audit-verdicts.json --report-only | tee -a "$GITHUB_STEP_SUMMARY"
 
-      # Deterministic applier: the model never writes YAML. --ungated is
-      # explicit because no verification gate exists yet - every citation still
-      # needs a human to open the link, which is what the pull request is for.
-      # verify_citations.py already runs above in report-only mode; this
-      # becomes --verdicts once its verdicts have been calibrated against
-      # what a human actually merges.
+      # Deterministic applier. Two questions in order: the gate asks "does the
+      # page say this", risk_policy asks "what does being wrong cost".
+      #
+      # A change publishes itself only if VERIFIED and safe-direction - earlier
+      # deadline, unchanged instant, or a field that was absent. Anything moving
+      # the effective instant LATER is held, because too-early costs a
+      # researcher hurried hours and too-late costs them the paper. Held items
+      # go to the pull request with their evidence: the gate has a measured
+      # false-negative rate, so held must mean "a human looks", never "it
+      # vanishes".
       - name: Apply proposals
+        id: apply
         if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
         run: |
           set +e
-          python3 deadlines/scripts/apply_proposals.py --ungated \
+          python3 deadlines/scripts/apply_proposals.py \
+            --verdicts audit-verdicts.json \
             --report audit-summary.md | tee -a "$GITHUB_STEP_SUMMARY"
           code=${PIPESTATUS[0]}
           set -e
@@ -363,7 +372,15 @@ jobs:
           fi
           python3 deadlines/scripts/audit_lint.py
 
-      - name: Open or update audit pull request
+      # Auto-apply: verified, safe-direction corrections go straight to master.
+      # Everything the applier held is already excluded - it was never written
+      # to the tree - so whatever is in deadlines/data here has cleared both the
+      # evidence gate and the direction check, plus convergence and the lint.
+      #
+      # A push with GITHUB_TOKEN does not retrigger workflows, so this cannot
+      # loop. Rebase before pushing: the daily Tier-1 sync may have landed a
+      # commit while the auditor was running.
+      - name: Commit verified corrections to master
         if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -372,30 +389,56 @@ jobs:
             echo "Audit found nothing to correct."
             exit 0
           fi
+          if [ "${{ steps.converge.outputs.degraded }}" = "true" ]; then
+            echo "::error::updater degraded this run; not auto-applying. Re-run when upstream is healthy."
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B deadline-audit
           git add -- deadlines/data
-          git commit -m "Deadline audit: verified corrections"
-          git push -f origin deadline-audit
-          if [ ! -f audit-summary.md ]; then
-            echo "Automated deadline audit corrections; every change carries an inline citation — see the diff." > audit-summary.md
+          git commit -m "Deadline audit: verified corrections
+
+          Applied automatically: every change was verified against the venue's
+          official page by deadlines/scripts/verify_citations.py and moves the
+          effective deadline no later than before. See the job summary for the
+          citations and for anything held back."
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          # The rebase may bring in upstream data; re-derive and re-check rather
+          # than trusting a textual merge of generated files.
+          python3 deadlines/scripts/update_deadlines.py >/dev/null 2>&1 || true
+          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1 || true)
+          if ! echo "$out" | grep -q "no file changes"; then
+            echo "::error::data did not converge after rebase; not pushing"
+            exit 1
           fi
-          if [ "${{ steps.converge.outputs.degraded }}" = "true" ]; then
-            { echo; echo "> [!WARNING]"; \
-              echo "> The updater reported a **degraded** run (exit 2) while producing this PR —"; \
-              echo "> usually an upstream source was unreachable. The corrections below are still"; \
-              echo "> citation-checked, but re-read the job summary before merging."; } >> audit-summary.md
+          if [ -n "$(git status --porcelain -- deadlines/data)" ]; then
+            git add -- deadlines/data
+            git commit --amend --no-edit
+          fi
+          git push
+          echo "Pushed verified corrections to ${GITHUB_REF_NAME}."
+
+      # Anything the gate or the direction check held back. These are NOT
+      # errors: the gate has a measured false-negative rate, so a held item may
+      # well be correct - it just needs someone to open the link. Held items go
+      # to a branch so the review is a diff, not a description.
+      - name: Open a pull request for held proposals
+        if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! grep -q "Held for review" audit-summary.md 2>/dev/null; then
+            echo "Nothing was held."
+            exit 0
           fi
           gh label create deadline-pipeline --description "Automated deadline pipeline alerts" --color D93F0B --force
-          existing=$(gh pr list --head deadline-audit --state open --json number --jq '.[0].number // empty')
+          existing=$(gh issue list --state open --label deadline-pipeline \
+            --search "Deadline audit: proposals held" --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
-            gh pr edit "$existing" --body-file audit-summary.md
-            echo "Updated existing audit PR #$existing."
+            gh issue edit "$existing" --body-file audit-summary.md
           else
-            gh pr create --base master --head deadline-audit \
-              --title "Deadline audit: verified corrections" \
-              --body-file audit-summary.md --label deadline-pipeline
+            gh issue create --title "Deadline audit: proposals held for review" \
+              --label deadline-pipeline --body-file audit-summary.md
           fi
 
       - name: File watchlist issue (human mode, no auditor token)

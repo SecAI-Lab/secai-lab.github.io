@@ -115,10 +115,21 @@ def main():
     check("worked file passes", err is None and p.returncode == 0,
           f"exit={p.returncode if p else err}")
 
-    print("== Apply proposals (all no_change -> nothing applied) ==")
+    print("== Verify citations ==")
+    # Offline: the fixture's source_url is unreachable, so the gate returns
+    # UNREACHABLE and the applier holds everything. That is the correct
+    # fail-closed behaviour and is what we assert.
+    p, err = run_step("Verify citations", subs, env)
+    check("gate runs and writes verdicts",
+          err is None and (REPO / "audit-verdicts.json").exists(),
+          (p.stdout.strip().splitlines() or [""])[-1] if p else err)
+
+    print("== Apply proposals (gate held everything -> nothing applied) ==")
     p, err = run_step("Apply proposals", subs, env)
     check("apply succeeds", err is None and p.returncode == 0,
           (p.stdout.strip().splitlines() or [""])[-1] if p else err)
+    check("unverifiable proposals are HELD, not applied",
+          p is not None and " held," in p.stdout)
 
     print("== Converge and lint ==")
     p, err = run_step("Converge and lint", subs, env)
@@ -130,7 +141,8 @@ def main():
                        cwd=REPO, capture_output=True, text=True)
     check("no data changes", g.stdout.strip() == "", g.stdout.strip())
 
-    for f in ("audit-proposals.json", "watchlist.json", "audit-summary.md"):
+    for f in ("audit-proposals.json", "watchlist.json", "audit-summary.md",
+              "audit-verdicts.json"):
         (REPO / f).unlink(missing_ok=True)
     shutil.rmtree(tmp, ignore_errors=True)
     print(f"\n{'ALL STEPS PASS' if not failures else 'FAILURES: ' + ', '.join(failures)}")

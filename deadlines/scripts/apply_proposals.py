@@ -15,9 +15,17 @@ Usage:
   apply_proposals.py --proposals audit-proposals.json --ungated
   apply_proposals.py --proposals audit-proposals.json --verdicts audit-verdicts.json
 
-Exactly one of --verdicts / --ungated is required. --ungated means no
-verification gate ran, which is correct only while the result still goes to a
-human as a pull request; it is spelled out so nobody enables it by accident.
+Exactly one of --verdicts / --ungated is required.
+
+With --verdicts, a proposal is applied only if the gate VERIFIED it AND the
+change is safe-direction (risk_policy): it moves the deadline earlier, leaves it
+unchanged, or fills a field that was absent. Anything that moves the effective
+instant LATER is held for a human, because too-early costs hurried hours and
+too-late costs the paper.
+
+--ungated skips the gate entirely and is correct only while the result still
+goes to a human as a pull request; it is spelled out so nobody enables it by
+accident.
 
 Exit codes: 0 = applied cleanly (possibly nothing to do); 1 = refused, nothing
 written; 3 = applied, but some proposals were rejected (see the report).
@@ -33,6 +41,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import risk_policy  # noqa: E402
 import update_deadlines as U  # noqa: E402
 
 MANUAL_PATH = U.MANUAL_PATH
@@ -600,12 +609,29 @@ def main() -> int:
         # correction in ten, silently, and leaves a human nothing to act on.
         # Held proposals keep their venue, values and source so the PR is
         # reviewable.
+        # Two questions, asked in order. The gate answers "does the page say
+        # this"; risk_policy answers "what does being wrong cost". A verified
+        # change that moves a deadline LATER still waits for a human, because
+        # that is the direction that costs someone their paper.
+        current = {}
+        for _, entry in U.load_existing().items():
+            for it in entry["items"]:
+                rec = it["data"]
+                if isinstance(rec.get("year"), int):
+                    current[(rec.get("title"), rec["year"])] = rec
         kept = []
         for p in proposals:
-            if status.get(p["id"]) == "accepted":
+            gate = "accepted" if status.get(p["id"]) == "accepted" else \
+                   str(status.get(p["id"], "missing"))
+            if gate != "accepted":
+                held.append((p, f"gate said {gate}"))
+                continue
+            what, why = risk_policy.decide(
+                "VERIFIED", p, current.get((p.get("title"), p.get("year"))) or {})
+            if what == "apply":
                 kept.append(p)
             else:
-                held.append((p, status.get(p["id"], "missing")))
+                held.append((p, why))
         proposals = kept
 
     if args.validate_only:
@@ -680,7 +706,7 @@ def main() -> int:
     for pid, why in skipped:
         print(f"  skipped  {pid}: {why}")
     for p, why in held:
-        print(f"  held     {p['id']}: gate said {why}; kept for human review")
+        print(f"  held     {p['id']}: {why}; kept for human review")
     for e in errors:
         print(f"  [!] rejected {e}")
     print(f"\n{len(applied)} applied, {len(held)} held, {len(skipped)} skipped, "
