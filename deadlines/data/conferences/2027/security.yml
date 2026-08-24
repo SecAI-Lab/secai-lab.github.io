@@ -220,7 +220,7 @@
   date: "May 17-20, 2027"
   start: 2027-05-17
   end: 2027-05-20
-  note: "Two submission cycles; abstract registration deadlines are one week before paper deadlines. Conference dates are not announced on the official page yet."
+  note: "Two submission cycles. Venue within Montreal is not announced yet."
 
 - title: "SAC"
   year: 2027
@@ -230,11 +230,12 @@
   tier: T4
   link: https://www.sigapp.org/sac/sac2027
   deadline: "2026-10-02 23:59"
-  timezone: UTC-5
+  timezone: America/New_York
   place: "Gwangju, South Korea"
   date: "April 5-9, 2027"
   start: 2027-04-05
   end: 2027-04-09
+  note: "The CFP writes (EST); October 2 falls in US Eastern Daylight Time, so the zone is stored as America/New_York to resolve the offset correctly."
 
 - title: "SecureComm"
   year: 2027

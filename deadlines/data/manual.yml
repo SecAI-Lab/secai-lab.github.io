@@ -138,13 +138,20 @@
   start: 2027-04-19
   end: 2027-04-23
 
-# The official SAC 2027 page states the deadline timezone as EST (UTC-5),
-# not AoE as upstream assumes.
-# Verified 2026-08-07 against https://www.sigapp.org/sac/sac2027
+# The official SAC 2027 page states the deadline timezone as EST, not AoE as
+# upstream assumes. Stored as America/New_York rather than UTC-5: 2 October
+# 2026 falls in US Eastern DAYLIGHT time (UTC-4), so a fixed UTC-5 renders the
+# deadline an hour LATER than the real instant - the direction that costs a
+# submission. Same reason conferences.yml maps Pacific venues to
+# America/Los_Angeles rather than PST.
+# Verified 2026-08-19 against https://www.sigapp.org/sac/sac2027 :
+# "October 2, 2026 (EST) Submission of regular papers and SRC research
+# abstracts"
 - title: "SAC"
   year: 2027
   deadline: "2026-10-02 23:59"
-  timezone: UTC-5
+  timezone: America/New_York
+  note: "The CFP writes (EST); October 2 falls in US Eastern Daylight Time, so the zone is stored as America/New_York to resolve the offset correctly."
 
 # The TC CFP calendar now names the host city, so the record's TBA place and its
 # "city is not confirmed yet" note are both out of date. The conference's own
@@ -212,3 +219,11 @@
 - title: "CCS"
   year: 2026
   note: "Review cycles have a mandatory registration step ahead of each paper deadline; see the official CFP for exact dates."
+
+# The note claimed the conference dates were unannounced; the official site now
+# shows them, and the record's own `date` field already carried them.
+# Verified 2026-08-19 against https://sp2027.ieee-security.org/ :
+# "MAY 17-20, 2027 AT THE TBA, MONTREAL, CANADA"
+- title: "S&P"
+  year: 2027
+  note: "Two submission cycles. Venue within Montreal is not announced yet."
