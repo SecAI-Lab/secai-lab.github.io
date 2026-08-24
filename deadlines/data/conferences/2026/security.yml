@@ -77,7 +77,7 @@
   date: "November 15-19, 2026"
   start: 2026-11-15
   end: 2026-11-19
-  note: "Abstract deadline 1 week before paper deadline."
+  note: "Review cycles have a mandatory registration step ahead of each paper deadline; see the official CFP for exact dates."
 
 - title: "CODASPY"
   year: 2026
@@ -86,13 +86,14 @@
   type: conference
   tier: "N/A"
   link: http://www.codaspy.org/2026/
+  abstract_deadline: "2025-12-26 23:59"
   deadline: "2026-01-02 23:59"
   timezone: UTC-12
   place: "Frankfurt am Main, Germany"
   date: "June 23-25, 2026"
   start: 2026-06-23
   end: 2026-06-25
-  note: "Abstract deadline 1 week before paper deadline."
+  note: "Abstract submission precedes the paper deadline; extended from December 12."
 
 - title: "DFRWS EU"
   year: 2026
@@ -148,13 +149,14 @@
   type: conference
   tier: "N/A"
   link: https://eurosp2026.ieee-security.org/
+  abstract_deadline: "2025-11-13 23:59"
   deadline: "2025-11-20 23:59"
   timezone: UTC-12
   place: "Lisbon, Portugal"
   date: "July 6 - 10, 2026"
   start: 2026-07-06
   end: 2026-07-10
-  note: "Abstract deadline 1 week before paper deadline."
+  note: "Abstract registration is mandatory and precedes the paper deadline."
 
 - title: "IFIP-Sec"
   year: 2026
@@ -207,6 +209,9 @@
   type: conference
   tier: T1
   link: https://www.ieee-security.org/TC/SP2026/
+  abstract_deadline:
+    - "2025-05-29 23:59"
+    - "2025-11-06 23:59"
   deadline:
     - "2025-06-05 23:59"
     - "2025-11-13 23:59"
@@ -215,7 +220,7 @@
   date: "MAY 18-21, 2026"
   start: 2026-05-18
   end: 2026-05-21
-  note: "Abstract deadline 1 week before paper deadline. Workshops held on May 21, 2026."
+  note: "Abstract registration is mandatory and precedes each paper deadline. Workshops held on May 21, 2026."
 
 - title: "SAC"
   year: 2026

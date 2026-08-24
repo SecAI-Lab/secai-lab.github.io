@@ -169,3 +169,46 @@
   abstract_deadline: "2026-09-18 23:59"
   deadline: "2026-09-25 23:59"
   note: "Full-paper deadlines per the official DFRWS EU 2027 page. That page states no timezone for these two rows - its only AoE marking belongs to the DFDS doctoral symposium track - so the timezone is deliberately left unset."
+
+# The frontend FABRICATES an abstract deadline at paper-minus-7-days from any
+# note matching /abstract.*1 week before/i (deadline-tracker.js:131), rendering
+# it as fact although no data file holds it. Writing the real value in - and
+# rewording the note so it no longer arms that regex - replaces a computed
+# guess with a cited fact.
+# Verified 2026-08-19 against https://sp2026.ieee-security.org/cfpapers.html :
+# "First deadline Abstract registration deadline: May 29, 2025 mandatory" and
+# "Second deadline Abstract, author, and conflict-of-interest registration
+# deadline: November 6, 2025, mandatory"
+- title: "S&P"
+  year: 2026
+  abstract_deadline:
+    - "2025-05-29 23:59"
+    - "2025-11-06 23:59"
+  note: "Abstract registration is mandatory and precedes each paper deadline. Workshops held on May 21, 2026."
+
+# Verified 2026-08-19 against https://eurosp2026.ieee-security.org/cfp.html :
+# "Abstract Registration All papers must complete a mandatory registration by
+# 13 November 2025."
+- title: "EuroS&P"
+  year: 2026
+  abstract_deadline: "2025-11-13 23:59"
+  note: "Abstract registration is mandatory and precedes the paper deadline."
+
+# Verified 2026-08-19 against https://www.codaspy.org/2026/ :
+# "Abstract submission deadline: December 12 December 26, 2025 anywhere in the
+# world" (December 12 struck through on the page; the extended date is the one
+# in force).
+- title: "CODASPY"
+  year: 2026
+  abstract_deadline: "2025-12-26 23:59"
+  note: "Abstract submission precedes the paper deadline; extended from December 12."
+
+# CCS 2026's own site (https://www.sigsac.org/ccs/CCS2026/, fetched 2026-08-19)
+# states NO abstract deadline. The note below armed the frontend's
+# deriveAbstractFromComment regex, which was rendering two invented abstract
+# instants - 2026-01-07 and 2026-04-22 - as fact. Reworded so it no longer
+# fires; no abstract_deadline is asserted because no official source states one.
+# Verified 2026-08-19 against https://www.sigsac.org/ccs/CCS2026/
+- title: "CCS"
+  year: 2026
+  note: "Review cycles have a mandatory registration step ahead of each paper deadline; see the official CFP for exact dates."

@@ -186,6 +186,34 @@ class WatchlistPriority(unittest.TestCase):
                          "the sort decides which records the bounded run ever reaches")
 
 
+class NoFabricatedAbstracts(unittest.TestCase):
+    """deadline-tracker.js:131 invents an abstract deadline at paper-7d from any
+    note matching this regex, and renders it as fact though no data file holds
+    it. Four records were doing that - CCS 2026's two invented instants had no
+    basis at all, since its site states no abstract deadline. The applier
+    rejects such notes; this pins the checked-in data too, since notes can also
+    arrive by hand or from upstream."""
+
+    REGEX = re.compile(r"abstract.*1 week before|1 week before.*abstract", re.I)
+
+    def test_no_record_arms_the_frontend_fabricator(self):
+        import yaml
+        armed = []
+        for f in (U.DATA_DIR).glob("*/*.yml"):
+            for rec in yaml.safe_load(f.read_text(encoding="utf-8")) or []:
+                if rec.get("note") and self.REGEX.search(str(rec["note"])):
+                    armed.append(f"{rec['title']} {rec['year']}")
+        self.assertEqual(armed, [], "these notes make the page invent an "
+                                    "abstract deadline at paper-7 days")
+
+    def test_no_manual_override_arms_it_either(self):
+        import yaml
+        recs = yaml.safe_load(U.MANUAL_PATH.read_text(encoding="utf-8")) or []
+        armed = [f"{r.get('title')} {r.get('year')}" for r in recs
+                 if r.get("note") and self.REGEX.search(str(r["note"]))]
+        self.assertEqual(armed, [])
+
+
 class RepoDataIsValid(unittest.TestCase):
     """Guards the checked-in data against the same rules the pipeline enforces."""
 
