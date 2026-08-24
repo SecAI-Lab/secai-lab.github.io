@@ -44,6 +44,7 @@ def main():
     out, summary = tmp / "gh_output", tmp / "gh_summary"
     out.touch(); summary.touch()
     env = {"GITHUB_OUTPUT": str(out), "GITHUB_STEP_SUMMARY": str(summary)}
+    # Placeholder; replaced with the real count once the watchlist step runs.
     subs = {"${{ steps.today.outputs.date }}": "2026-08-19",
             "${{ steps.watchlist.outputs.count }}": "30",
             "${{ steps.converge.outputs.degraded }}": "",
@@ -64,6 +65,8 @@ def main():
     count = re.search(r"count=(\d+)", out.read_text(encoding="utf-8"))
     check("watchlist built", err is None and p.returncode == 0 and count is not None,
           f"count={count.group(1) if count else '?'}")
+    if count:  # later steps interpolate the real count, not the placeholder
+        subs["${{ steps.watchlist.outputs.count }}"] = count.group(1)
 
     print("== Assert the auditor touched only its proposals file ==")
     p, err = run_step("Assert the auditor touched only its proposals file", subs, env)
@@ -85,7 +88,8 @@ def main():
     p, err = run_step("Validate proposals", subs, env)
     check("0-examined file fails the step (PIPESTATUS wiring)",
           err is None and p.returncode == 1, f"exit={p.returncode if p else err}")
-    check("examined line reached the summary", "examined: 0/30" in summary.read_text(encoding="utf-8"))
+    check("examined line reached the summary",
+          "examined: 0/" in summary.read_text(encoding="utf-8"))
 
     print("== Validate proposals: REAL WORK (must pass) ==")
     import json
