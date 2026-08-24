@@ -232,6 +232,47 @@ class Applying(unittest.TestCase):
                 self.assertRegex(blob, r"https?://")
 
 
+class GateRejectionIsAHold(unittest.TestCase):
+    """A gate rejection must be reviewable, not an error.
+
+    The gate has a measured false-negative rate on live data - it wrongly
+    refused SAC 2027's real deadline because the row also mentions SRC
+    abstracts. Filing rejections as bare ids under "Rejected" destroys roughly
+    one correct correction in ten and leaves a human nothing to act on.
+    """
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+
+    def report_for(self, held):
+        path = self.tmp / "report.md"
+        A.write_report(path, applied=[], skipped=[], errors=[],
+                       proposals={"proposals": [], "unverifiable": []},
+                       gated=True, held=held)
+        return path.read_text(encoding="utf-8")
+
+    def test_held_proposal_carries_venue_values_source_and_quote(self):
+        p = proposal(title="SAC", year=2027, fields={"deadline": claim(
+            "2026-10-02 23:59",
+            quote="October 2, 2026 (EST) Submission of regular papers")})
+        p["source_url"] = "https://www.sigapp.org/sac/sac2027"
+        body = self.report_for([(p, "rejected")])
+        self.assertIn("Held for review (1)", body)
+        self.assertIn("SAC 2027", body)
+        self.assertIn("2026-10-02 23:59", body)
+        self.assertIn("https://www.sigapp.org/sac/sac2027", body)
+        self.assertIn("October 2, 2026 (EST)", body)
+
+    def test_the_reader_is_told_the_gate_can_be_wrong(self):
+        p = proposal(fields={"deadline": claim("2026-02-17 23:59")})
+        body = self.report_for([(p, "rejected")])
+        self.assertIn("false-negative", body)
+
+    def test_no_held_section_when_nothing_is_held(self):
+        self.assertNotIn("Held for review", self.report_for([]))
+
+
 class Coverage(unittest.TestCase):
     """A run that examined 3 of 30 records must not look like one that examined
     all 30 and found nothing. The first live run wrote no file at all and went

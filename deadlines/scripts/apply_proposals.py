@@ -493,7 +493,7 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
     return applied, skipped
 
 
-def write_report(path, applied, skipped, errors, proposals, gated):
+def write_report(path, applied, skipped, errors, proposals, gated, held=()):
     lines = ["Automated deadline audit corrections.", ""]
     if not gated:
         lines += ["> [!NOTE]",
@@ -503,6 +503,22 @@ def write_report(path, applied, skipped, errors, proposals, gated):
     if applied:
         lines += [f"**Applied ({len(applied)})**", ""]
         lines += [f"- {desc}" for _, desc in applied] + [""]
+    if held:
+        lines += [f"**Held for review ({len(held)})** — the evidence gate did not",
+                  "confirm these. It has a known false-negative rate, so check the",
+                  "citation yourself before discarding: if the page says what the",
+                  "proposal claims, apply it by hand and tell us which check misfired.",
+                  ""]
+        for p, why in held:
+            fields = ", ".join(f"`{k}` → `{(v or {}).get('value')}`"
+                               for k, v in (p.get("fields") or {}).items())
+            lines.append(f"- **{p.get('title')} {p.get('year')}** ({why}): {fields}")
+            if p.get("source_url"):
+                lines.append(f"  - source: {p['source_url']}")
+            for k, v in (p.get("fields") or {}).items():
+                for ev in (v or {}).get("evidence") or []:
+                    lines.append(f"  - quote ({k}): \"{ev.get('quote', '')}\"")
+        lines.append("")
     if skipped:
         lines += [f"**Skipped ({len(skipped)})**", ""]
         lines += [f"- `{pid}` — {why}" for pid, why in skipped] + [""]
@@ -566,6 +582,7 @@ def main() -> int:
     canonical_keys = set(targets_by_key)
 
     errors: list[str] = []
+    held: list = []
     proposals = [p for p in doc["proposals"]
                  if isinstance(p, dict) and validate_proposal(p, targets_by_key, errors)]
 
@@ -576,13 +593,19 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001 - fail closed, never open
             print(f"APPLY REFUSED: verdict file unusable ({exc})")
             return 1
+        # A gate rejection is a HOLD, not an error. The gate has a measured
+        # false-negative rate on live data - it wrongly refused SAC 2027's real
+        # deadline because the row also mentions SRC abstracts - so filing
+        # rejections as bare ids under "Rejected" destroys roughly one correct
+        # correction in ten, silently, and leaves a human nothing to act on.
+        # Held proposals keep their venue, values and source so the PR is
+        # reviewable.
         kept = []
         for p in proposals:
             if status.get(p["id"]) == "accepted":
                 kept.append(p)
             else:
-                errors.append(f"{p['id']}: verdict is "
-                              f"{status.get(p['id'], 'missing')!r}, not 'accepted'")
+                held.append((p, status.get(p["id"], "missing")))
         proposals = kept
 
     if args.validate_only:
@@ -650,15 +673,18 @@ def main() -> int:
                   "reverted")
             return 1
 
-    write_report(args.report, applied, skipped, errors, doc, gated=bool(args.verdicts))
+    write_report(args.report, applied, skipped, errors, doc,
+                 gated=bool(args.verdicts), held=held)
     for pid, desc in applied:
         print(f"  applied  {pid}: {desc}")
     for pid, why in skipped:
         print(f"  skipped  {pid}: {why}")
+    for p, why in held:
+        print(f"  held     {p['id']}: gate said {why}; kept for human review")
     for e in errors:
         print(f"  [!] rejected {e}")
-    print(f"\n{len(applied)} applied, {len(skipped)} skipped, {len(errors)} rejected"
-          + (" (dry run)" if args.dry_run else ""))
+    print(f"\n{len(applied)} applied, {len(held)} held, {len(skipped)} skipped, "
+          f"{len(errors)} rejected" + (" (dry run)" if args.dry_run else ""))
     return 3 if errors else 0
 
 
