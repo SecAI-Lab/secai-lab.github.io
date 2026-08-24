@@ -236,6 +236,69 @@ class AbsenceClaims(unittest.TestCase):
         self.assertFalse(ok, why)
 
 
+class FalseNegatives(unittest.TestCase):
+    """Correct data the gate used to refuse.
+
+    A local reliability harness found 5 of 17 true field-claims (29%)
+    unprovable against pages that state them plainly - so a diligent auditor
+    proposing what the watchlist asks for scored 1/3, while one that omitted
+    the unprovable fields scored 3/3. The gap was entirely knowing what to drop,
+    which is the opposite of what a gate should teach.
+    """
+
+    def setUp(self):
+        self.dir = fixture_dir({
+            "https://eurosys.example/": "<li>Paper titles and abstracts due: "
+                                        "Thursday, September 17, 2026</li>",
+            "https://span.example/": "<p>The conference is held April 19-23, "
+                                     "2027 in Edinburgh.</p>",
+            "https://wrongspan.example/": "<p>The conference is held April 19-24, "
+                                          "2027 in Edinburgh.</p>",
+            "https://acns.example/": "<li>Submission deadline: 24 September 2026, "
+                                     "23:59 AoE</li>",
+            "https://ws.example/": "<li>Workshops paper submission deadline: "
+                                   "March 1, 2026</li>",
+        })
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
+        self.f = V.Fetcher(offline=True, fixtures=self.dir)
+
+    def v(self, url, fields):
+        return V.verify_proposal(proposal(url, fields), self.f)["status"]
+
+    def test_plural_abstracts_due_verifies(self):
+        # 3 of 4 natural CFP phrasings write "abstracts", not "abstract".
+        self.assertEqual(self.v("https://eurosys.example/", {"abstract_deadline": claim(
+            "2026-09-17 23:59",
+            "Paper titles and abstracts due: Thursday, September 17, 2026")}), "VERIFIED")
+
+    def test_compact_date_range_verifies(self):
+        # Spans are written "April 19-23, 2027", not as two full dates. Emitting
+        # only month-day-year made 83 of the repo's 107 date values ungroundable
+        # by their own text - including AUDITOR.md's documented example.
+        self.assertEqual(self.v("https://span.example/", {"date": claim(
+            "April 19-23, 2027",
+            "The conference is held April 19-23, 2027 in Edinburgh.")}), "VERIFIED")
+
+    def test_a_mismatched_range_is_still_refused(self):
+        self.assertEqual(self.v("https://wrongspan.example/", {"date": claim(
+            "April 19-23, 2027",
+            "The conference is held April 19-24, 2027 in Edinburgh.")}), "UNCONFIRMED")
+
+    def test_a_clock_time_is_not_a_second_date(self):
+        # "23:59" flattened to "23 59" and counted as another date, so the MORE
+        # precise quote - the one naming the exact instant - was the one refused.
+        self.assertEqual(self.v("https://acns.example/", {"deadline": claim(
+            "2026-09-24 23:59",
+            "Submission deadline: 24 September 2026, 23:59 AoE")}), "VERIFIED")
+
+    def test_plural_forbid_terms_still_disqualify(self):
+        # The plural fix must not open a hole: "Workshops" was evading a block
+        # on "workshop".
+        self.assertEqual(self.v("https://ws.example/", {"deadline": claim(
+            "2026-03-01 23:59",
+            "Workshops paper submission deadline: March 1, 2026")}), "UNCONFIRMED")
+
+
 class CombinedRows(unittest.TestCase):
     """CFP rows often cover two things at once. A disqualifying term should only
     disqualify when it LEADS the row, not merely when it appears in it.

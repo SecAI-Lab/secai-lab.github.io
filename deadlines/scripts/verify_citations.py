@@ -184,7 +184,12 @@ def count_dates(text: str) -> int:
     present either as the value while the quote still grounds perfectly - it is
     genuine page text. Counting is how that is refused.
     """
-    flat = flatten(text)
+    # Strip clock times first: "24 September 2026, 23:59 AoE" is ONE date, but
+    # 23:59 flattens to "23 59" and was counted as a second - so the MORE
+    # precise quote, the one naming the exact instant, was the one refused.
+    flat = re.sub(r"\b\d{1,2}\s*[:.]\s*\d{2}(\s*[:.]\s*\d{2})?\s*(am|pm)?\b", " ",
+                  normalize(text))
+    flat = re.sub(r"[^a-z0-9]+", " ", flat).strip()
     toks = flat.split()
     seen = set()
     for i, t in enumerate(toks):
@@ -214,7 +219,24 @@ def value_forms(field: str, value) -> tuple[list[str], bool]:
         rng = U.parse_date_range(str(value))
         if not rng:
             return [], False
-        return date_forms(rng[0]) + date_forms(rng[1]), True
+        a, b = rng
+        # Conference spans are written compactly - "April 19-23, 2027" - not as
+        # two full dates. Emitting only month-day-year forms made 83 of the
+        # repo's 107 date values ungroundable by their own text, including
+        # AUDITOR.md's documented example. A compact form still pins BOTH
+        # endpoints, so a page saying 19-24 cannot verify a claim of 19-23.
+        forms = date_forms(a) + date_forms(b)
+        if a.year == b.year:
+            ma, mb = MONTHS[a.month - 1], MONTHS[b.month - 1]
+            aa, ab = ABBR[ma], ABBR[mb]
+            if a.month == b.month:
+                for nm in (ma, aa):
+                    forms += [f"{nm} {a.day} {b.day} {a.year}",
+                              f"{a.day} {b.day} {nm} {a.year}"]
+            else:
+                for na, nb in ((ma, mb), (aa, ab)):
+                    forms += [f"{na} {a.day} {nb} {b.day} {a.year}"]
+        return forms, True
     return [], False
 
 
@@ -253,10 +275,16 @@ def phrase_present(flat: str, tokset: set, phrase: str) -> bool:
 
 
 def label_pos(flat: str, phrase: str) -> int:
-    """Character offset of a label in the flattened quote, or -1."""
-    if " " in phrase:
-        return flat.find(phrase)
-    m = re.search(rf"\b{re.escape(phrase)}\b", flat)
+    """Character offset of a label in the flattened quote, or -1.
+
+    Simple plurals match. CFPs write "Paper titles and abstracts due" far more
+    often than the singular, and a strict word-boundary match on "abstract"
+    rejected 3 of 4 natural phrasings - the auditor could not cite EuroSys's
+    real abstract deadline with any quote on the page. Applies to the forbid
+    list too, so "Workshops" no longer slips past a block on "workshop".
+    """
+    pat = rf"\b{re.escape(phrase)}(?:e?s)?\b"
+    m = re.search(pat, flat)
     return m.start() if m else -1
 
 
