@@ -236,6 +236,59 @@ class AbsenceClaims(unittest.TestCase):
         self.assertFalse(ok, why)
 
 
+class TrackHeadings(unittest.TestCase):
+    """Rows that are identical except for the date, distinguished only by the
+    heading above them.
+
+    ACNS 2027 is the real page: paper, poster and workshop sections each read
+    "Submission deadline: <date> AoE". The quote alone cannot say which track it
+    belongs to, so the poster date verified as the paper deadline at coverage
+    1.0 - a false positive, the direction that publishes a wrong deadline.
+    """
+
+    PAGE = ("<h3>Paper Submissions Cycle 1</h3>"
+            "<p>Submission deadline: 24 September 2026 AoE</p>"
+            "<h3>Poster Submissions</h3>"
+            "<p>Submission deadline: 12 March 2027 AoE</p>"
+            "<h3>Workshop Proposals</h3>"
+            "<p>Submission deadline: 22 September 2026 AoE</p>")
+
+    def setUp(self):
+        self.dir = fixture_dir({"https://acns.example/": self.PAGE})
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
+        self.f = V.Fetcher(offline=True, fixtures=self.dir)
+
+    def v(self, value, quote):
+        return V.verify_proposal(proposal("https://acns.example/",
+                                          {"deadline": claim(value, quote)}), self.f)["status"]
+
+    def test_the_paper_row_verifies(self):
+        self.assertEqual(self.v("2026-09-24 23:59",
+                                "Submission deadline: 24 September 2026 AoE"), "VERIFIED")
+
+    def test_the_poster_row_is_refused(self):
+        self.assertEqual(self.v("2027-03-12 23:59",
+                                "Submission deadline: 12 March 2027 AoE"), "UNCONFIRMED")
+
+    def test_the_workshop_row_is_refused(self):
+        self.assertEqual(self.v("2026-09-22 23:59",
+                                "Submission deadline: 22 September 2026 AoE"), "UNCONFIRMED")
+
+    def test_a_heading_is_cancelled_only_by_a_paper_label(self):
+        # A generic "submission deadline" belongs to whatever section it is in,
+        # so it must not cancel the heading - otherwise every track's row
+        # verifies again. An explicit paper label does cancel it.
+        d = fixture_dir({"https://ok.example/":
+                         "<h3>Poster Submissions</h3><p>closed</p>"
+                         "<h3>Research Papers</h3>"
+                         "<p>Paper submission deadline: 24 September 2026</p>"})
+        self.addCleanup(shutil.rmtree, d, ignore_errors=True)
+        f = V.Fetcher(offline=True, fixtures=d)
+        v = V.verify_proposal(proposal("https://ok.example/", {"deadline": claim(
+            "2026-09-24 23:59", "Paper submission deadline: 24 September 2026")}), f)
+        self.assertEqual(v["status"], "VERIFIED", v)
+
+
 class FalseNegatives(unittest.TestCase):
     """Correct data the gate used to refuse.
 

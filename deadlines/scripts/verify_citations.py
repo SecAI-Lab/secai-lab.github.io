@@ -255,6 +255,10 @@ def lcs_len(a: list[str], b: list[str]) -> int:
 
 
 def find_windows(page_toks: list[str], form: str, size: int):
+    """Yields (anchor_index, window). The anchor is where the VALUE matched;
+    the window is centred on it and extends both ways to tolerate quoting
+    slack. Callers needing page context must use the anchor, not the window
+    start - the window deliberately reaches back into the previous section."""
     ft = form.split()
     if not ft:
         return
@@ -262,7 +266,7 @@ def find_windows(page_toks: list[str], form: str, size: int):
     for i in range(n - len(ft) + 1):
         if page_toks[i:i + len(ft)] == ft:
             lo = max(0, i + len(ft) // 2 - size // 2)
-            yield lo, page_toks[lo:lo + size]
+            yield i, page_toks[lo:lo + size]
 
 
 def phrase_present(flat: str, tokset: set, phrase: str) -> bool:
@@ -286,6 +290,45 @@ def label_pos(flat: str, phrase: str) -> int:
     pat = rf"\b{re.escape(phrase)}(?:e?s)?\b"
     m = re.search(pat, flat)
     return m.start() if m else -1
+
+
+HEADING_LOOKBACK = 30  # tokens; a section heading sits close to its rows
+
+
+def heading_scope(page_toks, start, forbid):
+    """A disqualifying term in the text just BEFORE the match, if any.
+
+    Some CFPs give every track an identical row and distinguish them only by a
+    heading above. ACNS 2027 is the real case - paper, poster and workshop rows
+    all read "Submission deadline: <date> AoE", so the quote alone cannot say
+    which track it is and the poster date verified as the paper deadline at
+    coverage 1.0. That is a false positive, the direction that publishes a
+    wrong deadline.
+
+    So look left. A forbidden term nearer than this field's own label means the
+    match sits under that track's heading. Bounded lookback, because a heading
+    far above has stopped applying.
+    """
+    lo = max(0, start - HEADING_LOOKBACK)
+    before = " ".join(page_toks[lo:start])
+    if not before:
+        return None
+    hits = [(label_pos(before, b), b) for b in forbid]
+    hits = [(p, b) for p, b in hits if p >= 0]
+    if not hits:
+        return None
+    # A heading is cancelled only by a label that NAMES PAPERS, not by any
+    # deadline label. "Poster Submissions / Submission deadline: ..." carries a
+    # generic label belonging to the poster section, and treating that as
+    # cancelling would let every track's row verify as the paper deadline -
+    # which is the bug this exists to stop. "Poster Submissions ... Paper
+    # submission deadline" does cancel, because it names the track explicitly.
+    nearest_bad = max(p for p, _ in hits)
+    for good in ("paper submission", "paper deadline", "papers due", "full paper",
+                 "submission of regular papers", "research papers", "paper titles"):
+        if before.rfind(good) > nearest_bad:
+            return None
+    return next(b for p, b in hits if p == nearest_bad)
 
 
 def ground_quote(page_toks, quote, forms, labels, single_date=False):
@@ -336,13 +379,21 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
         return None, (f"the quote leads with '{bad}', so it is labelling that, "
                       "not this field")
     size = max(len(qt) + WINDOW_SLACK, int(len(qt) * 1.6))
-    best = 0.0
+    best, ctx_reject = 0.0, None
     for form in (forms or [" ".join(qt[:3])]):
-        for _, win in find_windows(page_toks, form, size):
+        for start, win in find_windows(page_toks, form, size):
             cov = lcs_len(qt, win) / len(qt)
             best = max(best, cov)
-            if cov >= LCS_THRESHOLD:
-                return round(cov, 3), None
+            if cov < LCS_THRESHOLD:
+                continue
+            bad = heading_scope(page_toks, start, forbid)
+            if bad:
+                ctx_reject = (f"the quote grounds under a '{bad}' heading on the "
+                              "page, so it belongs to that track, not this field")
+                continue
+            return round(cov, 3), None
+    if ctx_reject:
+        return None, ctx_reject
     return None, (f"quote not found on the page (best coverage {best:.2f} "
                   f"< {LCS_THRESHOLD})")
 
