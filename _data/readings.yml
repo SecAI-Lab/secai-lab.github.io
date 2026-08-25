@@ -27,7 +27,7 @@
   conference: FSE
   date: 2026.08.10
   pub_year: 2026
-  discussion: ":D"
+  discussion: "This paper presents SugBreaker, a mutation-based framework for testing the fix suggestions that rustc attaches to its error messages. Starting from valid Rust programs, it injects violations of Rust's core rules (borrow, lifetime, and type constraints), applies each suggested fix automatically, recompiles, and repeats for up to six rounds to catch suggestions that loop, point to the wrong location, or never resolve the error. This found 12 bugs, 11 confirmed or fixed. We think the main strength is the framing rather than the machinery: the mutation rules are simple, but treating a suggestion as a testable artifact with a clear oracle (apply it and check whether the code compiles) opens a new testing surface for compilers. Our concerns are that the oracle is weaker than it looks, since a fix that compiles may still not match the developer's intent, and that the validation loop discards any suggestion producing a different error as a false positive, even though the paper's own motivating example is exactly that kind of case, so the real bug count may be underestimated. The baseline comparison is also somewhat unfair, because tools like Rustlantis and RustSmith were never designed to trigger diagnostics. Overall, this is a solid, practical paper whose contribution is identifying an overlooked problem, and future work should aim for a stronger notion of fix correctness than compile success. (Yujeong)"
 
 - title: "Understanding Binary Code Similarity for Real-World Vulnerability Detection: A Large-Scale Empirical Study"
   link: "https://dl.acm.org/doi/pdf/10.1145/3797125"
