@@ -1,3 +1,13 @@
+- title: "CiRCLE: Recovering Complex Data Structures in Binaries Beyond Fragmentation
+  link: "https://www.computer.org/csdl/proceedings-article/sp/2026/606500c576/2geEWkeMihW"
+  ppt_link: "https://docs.google.com/presentation/d/1K2ELguBKNbcsWr15ZglRqfXnYsGv1aEf/edit?usp=sharing&ouid=115472134383580308853&rtpof=true&sd=true"
+  code_link: "https://github.com/vul337/CiRCLE"
+  presenter: Hyoungjun
+  conference: S&P
+  date: 2026.08.25
+  pub_year: 2026
+  discussion: ""
+
 - title: "Verbalizable Representations Form a Global Workspace in Language Models"
   link: "https://arxiv.org/pdf/2607.15495"
   ppt_link: "https://drive.google.com/file/d/1oE-sFedBW2UZYAiHEVKNrUfGTVzZFHVQ/view?usp=drive_link"
