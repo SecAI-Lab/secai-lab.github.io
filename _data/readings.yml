@@ -8,7 +8,7 @@
   pub_year: 2025
   discussion: ""
   
-- title: "CiRCLE: Recovering Complex Data Structures in Binaries Beyond Fragmentation
+- title: "CiRCLE: Recovering Complex Data Structures in Binaries Beyond Fragmentation"
   link: "https://www.computer.org/csdl/proceedings-article/sp/2026/606500c576/2geEWkeMihW"
   ppt_link: "https://docs.google.com/presentation/d/1K2ELguBKNbcsWr15ZglRqfXnYsGv1aEf/edit?usp=sharing&ouid=115472134383580308853&rtpof=true&sd=true"
   code_link: "https://github.com/vul337/CiRCLE"
@@ -16,7 +16,7 @@
   conference: S&P
   date: 2026.08.25
   pub_year: 2026
-  discussion: ""
+  discussion: "(Discussion) CiRCLE addresses the difficult problem of recovering complex data structures from stripped binaries by preserving pointer-access evidence in the MOSAIC graph, merging compatible information across functions, and using an LLM only when static analysis cannot resolve dynamic offsets or structural conflicts. The design is sensible because it avoids asking the LLM to perform the entire recovery task and retains the static result when refinement fails. The reported results are strong, with improvements of up to 15.6% in structure identification, 33.6% in layout recovery, and 47.7% in relationship recovery on OSPREY, as well as a 59.7% layout recovery F1 score on a large real-world dataset. Still, the contribution lies mainly in combining known static-analysis and LLM techniques effectively rather than introducing a fundamentally new recovery method. The evaluation is also not entirely clean because some baselines are tested using incomplete or modified implementations and the compared systems do not always operate under the same analysis scope. Efficiency is another concern: the average analysis time increases from about 21 seconds per binary without the LLM to nearly 494 seconds with it. More importantly, CiRCLE depends on the decompiler preserving useful pointer relationships and recovering call signatures correctly, so aggressive optimization, indirect calls, variadic functions, and variable reuse can lead to missing or incorrect structures. It may also merge layouts that are structurally compatible but semantically unrelated, and it does not adequately support stack-heavy Rust data structures or major C++ features such as inheritance and virtual tables. CiRCLE is therefore a useful and well-built system that improves practical structure recovery, but its effectiveness remains tied to decompiler quality, surviving binary evidence, and costly heuristic refinement. (Minseok)"
 
 - title: "Verbalizable Representations Form a Global Workspace in Language Models"
   link: "https://arxiv.org/pdf/2607.15495"
