@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for risk_policy.py - which corrections may publish themselves.
-
-The asymmetry these pin: too early costs hurried hours, too late costs the
-paper. Every test here is about not confusing the two.
-"""
+"""Tests for the autonomous correction safety policy."""
 
 import sys
 import unittest
@@ -104,12 +100,11 @@ class Decisions(unittest.TestCase):
                                   {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0],
                          "apply")
 
-    def test_verified_but_later_is_held(self):
-        # An extension is the commonest real correction and still waits: this is
-        # the direction that costs the paper.
+    def test_verified_extension_applies_without_a_human(self):
+        # A grounded official extension is a normal autonomous correction.
         self.assertEqual(R.decide("VERIFIED", prop({"deadline": "2026-02-17 23:59"}),
                                   {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0],
-                         "hold")
+                         "apply")
 
     def test_unverified_is_held_whatever_the_direction(self):
         for status in ("UNCONFIRMED", "UNCHECKED", "UNREACHABLE", "REJECTED_SOURCE"):
@@ -125,12 +120,87 @@ class Decisions(unittest.TestCase):
         self.assertEqual(R.decide("VERIFIED", prop({}, action="delete_manual"),
                                   {"deadline": "2026-02-10 23:59"})[0], "hold")
 
+    def test_verified_cycle_addition_applies(self):
+        self.assertEqual(R.decide(
+            "VERIFIED",
+            prop({"deadline": ["2026-02-10 23:59", "2026-03-01 23:59"]}),
+            {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "apply")
+
+    def test_deadline_deletion_is_always_held(self):
+        for value in (None, [], [None]):
+            with self.subTest(value=value):
+                self.assertEqual(R.decide(
+                    "VERIFIED", prop({"deadline": value}),
+                    {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0],
+                    "hold")
+
+    def test_abstract_deadline_deletion_is_always_held(self):
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"abstract_deadline": None}),
+            {"abstract_deadline": "2026-02-01 23:59",
+             "deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "hold")
+
+    def test_tba_cannot_remove_a_concrete_deadline(self):
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"deadline": "TBA"}),
+            {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "hold")
+
+    def test_extension_at_thirty_days_applies(self):
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"deadline": "2026-03-12 23:59"}),
+            {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "apply")
+
+    def test_extension_beyond_thirty_days_is_held(self):
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"deadline": "2026-03-13 23:59"}),
+            {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "hold")
+
+    def test_cycle_addition_cannot_bypass_later_cap(self):
+        self.assertEqual(R.decide(
+            "VERIFIED",
+            prop({"deadline": ["2026-02-10 23:59", "2026-06-10 23:59"]}),
+            {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "hold")
+
+    def test_replacement_with_fewer_cycles_cannot_bypass_cap(self):
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"deadline": "2026-09-10 23:59"}),
+            {"deadline": ["2026-02-10 23:59", "2026-06-10 23:59"],
+             "timezone": "AoE"})[0], "hold")
+
+    def test_dropping_one_close_cycle_is_still_a_deletion(self):
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"deadline": "2026-02-10 23:59"}),
+            {"deadline": ["2026-02-10 23:59", "2026-03-01 23:59"],
+             "timezone": "AoE"})[0], "hold")
+
+    def test_unchanged_cycles_do_not_cross_compare_against_each_other(self):
+        deadlines = ["2026-02-10 23:59", "2026-09-10 23:59"]
+        self.assertEqual(R.decide(
+            "VERIFIED", prop({"deadline": deadlines}),
+            {"deadline": deadlines, "timezone": "AoE"})[0], "apply")
+
+    def test_huge_cycle_count_change_is_held(self):
+        self.assertEqual(R.decide(
+            "VERIFIED",
+            prop({"deadline": ["2025-01-01 23:59", "2027-12-31 23:59"]}),
+            {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0], "hold")
+
     def test_a_huge_earlier_move_is_held(self):
         # Safe direction, but a shift this large is more likely a wrong-cycle
         # pick than a real correction.
         self.assertEqual(R.decide("VERIFIED", prop({"deadline": "2025-06-01 23:59"}),
                                   {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0],
                          "hold")
+
+    def test_a_huge_later_move_is_held(self):
+        self.assertEqual(R.decide("VERIFIED", prop({"deadline": "2026-08-15 23:59"}),
+                                  {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0],
+                         "hold")
+
+    def test_existing_safe_earlier_window_is_retained(self):
+        self.assertEqual(R.decide("VERIFIED", prop({"deadline": "2025-11-12 23:59"}),
+                                  {"deadline": "2026-02-10 23:59", "timezone": "AoE"})[0],
+                         "apply")
 
     def test_metadata_only_change_applies(self):
         self.assertEqual(R.decide("VERIFIED", prop({"place": "Lisbon, Portugal"}),

@@ -6,10 +6,11 @@ validates those proposals and writes the accepted ones. Splitting it that way
 means the model's output is machine-checkable, per-proposal accept/reject is
 trivial, and a whole class of YAML and merge errors cannot happen at all.
 
-manual.yml is JOINTLY OWNED - humans write entries here too - so the guiding
-rule throughout is: never destroy a human's work. Before any modification the
-file must round-trip through parse/render byte-for-byte; on mismatch this
-program refuses rather than rewriting under a misparse.
+manual.yml is the pipeline's persistent override layer and may contain legacy
+curated entries. The guiding rule throughout is: never destroy existing work.
+Before any modification the file must round-trip through parse/render
+byte-for-byte; on mismatch this program refuses rather than rewriting under a
+misparse.
 
 Usage:
   apply_proposals.py --proposals audit-proposals.json --ungated
@@ -17,44 +18,50 @@ Usage:
 
 Exactly one of --verdicts / --ungated is required.
 
-With --verdicts, a proposal is applied only if the gate VERIFIED it AND the
-change is safe-direction (risk_policy): it moves the deadline earlier, leaves it
-unchanged, or fills a field that was absent. Anything that moves the effective
-instant LATER is held for a human, because too-early costs hurried hours and
-too-late costs the paper.
+With --verdicts, a proposal is applied only if the gate VERIFIED it and it stays
+inside the deterministic one-run safety bounds in risk_policy. Identical
+verified claims outside those bounds promote after two distinct weekly audit
+dates. Other proposals are deferred with their existing data intact and kept on
+later watchlists; they never require a person to edit conference data.
 
---ungated skips the gate entirely and is correct only while the result still
-goes to a human as a pull request; it is spelled out so nobody enables it by
-accident.
+--ungated skips the gate entirely. It exists for local diagnostics and is
+spelled out so it cannot be enabled accidentally by the publishing workflow.
 
 Exit codes: 0 = applied cleanly (possibly nothing to do); 1 = refused, nothing
-written; 3 = applied, but some proposals were rejected (see the report).
+written; 3 = applied, but some proposals were malformed (see the report).
 """
 
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import datetime as dt
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import audit_state as AS  # noqa: E402
 import risk_policy  # noqa: E402
 import update_deadlines as U  # noqa: E402
 
 MANUAL_PATH = U.MANUAL_PATH
+AUDIT_STATE_PATH = AS.STATE_PATH
 MAX_RETAINED_CITATIONS = 3
 DEFAULT_MAX_CHANGES = 8
 ACTIONS = ("upsert_manual", "create_record", "delete_manual", "no_change")
 WATCHLIST_REASONS = ("deadline-within-45-days", "tba-upcoming-cycle",
                      "manual-override-active", "cross-source-disagreement",
-                     "stale-placeholder-note", "coverage-gap", "tba-metadata")
+                     "stale-placeholder-note", "coverage-gap", "tba-metadata",
+                     "audit-deferred", "scheduled-full-audit")
+UNVERIFIABLE_CAUSES = ("not_checked", "no_official_page", "fetch_blocked",
+                       "page_ambiguous", "javascript_only", "pdf_only")
 
 DEFAULT_PREAMBLE = [
     "# Manual overrides have the highest priority (priority 0 in deadline-tracker.js).",
-    "# Add confirmed CFP data here when upstream trackers are wrong or missing;",
+    "# The autonomous audit stores confirmed CFP data here when trackers differ;",
     "# every entry MUST cite the official source it was verified against.",
 ]
 
@@ -152,6 +159,28 @@ def render_manual(mf):
     if mf.epilogue:
         parts.append("\n".join(mf.epilogue))
     return "\n\n".join(parts) + "\n"
+
+
+def write_manual_atomic(text):
+    """Replace manual.yml atomically so an interrupted write cannot truncate it."""
+    MANUAL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp = MANUAL_PATH.with_name(MANUAL_PATH.name + ".tmp")
+    try:
+        tmp.write_text(text, encoding="utf-8")
+        os.replace(tmp, MANUAL_PATH)
+    finally:
+        try:
+            tmp.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
+def restore_manual(text, existed):
+    """Restore the exact pre-run state, including absence of the file."""
+    if existed:
+        write_manual_atomic(text)
+    else:
+        MANUAL_PATH.unlink(missing_ok=True)
 
 
 def assert_round_trip(text):
@@ -281,6 +310,47 @@ def coverage(doc, watchlist_path):
     return len(want), sorted(want - seen)
 
 
+def exact_coverage(doc, watchlist_path):
+    """Return exact-once coverage violations for a completed autonomous audit."""
+    try:
+        items = json.loads(Path(watchlist_path).read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        return [f"watchlist unreadable ({exc})"]
+    expected = Counter((i.get("title"), i.get("year")) for i in items)
+    accounted = list(doc.get("proposals") or []) + list(doc.get("unverifiable") or [])
+    observed = Counter((i.get("title"), i.get("year")) for i in accounted
+                       if isinstance(i, dict))
+    problems = []
+    order = lambda item: (str(item[0][0]), str(item[0][1]))
+    for key, count in sorted((expected - observed).items(), key=order):
+        problems.append(f"missing {key[0]} {key[1]} ({count})")
+    for key, count in sorted((observed - expected).items(), key=order):
+        problems.append(f"unexpected {key[0]} {key[1]} ({count})")
+    for key in sorted(expected.keys() & observed.keys(), key=lambda x: (str(x[0]), str(x[1]))):
+        if observed[key] != expected[key]:
+            problems.append(f"{key[0]} {key[1]} appears {observed[key]} times; expected once")
+    return problems
+
+
+def watchlist_by_identity(watchlist_path):
+    """Load the immutable prepare-stage watchlist as an exact identity map."""
+    items = json.loads(Path(watchlist_path).read_text(encoding="utf-8"))
+    if not isinstance(items, list):
+        raise ValueError("watchlist must be a JSON array")
+    out = {}
+    for index, item in enumerate(items):
+        if not isinstance(item, dict):
+            raise ValueError(f"watchlist[{index}] is not an object")
+        key = (item.get("title"), item.get("year"))
+        if not isinstance(key[0], str) or not isinstance(key[1], int) \
+                or isinstance(key[1], bool):
+            raise ValueError(f"watchlist[{index}] has an invalid identity")
+        if key in out:
+            raise ValueError(f"duplicate watchlist identity: {key[0]} {key[1]}")
+        out[key] = item
+    return out
+
+
 def _err(errors, pid, msg):
     errors.append(f"{pid}: {msg}")
 
@@ -321,7 +391,7 @@ def validate_proposal(p, targets_by_key, errors):
     # from not having looked - which is how a lazy run scores full coverage.
 
     url = p.get("source_url", "")
-    if not re.match(r"^https?://", str(url)):
+    if not isinstance(url, str) or not re.match(r"^https?://", url):
         _err(errors, pid, "source_url must be an http(s) URL")
         return False
     if U.clean(p.get("reason")) == "":
@@ -369,12 +439,35 @@ def validate_proposal(p, targets_by_key, errors):
                                   "the verbatim block that would contain it")
                 ok = False
             continue
-        if not claim.get("evidence"):
+        if name in ("deadline", "abstract_deadline"):
+            if not isinstance(value, (str, list)):
+                _err(errors, pid, f"{name} value must be a string or list of strings")
+                ok = False
+                continue
+            if isinstance(value, list) and (not value or len(value) > 8):
+                _err(errors, pid, f"{name} must contain 1..8 cycles")
+                ok = False
+                continue
+            allowed_item = lambda item: isinstance(item, str) or (
+                name == "abstract_deadline" and item is None
+            )
+            if any(not allowed_item(item) for item in U.as_list(value)):
+                _err(errors, pid, f"{name} cycles must be strings"
+                                  + (" or null" if name == "abstract_deadline" else ""))
+                ok = False
+                continue
+        elif not isinstance(value, str):
+            _err(errors, pid, f"field {name!r} value must be a string")
+            ok = False
+            continue
+        evidence = claim.get("evidence")
+        if not isinstance(evidence, list) or not evidence:
             _err(errors, pid, f"field {name!r} has no evidence")
             ok = False
             continue
-        for ev in claim["evidence"]:
-            if len(U.clean(ev.get("quote"))) < 8:
+        for ev in evidence:
+            if not isinstance(ev, dict) or not isinstance(ev.get("quote"), str) \
+                    or len(U.clean(ev.get("quote"))) < 8:
                 _err(errors, pid, f"field {name!r} has an empty or trivial quote")
                 ok = False
         if name == "note":
@@ -394,9 +487,39 @@ def validate_proposal(p, targets_by_key, errors):
         if name in ("deadline", "abstract_deadline"):
             for v in U.as_list(value):
                 if v is not None and str(v).upper() not in ("TBA", "TBD") \
-                        and not U.DEADLINE_RE.match(str(v)):
+                        and not U.valid_deadline(v):
                     _err(errors, pid, f"{name} {v!r} must be 'YYYY-MM-DD HH:MM'")
                     ok = False
+    return ok
+
+
+def validate_unverifiable(items, targets_by_key, errors):
+    """Validate negative/deferral outcomes just as strictly as proposals."""
+    ok = True
+    for index, item in enumerate(items or []):
+        label = f"unverifiable[{index}]"
+        if not isinstance(item, dict):
+            errors.append(f"{label}: not an object")
+            ok = False
+            continue
+        title, year, cause = item.get("title"), item.get("year"), item.get("cause")
+        if title not in targets_by_key:
+            errors.append(f"{label}: title {title!r} is not a canonical key")
+            ok = False
+        if not isinstance(year, int) or isinstance(year, bool) or not U.FROM_YEAR <= year <= U.TO_YEAR:
+            errors.append(f"{label}: year {year!r} is outside the rendered window")
+            ok = False
+        if cause not in UNVERIFIABLE_CAUSES:
+            errors.append(f"{label}: unknown cause {cause!r}")
+            ok = False
+        attempted = item.get("attempted")
+        if cause != "not_checked":
+            if not isinstance(attempted, list) or not attempted:
+                errors.append(f"{label}: cause {cause!r} requires attempted official URL(s)")
+                ok = False
+            elif any(not re.match(r"^https?://", str(url)) for url in attempted):
+                errors.append(f"{label}: attempted entries must be http(s) URLs")
+                ok = False
     return ok
 
 
@@ -429,6 +552,131 @@ def normalise_fields(fields):
     return out
 
 
+def fields_match_current(fields, current_record):
+    """Whether every proposed field already has the rendered value.
+
+    This comparison deliberately uses the updater's canonical form so scalar
+    versus one-item-list, AoE versus UTC-12, and seconds versus minute precision
+    are treated the same.  A ``None`` proposal is a deletion and only matches
+    when the rendered field is already absent.
+    """
+    current = U.canon_record(current_record or {})
+    for name, value in normalise_fields(fields).items():
+        if value is None:
+            if name in current:
+                return False
+            continue
+        proposed = U.canon_record({name: value})
+        if proposed.get(name) != current.get(name):
+            return False
+    return True
+
+
+def effective_current_records(existing_files, manual):
+    """Frontend-effective records: generated data overlaid by priority-0 manual."""
+    current = {}
+    for _, entry in existing_files.items():
+        for item in entry.get("items") or ():
+            rec = item.get("data") or {}
+            if isinstance(rec.get("year"), int):
+                current[(rec.get("title"), rec["year"])] = dict(rec)
+    for (title, year), override in manual.items():
+        rec = current.get((title, year), {"title": title, "year": year})
+        U.apply_manual_override(rec, override)
+        current[(title, year)] = rec
+    return current
+
+
+def verdict_reason(verdict):
+    """Compact, actionable diagnostics from verify_citations' full verdict."""
+    if not verdict:
+        return "citation verdict missing"
+    detail = verdict.get("detail") or {}
+    gate = verdict.get("gate") or detail.get("status") or verdict.get("status", "unknown")
+    reasons = []
+    if detail.get("reason"):
+        reasons.append(str(detail["reason"]))
+    for name, result in (detail.get("fields") or {}).items():
+        if result.get("status") == "VERIFIED":
+            continue
+        why = result.get("reason") or result.get("status") or "not verified"
+        reasons.append(f"{name}: {why}")
+    suffix = "; ".join(reasons)
+    return f"gate {gate}" + (f" ({suffix})" if suffix else "")
+
+
+DEADLINE_ATOMIC_FIELDS = frozenset(("deadline", "abstract_deadline", "timezone"))
+
+
+def split_verified_fields(proposal, verdict):
+    """Split a proposal into independently verified and pending parts.
+
+    One weak metadata quote must not discard an otherwise grounded correction.
+    Deadline fields and timezone stay atomic whenever more than one of them is
+    proposed, because applying only half can move the effective instant.  Every
+    cycle of a multi-cycle field is already atomic inside verify_citations.
+
+    Per-field results are authoritative even when the verdict's top-level
+    ``status`` says accepted.  This is deliberately fail-closed: a historical
+    verifier bug marked VERIFIED+UNCHECKED as globally VERIFIED, and trusting
+    that shortcut applied the unchecked field too.
+    """
+    if proposal.get("action") == "delete_manual":
+        # This action has no page fields; its global verdict is the only gate.
+        if (verdict or {}).get("status") == "accepted":
+            return proposal, None
+        return None, proposal
+
+    fields = proposal.get("fields") or {}
+    detail = (verdict or {}).get("detail") or verdict or {}
+    results = detail.get("fields") or {}
+    verified = {name for name in fields
+                if (results.get(name) or {}).get("status") == "VERIFIED"}
+
+    coupled = set(fields) & DEADLINE_ATOMIC_FIELDS
+    if len(coupled) > 1 and not coupled.issubset(verified):
+        verified -= coupled
+
+    # A partial create without its paper deadline is not a usable record.
+    if proposal.get("action") == "create_record" and "deadline" not in verified:
+        verified.clear()
+
+    if not verified:
+        return None, proposal
+    if verified == set(fields):
+        return proposal, None
+
+    accepted = dict(proposal)
+    accepted["fields"] = {name: fields[name] for name in fields if name in verified}
+    pending = dict(proposal)
+    pending["fields"] = {name: fields[name] for name in fields if name not in verified}
+    return accepted, pending
+
+
+def proposal_state_scope(proposal):
+    """Value-free persistent-state scope for a validated proposal."""
+    if proposal.get("action") == "delete_manual":
+        return {AS.DELETE_SCOPE}
+    return set((proposal.get("fields") or {}).keys())
+
+
+def bound_autonomous_changes(proposals, limit):
+    """Take a stable per-run mutation budget and return deferred overflow.
+
+    Refusing the whole run when a yearly rollover produced many legitimate
+    corrections made the safety rail non-convergent: the same oversized set
+    failed every week.  Watchlist order already puts urgent records first, so a
+    stable prefix makes bounded progress without weakening any evidence gate.
+    """
+    if limit < 0:
+        raise ValueError("max changes must be non-negative")
+    accepted = list(proposals[:limit])
+    reason = (f"per-run autonomous change budget ({limit}) exhausted; "
+              "scheduled for a later audit")
+    deferred = [(proposal, reason) for proposal in proposals[limit:]]
+    return accepted, deferred
+
+
 def primary_quote(fields):
     for claim in fields.values():
         for ev in claim.get("evidence") or []:
@@ -442,8 +690,10 @@ def primary_quote(fields):
     return ""
 
 
-def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, errors):
+def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, errors,
+                    approved_delete_ids=()):
     applied, skipped = [], []
+    approved_delete_ids = set(approved_delete_ids)
     for p in proposals:
         pid = p["id"]
         action, title, year = p["action"], p["title"], p["year"]
@@ -455,20 +705,12 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
             if idx is None:
                 skipped.append((pid, "no manual.yml entry to delete"))
                 continue
-            # Nothing verifies this. The gate returns VERIFIED for
-            # delete_manual on the grounds that "the updater checks upstream
-            # agreement" - and no code path actually calls
-            # manual_matches_upstream before the chunk is removed. Deleting the
-            # real NDSS override would let the upstream FABRICATED abstract
-            # deadline back onto the live page.
-            #
-            # AUTO-APPLY-DESIGN.md 6 requires agreement on two consecutive runs
-            # from every source covering the venue. Until that exists, removal
-            # stays a human decision.
-            skipped.append((pid, "delete_manual is not applied automatically: "
-                                 "nothing yet verifies that upstream really agrees "
-                                 "(see AUTO-APPLY-DESIGN.md 6). Remove the entry by "
-                                 "hand if the run summary says it is obsolete"))
+            if pid not in approved_delete_ids:
+                skipped.append((pid, "delete_manual is not applied automatically "
+                                     "without two-run deterministic upstream agreement"))
+                continue
+            del mf.chunks[idx]
+            applied.append((pid, f"retired obsolete override for {title} {year}"))
             continue
 
         new_fields = normalise_fields(p["fields"])
@@ -477,6 +719,7 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
         merged = {k: v for k, v in existing.items() if k not in ("title", "year")}
         merged.update(new_fields)          # unmentioned human fields survive
         record = {"title": title, "year": year, **merged}
+        U.default_timezone(record)
 
         if not validate_merged(record, canonical_keys, pid, errors):
             skipped.append((pid, "failed record validation"))
@@ -507,21 +750,21 @@ def write_report(path, applied, skipped, errors, proposals, gated, held=()):
     if not gated:
         lines += ["> [!NOTE]",
                   "> No automated verification gate ran on these proposals - every"
-                  " citation below still needs a human to open the link and check"
-                  " it says what the entry claims.", ""]
+                  " proposal is ineligible for autonomous publication.", ""]
     if applied:
         lines += [f"**Applied ({len(applied)})**", ""]
         lines += [f"- {desc}" for _, desc in applied] + [""]
     if held:
-        lines += [f"**Held for review ({len(held)})** — the evidence gate did not",
-                  "confirm these. It has a known false-negative rate, so check the",
-                  "citation yourself before discarding: if the page says what the",
-                  "proposal claims, apply it by hand and tell us which check misfired.",
+        lines += [f"**Deferred automatically ({len(held)})** — the evidence gate or",
+                  "a safety bound did not confirm these. Existing values were kept;",
+                  "the scheduler will retry them on a later autonomous audit.",
                   ""]
         for p, why in held:
             fields = ", ".join(f"`{k}` → `{(v or {}).get('value')}`"
                                for k, v in (p.get("fields") or {}).items())
-            lines.append(f"- **{p.get('title')} {p.get('year')}** ({why}): {fields}")
+            action = p.get("action") or "unknown"
+            lines.append(f"- **{p.get('title')} {p.get('year')}** "
+                         f"(`{action}`; {why}): {fields}")
             if p.get("source_url"):
                 lines.append(f"  - source: {p['source_url']}")
             for k, v in (p.get("fields") or {}).items():
@@ -543,15 +786,25 @@ def write_report(path, applied, skipped, errors, proposals, gated, held=()):
 
 
 def main() -> int:
+    # The CLI is also invoked repeatedly in unit/integration processes. Do not
+    # let updater diagnostics from an earlier invocation poison this one.
+    U.health.clear()
+    U.warnings.clear()
+    U.actions.clear()
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--proposals", default="audit-proposals.json")
     ap.add_argument("--verdicts")
     ap.add_argument("--ungated", action="store_true",
-                    help="apply without a verification gate (PR-reviewed mode)")
+                    help="apply without a verification gate (local diagnostics only)")
     ap.add_argument("--report", default="audit-summary.md")
     ap.add_argument("--max-changes", type=int, default=DEFAULT_MAX_CHANGES)
     ap.add_argument("--watchlist",
                     help="report which watchlist records went unaddressed")
+    ap.add_argument("--require-complete", action="store_true",
+                    help="fail validation if any watchlist record is missing or not_checked")
+    ap.add_argument("--require-some-proposal", action="store_true",
+                    help="for a non-empty watchlist, fail validation when every "
+                         "outcome is unverifiable (used to trigger one bounded retry)")
     ap.add_argument("--seed-from-watchlist", metavar="WATCHLIST",
                     help="write a skeleton proposals file marking every "
                          "watchlist record not_checked, then exit")
@@ -565,6 +818,10 @@ def main() -> int:
                                 args.audit_date)
         print(f"seeded {args.proposals} with {n} record(s) marked not_checked")
         return 0
+
+    if args.max_changes < 0:
+        print("APPLY REFUSED: --max-changes must be non-negative")
+        return 1
 
     if not args.validate_only and bool(args.verdicts) == bool(args.ungated):
         print("APPLY REFUSED: pass exactly one of --verdicts or --ungated")
@@ -592,46 +849,168 @@ def main() -> int:
 
     errors: list[str] = []
     held: list = []
+    pre_skipped: list = []
+    approved_delete_ids: set[str] = set()
+    state = None
+    state_observed: set[AS.ClaimRef] = set()
+    state_audited: dict[str, set[str] | None] = {}
+    immutable_watchlist = {}
+    audit_date = doc.get("audit_date") or dt.date.today().isoformat()
     proposals = [p for p in doc["proposals"]
                  if isinstance(p, dict) and validate_proposal(p, targets_by_key, errors)]
+    validate_unverifiable(doc.get("unverifiable") or [], targets_by_key, errors)
+
+    # Never perform a partial transaction from a mixed valid/malformed model
+    # document. The workflow already treats any schema error as fatal; refusing
+    # before manual/state mutation also keeps local invocations byte-identical.
+    if errors and not args.validate_only:
+        for error in errors:
+            print(f"  [!] rejected {error}")
+        print("APPLY REFUSED: proposal document contains validation errors")
+        return 1
+
+    # Persistence is enabled only for the production-shaped gated invocation,
+    # which always supplies the immutable prepare-stage watchlist. Local
+    # diagnostics without a watchlist retain the one-run safety policy and do
+    # not write repository state.
+    if args.verdicts and args.watchlist:
+        try:
+            immutable_watchlist = watchlist_by_identity(args.watchlist)
+            state = AS.load(AUDIT_STATE_PATH)
+            AS.prune_years(state, U.FROM_YEAR, U.TO_YEAR)
+            for item in doc.get("unverifiable") or []:
+                if isinstance(item, dict) and item.get("cause") != "not_checked":
+                    AS.mark_retry(state, item.get("title"), item.get("year"),
+                                  audit_date, "unverifiable")
+                    state_audited[AS.identity_key(item.get("title"),
+                                                  item.get("year"))] = None
+        except (AS.StateError, OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"APPLY REFUSED: persistent audit state/watchlist unusable ({exc})")
+            return 1
 
     if args.verdicts:
         try:
             verdicts = json.loads(Path(args.verdicts).read_text(encoding="utf-8"))
-            status = {v["id"]: v.get("status") for v in verdicts.get("verdicts", [])}
+            verdict_by_id = {v["id"]: v for v in verdicts.get("verdicts", [])}
         except Exception as exc:  # noqa: BLE001 - fail closed, never open
             print(f"APPLY REFUSED: verdict file unusable ({exc})")
             return 1
-        # A gate rejection is a HOLD, not an error. The gate has a measured
-        # false-negative rate on live data - it wrongly refused SAC 2027's real
-        # deadline because the row also mentions SRC abstracts - so filing
-        # rejections as bare ids under "Rejected" destroys roughly one correct
-        # correction in ten, silently, and leaves a human nothing to act on.
-        # Held proposals keep their venue, values and source so the PR is
-        # reviewable.
-        # Two questions, asked in order. The gate answers "does the page say
-        # this"; risk_policy answers "what does being wrong cost". A verified
-        # change that moves a deadline LATER still waits for a human, because
-        # that is the direction that costs someone their paper.
-        current = {}
-        for _, entry in U.load_existing().items():
-            for it in entry["items"]:
-                rec = it["data"]
-                if isinstance(rec.get("year"), int):
-                    current[(rec.get("title"), rec["year"])] = rec
+        # A rejected citation is a DEFER, not an error and never a request for a
+        # person to edit YAML.  Exact-current findings are resolved before the
+        # gate decision: there is no mutation to protect, and issue #9 showed
+        # that treating rejected confirmations as corrections creates pure
+        # noise.  Real mutations retain the old value and are retried later.
+        current_manual = U.load_manual(targets)
+        if U.health:
+            print("APPLY REFUSED: manual.yml is invalid; current effective values "
+                  "cannot be established")
+            return 1
+        current = effective_current_records(U.load_existing(), current_manual)
         kept = []
-        for p in proposals:
-            gate = "accepted" if status.get(p["id"]) == "accepted" else \
-                   str(status.get(p["id"], "missing"))
-            if gate != "accepted":
-                held.append((p, f"gate said {gate}"))
-                continue
-            what, why = risk_policy.decide(
-                "VERIFIED", p, current.get((p.get("title"), p.get("year"))) or {})
-            if what == "apply":
-                kept.append(p)
-            else:
-                held.append((p, why))
+        try:
+            for p in proposals:
+                identity = (p.get("title"), p.get("year"))
+                state_key = AS.identity_key(*identity) if state is not None else None
+                if state is not None:
+                    if state_key not in state_audited:
+                        state_audited[state_key] = set(proposal_state_scope(p))
+                    elif state_audited[state_key] is not None:
+                        state_audited[state_key].update(proposal_state_scope(p))
+                current_record = current.get(identity) or {}
+                verdict = verdict_by_id.get(p["id"])
+                # Always consult field verdicts. A top-level accepted flag is
+                # not evidence for every field and must never bypass this
+                # partition.
+                candidate, pending = split_verified_fields(p, verdict)
+                if pending is not None:
+                    held.append((pending, verdict_reason(verdict)))
+                    if state is not None:
+                        AS.mark_retry_fields(
+                            state, *identity, audit_date, "citation",
+                            proposal_state_scope(pending))
+                if candidate is None:
+                    continue
+
+                if candidate.get("action") == "delete_manual":
+                    marker = (immutable_watchlist.get(identity) or {}).get(
+                        "upstream_agreement")
+                    marker_ok = (
+                        isinstance(marker, dict)
+                        and marker.get("agrees") is True
+                        and marker.get("all_fetches_healthy") is True
+                        and isinstance(marker.get("sources"), list)
+                        and bool(marker["sources"])
+                        and all(isinstance(src, str) and src for src in marker["sources"])
+                        and isinstance(marker.get("basis_digest"), str)
+                        and re.fullmatch(r"sha256:[0-9a-f]{64}",
+                                         marker["basis_digest"]) is not None
+                    )
+                    if state is None or not marker_ok:
+                        why = ("delete_manual requires complete deterministic agreement "
+                               "from every healthy configured upstream source")
+                        held.append((candidate, why))
+                        if state is not None:
+                            AS.mark_retry_fields(
+                                state, *identity, audit_date, "citation",
+                                proposal_state_scope(candidate))
+                        continue
+                    promoted, observed_ref = AS.observe_verified_claim(
+                        state, candidate,
+                        {"upstream_agreement": marker["basis_digest"]},
+                        audit_date)
+                    state_observed.add(observed_ref)
+                    if promoted:
+                        kept.append(candidate)
+                        approved_delete_ids.add(candidate["id"])
+                    else:
+                        held.append((candidate,
+                                     "awaiting the second distinct weekly upstream-agreement run"))
+                    continue
+
+                matches = fields_match_current(candidate.get("fields") or {}, current_record)
+                if candidate.get("action") == "no_change":
+                    if matches:
+                        pre_skipped.append((candidate["id"], "verified current values"))
+                        if state is not None:
+                            AS.resolve_fields(
+                                state, *identity, proposal_state_scope(candidate))
+                    else:
+                        held.append((candidate,
+                                     "non-mutating confirmation disagrees with the current record"))
+                        if state is not None:
+                            AS.mark_retry_fields(
+                                state, *identity, audit_date, "citation",
+                                proposal_state_scope(candidate))
+                    continue
+                if candidate.get("action") == "upsert_manual" and matches:
+                    pre_skipped.append((candidate["id"],
+                                        "verified fields already match rendered data (no-op)"))
+                    if state is not None:
+                        AS.resolve_fields(
+                            state, *identity, proposal_state_scope(candidate))
+                    continue
+                what, why = risk_policy.decide(
+                    "VERIFIED", candidate, current_record)
+                if what == "apply":
+                    kept.append(candidate)
+                elif state is not None:
+                    promoted, observed_ref = AS.observe_verified_claim(
+                        state, candidate, normalise_fields(candidate["fields"]),
+                        audit_date)
+                    state_observed.add(observed_ref)
+                    if promoted:
+                        kept.append(candidate)
+                    else:
+                        held.append((candidate, why + "; awaiting a second distinct verified run"))
+                else:
+                    held.append((candidate, why))
+
+            if state is not None:
+                AS.finish_corroboration_claims(
+                    state, state_audited, state_observed)
+        except AS.StateError as exc:
+            print(f"APPLY REFUSED: cannot update persistent audit state ({exc})")
+            return 1
         proposals = kept
 
     if args.validate_only:
@@ -647,10 +1026,14 @@ def main() -> int:
         examined, total, causes = audit_effort(doc)
         if causes:
             print("unverifiable: " + ", ".join(f"{k}={v}" for k, v in sorted(causes.items())))
+        incomplete = False
+        retry_needed = False
+        watchlist_total = None
         if args.watchlist:
             cov = coverage(doc, args.watchlist)
             if cov:
                 wl_total, missing = cov
+                watchlist_total = wl_total
                 print(f"coverage: {wl_total - len(missing)}/{wl_total} watchlist "
                       "record(s) accounted for")
                 for title, year in missing[:20]:
@@ -658,15 +1041,44 @@ def main() -> int:
                 if missing:
                     print("  (a record the auditor neither proposed for nor listed "
                           "as unverifiable was silently skipped)")
+                    incomplete = True
+        if args.require_some_proposal and watchlist_total \
+                and not doc["proposals"]:
+            print("  [!] retry requested: a non-empty shard produced no positive "
+                  "proposal or no_change finding")
+            retry_needed = True
+        if args.require_complete and causes.get("not_checked", 0):
+            print(f"  [!] incomplete audit: {causes['not_checked']} record(s) remain not_checked")
+            incomplete = True
+        if args.require_complete and args.watchlist:
+            for problem in exact_coverage(doc, args.watchlist):
+                print(f"  [!] incomplete audit: {problem}")
+                incomplete = True
         if total:
             print(f"examined: {examined}/{total} record(s) actually checked")
             if examined == 0:
                 print("  [!] the auditor examined nothing: every record is still "
                       "marked not_checked from the seed")
                 return 1
-        return 1 if errors else 0
+        return 1 if errors or retry_needed \
+            or (args.require_complete and incomplete) else 0
 
-    original = MANUAL_PATH.read_text(encoding="utf-8") if MANUAL_PATH.exists() else ""
+    if args.verdicts:
+        proposals, budget_deferred = bound_autonomous_changes(
+            proposals, args.max_changes)
+        held.extend(budget_deferred)
+        if state is not None:
+            try:
+                for proposal, _ in budget_deferred:
+                    AS.mark_retry_fields(
+                        state, proposal.get("title"), proposal.get("year"),
+                        audit_date, "change-budget", proposal_state_scope(proposal))
+            except AS.StateError as exc:
+                print(f"APPLY REFUSED: cannot persist budget deferral ({exc})")
+                return 1
+
+    manual_existed = MANUAL_PATH.exists()
+    original = MANUAL_PATH.read_text(encoding="utf-8") if manual_existed else ""
     if original:
         problem = assert_round_trip(original)
         if problem:
@@ -676,27 +1088,70 @@ def main() -> int:
     else:
         mf = ManualFile(DEFAULT_PREAMBLE, [])
 
-    audit_date = doc.get("audit_date") or dt.date.today().isoformat()
-    applied, skipped = apply_proposals(proposals, mf, audit_date, canonical_keys,
-                                       targets_by_key, errors)
+    applied, apply_skipped = apply_proposals(
+        proposals, mf, audit_date, canonical_keys, targets_by_key, errors,
+        approved_delete_ids)
+    skipped = pre_skipped + apply_skipped
+
+    if state is not None:
+        proposal_scopes = {
+            p.get("id"): ((p.get("title"), p.get("year")),
+                          proposal_state_scope(p))
+            for p in proposals
+        }
+        try:
+            # pre_skipped candidates were resolved inline using their exact
+            # verified fragment. Only outcomes from the kept candidate list
+            # belong to this id-to-scope map.
+            for pid, _ in applied + apply_skipped:
+                scoped = proposal_scopes.get(pid)
+                if scoped:
+                    identity, fields = scoped
+                    AS.resolve_fields(state, *identity, fields)
+        except AS.StateError as exc:
+            print(f"APPLY REFUSED: cannot resolve persistent audit state ({exc})")
+            return 1
 
     if len(applied) > args.max_changes:
-        print(f"APPLY REFUSED: {len(applied)} changes exceeds --max-changes "
-              f"{args.max_changes}; a week wanting this many corrections is a week "
-              "something upstream broke")
+        print(f"APPLY REFUSED: internal change-budget violation: {len(applied)} "
+              f"changes exceeds --max-changes {args.max_changes}")
         return 1
 
     if applied and not args.dry_run:
-        MANUAL_PATH.write_text(render_manual(mf), encoding="utf-8")
+        try:
+            write_manual_atomic(render_manual(mf))
+        except OSError as exc:
+            print(f"APPLY REFUSED: cannot atomically write manual.yml ({exc})")
+            return 1
         U.health.clear()
         U.warnings.clear()
         U.load_manual(U.load_config())
         if U.health:
-            MANUAL_PATH.write_text(original, encoding="utf-8")
+            try:
+                restore_manual(original, manual_existed)
+            except OSError as exc:
+                print(f"APPLY REFUSED: manual.yml validation failed and rollback "
+                      f"also failed ({exc})")
+                return 1
             for h in U.health:
                 print(f"  [!] {h}")
             print("APPLY REFUSED: the written manual.yml would degrade the updater; "
                   "reverted")
+            return 1
+
+    if state is not None and not errors and not args.dry_run:
+        try:
+            AS.save(state, AUDIT_STATE_PATH)
+        except AS.StateError as exc:
+            if applied:
+                try:
+                    restore_manual(original, manual_existed)
+                except OSError as rollback_exc:
+                    print(f"APPLY REFUSED: state save and manual.yml rollback both "
+                          f"failed ({rollback_exc})")
+                    return 1
+            print(f"APPLY REFUSED: persistent audit state could not be saved ({exc}); "
+                  "manual.yml reverted")
             return 1
 
     write_report(args.report, applied, skipped, errors, doc,
@@ -706,10 +1161,10 @@ def main() -> int:
     for pid, why in skipped:
         print(f"  skipped  {pid}: {why}")
     for p, why in held:
-        print(f"  held     {p['id']}: {why}; kept for human review")
+        print(f"  deferred {p['id']}: {why}; existing data kept for automatic retry")
     for e in errors:
         print(f"  [!] rejected {e}")
-    print(f"\n{len(applied)} applied, {len(held)} held, {len(skipped)} skipped, "
+    print(f"\n{len(applied)} applied, {len(held)} deferred, {len(skipped)} skipped, "
           f"{len(errors)} rejected" + (" (dry run)" if args.dry_run else ""))
     return 3 if errors else 0
 

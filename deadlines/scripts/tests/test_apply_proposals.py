@@ -4,9 +4,9 @@
 Run: python3 deadlines/scripts/tests/test_apply_proposals.py
 
 The highest-value tests here are the round-trip and idempotence ones. manual.yml
-is jointly owned by humans and this program, so the property that actually
-matters is that a machine write never disturbs a hand-written entry - and that
-running twice changes nothing the second time.
+is pipeline-owned but contains legacy curated entries, so the property that
+actually matters is that a machine write never disturbs an existing entry - and
+that running twice changes nothing the second time.
 """
 
 import json
@@ -15,6 +15,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -121,6 +122,109 @@ class Rendering(unittest.TestCase):
         self.assertIn('  place: "Vienna, Austria"', lines)  # quoted key
 
 
+class CurrentValueMatching(unittest.TestCase):
+    def test_canonical_deadline_and_timezone_match(self):
+        fields = {
+            "deadline": claim(["2026-02-10 23:59"]),
+            "timezone": claim("AoE", "All deadlines are anywhere on Earth (AoE)."),
+        }
+        current = {"deadline": "2026-02-10 23:59:59", "timezone": "UTC-12"}
+        self.assertTrue(A.fields_match_current(fields, current))
+
+    def test_changed_field_does_not_match(self):
+        self.assertFalse(A.fields_match_current(
+            {"deadline": claim("2026-02-17 23:59")},
+            {"deadline": "2026-02-10 23:59"}))
+
+    def test_absent_field_matches_a_redundant_deletion(self):
+        self.assertTrue(A.fields_match_current(
+            {"abstract_deadline": {"value": None}},
+            {"deadline": "2026-02-10 23:59"}))
+
+    def test_manual_only_cycles_are_effective_for_risk_decisions(self):
+        manual = {("BAR", 2027): {
+            "title": "BAR", "year": 2027,
+            "deadline": ["2027-03-15 23:59", "2027-09-15 23:59"],
+            "timezone": "AoE",
+        }}
+        current = A.effective_current_records({}, manual)[("BAR", 2027)]
+        candidate = proposal(title="BAR", year=2027, fields={
+            "deadline": claim("2027-09-15 23:59")
+        })
+        action, why = A.risk_policy.decide("VERIFIED", candidate, current)
+        self.assertEqual(action, "hold")
+        self.assertIn("cycle", why)
+
+
+class FieldLevelVerdicts(unittest.TestCase):
+    def verdict(self, statuses, top="rejected"):
+        return {"status": top, "detail": {"fields": {
+            name: {"status": status, "reason": "fixture"}
+            for name, status in statuses.items()
+        }}}
+
+    def test_bad_place_does_not_discard_verified_deadline(self):
+        p = proposal(fields={"deadline": claim("2026-02-17 23:59"),
+                             "place": claim("Lisbon, Portugal")})
+        accepted, pending = A.split_verified_fields(
+            p, self.verdict({"deadline": "VERIFIED", "place": "UNCONFIRMED"}))
+        self.assertEqual(set(accepted["fields"]), {"deadline"})
+        self.assertEqual(set(pending["fields"]), {"place"})
+
+    def test_deadline_and_timezone_are_atomic(self):
+        p = proposal(fields={"deadline": claim("2026-02-17 23:59"),
+                             "timezone": claim("UTC+9")})
+        accepted, pending = A.split_verified_fields(
+            p, self.verdict({"deadline": "VERIFIED", "timezone": "UNCONFIRMED"}))
+        self.assertIsNone(accepted)
+        self.assertEqual(set(pending["fields"]), {"deadline", "timezone"})
+
+    def test_independent_metadata_can_apply_while_deadline_group_waits(self):
+        p = proposal(fields={"deadline": claim("2026-02-17 23:59"),
+                             "timezone": claim("UTC+9"),
+                             "date": claim("April 1-3, 2027")})
+        accepted, pending = A.split_verified_fields(
+            p, self.verdict({"deadline": "VERIFIED", "timezone": "UNCONFIRMED",
+                             "date": "VERIFIED"}))
+        self.assertEqual(set(accepted["fields"]), {"date"})
+        self.assertEqual(set(pending["fields"]), {"deadline", "timezone"})
+
+    def test_top_level_accepted_never_carries_an_unchecked_field(self):
+        p = proposal(fields={"deadline": claim("2026-02-17 23:59"),
+                             "note": claim("Uncheckable free-form text")})
+        accepted, pending = A.split_verified_fields(
+            p, self.verdict({"deadline": "VERIFIED", "note": "UNCHECKED"},
+                            top="accepted"))
+        self.assertEqual(set(accepted["fields"]), {"deadline"})
+        self.assertEqual(set(pending["fields"]), {"note"})
+
+    def test_deadline_abstract_and_timezone_are_one_atomic_group(self):
+        p = proposal(fields={
+            "deadline": claim("2026-02-17 23:59"),
+            "abstract_deadline": claim("2026-02-10 23:59"),
+            "timezone": claim("UTC+9"),
+            "place": claim("Lisbon, Portugal"),
+        })
+        accepted, pending = A.split_verified_fields(p, self.verdict({
+            "deadline": "VERIFIED", "abstract_deadline": "VERIFIED",
+            "timezone": "UNCHECKED", "place": "VERIFIED",
+        }, top="accepted"))
+        self.assertEqual(set(accepted["fields"]), {"place"})
+        self.assertEqual(set(pending["fields"]),
+                         {"deadline", "abstract_deadline", "timezone"})
+
+    def test_scheduled_full_audit_is_a_known_watchlist_reason(self):
+        self.assertIn("scheduled-full-audit", A.WATCHLIST_REASONS)
+        self.assertIn("audit-deferred", A.WATCHLIST_REASONS)
+
+    def test_change_budget_makes_stable_progress_and_defers_the_tail(self):
+        proposals = [proposal(title="EuroSec", year=2026 + i) for i in range(4)]
+        accepted, deferred = A.bound_autonomous_changes(proposals, 2)
+        self.assertEqual(accepted, proposals[:2])
+        self.assertEqual([item for item, _ in deferred], proposals[2:])
+        self.assertTrue(all("later audit" in reason for _, reason in deferred))
+
+
 class Applying(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
@@ -186,6 +290,61 @@ class Applying(unittest.TestCase):
         self.assertEqual(len(applied), 1)
         mf = A.parse_manual(self.path.read_text(encoding="utf-8"))
         self.assertEqual(mf.chunks[-1].key, ("DIMVA", 2026))
+        self.assertEqual(mf.chunks[-1].record()["timezone"], "AoE")
+
+    def test_main_applies_only_verified_fields_even_when_top_gate_is_accepted(self):
+        proposals_path = self.tmp / "audit-proposals.json"
+        verdicts_path = self.tmp / "audit-verdicts.json"
+        report_path = self.tmp / "audit-summary.md"
+        p = proposal(fields={
+            "place": claim("Lisbon, Portugal", "Conference venue: Lisbon, Portugal"),
+            "note": claim("Unchecked text must never reach manual.yml"),
+        })
+        proposals_path.write_text(json.dumps({
+            "audit_date": "2026-08-19", "proposals": [p], "unverifiable": []
+        }), encoding="utf-8")
+        verdicts_path.write_text(json.dumps({"verdicts": [{
+            "id": p["id"], "status": "accepted", "gate": "VERIFIED",
+            "detail": {"status": "VERIFIED", "fields": {
+                "place": {"status": "VERIFIED"},
+                "note": {"status": "UNCHECKED", "reason": "no surface form"},
+            }},
+        }]}), encoding="utf-8")
+        existing = {(2026, "system"): {"items": [{"data": {
+            "title": "EuroSec", "year": 2026,
+            "deadline": "2026-02-10 23:59", "timezone": "AoE",
+            "place": "Vienna, Austria",
+        }}]}}
+        argv = ["apply_proposals.py", "--proposals", str(proposals_path),
+                "--verdicts", str(verdicts_path), "--report", str(report_path)]
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(U, "load_existing", return_value=existing):
+            code = A.main()
+
+        text = self.path.read_text(encoding="utf-8")
+        self.assertEqual(code, 0)
+        self.assertIn('place: "Lisbon, Portugal"', text)
+        self.assertNotIn("Unchecked text must never reach manual.yml", text)
+        self.assertIn("note", report_path.read_text(encoding="utf-8"))
+
+    def test_mixed_valid_and_invalid_document_is_rejected_before_mutation(self):
+        proposals_path = self.tmp / "mixed-proposals.json"
+        report_path = self.tmp / "mixed-summary.md"
+        good = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        bad = proposal(title="DIMVA", fields={"deadline": claim("2027-02-29 23:59")})
+        proposals_path.write_text(json.dumps({
+            "audit_date": "2026-08-19", "proposals": [good, bad],
+            "unverifiable": [],
+        }), encoding="utf-8")
+        argv = ["apply_proposals.py", "--proposals", str(proposals_path),
+                "--ungated", "--report", str(report_path)]
+        before = self.path.read_bytes()
+        with mock.patch.object(sys, "argv", argv):
+            code = A.main()
+        self.assertEqual(code, 1)
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertFalse(report_path.exists())
 
     def test_delete_manual_is_never_applied_automatically(self):
         # Nothing verifies that upstream really agrees - the gate returns
@@ -221,8 +380,8 @@ class Applying(unittest.TestCase):
         self.assertIsNone(A.assert_round_trip(text))
         # audit_lint's rule: a contiguous '#' run citing a URL immediately above
         lines = text.split("\n")
-        for i, l in enumerate(lines):
-            if l.startswith("- title:"):
+        for i, line in enumerate(lines):
+            if line.startswith("- title:"):
                 run, j = [], i
                 while j - 1 >= 0 and lines[j - 1].startswith("#"):
                     j -= 1
@@ -232,8 +391,188 @@ class Applying(unittest.TestCase):
                 self.assertRegex(blob, r"https?://")
 
 
-class GateRejectionIsAHold(unittest.TestCase):
-    """A gate rejection must be reviewable, not an error.
+class PersistentPromotion(unittest.TestCase):
+    """Risky facts need two independent weekly observations, never a person."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.manual = self.tmp / "manual.yml"
+        self.manual.write_text(HUMAN_FILE, encoding="utf-8")
+        self.state = self.tmp / "audit-state.json"
+        self.proposals = self.tmp / "audit-proposals.json"
+        self.verdicts = self.tmp / "audit-verdicts.json"
+        self.watchlist = self.tmp / "watchlist.json"
+        self.report = self.tmp / "audit-summary.md"
+        self.saved = (A.MANUAL_PATH, A.AUDIT_STATE_PATH, U.MANUAL_PATH)
+        A.MANUAL_PATH = U.MANUAL_PATH = self.manual
+        A.AUDIT_STATE_PATH = self.state
+
+    def tearDown(self):
+        A.MANUAL_PATH, A.AUDIT_STATE_PATH, U.MANUAL_PATH = self.saved
+
+    def run_main(self, p, audit_date, current, marker=None, statuses=None):
+        item = {
+            "title": p["title"], "year": p["year"], "record": current,
+            "reasons": ["audit-deferred"],
+        }
+        if marker is not None:
+            item["upstream_agreement"] = marker
+        self.watchlist.write_text(json.dumps([item]), encoding="utf-8")
+        self.proposals.write_text(json.dumps({
+            "audit_date": audit_date, "watchlist_size": 1,
+            "proposals": [p], "unverifiable": [],
+        }), encoding="utf-8")
+        if p["action"] == "delete_manual":
+            verdict = {"id": p["id"], "status": "accepted", "gate": "VERIFIED"}
+        else:
+            statuses = statuses or {name: "VERIFIED" for name in p["fields"]}
+            verdict = {
+                "id": p["id"], "status": "accepted", "gate": "VERIFIED",
+                "detail": {"status": "VERIFIED", "fields": {
+                    name: {"status": statuses.get(name, "UNCONFIRMED")}
+                    for name in p["fields"]
+                }},
+            }
+        self.verdicts.write_text(
+            json.dumps({"verdicts": [verdict]}), encoding="utf-8")
+        argv = [
+            "apply_proposals.py", "--proposals", str(self.proposals),
+            "--verdicts", str(self.verdicts), "--watchlist", str(self.watchlist),
+            "--require-complete", "--report", str(self.report),
+        ]
+        existing = {(2026, "system"): {"items": [{"data": {
+            "title": p["title"], "year": p["year"], **current,
+        }}]}}
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(U, "load_existing", return_value=existing):
+            return A.main()
+
+    def test_large_shift_is_deferred_then_applied_on_second_week(self):
+        p = proposal(fields={"deadline": claim("2026-04-20 23:59")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE"}
+
+        self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+        self.assertIn('deadline: "2026-02-10 23:59"',
+                      self.manual.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        container = next(iter(saved["corroboration"].values()))
+        self.assertEqual(next(iter(container["claims"].values()))["verified_runs"], 1)
+
+        self.assertEqual(self.run_main(p, "2026-09-07", current), 0)
+        self.assertIn('deadline: "2026-04-20 23:59"',
+                      self.manual.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(saved["corroboration"], {})
+        self.assertEqual(saved["retry"], {})
+
+    def test_obsolete_override_needs_static_agreement_then_two_weeks(self):
+        p = proposal(action="delete_manual", title="NDSS", year=2026,
+                     obsolete_because="upstream_agrees")
+        current = {"deadline": "2025-08-06 23:59", "abstract_deadline": None}
+        marker = {"agrees": True, "all_fetches_healthy": True,
+                  "sources": ["ccfddl", "secdl"],
+                  "basis_digest": "sha256:" + "a" * 64}
+
+        self.assertEqual(self.run_main(p, "2026-08-31", current, marker), 0)
+        self.assertIn('title: "NDSS"', self.manual.read_text(encoding="utf-8"))
+        self.assertEqual(self.run_main(p, "2026-09-07", current, marker), 0)
+        self.assertNotIn('title: "NDSS"', self.manual.read_text(encoding="utf-8"))
+
+    def test_model_cannot_promote_delete_without_static_agreement(self):
+        p = proposal(action="delete_manual", title="NDSS", year=2026,
+                     obsolete_because="upstream_agrees")
+        current = {"deadline": "2025-08-06 23:59", "abstract_deadline": None}
+        marker = {"agrees": False, "all_fetches_healthy": True,
+                  "sources": ["ccfddl", "secdl"]}
+        self.assertEqual(self.run_main(p, "2026-08-31", current, marker), 0)
+        self.assertEqual(self.run_main(p, "2026-09-07", current, marker), 0)
+        self.assertIn('title: "NDSS"', self.manual.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(saved["corroboration"], {})
+
+    def test_state_save_failure_restores_a_previously_absent_manual_file(self):
+        self.manual.unlink()
+        p = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        with mock.patch.object(
+                A.AS, "save", side_effect=A.AS.StateError("simulated write fault")):
+            self.assertEqual(self.run_main(p, "2026-08-31", current), 1)
+        self.assertFalse(self.manual.exists())
+
+    def seed_deadline_claim(self, year, value, audit_date="2026-08-24"):
+        state = A.AS.empty_state()
+        p = proposal(title="EuroSec", year=year,
+                     fields={"deadline": claim(value)})
+        _, ref = A.AS.observe_verified_claim(
+            state, p, {"deadline": value}, audit_date)
+        A.AS.save(state, self.state)
+        return ref, A.AS.proposal_fingerprint(p, {"deadline": value})
+
+    def test_partial_current_finding_preserves_prior_year_deadline_work(self):
+        year = U.TODAY.year - 1
+        current = {"deadline": f"{year}-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        for action in ("no_change", "upsert_manual"):
+            with self.subTest(action=action):
+                self.state.unlink(missing_ok=True)
+                ref, fingerprint = self.seed_deadline_claim(
+                    year, f"{year}-04-20 23:59")
+                p = proposal(action=action, title="EuroSec", year=year,
+                             fields={"place": claim(
+                                 "Vienna, Austria", "Conference venue: Vienna, Austria")})
+                self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+
+                saved = json.loads(self.state.read_text(encoding="utf-8"))
+                claim_state = saved["corroboration"][ref.identity]["claims"][
+                    "fields:deadline"]
+                self.assertEqual(claim_state["fingerprint"], fingerprint)
+                self.assertEqual(saved["retry"][ref.identity]["fields"], ["deadline"])
+
+    def test_same_scope_no_change_resolves_old_deadline_claim(self):
+        year = U.TODAY.year - 1
+        ref, _ = self.seed_deadline_claim(year, f"{year}-04-20 23:59")
+        current = {"deadline": f"{year}-02-10 23:59", "timezone": "AoE"}
+        p = proposal(action="no_change", title="EuroSec", year=year,
+                     fields={"deadline": claim(f"{year}-02-10 23:59")})
+        self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertNotIn(ref.identity, saved["corroboration"])
+        self.assertNotIn(ref.identity, saved["retry"])
+
+    def test_promoted_deadline_keeps_pending_place_scope_and_no_model_prose(self):
+        secret_value = "UNVERIFIED_SECRET_PROSE"
+        secret_quote = "UNVERIFIED_SECRET_QUOTE_FROM_MODEL"
+        secret_url = "https://unverified.invalid/SECRET_URL"
+        secret_reason = "UNVERIFIED_SECRET_REASON"
+        p = proposal(fields={
+            "deadline": claim("2026-04-20 23:59"),
+            "place": claim(secret_value, secret_quote),
+        }, source_url=secret_url, reason=secret_reason)
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        statuses = {"deadline": "VERIFIED", "place": "UNCONFIRMED"}
+
+        self.assertEqual(
+            self.run_main(p, "2026-08-31", current, statuses=statuses), 0)
+        first_state = self.state.read_text(encoding="utf-8")
+        for secret in (secret_value, secret_quote, secret_url, secret_reason):
+            self.assertNotIn(secret, first_state)
+
+        self.assertEqual(
+            self.run_main(p, "2026-09-07", current, statuses=statuses), 0)
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        key = A.AS.identity_key("EuroSec", 2026)
+        self.assertEqual(saved["corroboration"], {})
+        self.assertEqual(saved["retry"][key]["fields"], ["place"])
+        self.assertIn('deadline: "2026-04-20 23:59"',
+                      self.manual.read_text(encoding="utf-8"))
+
+
+class GateRejectionIsDeferred(unittest.TestCase):
+    """A gate rejection is autonomous telemetry, not a request for a person.
 
     The gate has a measured false-negative rate on live data - it wrongly
     refused SAC 2027's real deadline because the row also mentions SRC
@@ -252,25 +591,25 @@ class GateRejectionIsAHold(unittest.TestCase):
                        gated=True, held=held)
         return path.read_text(encoding="utf-8")
 
-    def test_held_proposal_carries_venue_values_source_and_quote(self):
+    def test_deferred_proposal_carries_venue_values_source_and_quote(self):
         p = proposal(title="SAC", year=2027, fields={"deadline": claim(
             "2026-10-02 23:59",
             quote="October 2, 2026 (EST) Submission of regular papers")})
         p["source_url"] = "https://www.sigapp.org/sac/sac2027"
         body = self.report_for([(p, "rejected")])
-        self.assertIn("Held for review (1)", body)
+        self.assertIn("Deferred automatically (1)", body)
         self.assertIn("SAC 2027", body)
         self.assertIn("2026-10-02 23:59", body)
         self.assertIn("https://www.sigapp.org/sac/sac2027", body)
         self.assertIn("October 2, 2026 (EST)", body)
 
-    def test_the_reader_is_told_the_gate_can_be_wrong(self):
+    def test_the_scheduler_is_told_to_retry(self):
         p = proposal(fields={"deadline": claim("2026-02-17 23:59")})
         body = self.report_for([(p, "rejected")])
-        self.assertIn("false-negative", body)
+        self.assertIn("retry", body)
 
-    def test_no_held_section_when_nothing_is_held(self):
-        self.assertNotIn("Held for review", self.report_for([]))
+    def test_no_deferred_section_when_nothing_is_deferred(self):
+        self.assertNotIn("Deferred automatically", self.report_for([]))
 
 
 class Coverage(unittest.TestCase):
@@ -307,6 +646,52 @@ class Coverage(unittest.TestCase):
 
     def test_absent_watchlist_is_not_an_error(self):
         self.assertIsNone(A.coverage({"proposals": []}, self.tmp / "nope.json"))
+
+    def test_exact_coverage_accepts_each_record_once(self):
+        doc = {"proposals": [{"title": "DIMVA", "year": 2027},
+                              {"title": "RAID", "year": 2027}],
+               "unverifiable": [{"title": "SAC", "year": 2027,
+                                  "cause": "no_official_page"}]}
+        self.assertEqual(A.exact_coverage(doc, self.wl), [])
+
+    def test_exact_coverage_rejects_duplicate_and_missing_records(self):
+        doc = {"proposals": [{"title": "DIMVA", "year": 2027},
+                              {"title": "DIMVA", "year": 2027}],
+               "unverifiable": [{"title": "SAC", "year": 2027}]}
+        problems = A.exact_coverage(doc, self.wl)
+        self.assertTrue(any("appears 2 times" in p for p in problems), problems)
+        self.assertTrue(any("missing RAID 2027" in p for p in problems), problems)
+
+    def test_exact_coverage_rejects_unknown_records(self):
+        doc = {"proposals": [{"title": "DIMVA", "year": 2027},
+                              {"title": "RAID", "year": 2027}],
+               "unverifiable": [{"title": "SAC", "year": 2027},
+                                  {"title": "CCS", "year": 2027}]}
+        self.assertTrue(any("unexpected CCS 2027" in p
+                            for p in A.exact_coverage(doc, self.wl)))
+
+    def test_all_unverifiable_first_pass_requests_one_retry(self):
+        proposals = self.tmp / "all-unverifiable.json"
+        proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31",
+            "proposals": [],
+            "unverifiable": [
+                {"title": title, "year": 2027, "cause": "no_official_page",
+                 "attempted": [f"https://official.example/{title}"]}
+                for title in ("DIMVA", "SAC", "RAID")
+            ],
+        }), encoding="utf-8")
+        argv = ["apply_proposals.py", "--proposals", str(proposals),
+                "--validate-only", "--require-complete",
+                "--require-some-proposal", "--watchlist", str(self.wl)]
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 1)
+
+        # The final validation deliberately omits --require-some-proposal, so
+        # a second diligent pass that truly found no page can finish green.
+        argv.remove("--require-some-proposal")
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 0)
 
 
 class Seeding(unittest.TestCase):
@@ -372,6 +757,37 @@ class Validation(unittest.TestCase):
         ok = A.validate_proposal(p, self.targets, errors)
         return ok, errors
 
+    def check_unverifiable(self, item):
+        errors = []
+        ok = A.validate_unverifiable([item], self.targets, errors)
+        return ok, errors
+
+    def test_unverifiable_outcome_needs_a_known_cause(self):
+        ok, errors = self.check_unverifiable(
+            {"title": "SAC", "year": 2027, "cause": "model_gave_up",
+             "attempted": ["https://example.org/"]})
+        self.assertFalse(ok)
+        self.assertIn("unknown cause", errors[0])
+
+    def test_concrete_unverifiable_outcome_needs_attempted_urls(self):
+        ok, errors = self.check_unverifiable(
+            {"title": "SAC", "year": 2027, "cause": "no_official_page",
+             "attempted": []})
+        self.assertFalse(ok)
+        self.assertIn("requires attempted", errors[0])
+
+    def test_bounded_no_page_outcome_passes(self):
+        ok, errors = self.check_unverifiable(
+            {"title": "SAC", "year": 2027, "cause": "no_official_page",
+             "attempted": ["https://www.sigapp.org/sac/sac2027"]})
+        self.assertTrue(ok, errors)
+
+    def test_not_checked_is_valid_as_an_intermediate_checkpoint(self):
+        ok, errors = self.check_unverifiable(
+            {"title": "SAC", "year": 2027, "cause": "not_checked",
+             "attempted": []})
+        self.assertTrue(ok, errors)
+
     def test_alias_title_is_rejected(self):
         ok, errors = self.check(proposal(title="Euro S&P", year=2026,
                                          fields={"place": claim("Lisbon")}))
@@ -388,6 +804,20 @@ class Validation(unittest.TestCase):
         ok, errors = self.check(proposal(fields={"tier": claim("T1")}))
         self.assertFalse(ok)
         self.assertIn("not overridable", errors[0])
+
+    def test_metadata_object_cannot_be_stringified_into_public_yaml(self):
+        ok, errors = self.check(proposal(fields={
+            "place": claim({"San": "Diego"}, "Conference venue San Diego")
+        }))
+        self.assertFalse(ok)
+        self.assertTrue(any("must be a string" in error for error in errors), errors)
+
+    def test_evidence_must_be_a_list_of_quote_objects(self):
+        ok, errors = self.check(proposal(fields={"place": {
+            "value": "San Diego, USA", "evidence": "not-an-array"
+        }}))
+        self.assertFalse(ok)
+        self.assertTrue(any("has no evidence" in error for error in errors), errors)
 
     def test_timezone_deletion_is_refused(self):
         ok, errors = self.check(proposal(fields={"timezone": {
@@ -408,6 +838,13 @@ class Validation(unittest.TestCase):
 
     def test_malformed_deadline_is_rejected(self):
         ok, errors = self.check(proposal(fields={"deadline": claim("March 5, 2027")}))
+        self.assertFalse(ok)
+        self.assertIn("YYYY-MM-DD HH:MM", errors[0])
+
+    def test_impossible_calendar_instant_is_rejected(self):
+        ok, errors = self.check(proposal(fields={
+            "deadline": claim("2027-02-29 23:59")
+        }))
         self.assertFalse(ok)
         self.assertIn("YYYY-MM-DD HH:MM", errors[0])
 

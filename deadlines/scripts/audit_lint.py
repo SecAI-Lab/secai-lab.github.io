@@ -3,7 +3,7 @@
 
 Fails (exit 1) unless:
   * every modified tracked file is inside the audit allowlist
-    (deadlines/data/manual.yml or deadlines/data/conferences/**), and
+    (manual.yml, audit-state.json, or deadlines/data/conferences/**), and
   * every manual.yml entry is preceded by a comment block containing
     'Verified' and an http(s) URL (the citation rule).
 
@@ -19,7 +19,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ALLOWED_RE = re.compile(
-    r"^deadlines/data/(manual\.yml|conferences/\d{4}/[a-z]+\.yml)$")
+    r"^deadlines/data/(manual\.yml|audit-state\.json|conferences/\d{4}/[a-z]+\.yml)$")
 
 
 def fail(msg: str) -> None:

@@ -1,153 +1,313 @@
 #!/usr/bin/env python3
-"""Run the audit workflow's real shell steps locally, Claude step stubbed.
+"""Offline structural/integration simulation of the sharded audit workflow.
 
-Extracts each `run:` block verbatim from the YAML so we are testing the text
-that will actually execute in CI, not a paraphrase of it.
+This deliberately does not invoke Claude, fetch the network, touch repository
+data, or require a clean working tree. It checks the actual workflow graph and
+then exercises the deterministic split/merge and two-run promotion primitives
+with temporary files.
 
 Run: python3 deadlines/scripts/tests/simulate_workflow.py
-
-Requires a CLEAN working tree. The tamper check and audit_lint will correctly
-flag your own uncommitted edits to pipeline files, so commit first, then run.
 """
+
+from __future__ import annotations
+
+import json
 import re
-import os
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
+import yaml
+
 REPO = Path(__file__).resolve().parents[3]
-import yaml  # noqa: E402
+sys.path.insert(0, str(REPO / "deadlines" / "scripts"))
 
-WF = yaml.safe_load((REPO / ".github/workflows/audit-deadlines.yml").read_text(encoding="utf-8"))
-STEPS = {s.get("name"): s for s in WF["jobs"]["audit"]["steps"]}
+import audit_batches as B  # noqa: E402
+import audit_state as S  # noqa: E402
 
 
-def run_step(name, subs, env_extra=None):
-    """Execute a step's run: block with GitHub expressions substituted."""
-    script = STEPS[name]["run"]
-    for k, v in subs.items():
-        script = script.replace(k, v)
-    if re.search(r"\$\{\{", script):
-        leftover = re.findall(r"\$\{\{[^}]*\}\}", script)
-        return None, f"UNSUBSTITUTED EXPRESSION(S): {leftover}"
-    env = dict(os.environ)
-    env.update(env_extra or {})
-    p = subprocess.run(["bash", "-e", "-c", script], cwd=REPO, env=env,
-                       capture_output=True, text=True)
-    return p, None
+class SimulationFailure(AssertionError):
+    pass
+
+
+def require(condition, message):
+    if not condition:
+        raise SimulationFailure(message)
+
+
+def named_step(job, name):
+    for step in job.get("steps") or []:
+        if step.get("name") == name:
+            return step
+    raise SimulationFailure(f"missing workflow step: {name}")
+
+
+def trigger_config(workflow):
+    # PyYAML 1.1 treats the unquoted GitHub key `on` as boolean true.
+    return workflow.get("on", workflow.get(True, {})) or {}
+
+
+def workflow_contract():
+    path = REPO / ".github" / "workflows" / "audit-deadlines.yml"
+    workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
+    jobs = workflow.get("jobs") or {}
+    require(set(jobs) == {"prepare", "audit_shard", "apply", "lifecycle"},
+            f"unexpected job graph: {sorted(jobs)}")
+    require(workflow.get("permissions") == {}, "top-level permissions must be empty")
+    require(trigger_config(workflow).get("schedule") == [{"cron": "17 23 * * 0"}],
+            "weekly Claude audit schedule drifted from Sunday 23:17 UTC")
+    require((workflow.get("concurrency") or {}).get("group") == "deadline-pipeline",
+            "weekly audit must serialize with the daily updater")
+
+    prepare = jobs["prepare"]
+    require((prepare.get("permissions") or {}).get("contents") == "read",
+            "prepare must be read-only")
+    require((prepare.get("outputs") or {}).get("source_sha"),
+            "prepare must export the immutable repository revision")
+    test_script = named_step(prepare, "Run pipeline tests").get("run", "")
+    for suite in (
+        "test_update_deadlines.py", "test_audit_lint.py",
+        "test_apply_proposals.py", "test_audit_state.py",
+        "test_audit_batches.py", "test_reconcile_audit_outcomes.py",
+        "test_risk_policy.py", "test_verify_citations.py",
+        "simulate_workflow.py",
+    ):
+        require(suite in test_script, f"prepare does not run {suite}")
+
+    shard = jobs["audit_shard"]
+    require((shard.get("strategy") or {}).get("max-parallel") == 1,
+            "audit shards must be serial to bound subscription usage")
+    require((shard.get("permissions") or {}).get("contents") == "read",
+            "model job must not receive contents:write")
+    checkouts = [step for step in shard.get("steps") or []
+                 if str(step.get("uses", "")).startswith("actions/checkout@")]
+    require(checkouts and all((step.get("with") or {}).get("persist-credentials") is False
+                              for step in checkouts),
+            "model checkout must not persist a push credential")
+    require(checkouts and all("source_sha" in str((step.get("with") or {}).get("ref", ""))
+                              for step in checkouts),
+            "model shards must check out the immutable prepare-stage revision")
+    tamper_steps = [step.get("run", "") for step in shard.get("steps") or []
+                    if "WATCHLIST_SHA" in str(step.get("run", ""))]
+    require(len(tamper_steps) == 2
+            and all("sha256sum --check --strict" in str(run) for run in tamper_steps),
+            "both model attempts must detect root watchlist tampering")
+    reconcile = named_step(shard, "Reconcile transient fetch outcomes").get("run", "")
+    require("--watchlist watchlist.json" in reconcile,
+            "transient re-fetches must remain bound to immutable trusted hosts")
+    first_check = named_step(shard, "Check first auditor output completeness").get(
+        "run", ""
+    )
+    require("--require-some-proposal" in first_check,
+            "an all-unverifiable first pass must receive the bounded retry")
+    final_check = named_step(shard, "Validate final shard contract").get("run", "")
+    require("--require-some-proposal" not in final_check,
+            "a fully checked all-unverifiable second pass must be allowed to finish")
+
+    claude_steps = [step for step in shard.get("steps") or []
+                    if str(step.get("uses", "")).startswith(
+                        "anthropics/claude-code-action@")]
+    require(len(claude_steps) == 2, "expected a bounded first attempt plus one retry")
+    for step in claude_steps:
+        ref = step["uses"].split("@", 1)[1]
+        require(bool(re.fullmatch(r"[0-9a-f]{40}", ref)),
+                "Claude action must be pinned to a full commit SHA")
+        require(isinstance(step.get("timeout-minutes"), int),
+                "each Claude attempt needs its own timeout")
+        args = str((step.get("with") or {}).get("claude_args", ""))
+        require("WebFetch" in args and "WebSearch" in args,
+                "auditor needs bounded web tools")
+        require("Bash" not in args, "model job must not have arbitrary shell access")
+
+    apply = jobs["apply"]
+    require((apply.get("permissions") or {}).get("contents") == "write",
+            "only apply should publish repository contents")
+    apply_checkout = named_step(apply, "Check out trusted repository")
+    require("source_sha" in str((apply_checkout.get("with") or {}).get("ref", "")),
+            "write-capable apply must start from the immutable source revision")
+    names = [step.get("name") for step in apply.get("steps") or []]
+    require(names.index("Check out trusted repository")
+            < names.index("Download all completed shard outputs")
+            < names.index("Merge exact-once audit output"),
+            "apply must start fresh, then download and merge untrusted JSON")
+    merge_script = named_step(apply, "Merge exact-once audit output").get("run", "")
+    require("audit_batches.py merge" in merge_script
+            and "--audit-date" in merge_script
+            and "--require-complete" in merge_script,
+            "apply must enforce date-bound exact complete coverage")
+    publish = named_step(apply, "Commit verified corrections to default branch").get(
+        "run", ""
+    )
+    require(publish.index('steps.converge.outputs.degraded')
+            < publish.index('git status --porcelain -- deadlines/data'),
+            "a degraded no-diff audit must fail instead of closing alerts as healthy")
+    require(publish.index('git fetch origin "$DEFAULT_BRANCH"')
+            < publish.index('git status --porcelain -- deadlines/data'),
+            "input drift must be checked even when the audit produces no data diff")
+    require('git diff --quiet "$SOURCE_SHA" "$latest"' in publish
+            and "deadlines/" in publish,
+            "publication must reject drift anywhere under the deadline application")
+    require('git rebase "$latest"' in publish,
+            "verified corrections must rebase onto the checked default-branch tip")
+
+    lifecycle = jobs["lifecycle"]
+    require(set(lifecycle.get("needs") or []) == {"prepare", "audit_shard", "apply"},
+            "lifecycle must reflect every preceding job")
+    require((lifecycle.get("env") or {}).get("GH_REPO"),
+            "failure alerts need an explicit repository even if checkout failed")
+    keepalive = named_step(lifecycle, "Keep the schedule alive").get("run", "")
+    require("|| true" not in keepalive,
+            "weekly schedule keepalive failures must not be hidden")
+    named_step(lifecycle, "File an alert if audit lifecycle maintenance failed")
+
+
+def daily_workflow_contract():
+    path = REPO / ".github" / "workflows" / "update-deadlines.yml"
+    workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
+    require(trigger_config(workflow).get("schedule") == [{"cron": "17 21 * * *"}],
+            "daily static updater schedule drifted from 21:17 UTC")
+    require((workflow.get("concurrency") or {}).get("group") == "deadline-pipeline",
+            "daily updater must serialize with the weekly audit")
+    permissions = workflow.get("permissions") or {}
+    require(permissions.get("contents") == "write"
+            and permissions.get("issues") == "write",
+            "daily updater needs scoped publication and alert permissions")
+
+    jobs = workflow.get("jobs") or {}
+    require(set(jobs) == {"update"}, f"unexpected daily job graph: {sorted(jobs)}")
+    update = jobs["update"]
+    require((update.get("env") or {}).get("DEFAULT_BRANCH"),
+            "daily push must target the repository default branch")
+    checkout = named_step(update, "Check out repository")
+    require("default_branch" in str((checkout.get("with") or {}).get("ref", "")),
+            "daily checkout must not assume a branch name")
+    activity = named_step(update, "Prevent schedule inactivity disablement").get(
+        "run", ""
+    )
+    require("45 * 24 * 60 * 60" in activity
+            and "git commit --allow-empty" in activity
+            and 'git push origin "HEAD:$DEFAULT_BRANCH"' in activity,
+            "daily workflow needs bounded repository activity before 60-day disablement")
+    publish = named_step(update, "Commit and push changes").get("run", "")
+    for contract in (
+        'git fetch origin "$DEFAULT_BRANCH"',
+        'git rebase "$latest"',
+        'git merge --ff-only "$latest"',
+        "update_deadlines.py --dry-run",
+        "audit_lint.py",
+        'git push origin "HEAD:$DEFAULT_BRANCH"',
+    ):
+        require(contract in publish, f"daily post-rebase gate is missing {contract!r}")
+    require(publish.index('git fetch origin "$DEFAULT_BRANCH"')
+            < publish.index("update_deadlines.py --dry-run"),
+            "daily no-op runs must validate the current default-branch tip")
+    close = named_step(update, "Close stale pipeline alerts on a healthy run").get(
+        "run", ""
+    )
+    require('title == "Deadline auto-update needs attention"' in close,
+            "daily health must not close unrelated deadline-pipeline issues")
+    names = [step.get("name") for step in update.get("steps") or []]
+    keepalive = named_step(update, "Keep the schedule alive").get("run", "")
+    require("|| true" not in keepalive,
+            "daily schedule keepalive failures must not be hidden")
+    require(names.index("Keep the schedule alive")
+            < names.index("File an alert issue on failure"),
+            "daily keepalive faults must reach the issue alert step")
+
+
+def deterministic_integration():
+    temp = Path(tempfile.mkdtemp())
+    try:
+        watchlist = [
+            {"title": f"C{i:02d}", "year": 2027, "record": {},
+             "reasons": ["scheduled-full-audit"]}
+            for i in range(23)
+        ]
+        watchlist_path = temp / "watchlist.json"
+        watchlist_path.write_text(json.dumps(watchlist), encoding="utf-8")
+        shard_paths = B.write_watchlist_shards(watchlist_path, temp / "shards", 10)
+        require([len(json.loads(path.read_text(encoding="utf-8")))
+                 for path in shard_paths] == [10, 10, 3],
+                "23 records did not split into stable 10/10/3 shards")
+
+        empty_watchlist_path = temp / "empty-watchlist.json"
+        empty_watchlist_path.write_text("[]\n", encoding="utf-8")
+        empty_paths = B.write_watchlist_shards(
+            empty_watchlist_path, temp / "empty-shards", 10)
+        require(empty_paths == [], "an empty watchlist unexpectedly created work")
+        # Mirrors the workflow's matrix-safe fallback: the sole shard remains
+        # valid input and exact coverage requires zero records.
+        fallback = temp / "empty-shards" / "watchlist-001.json"
+        fallback.write_text(empty_watchlist_path.read_text(encoding="utf-8"),
+                            encoding="utf-8")
+        B.validate_audit_document([], {
+            "audit_date": "2026-08-31", "watchlist_size": 0,
+            "proposals": [], "unverifiable": [],
+        }, "empty fallback", "2026-08-31")
+
+        documents = []
+        for number, shard_path in enumerate(shard_paths, 1):
+            shard = json.loads(shard_path.read_text(encoding="utf-8"))
+            doc = {
+                "audit_date": "2026-08-31",
+                "watchlist_size": len(shard),
+                "proposals": [],
+                "unverifiable": [
+                    {"title": item["title"], "year": item["year"],
+                     "cause": "no_official_page",
+                     "attempted": [f"https://official.example/{item['title']}"]}
+                    for item in shard
+                ],
+            }
+            B.validate_audit_document(
+                shard, doc, f"shard {number}", "2026-08-31")
+            documents.append((f"shard {number}", doc))
+
+        merged = B.merge_audit_documents(
+            watchlist, documents, "2026-08-31")
+        require(merged["watchlist_size"] == 23
+                and len(merged["unverifiable"]) == 23,
+                "exact-once merge lost work")
+        require([item["title"] for item in merged["unverifiable"]]
+                == [item["title"] for item in watchlist],
+                "merge did not preserve stable watchlist order")
+
+        state = S.empty_state()
+        proposal = {
+            "action": "upsert_manual", "title": "C00", "year": 2027,
+            "fields": {"deadline": {"value": "2027-03-15 23:59"}},
+        }
+        first, _ = S.observe_verified(
+            state, proposal, {"deadline": "2027-03-15 23:59"}, "2026-08-31")
+        second, _ = S.observe_verified(
+            state, proposal, {"deadline": "2027-03-15 23:59"}, "2026-09-07")
+        require(not first and second,
+                "two distinct identical verified runs did not promote deterministically")
+    finally:
+        shutil.rmtree(temp, ignore_errors=True)
 
 
 def main():
-    tmp = Path(tempfile.mkdtemp())
-    out, summary = tmp / "gh_output", tmp / "gh_summary"
-    out.touch(); summary.touch()
-    env = {"GITHUB_OUTPUT": str(out), "GITHUB_STEP_SUMMARY": str(summary)}
-    # Placeholder; replaced with the real count once the watchlist step runs.
-    subs = {"${{ steps.today.outputs.date }}": "2026-08-19",
-            "${{ steps.watchlist.outputs.count }}": "30",
-            "${{ steps.converge.outputs.degraded }}": "",
-            "${{ github.token }}": "dummy"}
+    checks = [
+        ("workflow trust/coverage contract", workflow_contract),
+        ("daily static workflow contract", daily_workflow_contract),
+        ("deterministic shard/state integration", deterministic_integration),
+    ]
     failures = []
-
-    def check(label, ok, detail=""):
-        print(f"  {'PASS' if ok else 'FAIL'}  {label}" + (f"  {detail}" if detail else ""))
-        if not ok:
-            failures.append(label)
-
-    print("== Run pipeline tests ==")
-    p, err = run_step("Run pipeline tests", subs, env)
-    check("tests pass", err is None and p.returncode == 0, err or p.stderr[-200:])
-
-    print("== Build watchlist ==")
-    p, err = run_step("Build watchlist", subs, env)
-    count = re.search(r"count=(\d+)", out.read_text(encoding="utf-8"))
-    check("watchlist built", err is None and p.returncode == 0 and count is not None,
-          f"count={count.group(1) if count else '?'}")
-    if count:  # later steps interpolate the real count, not the placeholder
-        subs["${{ steps.watchlist.outputs.count }}"] = count.group(1)
-
-    print("== Assert the auditor touched only its proposals file ==")
-    p, err = run_step("Assert the auditor touched only its proposals file", subs, env)
-    check("clean tree passes tamper check", err is None and p.returncode == 0,
-          (p.stdout + p.stderr)[-200:] if p else err)
-
-    print("== Validate proposals: NO FILE (must fail) ==")
-    (REPO / "audit-proposals.json").unlink(missing_ok=True)
-    p, err = run_step("Validate proposals", subs, env)
-    check("missing file fails the step", err is None and p.returncode == 1,
-          f"exit={p.returncode if p else err}")
-    check("missing file is reported as an error",
-          p is not None and "::error::" in p.stdout)
-
-    print("== Validate proposals: EMPTY-EFFORT FILE (must fail) ==")
-    subprocess.run([sys.executable, "deadlines/scripts/apply_proposals.py",
-                    "--seed-from-watchlist", "watchlist.json",
-                    "--audit-date", "2026-08-19"], cwd=REPO, capture_output=True)
-    p, err = run_step("Validate proposals", subs, env)
-    check("0-examined file fails the step (PIPESTATUS wiring)",
-          err is None and p.returncode == 1, f"exit={p.returncode if p else err}")
-    check("examined line reached the summary",
-          "examined: 0/" in summary.read_text(encoding="utf-8"))
-
-    print("== Validate proposals: REAL WORK (must pass) ==")
-    import json
-    d = json.loads((REPO / "audit-proposals.json").read_text(encoding="utf-8"))
-    moved = d["unverifiable"][:2]
-    # no_change carries the same evidence as a correction: it is a claim about
-    # a page, and an unevidenced one cannot be told apart from not looking.
-    d["proposals"] = [{"id": f"no_change:{m['title']}:{m['year']}", "action": "no_change",
-                       "title": m["title"], "year": m["year"],
-                       "reason": "Checked against the official CFP; record is correct.",
-                       "source_url": "https://example.org/cfp",
-                       "watchlist_reasons": ["tba-upcoming-cycle"],
-                       "fields": {"deadline": {
-                           "value": "2026-02-10 23:59",
-                           "evidence": [{"quote": "Paper Submission Deadline: "
-                                                  "February 10, 2026 (AoE)"}]}}}
-                      for m in moved]
-    d["unverifiable"] = d["unverifiable"][2:]
-    for u in d["unverifiable"]:
-        u["cause"] = "no_official_page"
-    (REPO / "audit-proposals.json").write_text(json.dumps(d, indent=2), encoding="utf-8")
-    p, err = run_step("Validate proposals", subs, env)
-    check("worked file passes", err is None and p.returncode == 0,
-          f"exit={p.returncode if p else err}")
-
-    print("== Verify citations ==")
-    # Offline: the fixture's source_url is unreachable, so the gate returns
-    # UNREACHABLE and the applier holds everything. That is the correct
-    # fail-closed behaviour and is what we assert.
-    p, err = run_step("Verify citations", subs, env)
-    check("gate runs and writes verdicts",
-          err is None and (REPO / "audit-verdicts.json").exists(),
-          (p.stdout.strip().splitlines() or [""])[-1] if p else err)
-
-    print("== Apply proposals (gate held everything -> nothing applied) ==")
-    p, err = run_step("Apply proposals", subs, env)
-    check("apply succeeds", err is None and p.returncode == 0,
-          (p.stdout.strip().splitlines() or [""])[-1] if p else err)
-    check("unverifiable proposals are HELD, not applied",
-          p is not None and " held," in p.stdout)
-
-    print("== Converge and lint ==")
-    p, err = run_step("Converge and lint", subs, env)
-    check("converge+lint pass", err is None and p.returncode == 0,
-          (p.stdout + p.stderr).strip().splitlines()[-1] if p else err)
-
-    print("== Data untouched ==")
-    g = subprocess.run(["git", "status", "--porcelain", "--", "deadlines/data"],
-                       cwd=REPO, capture_output=True, text=True)
-    check("no data changes", g.stdout.strip() == "", g.stdout.strip())
-
-    for f in ("audit-proposals.json", "watchlist.json", "audit-summary.md",
-              "audit-verdicts.json"):
-        (REPO / f).unlink(missing_ok=True)
-    shutil.rmtree(tmp, ignore_errors=True)
-    print(f"\n{'ALL STEPS PASS' if not failures else 'FAILURES: ' + ', '.join(failures)}")
-    return 1 if failures else 0
+    for label, check in checks:
+        try:
+            check()
+            print(f"PASS  {label}")
+        except Exception as exc:  # noqa: BLE001 - report every structural failure
+            failures.append(f"{label}: {exc}")
+            print(f"FAIL  {label}: {exc}")
+    if failures:
+        print("\n" + "\n".join(failures))
+        return 1
+    print("\nALL WORKFLOW SIMULATIONS PASS")
+    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

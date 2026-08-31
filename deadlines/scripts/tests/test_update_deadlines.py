@@ -7,10 +7,12 @@ Every test here pins a bug that was live in the pipeline and could put a wrong
 deadline - or a deadline that renders LATER than the truth - on the public page.
 """
 
+import datetime as dt
 import re
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -37,6 +39,12 @@ class ManualMatchesUpstream(unittest.TestCase):
         man = {"title": "X", "year": 2026, "start": "2026-06-29", "end": "2026-07-03"}
         self.assertFalse(U.manual_matches_upstream(man, cand(["2026-02-10 23:59"])))
 
+    def test_comparable_match_cannot_discard_an_unverifiable_note_override(self):
+        man = {"title": "X", "year": 2026,
+               "deadline": "2026-02-10 23:59", "note": "Official clarification."}
+        self.assertFalse(U.manual_matches_upstream(
+            man, cand(["2026-02-10 23:59"])))
+
     def test_null_override_survives_a_transient_upstream_omission(self):
         # The real NDSS 2026 pattern: abstract_deadline is pinned to null to
         # suppress a value both trackers fabricate. On a run where upstream
@@ -50,6 +58,15 @@ class ManualMatchesUpstream(unittest.TestCase):
         self.assertFalse(U.manual_matches_upstream(
             man, cand(["2025-08-06 23:59"], ["2025-07-30 23:59"])))
 
+    def test_abstract_cycle_position_must_match_before_retirement(self):
+        man = {"title": "X", "year": 2027,
+               "abstract_deadline": "2027-05-01 23:59"}
+        upstream = cand(
+            ["2027-05-08 23:59", "2027-09-08 23:59"],
+            [None, "2027-05-01 23:59"],
+        )
+        self.assertFalse(U.manual_matches_upstream(man, upstream))
+
     def test_genuine_agreement_is_still_reported(self):
         # The fix must not break the real signal: an override upstream has
         # caught up on should still be reported as removable.
@@ -61,6 +78,53 @@ class ManualMatchesUpstream(unittest.TestCase):
     def test_genuine_disagreement_is_not_agreement(self):
         man = {"title": "X", "year": 2026, "deadline": "2026-02-10 23:59"}
         self.assertFalse(U.manual_matches_upstream(man, cand(["2026-02-03 23:59"])))
+
+    def test_retirement_marker_requires_every_covering_source_to_agree(self):
+        man = {"title": "X", "year": 2026, "deadline": "2026-02-10 23:59"}
+        target = {"key": "X", "priority": ["ccfddl", "secdl"]}
+        candidates = [
+            cand(["2026-02-10 23:59"], source="ccfddl"),
+            cand(["2026-02-03 23:59"], source="secdl"),
+        ]
+        marker = U.upstream_agreement_marker(man, candidates, target, {})
+        self.assertFalse(marker["agrees"])
+        self.assertEqual(marker["sources"], ["ccfddl", "secdl"])
+
+    def test_retirement_marker_fails_closed_when_a_source_fetch_failed(self):
+        man = {"title": "X", "year": 2026, "deadline": "2026-02-10 23:59"}
+        target = {"key": "X", "priority": ["ccfddl", "secdl"]}
+        candidates = [cand(["2026-02-10 23:59"], source="ccfddl")]
+        marker = U.upstream_agreement_marker(
+            man, candidates, target, {"secdl": {"X"}})
+        self.assertFalse(marker["agrees"])
+        self.assertFalse(marker["all_fetches_healthy"])
+
+    def test_retirement_marker_accepts_complete_multi_source_agreement(self):
+        man = {"title": "X", "year": 2026, "deadline": "2026-02-10 23:59"}
+        target = {"key": "X", "priority": ["ccfddl", "secdl"]}
+        candidates = [
+            cand(["2026-02-10 23:59"], source="ccfddl"),
+            cand(["2026-02-10 23:59"], source="secdl"),
+        ]
+        self.assertTrue(
+            U.upstream_agreement_marker(man, candidates, target, {})["agrees"])
+
+    def test_retirement_digest_binds_manual_and_every_source_value(self):
+        target = {"key": "X", "priority": ["ccfddl", "secdl"]}
+        man = {"title": "X", "year": 2026, "deadline": "2026-02-10 23:59"}
+        candidates = [
+            cand(["2026-02-10 23:59"], source="ccfddl"),
+            cand(["2026-02-10 23:59"], source="secdl"),
+        ]
+        first = U.upstream_agreement_marker(man, candidates, target, {})
+        changed_manual = U.upstream_agreement_marker(
+            {**man, "deadline": "2026-02-11 23:59"}, candidates, target, {})
+        changed_source = U.upstream_agreement_marker(
+            man, [candidates[0], cand(["2026-02-11 23:59"], source="secdl")],
+            target, {})
+        self.assertRegex(first["basis_digest"], r"^sha256:[0-9a-f]{64}$")
+        self.assertNotEqual(first["basis_digest"], changed_manual["basis_digest"])
+        self.assertNotEqual(first["basis_digest"], changed_source["basis_digest"])
 
 
 class TimezoneResolvability(unittest.TestCase):
@@ -100,6 +164,93 @@ class TimezoneResolvability(unittest.TestCase):
                "timezone": "not a zone!"}
         errors = U.validate(rec, {"S&P"})
         self.assertTrue(any("bad timezone" in e for e in errors), errors)
+
+    def test_impossible_fixed_offsets_are_rejected(self):
+        for tz in ("UTC+15", "UTC-13", "UTC+99"):
+            with self.subTest(tz=tz):
+                rec = {"title": "S&P", "year": U.TODAY.year,
+                       "deadline": "2026-02-10 23:59", "timezone": tz}
+                errors = U.validate(rec, {"S&P"})
+                self.assertTrue(any("unresolvable timezone" in e for e in errors),
+                                errors)
+
+    def test_edge_fixed_offsets_are_accepted(self):
+        for tz in ("UTC-12", "UTC+14"):
+            with self.subTest(tz=tz):
+                rec = {"title": "S&P", "year": U.TODAY.year,
+                       "deadline": "2026-02-10 23:59", "timezone": tz}
+                self.assertEqual(U.validate(rec, {"S&P"}), [])
+
+
+class DeadlineValidity(unittest.TestCase):
+    def test_normalizer_rejects_impossible_calendar_and_clock_values(self):
+        for value in ("2027-99-99 23:59", "2027-02-29 23:59",
+                      "2027-10-02 24:00", "2027-10-02 12:60"):
+            with self.subTest(value=value):
+                self.assertIsNone(U.norm_dt(value))
+
+    def test_leap_day_is_accepted_only_in_a_leap_year(self):
+        self.assertEqual(U.norm_dt("2028-02-29 5:07"), "2028-02-29 05:07")
+        self.assertTrue(U.valid_deadline("2028-02-29 05:07"))
+
+    def test_validator_rejects_shape_correct_but_impossible_instants(self):
+        for value in ("2027-99-99 23:59", "2027-02-29 23:59",
+                      "2027-10-02 24:00"):
+            with self.subTest(value=value):
+                rec = {"title": "S&P", "year": U.TODAY.year,
+                       "deadline": value, "timezone": "AoE"}
+                errors = U.validate(rec, {"S&P"})
+                self.assertTrue(any("bad deadline" in e for e in errors), errors)
+
+
+class UpstreamDeadlineParsing(unittest.TestCase):
+    def test_ccfddl_invalid_instant_is_a_source_failure_not_silent_tba(self):
+        doc = [{"confs": [{
+            "year": U.TODAY.year,
+            "timeline": [{"deadline": f"{U.TODAY.year}-99-99 23:59"}],
+        }]}]
+        with self.assertRaisesRegex(RuntimeError, "invalid deadline value"):
+            U.convert_ccfddl(doc, "X")
+
+    def test_explicit_tba_still_means_no_candidate(self):
+        doc = [{"confs": [{
+            "year": U.TODAY.year,
+            "timeline": [{"deadline": "TBA"}],
+        }]}]
+        self.assertEqual(U.convert_ccfddl(doc, "X"), {})
+
+    def test_invalid_explicit_timezone_is_not_silently_replaced_with_aoe(self):
+        with self.assertRaisesRegex(RuntimeError, "invalid ccfddl timezone"):
+            U.map_ccfddl_tz("UTC+99")
+
+    def test_ccfddl_iana_timezone_is_preserved(self):
+        self.assertEqual(U.map_ccfddl_tz("America/New_York"),
+                         "America/New_York")
+
+    def test_one_bad_secdl_target_does_not_poison_every_other_target(self):
+        records = [
+            {"name": "Good", "year": U.TODAY.year,
+             "deadline": f"{U.TODAY.year}-09-01 23:59"},
+            {"name": "Bad", "year": U.TODAY.year,
+             "deadline": f"{U.TODAY.year}-99-99 23:59"},
+        ]
+        targets = [
+            {"key": "Good", "sources": {"secdl": "Good"}},
+            {"key": "Bad", "sources": {"secdl": "Bad"}},
+        ]
+        saved_health, saved_warnings = list(U.health), list(U.warnings)
+        U.health.clear()
+        U.warnings.clear()
+        def restore_diagnostics():
+            U.health[:] = saved_health
+            U.warnings[:] = saved_warnings
+        self.addCleanup(restore_diagnostics)
+        with mock.patch.object(U, "http_get", return_value=__import__("yaml").safe_dump(records)):
+            data, failed, _, any_ok = U.fetch_upstream(targets)
+        self.assertTrue(any_ok)
+        self.assertIn(U.TODAY.year, data["secdl"]["Good"])
+        self.assertEqual(failed["secdl"], {"Bad"})
+        self.assertTrue(any("secdl parse failed for Bad" in item for item in U.health))
 
 
 class ManualBigMoveWarning(unittest.TestCase):
@@ -166,14 +317,13 @@ class TbaMetadataNomination(unittest.TestCase):
 
 
 class WatchlistPriority(unittest.TestCase):
-    """The auditor verifies a bounded slice from the top of the watchlist, so
-    the order decides which records ever get checked. Alphabetical order handed
-    it seven venues with no published edition - nothing correctable - which is
-    a large part of why runs concluded there was nothing worth writing."""
+    """Every shard is required, but ordering still puts urgent records into the
+    earliest shard so they receive the first completion-retry opportunity."""
 
-    RANK = ["deadline-within-45-days", "tba-upcoming-cycle", "manual-override-active",
+    RANK = ["deadline-within-45-days", "audit-deferred", "tba-upcoming-cycle",
+            "manual-override-active",
             "cross-source-disagreement", "stale-placeholder-note", "coverage-gap",
-            "tba-metadata"]
+            "tba-metadata", "scheduled-full-audit"]
 
     def test_priority_order_matches_auditor_md(self):
         # Scope to the numbered Priorities section: these reason names also
@@ -184,6 +334,33 @@ class WatchlistPriority(unittest.TestCase):
         self.assertEqual(order, self.RANK,
                          "AUDITOR.md's priority list and the watchlist sort disagree; "
                          "the sort decides which records the bounded run ever reaches")
+
+    def test_persisted_retry_survives_an_edition_year_boundary(self):
+        rec = {"deadline": "2025-08-01 23:59", "timezone": "AoE"}
+        reasons = U.audit_reasons_for_record(
+            "FSE", 2025, rec, set(), set(), {("FSE", 2025)},
+            today=dt.date(2026, 1, 2))
+        self.assertEqual(reasons, ["audit-deferred"])
+
+    def test_resolved_past_edition_is_not_scheduled_forever(self):
+        rec = {"deadline": "2025-08-01 23:59", "timezone": "AoE"}
+        reasons = U.audit_reasons_for_record(
+            "FSE", 2025, rec, set(), set(), set(),
+            today=dt.date(2026, 1, 2))
+        self.assertEqual(reasons, [])
+
+    def test_manual_only_rendered_row_remains_in_weekly_audit_records(self):
+        rec = {"title": "BAR", "year": 2027, "deadline": "2026-12-01 23:59"}
+        manual = {("BAR", 2027): rec}
+        rows = U.audit_record_rows({}, [], manual, [("BAR", 2027)])
+        self.assertEqual(rows, [("BAR", 2027, rec)])
+
+    def test_deferred_gap_survives_january_rollover_without_a_record(self):
+        deferred = {("BAR", 2027)}
+        missing = U.missing_deferred_audits(
+            deferred, {("BAR", 2028)}, {"BAR": {"category": "security"}}
+        )
+        self.assertEqual(missing, [("BAR", 2027)])
 
 
 class ExplicitTimezone(unittest.TestCase):

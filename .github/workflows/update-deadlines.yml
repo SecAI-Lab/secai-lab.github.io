@@ -9,8 +9,8 @@ name: Update conference deadlines
 
 on:
   schedule:
-    # 21:00 UTC == 06:00 KST, daily
-    - cron: '0 21 * * *'
+    # 21:17 UTC == 06:17 KST, daily; avoid start-of-hour schedule congestion.
+    - cron: '17 21 * * *'
   workflow_dispatch:
 
 permissions:
@@ -27,10 +27,28 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    env:
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      GH_REPO: ${{ github.repository }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Prevent schedule inactivity disablement
+        run: |
+          git fetch origin "$DEFAULT_BRANCH"
+          git merge --ff-only FETCH_HEAD
+          last_activity=$(git show -s --format=%ct HEAD)
+          quiet_seconds=$(($(date +%s) - last_activity))
+          if [ "$quiet_seconds" -ge $((45 * 24 * 60 * 60)) ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "Keep scheduled deadline automation active"
+            git push origin "HEAD:$DEFAULT_BRANCH"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -40,12 +58,10 @@ jobs:
       - name: Install dependencies
         run: pip install 'pyyaml==6.0.*'
 
-      # Updater exit codes: 0 = healthy, 2 = degraded (files were still written
-      # where safe, but something needs human attention), 1 = fatal (nothing
-      # written). 0 and 2 both proceed to the commit step so good data is never
-      # held hostage by a partial failure; 2 then fails the job afterwards so
-      # the run shows red and the alert issue gets filed. The full report is
-      # mirrored to the job summary either way.
+      # Updater exit codes: 0 = healthy, 2 = degraded (safe local output may
+      # exist), 1 = fatal. A degraded run reaches the commit step only so the
+      # same validation path executes; post-rebase publication requires a fully
+      # healthy rerun, and the job remains red with an infrastructure alert.
       - name: Run deadline updater
         id: updater
         run: |
@@ -55,31 +71,81 @@ jobs:
           code=$?
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           if [ "$code" -eq 2 ]; then
-            echo "Updater reported degraded health; committing what was written, then failing the job."
+            echo "Updater reported degraded health; publication still requires a healthy post-rebase rerun."
             exit 0
           fi
           exit "$code"
 
       - name: Commit and push changes
         run: |
+          made_commit=false
           if [ -n "$(git status --porcelain -- deadlines/data/conferences)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -- deadlines/data/conferences
             git commit -m "Auto-update conference deadlines"
-            # A human may have pushed to master while this job ran; rebase our
-            # single data-only commit instead of failing the push.
-            git pull --rebase origin "${GITHUB_REF_NAME}"
-            git push
-          else
-            echo "No changes to commit."
+            made_commit=true
           fi
+
+          # Always validate the current default-branch tip, including a no-op
+          # run. Otherwise a stale checkout could close an infrastructure alert
+          # after the updater or config changed while this job was running.
+          git fetch origin "$DEFAULT_BRANCH"
+          latest=$(git rev-parse FETCH_HEAD)
+          if [ "$made_commit" = "true" ]; then
+            git rebase "$latest"
+          else
+            git merge --ff-only "$latest"
+          fi
+
+          set +e
+          python3 deadlines/scripts/update_deadlines.py >/dev/null 2>&1
+          code=$?
+          set -e
+          if [ "$code" -ne 0 ]; then
+            echo "::error::updater was not healthy on the current branch tip (exit $code); not pushing"
+            exit 1
+          fi
+          set +e
+          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1)
+          dry_code=$?
+          set -e
+          echo "$out" | tail -5
+          if [ "$dry_code" -ne 0 ] || ! echo "$out" | grep -q "no file changes"; then
+            echo "::error::data did not converge on the current branch tip; not pushing"
+            exit 1
+          fi
+          python3 deadlines/scripts/audit_lint.py
+
+          if git diff --quiet "$latest" -- deadlines/data/conferences; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- deadlines/data/conferences
+          if [ "$made_commit" = "true" ]; then
+            git commit --amend --no-edit
+          else
+            git commit -m "Auto-update conference deadlines"
+          fi
+          git push origin "HEAD:$DEFAULT_BRANCH"
 
       - name: Fail the run if the updater reported degraded health
         if: steps.updater.outputs.exit_code == '2'
         run: |
           echo "Updater exit code 2 (degraded) - see the [!] lines in the job summary."
           exit 1
+
+      # Keep the workflow state enabled. The bounded 45-day activity step near
+      # the start independently prevents inactivity auto-disable, even if the
+      # updater itself later fails.
+      # A permission/API fault is real and must reach the alert below.
+      - name: Keep the schedule alive
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/update-deadlines.yml/enable"
 
       # A red run alone is easy to miss; file (or bump) an issue so somebody
       # actually sees it.
@@ -90,7 +156,7 @@ jobs:
         run: |
           run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           body="The scheduled conference-deadline update failed or reported degraded health. See the run log and job summary: $run_url"
-          existing=$(gh issue list --state open --label deadline-pipeline --json number --jq '.[0].number // empty')
+          existing=$(gh issue list --state open --label deadline-pipeline --json number,title --jq 'map(select(.title == "Deadline auto-update needs attention"))[0].number // empty')
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"
           else
@@ -107,14 +173,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          for n in $(gh issue list --state open --label deadline-pipeline --json number --jq '.[].number'); do
+          for n in $(gh issue list --state open --label deadline-pipeline --json number,title --jq '.[] | select(.title == "Deadline auto-update needs attention") | .number'); do
             gh issue close "$n" --comment "Resolved by a healthy sync run: $RUN_URL"
           done
-
-      # GitHub auto-disables cron workflows after 60 days without repo
-      # activity; re-enabling on every run resets that timer.
-      - name: Keep the schedule alive
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/update-deadlines.yml/enable" || true

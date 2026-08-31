@@ -73,6 +73,13 @@ class AuditLintInTempRepo(unittest.TestCase):
         r = self._lint()
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
 
+    def test_persistent_audit_state_is_allowlisted(self):
+        state = self.tmp / "deadlines" / "data" / "audit-state.json"
+        state.write_text('{"version":1,"corroboration":{},"retry":{}}\n',
+                         encoding="utf-8")
+        r = self._lint()
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
     def test_scratch_files_at_the_repo_root_are_litter_not_violations(self):
         # The first live run failed on exactly this: the auditor used curl and
         # left *_fetch.html at the repo root. The workflow stages only

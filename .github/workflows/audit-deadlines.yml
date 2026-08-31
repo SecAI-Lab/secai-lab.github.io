@@ -1,51 +1,45 @@
-# Weekly verification audit of the deadline tracker data against OFFICIAL
-# conference sources (Tier 2 of the pipeline; Tier 1 is the daily
-# update-deadlines.yml sync from community datasets).
+# Weekly official-source audit of the deadline tracker (Tier 2). Tier 1 is the
+# daily deterministic sync in update-deadlines.yml.
 #
-# Two modes, decided by whether the CLAUDE_CODE_OAUTH_TOKEN secret exists:
-#   * Claude mode: Claude Code (billed to the lab's Max subscription via the
-#     OAuth token — no API billing) verifies the watchlist against official
-#     pages and writes findings to audit-proposals.json. It never edits
-#     repository data: apply_proposals.py validates those proposals and writes
-#     the YAML, then deterministic steps converge, lint, and open/update a pull
-#     request for human review. Claude never pushes anything itself.
-#
-#     Keeping the model's output as structured proposals rather than a diff is
-#     what makes it machine-checkable - and is the groundwork for the
-#     verification gates in deadlines/scripts/AUTO-APPLY-DESIGN.md.
-#   * Human mode (no secret): the watchlist is filed as a GitHub issue for a
-#     lab member to check by hand (~5-10 minutes).
+# Trust boundary: Claude runs only in read-only shard jobs. Its sole output is
+# JSON. A separate job starts from a fresh checkout, merges exact-once coverage,
+# re-fetches every citation, applies the deterministic risk policy, converges
+# and lints the data, and only then may push as github-actions[bot].
 
 name: Audit conference deadlines
 
 on:
   schedule:
-    # 23:00 UTC Sunday == 08:00 KST Monday, weekly. Deliberately NOT 21:00:
-    # the daily Tier-1 sync runs at 21:00 every day, so a Sunday audit at the
-    # same instant started from a tree Tier 1 was concurrently rewriting.
-    - cron: '0 23 * * 0'
+    # 23:17 UTC Sunday == 08:17 KST Monday. Off-hour minutes avoid GitHub's
+    # documented start-of-hour schedule congestion. Daily sync is at 21:17 UTC.
+    - cron: '17 23 * * 0'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  id-token: write
-  actions: write  # keepalive: re-enabling the workflow resets the 60-day auto-disable timer
+permissions: {}
 
-# Shared with update-deadlines.yml: both write deadlines/data, so they must
-# never run at once regardless of what the schedules say.
+# Daily and weekly jobs both derive deadlines/data, so serialize them.
 concurrency:
   group: deadline-pipeline
   cancel-in-progress: false
 
 jobs:
-  audit:
+  prepare:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      audit_date: ${{ steps.today.outputs.date }}
+      source_sha: ${{ steps.source.outputs.sha }}
+      matrix: ${{ steps.shards.outputs.matrix }}
+      count: ${{ steps.watchlist.outputs.count }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -59,474 +53,522 @@ jobs:
         id: today
         run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
-      # The pipeline's own correctness tests. If these fail the gates cannot be
-      # trusted, so the audit does not run at all.
+      - name: Record immutable source revision
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Run pipeline tests
         run: |
           python3 deadlines/scripts/tests/test_update_deadlines.py
           python3 deadlines/scripts/tests/test_audit_lint.py
           python3 deadlines/scripts/tests/test_apply_proposals.py
+          python3 deadlines/scripts/tests/test_audit_state.py
+          python3 deadlines/scripts/tests/test_audit_batches.py
+          python3 deadlines/scripts/tests/test_reconcile_audit_outcomes.py
+          python3 deadlines/scripts/tests/test_risk_policy.py
           python3 deadlines/scripts/tests/test_verify_citations.py
+          python3 deadlines/scripts/tests/simulate_workflow.py
 
-      # Exit 2 (degraded fetch) still produces a usable watchlist; only a
-      # fatal exit 1 aborts the audit.
-      - name: Build watchlist
+      # Exit 2 means some upstream fetches degraded, but the existing repository
+      # still yields a useful watchlist. Every undocumented exit fails closed.
+      - name: Build complete scheduled watchlist
         id: watchlist
         run: |
           set +e
           python3 deadlines/scripts/update_deadlines.py --dry-run --watchlist watchlist.json
           code=$?
-          if [ "$code" -eq 1 ]; then exit 1; fi
+          set -e
+          case "$code" in
+            0|2) ;;
+            *)
+              echo "::error::watchlist updater failed with unexpected exit code $code"
+              exit 1
+              ;;
+          esac
           count=$(python3 -c "import json; print(len(json.load(open('watchlist.json'))))")
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "Watchlist: $count record(s)"
 
       - name: Detect auditor token
-        id: token
         env:
           TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          COUNT: ${{ steps.watchlist.outputs.count }}
         run: |
-          if [ -n "$TOKEN" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+          if [ "$COUNT" != "0" ] && [ -z "$TOKEN" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN is missing; the automated audit cannot run"
+            exit 1
+          fi
 
-      # The auditor is unreliable in a way no wording has fixed: with identical
-      # configuration it produced 26 proposals and 30/30 coverage on one run and
-      # wrote nothing at all on the next. Failing runs stop at roughly 2m45s,
-      # successful ones take 11-14m, so it is bailing early rather than working
-      # and losing the result. Seeding the file, changing the tool list and
-      # rewording the instructions all failed to move it.
-      #
-      # So: retry. continue-on-error keeps a bailed attempt from killing the job
-      # before the second one runs, and the attempts are identical - this is a
-      # coin flip, not a configuration problem.
+      # Stable shards prevent a long watchlist from starving its tail. The empty
+      # fallback keeps a zero-record repository valid without an invalid matrix.
+      - name: Split watchlist into bounded shards
+        id: shards
+        run: |
+          python3 deadlines/scripts/audit_batches.py split watchlist.json \
+            --output-dir audit-shards --size 10
+          if [ ! -f audit-shards/watchlist-001.json ]; then
+            cp watchlist.json audit-shards/watchlist-001.json
+          fi
+          matrix=$(python3 -c 'import json; from pathlib import Path; paths=sorted(Path("audit-shards").glob("watchlist-*.json")); print(json.dumps({"include":[{"shard":p.stem[-3:]} for p in paths]},separators=(",",":")))')
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+      # Created before any model runs; this is the authoritative input later
+      # downloaded by the only write-capable job.
+      - name: Upload immutable audit input
+        uses: actions/upload-artifact@v4
+        with:
+          name: deadline-audit-input-${{ github.run_id }}
+          path: |
+            watchlist.json
+            audit-shards/
+          if-no-files-found: error
+          retention-days: 30
+
+  audit_shard:
+    name: Audit shard ${{ matrix.shard }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Check out repository without push credentials
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.source_sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install 'pyyaml==6.0.*'
+
+      - name: Download immutable audit input
+        uses: actions/download-artifact@v4
+        with:
+          name: deadline-audit-input-${{ github.run_id }}
+          path: audit-input
+
+      - name: Select shard and seed pessimistic checkpoint
+        id: shard
+        env:
+          SHARD: ${{ matrix.shard }}
+          AUDIT_DATE: ${{ needs.prepare.outputs.audit_date }}
+        run: |
+          cp "audit-input/audit-shards/watchlist-$SHARD.json" watchlist.json
+          count=$(python3 -c "import json; print(len(json.load(open('watchlist.json'))))")
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "watchlist_sha=$(sha256sum watchlist.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          python3 deadlines/scripts/apply_proposals.py \
+            --proposals audit-proposals.json \
+            --seed-from-watchlist watchlist.json \
+            --audit-date "$AUDIT_DATE"
+
       - name: Run Claude auditor
         id: auditor1
         continue-on-error: true
-        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
-        uses: anthropics/claude-code-action@v1
+        if: steps.shard.outputs.count != '0'
+        timeout-minutes: 24
+        # v1.0.210; pin the reviewed source because this step receives a
+        # long-lived OAuth token.
+        uses: anthropics/claude-code-action@a874e9ecd7bb36efdad65429c6b35815f5a08f10
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # Use the workflow's own token instead of the Claude Code GitHub
-          # App (which is deliberately not installed on this repo). Claude
-          # only edits the working tree; branch/PR operations are done by
-          # the deterministic steps below as github-actions[bot].
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # TEMPORARY, for diagnosis: the action hides the model's
-          # transcript by default, which is why five runs have been
-          # diagnosed by inference. Turn this back off once the
-          # bail-at-2m45s cause is known.
-          show_full_output: true
-          # Today's date is interpolated, not merely alluded to: nothing else in
-          # the environment tells the model what today is, and audit_date drives
-          # the citation comments the applier writes.
+          github_token: ${{ github.token }}
+          show_full_output: false
           prompt: |
-            Read deadlines/scripts/AUDITOR.md and follow it exactly. The
-            watchlist is in watchlist.json at the repository root.
-            Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
-            audit_date. Trust pages you fetch this run, not memory.
+            Read deadlines/scripts/AUDITOR.md and follow it exactly. This job's
+            bounded watchlist shard is watchlist.json. Today's UTC date is
+            ${{ needs.prepare.outputs.audit_date }}; use it as audit_date.
+            Trust pages fetched this run, never memory.
 
-            Work autonomously - there is nobody to ask, so never stop to
-            ask a question.
+            Work autonomously; there is nobody to ask. Attempt every one of the
+            ${{ steps.shard.outputs.count }} records and replace every seeded
+            not_checked entry. A concrete unavailable cause is valid only after
+            exhausting the official-source routes described in AUDITOR.md.
 
-            Do NOT try to verify all ${{ steps.watchlist.outputs.count }}
-            records. Verify the FIRST 10 in watchlist.json properly, with a
-            real fetched quote for each, and list every remaining record under
-            "unverifiable" with cause "not_checked". Ten well-evidenced records
-            beat thirty asserted ones, and the next run picks up where this one
-            stopped. Partial coverage is expected and is reported honestly.
-
-            Write your findings to audit-proposals.json at the repository root,
-            creating or editing it as you go, and change no other file. Update
-            it every few records rather than only at the end, so a run that
-            stops early still reports what it managed to check.
-          # The auditor gets the tools its job actually needs: find, grep, read,
-          # edit, fetch. What keeps it out of repository data is the tamper
-          # check below - an external gate that fails the run on any change
-          # under deadlines/ or .github/ - NOT a starved tool list. Removing
-          # tools only made it stall; 35 permission denials in one run is a
-          # model fighting its allowlist instead of reading conference pages.
-          #
-          # --max-turns matters as much as the tools. A run reported exactly 60
-          # turns, which is a cap rather than a natural stop: roughly two turns
-          # per watchlist record, barely enough to fetch a page, let alone find
-          # the CFP subpage and read it. The 45-minute job timeout is the real
-          # bound, so let turns be generous.
+            Edit only audit-proposals.json. Checkpoint after every few records.
+            Finish with every watchlist identity exactly once and no not_checked.
+          # No arbitrary shell or curl: official pages are read with WebFetch and
+          # WebSearch. This job also has no repository write credential.
           claude_args: |
             --max-turns 200
-            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(grep:*),Bash(find:*),Bash(jq:*),Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
 
-      # Did attempt 1 actually produce anything?
-      - name: Check for auditor output
-        id: attempt1
-        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+      - name: Assert the first auditor touched no protected files
+        if: steps.shard.outputs.count != '0'
+        env:
+          WATCHLIST_SHA: ${{ steps.shard.outputs.watchlist_sha }}
         run: |
-          if [ -f audit-proposals.json ]; then
-            echo "have=true" >> "$GITHUB_OUTPUT"
-            echo "Attempt 1 produced audit-proposals.json."
-          else
-            echo "have=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::attempt 1 wrote nothing; retrying the auditor once"
-          fi
-
-      - name: Run Claude auditor (retry)
-        id: auditor2
-        continue-on-error: true
-        if: steps.token.outputs.present == 'true' && steps.attempt1.outputs.have == 'false'
-        uses: anthropics/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # Use the workflow's own token instead of the Claude Code GitHub
-          # App (which is deliberately not installed on this repo). Claude
-          # only edits the working tree; branch/PR operations are done by
-          # the deterministic steps below as github-actions[bot].
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # TEMPORARY, for diagnosis: the action hides the model's
-          # transcript by default, which is why five runs have been
-          # diagnosed by inference. Turn this back off once the
-          # bail-at-2m45s cause is known.
-          show_full_output: true
-          # Today's date is interpolated, not merely alluded to: nothing else in
-          # the environment tells the model what today is, and audit_date drives
-          # the citation comments the applier writes.
-          prompt: |
-            Read deadlines/scripts/AUDITOR.md and follow it exactly. The
-            watchlist is in watchlist.json at the repository root.
-            Today's date is ${{ steps.today.outputs.date }} (UTC); use it as
-            audit_date. Trust pages you fetch this run, not memory.
-
-            Work autonomously - there is nobody to ask, so never stop to
-            ask a question.
-
-            Do NOT try to verify all ${{ steps.watchlist.outputs.count }}
-            records. Verify the FIRST 10 in watchlist.json properly, with a
-            real fetched quote for each, and list every remaining record under
-            "unverifiable" with cause "not_checked". Ten well-evidenced records
-            beat thirty asserted ones, and the next run picks up where this one
-            stopped. Partial coverage is expected and is reported honestly.
-
-            Write your findings to audit-proposals.json at the repository root,
-            creating or editing it as you go, and change no other file. Update
-            it every few records rather than only at the end, so a run that
-            stops early still reports what it managed to check.
-          # The auditor gets the tools its job actually needs: find, grep, read,
-          # edit, fetch. What keeps it out of repository data is the tamper
-          # check below - an external gate that fails the run on any change
-          # under deadlines/ or .github/ - NOT a starved tool list. Removing
-          # tools only made it stall; 35 permission denials in one run is a
-          # model fighting its allowlist instead of reading conference pages.
-          #
-          # --max-turns matters as much as the tools. A run reported exactly 60
-          # turns, which is a cap rather than a natural stop: roughly two turns
-          # per watchlist record, barely enough to fetch a page, let alone find
-          # the CFP subpage and read it. The 45-minute job timeout is the real
-          # bound, so let turns be generous.
-          claude_args: |
-            --max-turns 200
-            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(grep:*),Bash(find:*),Bash(jq:*),Bash(python3:*),Bash(python:*),Bash(curl:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*)"
-
-      # The auditor may now create audit-proposals.json and nothing else - it
-      # has no reason to touch deadlines/ at all. Checked from OUTSIDE the
-      # gates: audit_lint.py cannot police itself (a tampered copy just
-      # approves everything) and the model holds Bash(python3:*).
-      - name: Assert the auditor touched only its proposals file
-        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
-        run: |
+          echo "$WATCHLIST_SHA  watchlist.json" | sha256sum --check --strict
           tampered=$(git status --porcelain -- deadlines .github)
           if [ -n "$tampered" ]; then
-            echo "::error::auditor modified repository files, which AUDITOR.md forbids"
-            # Preserve what it wrote rather than reverting. The job fails here,
-            # so nothing reaches master either way - and this is the one failure
-            # mode where seeing the attempted change is the whole point.
-            {
-              echo "## Audit aborted: the auditor modified repository files"
-              echo
-              echo '```'
-              echo "$tampered"
-              echo '```'
-              echo
-              echo '<details><summary>Attempted diff</summary>'
-              echo
-              echo '```diff'
-              git diff -- deadlines .github | head -400
-              echo '```'
-              echo
-              echo '</details>'
-            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::auditor modified protected repository files"
+            echo "$tampered"
             exit 1
           fi
 
-      # Schema and repo-contract check on the model's output, run before
-      # anything is written. Rejected proposals are reported, not applied.
-      - name: Validate proposals
-        id: proposals
-        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
+      # A deterministic re-fetch of only recorded official URLs requeues a
+      # model-side fetch failure when the page is actually reachable.
+      - name: Reconcile transient fetch outcomes
+        continue-on-error: true
+        if: steps.shard.outputs.count != '0'
         run: |
-          # A missing file is a CONTRACT VIOLATION, not a quiet week. AUDITOR.md
-          # requires audit-proposals.json on every run - an empty proposals array
-          # is how a clean audit reports itself - so "the model wrote nothing"
-          # and "the model checked everything and found nothing" are different
-          # outcomes and must not look identical. Failing here is what keeps them
-          # distinguishable.
-          if [ ! -f audit-proposals.json ]; then
-            echo "any=false" >> "$GITHUB_OUTPUT"
-            echo "::error::the auditor exited successfully but wrote no audit-proposals.json"
-            {
-              echo "## Audit produced no output"
-              echo
-              echo "The auditor ran, exited 0, and wrote no \`audit-proposals.json\`."
-              echo
-              echo "\`AUDITOR.md\` requires that file on every run: a clean audit is"
-              echo "reported as an empty \`proposals\` array plus \`no_change\` entries"
-              echo "showing what was checked. No file means the run cannot be"
-              echo "distinguished from one that did nothing, so it is failed here"
-              echo "rather than passed silently."
-            } >> "$GITHUB_STEP_SUMMARY"
+          python3 deadlines/scripts/reconcile_audit_outcomes.py \
+            --proposals audit-proposals.json --watchlist watchlist.json
+
+      - name: Check first auditor output completeness
+        id: attempt1
+        run: |
+          complete=false
+          if python3 deadlines/scripts/audit_batches.py validate \
+               watchlist.json audit-proposals.json \
+               --audit-date "${{ needs.prepare.outputs.audit_date }}" \
+             && python3 deadlines/scripts/apply_proposals.py --validate-only \
+               --require-complete --require-some-proposal \
+               --watchlist watchlist.json; then
+            complete=true
+          fi
+          echo "complete=$complete" >> "$GITHUB_OUTPUT"
+          if [ "$complete" != "true" ]; then
+            echo "::warning::shard output is incomplete or malformed; retrying once"
+          fi
+
+      - name: Run Claude auditor completion retry
+        id: auditor2
+        continue-on-error: true
+        if: steps.shard.outputs.count != '0' && steps.attempt1.outputs.complete != 'true'
+        timeout-minutes: 24
+        # v1.0.210; keep both attempts on the same reviewed implementation.
+        uses: anthropics/claude-code-action@a874e9ecd7bb36efdad65429c6b35815f5a08f10
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          show_full_output: false
+          prompt: |
+            Read deadlines/scripts/AUDITOR.md and follow it exactly. This is a
+            completion retry for watchlist.json. Preserve valid completed
+            findings in audit-proposals.json, then inspect every missing or
+            not_checked identity. Remove duplicate or unknown identities.
+            Today's UTC date is ${{ needs.prepare.outputs.audit_date }}.
+
+            Work autonomously; there is nobody to ask. Edit only
+            audit-proposals.json. Finish with every record exactly once and no
+            not_checked entries. Trust pages fetched this run, never memory.
+          claude_args: |
+            --max-turns 200
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+
+      - name: Assert the final auditor touched no protected files
+        if: steps.shard.outputs.count != '0'
+        env:
+          WATCHLIST_SHA: ${{ steps.shard.outputs.watchlist_sha }}
+        run: |
+          echo "$WATCHLIST_SHA  watchlist.json" | sha256sum --check --strict
+          tampered=$(git status --porcelain -- deadlines .github)
+          if [ -n "$tampered" ]; then
+            echo "::error::auditor modified protected repository files"
+            echo "$tampered"
             exit 1
           fi
-          echo "any=true" >> "$GITHUB_OUTPUT"
-          # PIPESTATUS, not the pipeline's status: `| tee` returns 0 and would
-          # swallow the validator's verdict. An earlier run reported
-          # "examined: 0/30" and still went green for exactly this reason.
-          set +e
+
+      - name: Validate final shard contract
+        run: |
+          python3 deadlines/scripts/audit_batches.py validate \
+            watchlist.json audit-proposals.json \
+            --audit-date "${{ needs.prepare.outputs.audit_date }}"
           python3 deadlines/scripts/apply_proposals.py --validate-only \
-            --watchlist watchlist.json | tee -a "$GITHUB_STEP_SUMMARY"
+            --require-complete --watchlist watchlist.json
+
+      - name: Name shard output
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: cp audit-proposals.json "audit-proposals-$SHARD.json"
+
+      - name: Upload shard checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deadline-audit-output-${{ github.run_id }}-${{ matrix.shard }}
+          path: audit-proposals-${{ matrix.shard }}.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  apply:
+    needs: [prepare, audit_shard]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      actions: read
+    env:
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      SOURCE_SHA: ${{ needs.prepare.outputs.source_sha }}
+    steps:
+      # No model process, environment, git config or hook crosses into this job.
+      - name: Check out trusted repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.source_sha }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install 'pyyaml==6.0.*'
+
+      - name: Download immutable watchlist
+        uses: actions/download-artifact@v4
+        with:
+          name: deadline-audit-input-${{ github.run_id }}
+          path: audit-input
+
+      - name: Download all completed shard outputs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: deadline-audit-output-${{ github.run_id }}-*
+          path: shard-output
+          merge-multiple: true
+
+      - name: Merge exact-once audit output
+        env:
+          AUDIT_DATE: ${{ needs.prepare.outputs.audit_date }}
+        run: |
+          cp audit-input/watchlist.json watchlist.json
+          for proposal in shard-output/audit-proposals-*.json; do
+            shard=${proposal##*-}
+            shard=${shard%.json}
+            python3 deadlines/scripts/audit_batches.py validate \
+              "audit-input/audit-shards/watchlist-$shard.json" "$proposal" \
+              --audit-date "$AUDIT_DATE"
+          done
+          python3 deadlines/scripts/audit_batches.py merge \
+            watchlist.json audit-proposals.json \
+            --audit-date "$AUDIT_DATE" \
+            shard-output/audit-proposals-*.json
+          python3 deadlines/scripts/audit_batches.py validate \
+            watchlist.json audit-proposals.json \
+            --audit-date "$AUDIT_DATE"
+          python3 deadlines/scripts/apply_proposals.py --validate-only \
+            --require-complete --watchlist watchlist.json
+
+      - name: Verify official citations independently
+        run: |
+          set +e
+          python3 deadlines/scripts/verify_citations.py \
+            --watchlist watchlist.json \
+            --out audit-verdicts.json --report-only \
+            | tee -a "$GITHUB_STEP_SUMMARY"
           code=${PIPESTATUS[0]}
           set -e
-          if [ "$code" -ne 0 ]; then
-            echo "::error::proposal validation failed (see the summary above)"
+          if [ "$code" -ne 0 ] || [ ! -f audit-verdicts.json ]; then
+            echo "::error::citation verifier failed or wrote no verdict file"
             exit 1
           fi
 
-      # Strict evidence gate, report-only for now: re-fetches every cited page
-      # and checks the quote is really there, really contains the value, and
-      # carries a label appropriate to the field. Nothing acts on the verdicts
-      # yet - this run is calibration. Compare its verdicts against what you
-      # actually merge for a few weeks before letting them gate anything.
-      # The evidence gate, now deciding rather than reporting. It re-fetches
-      # every cited page and checks the quote is really there, contains the
-      # value, and carries a label appropriate to the field.
-      - name: Verify citations
-        if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
-        run: |
-          python3 deadlines/scripts/verify_citations.py \
-            --out audit-verdicts.json --report-only | tee -a "$GITHUB_STEP_SUMMARY"
-
-      # Deterministic applier. Two questions in order: the gate asks "does the
-      # page say this", risk_policy asks "what does being wrong cost".
-      #
-      # A change publishes itself only if VERIFIED and safe-direction - earlier
-      # deadline, unchanged instant, or a field that was absent. Anything moving
-      # the effective instant LATER is held, because too-early costs a
-      # researcher hurried hours and too-late costs them the paper. Held items
-      # go to the pull request with their evidence: the gate has a measured
-      # false-negative rate, so held must mean "a human looks", never "it
-      # vanishes".
-      - name: Apply proposals
-        id: apply
-        if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
+      - name: Apply independently verified fields
         run: |
           set +e
           python3 deadlines/scripts/apply_proposals.py \
             --verdicts audit-verdicts.json \
+            --watchlist watchlist.json --require-complete \
             --report audit-summary.md | tee -a "$GITHUB_STEP_SUMMARY"
           code=${PIPESTATUS[0]}
           set -e
-          if [ "$code" -eq 1 ]; then
-            echo "::error::applier refused; nothing was written"
+          if [ "$code" -ne 0 ]; then
+            echo "::error::applier failed with exit code $code; refusing to publish"
             exit 1
           fi
-          if [ "$code" -eq 3 ]; then
-            echo "::warning::some proposals were rejected; see the summary"
-          fi
 
-      # Deterministic gate: converge the data (propagating any manual.yml
-      # edits), confirm the run is idempotent, and enforce the audit allowlist
-      # + citation rule.
-      #
-      # Exit 2 (degraded) is NOT fatal here. It usually means an unrelated
-      # upstream fetch failed, while everything that could be written safely
-      # was. The previous `set -o pipefail` with no `set +e` turned any such
-      # degrade into a silent no-PR, no-alert week - the audit's findings were
-      # simply lost. Convergence is now asserted on output, not on exit code,
-      # for the same reason.
       - name: Converge and lint
         id: converge
-        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
         run: |
           set +e
           python3 deadlines/scripts/update_deadlines.py 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
           code=${PIPESTATUS[0]}
           set -e
-          if [ "$code" -eq 1 ]; then
-            echo "::error::updater failed fatally (exit 1); nothing was written"
+          case "$code" in
+            0) ;;
+            2)
+              echo "degraded=true" >> "$GITHUB_OUTPUT"
+              echo "::warning::updater degraded; verified changes will not be pushed this run"
+              ;;
+            *)
+              echo "::error::updater failed with unexpected exit code $code"
+              exit 1
+              ;;
+          esac
+          set +e
+          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1)
+          dry_code=$?
+          set -e
+          echo "$out" | tail -5
+          if [ "$dry_code" -ne 0 ] && [ "$dry_code" -ne 2 ]; then
+            echo "::error::dry-run convergence check failed with exit code $dry_code"
             exit 1
           fi
-          if [ "$code" -eq 2 ]; then
-            echo "degraded=true" >> "$GITHUB_OUTPUT"
-            echo "::warning::updater reported a degraded run (exit 2); continuing so this week's audit is not silently discarded"
-          fi
-          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1 || true)
-          echo "$out" | tail -5
           if ! echo "$out" | grep -q "no file changes"; then
-            echo "::error::updater did not converge: a second run still wants to change files"
+            echo "::error::updater did not converge"
             exit 1
           fi
           python3 deadlines/scripts/audit_lint.py
 
-      # Auto-apply: verified, safe-direction corrections go straight to master.
-      # Everything the applier held is already excluded - it was never written
-      # to the tree - so whatever is in deadlines/data here has cleared both the
-      # evidence gate and the direction check, plus convergence and the lint.
-      #
-      # A push with GITHUB_TOKEN does not retrigger workflows, so this cannot
-      # loop. Rebase before pushing: the daily Tier-1 sync may have landed a
-      # commit while the auditor was running.
-      - name: Commit verified corrections to master
-        if: steps.token.outputs.present == 'true' && steps.watchlist.outputs.count != '0'
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Commit verified corrections to default branch
         run: |
+          if [ "${{ steps.converge.outputs.degraded }}" = "true" ]; then
+            echo "::error::updater degraded; retrying automatically on the next schedule"
+            exit 1
+          fi
+          # Even a no-op audit must prove that the trusted pipeline inputs did
+          # not change while the model shards were running. Otherwise a stale
+          # snapshot could be reported healthy and close an active alert.
+          git fetch origin "$DEFAULT_BRANCH"
+          latest=$(git rev-parse FETCH_HEAD)
+          if ! git diff --quiet "$SOURCE_SHA" "$latest" -- \
+               deadlines/ \
+               .github/workflows/audit-deadlines.yml \
+               .github/workflows/update-deadlines.yml; then
+            echo "::error::deadline pipeline inputs changed during the audit; refusing stale publication"
+            exit 1
+          fi
           if [ -z "$(git status --porcelain -- deadlines/data)" ]; then
             echo "Audit found nothing to correct."
             exit 0
           fi
-          if [ "${{ steps.converge.outputs.degraded }}" = "true" ]; then
-            echo "::error::updater degraded this run; not auto-applying. Re-run when upstream is healthy."
-            exit 1
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c deadline-audit-run
           git add -- deadlines/data
-          git commit -m "Deadline audit: verified corrections
-
-          Applied automatically: every change was verified against the venue's
-          official page by deadlines/scripts/verify_citations.py and moves the
-          effective deadline no later than before. See the job summary for the
-          citations and for anything held back."
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          # The rebase may bring in upstream data; re-derive and re-check rather
-          # than trusting a textual merge of generated files.
-          python3 deadlines/scripts/update_deadlines.py >/dev/null 2>&1 || true
-          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1 || true)
+          git commit -m "Deadline audit: verified corrections"
+          git rebase "$latest"
+          set +e
+          python3 deadlines/scripts/update_deadlines.py >/dev/null 2>&1
+          code=$?
+          set -e
+          if [ "$code" -ne 0 ]; then
+            echo "::error::updater was not healthy after rebase; not pushing"
+            exit 1
+          fi
+          set +e
+          out=$(python3 deadlines/scripts/update_deadlines.py --dry-run 2>&1)
+          dry_code=$?
+          set -e
+          if [ "$dry_code" -ne 0 ]; then
+            echo "::error::post-rebase dry run was not healthy (exit $dry_code); not pushing"
+            exit 1
+          fi
           if ! echo "$out" | grep -q "no file changes"; then
             echo "::error::data did not converge after rebase; not pushing"
             exit 1
           fi
+          python3 deadlines/scripts/audit_lint.py
           if [ -n "$(git status --porcelain -- deadlines/data)" ]; then
             git add -- deadlines/data
             git commit --amend --no-edit
           fi
-          git push
-          echo "Pushed verified corrections to ${GITHUB_REF_NAME}."
+          git push origin "HEAD:$DEFAULT_BRANCH"
 
-      # Anything the gate or the direction check held back. These are NOT
-      # errors: the gate has a measured false-negative rate, so a held item may
-      # well be correct - it just needs someone to open the link. Held items go
-      # to a branch so the review is a diff, not a description.
-      - name: Open a pull request for held proposals
-        if: steps.token.outputs.present == 'true' && steps.proposals.outputs.any == 'true'
+      - name: Upload deterministic audit telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deadline-audit-telemetry-${{ github.run_id }}
+          path: |
+            watchlist.json
+            audit-proposals.json
+            audit-verdicts.json
+            audit-summary.md
+          if-no-files-found: warn
+          retention-days: 30
+
+  lifecycle:
+    needs: [prepare, audit_shard, apply]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_REPO: ${{ github.repository }}
+    permissions:
+      contents: read
+      issues: write
+      actions: write
+    steps:
+      - name: Close the legacy review-queue issue after a healthy audit
+        if: ${{ needs.prepare.result == 'success' && needs.audit_shard.result == 'success' && needs.apply.result == 'success' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if ! grep -q "Held for review" audit-summary.md 2>/dev/null; then
-            echo "Nothing was held."
-            exit 0
-          fi
-          gh label create deadline-pipeline --description "Automated deadline pipeline alerts" --color D93F0B --force
-          existing=$(gh issue list --state open --label deadline-pipeline \
-            --search "Deadline audit: proposals held" --json number --jq '.[0].number // empty')
-          if [ -n "$existing" ]; then
-            gh issue edit "$existing" --body-file audit-summary.md
-          else
-            gh issue create --title "Deadline audit: proposals held for review" \
-              --label deadline-pipeline --body-file audit-summary.md
-          fi
+          for n in $(gh issue list --state open --limit 1000 --json number,title \
+            --jq '.[] | select(.title == "Deadline audit: proposals held for review") | .number'); do
+            gh issue close "$n" --comment "The review queue is retired. This run completed the sharded autonomous audit and retained its telemetry: $RUN_URL"
+          done
 
-      - name: File watchlist issue (human mode, no auditor token)
-        if: steps.token.outputs.present == 'false' && steps.watchlist.outputs.count != '0'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 - <<'PY'
-          import datetime as dt
-          import json
-
-          items = json.load(open("watchlist.json"))
-          lines = [
-              "No usable `CLAUDE_CODE_OAUTH_TOKEN` secret was found. Either it was",
-              "never configured, or **it expired** — tokens from `claude setup-token`",
-              "last about a year and lapse with no warning. Regenerate it and update",
-              "the Actions repository secret to put the auditor back in the loop.",
-              "",
-              "Until then this week's verification watchlist needs a human",
-              "(~5-10 minutes): open each",
-              "venue's official page and check the values below. Corrections go",
-              "in `deadlines/data/manual.yml` (with a `Verified <date> against",
-              "<URL>` comment) or, for records with no upstream, directly in the",
-              "data file. See `deadlines/scripts/AUDITOR.md` for the full rules.",
-              "",
-          ]
-          for it in items:
-              rec = it["record"]
-              lines.append(f"- [ ] **{it['title']} {it['year']}** ({', '.join(it['reasons'])})")
-              if rec.get("link"):
-                  lines.append(f"      link: {rec['link']}")
-              for f in ("deadline", "abstract_deadline", "timezone", "place", "date"):
-                  if rec.get(f) is not None:
-                      lines.append(f"      {f}: {rec[f]}")
-          open("watchlist.md", "w", encoding="utf-8").write("\n".join(lines) + "\n")
-          PY
-          title="Weekly deadline audit: $(date -u +%F) — ${{ steps.watchlist.outputs.count }} record(s) to verify"
-          gh label create deadline-audit --description "Weekly human verification watchlist" --color FBCA04 --force
-          existing=$(gh issue list --state open --label deadline-audit --json number --jq '.[0].number // empty')
-          if [ -n "$existing" ]; then
-            gh issue edit "$existing" --title "$title" --body-file watchlist.md
-            echo "Updated existing watchlist issue #$existing."
-          else
-            gh issue create --title "$title" --label deadline-audit --body-file watchlist.md
-          fi
-
-      # A red run nobody looks at is a silent failure with extra steps. Tier 1
-      # already files/bumps a deadline-pipeline issue on failure; the audit now
-      # does too, so a broken auditor surfaces without anyone watching Actions.
-      - name: File a pipeline alert on failure
-        if: failure()
+      - name: File or update an audit failure alert
+        if: ${{ needs.prepare.result != 'success' || needs.audit_shard.result != 'success' || needs.apply.result != 'success' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh label create deadline-pipeline \
             --description "Automated deadline pipeline alerts" --color D93F0B --force
           title="Deadline audit failed: $(date -u +%F)"
-          body="The weekly audit run failed. See the run for details:
-          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          body="The autonomous weekly audit did not complete. Results: prepare=${{ needs.prepare.result }}, audit-shard=${{ needs.audit_shard.result }}, apply=${{ needs.apply.result }}.
 
-          Common causes: the auditor wrote no \`audit-proposals.json\` (a contract
-          violation - see AUDITOR.md), the OAuth token expired, or the updater
-          failed fatally."
-          existing=$(gh issue list --state open --label deadline-pipeline \
-            --search "Deadline audit failed" --json number --jq '.[0].number // empty')
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          existing=$(gh issue list --state open --label deadline-pipeline --limit 1000 \
+            --json number,title \
+            --jq 'map(select(.title | startswith("Deadline audit failed:"))) | .[0].number // empty')
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"
           else
             gh issue create --title "$title" --label deadline-pipeline --body "$body"
           fi
 
-      # Nothing ever closed these, so an alert from a failed run stayed open
-      # forever and the next healthy run said nothing about it. An alert that
-      # outlives its cause trains people to ignore alerts.
-      - name: Close stale pipeline alerts on a healthy run
-        if: success()
+      - name: Close stale audit and lifecycle alerts after a healthy audit
+        if: ${{ needs.prepare.result == 'success' && needs.audit_shard.result == 'success' && needs.apply.result == 'success' }}
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          for n in $(gh issue list --state open --label deadline-pipeline --json number --jq '.[].number'); do
-            gh issue close "$n" --comment "Resolved by a healthy audit run: $RUN_URL"
+          for n in $(gh issue list --state open --label deadline-pipeline --limit 1000 \
+            --json number,title \
+            --jq '.[] | select((.title | startswith("Deadline audit failed:")) or (.title | startswith("Deadline audit lifecycle failed:"))) | .number'); do
+            gh issue close "$n" --comment "Resolved by a complete autonomous audit: $RUN_URL"
           done
 
-      # GitHub auto-disables cron workflows after 60 days without repo
-      # activity; re-enabling on every run resets that timer.
       - name: Keep the schedule alive
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/audit-deadlines.yml/enable" || true
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/audit-deadlines.yml/enable"
+
+      - name: File an alert if audit lifecycle maintenance failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create deadline-pipeline \
+            --description "Automated deadline pipeline alerts" --color D93F0B --force
+          title="Deadline audit lifecycle failed: $(date -u +%F)"
+          body="The audit completed its worker jobs, but lifecycle maintenance (issue handling or schedule keepalive) failed.
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          existing=$(gh issue list --state open --label deadline-pipeline --limit 1000 \
+            --json number,title \
+            --jq 'map(select(.title | startswith("Deadline audit lifecycle failed:"))) | .[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --label deadline-pipeline --body "$body"
+          fi

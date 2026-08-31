@@ -14,13 +14,17 @@
 #               and future editions, so fixing a tier here self-corrects the data.
 #   aliases     titles used to associate records already present in the repo data
 #               files with this target (same matching rule as the frontend).
+#   official_hosts optional curated host trust anchors used only by the weekly
+#               evidence gate. They bootstrap a linkless coverage gap without
+#               trusting whatever domain the model proposes.
 #   sources     upstream locators:
 #                 ccfddl: file path under conference/ in github.com/ccfddl/ccf-deadlines
 #                 secdl:  record `name` in sec-deadlines.github.io _data/conferences.yml,
 #                         either a plain string or {name, description_contains}
 #                         (description_contains disambiguates duplicate names).
-#               "manual-only": no reliable machine source; the script never fetches
-#               this target - curate it by hand in the data files / manual.yml.
+#               "manual-only": no reliable deterministic community dataset; the
+#               daily script does not fetch it, so the weekly official-source
+#               audit discovers and verifies its current edition.
 #               The script warns on every run when any target (manual-only or
 #               not) has no entry for the upcoming cycle year.
 #
@@ -366,6 +370,7 @@ conferences:
     full_name: "Workshop on Binary Analysis Research"
     tier: "N/A"
     aliases: ["BAR", "Workshop on Binary Analysis Research"]
+    official_hosts: ["ndss-symposium.org"]
     # In neither dataset; the NDSS co-located-events page is prose-only HTML.
     sources: manual-only
 
@@ -386,7 +391,8 @@ conferences:
     full_name: "ACM Workshop on Large AI Systems and Models with Privacy and Safety Analysis"
     tier: "N/A"
     aliases: ["CCS-LAMPS", "LAMPS", "Workshop on Large AI Systems and Models with Privacy and Safety Analysis"]
-    # In neither dataset; watch https://lamps-ccs.github.io/home/ by hand.
+    official_hosts: ["lamps-ccs.github.io"]
+    # In neither dataset; the weekly auditor watches the official host above.
     sources: manual-only
 
   - key: "EuroSec"
@@ -420,8 +426,9 @@ conferences:
     full_name: "Digital Forensics Research Conference USA"
     tier: "N/A"
     aliases: ["DFRWS US", "DFRWS USA", "Digital Forensics Research Conference USA"]
-    # In neither dataset; dfrws.org WAF-blocks scripted fetches. WikiCFP has
-    # date-only data - not reliable enough to automate.
+    official_hosts: ["dfrws.org"]
+    # In neither dataset. Community calendars remain inadmissible evidence; the
+    # weekly auditor retries the official DFRWS host directly.
     sources: manual-only
 
   - key: "DFRWS APAC"
@@ -432,6 +439,6 @@ conferences:
     tier: "N/A"
     aliases: ["DFRWS APAC", "Digital Forensics Research Conference APAC"]
     sources:
-      # ccfddl coverage is stale (2025 edition only); current-cycle data must
-      # go into manual.yml by hand.
+      # ccfddl coverage is stale (2025 edition only); the weekly official-source
+      # audit owns current-cycle discovery and persists verified corrections.
       ccfddl: "SC/dfrws-apac.yml"

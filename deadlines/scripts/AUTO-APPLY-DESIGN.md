@@ -1,14 +1,12 @@
 # Tier 2 auto-apply: design
 
-Status: **§8 fixed and tested (2026-08-18). The rest is a proposal, revised the same day against a probe of all 36 tracked venues.**
+Status: **Threat-model and design record. The autonomous sharded core was
+implemented 2026-08-31; exploratory tiers below are not all live.**
 
-Step 1 of the build order in §11 is done: every bug in §8 is fixed on the
-existing PR-based pipeline, with regression tests under
-`deadlines/scripts/tests/`. Nothing auto-applies yet — the human still merges
-the audit PR, exactly as before. What changed is that the pipeline no longer
-loses a week's audit to an unrelated fetch failure, no longer lets an
-unresolvable timezone render a deadline as AoE, and no longer treats a
-suppressing override as obsolete.
+The design below records the threat model and trade-offs that led to the live
+implementation. The publisher now verifies official citations independently,
+persists bounded retry/corroboration state, and writes the default branch without
+a human data-review step.
 
 Goal: the weekly verification audit publishes verified corrections straight to
 master with no human in the loop, without ever publishing a wrong deadline.
@@ -19,7 +17,7 @@ zero rather than pretending it is empty.
 
 ---
 
-## 1. Why the current design stops at a PR
+## 1. Why the original design stopped at a PR
 
 The auditor edits YAML directly. The only automated check is `audit_lint.py`:
 files touched are inside `deadlines/data/`, and every `manual.yml` entry has a
@@ -470,7 +468,8 @@ Per `(title, year)` each run: `NOT_APPLICABLE` (no concrete deadline) ·
 it) · `TRACKER_ONLY` · `NO_SOURCE` (not even a tracker) · `CONTRADICTED` (a source
 grounds a *different* value, which feeds the normal proposal path).
 
-State lives in a machine-owned sidecar, `deadlines/data/corroboration.json`, read
+The live bounded retry/promotion state uses the machine-owned sidecar
+`deadlines/data/audit-state.json`, read
 as a **fourth input** to `update_deadlines.py`. Not in `manual.yml`: that is the
 human override channel, and machine bookkeeping there would be indistinguishable
 from a verified human decision, would be swept by `manual_matches_upstream`, and
@@ -566,7 +565,7 @@ can be skipped entirely this run.
 | breaker | value | why |
 |---|---|---|
 | max auto-applied / run | 6 | steady state is 0–3; caps a runaway without ever binding normally |
-| max proposals / run | 12 | watchlist is ~28 today and most are fine; more is a broken upstream, not 20 findings |
+| max proposals / run | 8 | a stable prefix makes bounded progress; overflow remains in persistent retry state |
 | max deadline shift | 120 days | above the ~4-month gap between cycles at EuroSys/NDSS/DIMVA, well below a 365-day year-offset error |
 | max risk-direction shift | 30 days | real extensions run days to weeks; today's entries move 1–14 days |
 | oscillation | 2 auto-applies to the same `(title, year, field)` within 28 days that revert to a prior value → permanent quarantine until a human clears it |
@@ -655,8 +654,8 @@ create untracked files. Use `git status --porcelain`.
 **8.10 The converge step lacks `set +e`.** Any unrelated exit-2 degrade — one
 ccfddl fetch failing — silently kills that week's audit with no PR and no alert.
 
-**8.11 Token expiry fails green.** No `CLAUDE_CODE_OAUTH_TOKEN` routes to human-mode
-issue filing and the job stays green. In auto-apply mode the tracker would quietly
+**8.11 Token expiry fails green.** No `CLAUDE_CODE_OAUTH_TOKEN` routes to the old
+review-only issue fallback and the job stays green. In auto-apply mode the tracker would quietly
 stop self-correcting. Absent token → red + alert.
 
 **8.12 The audit prompt does not actually pin today's date.** It says "Today's date
@@ -687,12 +686,12 @@ citation — the second fails, correctly. No fix needed.
   comment run resets on any blank line.
 - **Re-cite on every edit.** The lint is whole-file and freshness-blind, so a stale
   `Verified` date satisfies an edited entry.
-- **Round-trip self-test.** `manual.yml` is jointly owned by humans and the applier.
-  Before any modification, assert `render(parse(text)) == text` byte-for-byte; on
-  mismatch, refuse and exit. Rewriting under a misparse could drop a hand-written
-  override — the worst failure available to this system.
-- **Unmentioned fields are preserved** on upsert, so a human-pinned `place` survives
-  a machine correction to `deadline`.
+- **Round-trip self-test.** `manual.yml` is pipeline-owned but can contain legacy
+  curated entries. Before any modification, assert `render(parse(text)) == text`
+  byte-for-byte; on mismatch, refuse and exit. Rewriting under a misparse could
+  drop an existing override — the worst failure available to this system.
+- **Unmentioned fields are preserved** on upsert, so a previously pinned `place`
+  survives a machine correction to `deadline`.
 - **Idempotence** via `canon_record` comparison, so `AoE` ≡ `UTC-12` and `"x"` ≡
   `["x"]` count as no-ops and a re-run produces a zero-byte diff.
 

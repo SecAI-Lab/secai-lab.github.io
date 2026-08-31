@@ -6,9 +6,9 @@ program (`apply_proposals.py`) applies your findings after machine-checking
 every one of them.
 
 **Write exactly one file: `audit-proposals.json` at the repository root.**
-Do not edit anything under `deadlines/`. Do not commit, push, branch, or open a
-pull request. A separate step checks that you touched nothing else and fails the
-run if you did.
+Do not edit anything under `deadlines/`. Do not commit, push, create branches,
+or invoke repository-hosting operations. A separate step checks that you
+touched nothing else and fails the run if you did.
 
 **Write that file on every run, without exception — including when you find
 nothing wrong.** Finding nothing is a normal, good outcome, but it is reported
@@ -18,17 +18,17 @@ failed: it cannot be told apart from a run that did no work, so it is treated as
 the latter. If you are about to finish without writing the file, stop and write
 it.
 
-**Do not try to do all of them.** The prompt tells you how many records to
-verify properly this run — usually about ten. Verify those with real fetched
-quotes, and list every record you did not reach under `unverifiable` with cause
-`not_checked`. Ten well-evidenced records are worth more than thirty asserted
-ones, and next week's run continues from where you stopped. Partial coverage is
-expected, reported, and fine.
+**Attempt every watchlist record.** Verify each one with real fetched quotes or
+record the concrete reason its official evidence could not be obtained. During
+the run you may use `not_checked` as a temporary checkpoint for work that is
+still pending, but replace every such entry before finishing. An output that
+still contains `not_checked` is incomplete, is retried once, and is rejected if
+the retry does not finish it.
 
 **Account for every watchlist record.** Each one appears exactly once, either in
 `proposals` (with any action, `no_change` included) or in `unverifiable`. A
-record you skipped silently is reported as an error, so say what happened to it
-— `not_checked` is an honest answer.
+record you skipped silently is reported as an error. An unavailable page is a
+valid result, but use the specific cause that describes the attempted check.
 
 ## Input
 
@@ -66,9 +66,9 @@ do not retype it from memory, and do not tidy it up.
    to you in the prompt — use it.
 4. **Unreachable means UNVERIFIABLE.** Make no proposal; add an `unverifiable`
    entry instead.
-5. **Propose only fields you can quote.** A proposal is accepted or rejected as
-   a unit, so one unquotable `place` would discard a correct `deadline` beside
-   it.
+5. **Propose only fields you can quote.** Fields are gated independently, while
+   `deadline`, `abstract_deadline` and `timezone` remain atomic when proposed
+   together because applying only half can change the effective instant.
 
 ## Actions
 
@@ -78,8 +78,9 @@ do not retype it from memory, and do not tidy it up.
   (`coverage-gap`). Requires at least a `deadline`.
 - `delete_manual` — an existing override is obsolete because upstream now
   agrees. Set `"obsolete_because": "upstream_agrees"`; no web evidence needed,
-  the program checks this itself. If the override is *wrong* rather than
-  obsolete, use `upsert_manual` with corrected values.
+  the program checks this against the immutable static-updater marker and
+  requires the same result on two distinct weekly runs. If the override is
+  *wrong* rather than obsolete, use `upsert_manual` with corrected values.
 - `no_change` — you checked and the record is correct. Emit these; they are how
   the run shows its coverage. **They carry the same evidence as a correction**:
   `source_url`, and a `fields` map holding the values you verified — the ones
@@ -114,27 +115,32 @@ that block only, that no date sits near the field's label. A fragment will not
 do - quote the whole block.
 
 `timezone` is never deleted automatically. A missing timezone renders as AoE,
-i.e. later than the truth, so that one stays a human decision.
+i.e. later than the truth. Leave the stored value unchanged and do not propose
+a deletion; retain the official source in the record's audit result.
 
 ## Priorities (work top-down; stop when the watchlist is exhausted)
 
 1. `deadline-within-45-days` — an error here costs someone a submission.
-2. `tba-upcoming-cycle` — has a CFP been announced? The most common real finding.
-3. `manual-override-active` — re-verify; propose `delete_manual` if obsolete.
-4. `cross-source-disagreement` — the official page is the tiebreaker.
-5. `stale-placeholder-note` — refresh notes whose claims have aged out.
-6. `coverage-gap` — `create_record` if an official page now exists.
-7. `tba-metadata` — the deadline is known but `place`, `date` or `timezone` is
+2. `audit-deferred` — retry a correction retained by a prior evidence, safety,
+   or per-run budget gate; this persists across edition-year boundaries.
+3. `tba-upcoming-cycle` — has a CFP been announced? The most common real finding.
+4. `manual-override-active` — re-verify; propose `delete_manual` if obsolete.
+5. `cross-source-disagreement` — the official page is the tiebreaker.
+6. `stale-placeholder-note` — refresh notes whose claims have aged out.
+7. `coverage-gap` — `create_record` if an official page now exists.
+8. `tba-metadata` — the deadline is known but `place`, `date` or `timezone` is
    still TBA. Lowest stakes, but nothing else nominates these records, so they
    stay TBA indefinitely unless this pass fills them. The publisher's CFP
    calendar often has the city before the venue's own site does.
+9. `scheduled-full-audit` — routine coverage for every current or future
+   edition. Check these too; persisted `audit-deferred` state carries unresolved
+   older editions independently of this routine nomination.
 
 ## Web access
 
-Prefer WebFetch/WebSearch. If they are unavailable in this environment, use
-`curl -sL` via Bash — and pipe it, do not save it. Writing fetched pages to
-files in the repository leaves litter behind; if you must save one, put it in
-`/tmp`, never in the working tree.
+Use WebFetch/WebSearch. Shell network tools are deliberately unavailable in the
+read-only auditor job. Do not save fetched pages or edit any file other than
+`audit-proposals.json`.
 
 `usenix.org` serves automated requests fine — go to the USENIX page itself for
 OSDI / NSDI / USENIX Security / WOOT rather than a second-hand calendar.
@@ -237,16 +243,16 @@ reformatted `2025-12-10` that goes in `value`. The checker reconciles the two.
 }
 ```
 
-`cause` is one of `not_checked` (you did not reach this record — the honest
-answer for everything beyond the ten you verified), `no_official_page` (the
-venue's site exists but has no page for this edition yet — the most common
-outcome by far, and a perfectly good one), `fetch_blocked`, `page_ambiguous`,
-`javascript_only`, `pdf_only`.
+`cause` is one of `no_official_page` (the venue's site exists but has no page
+for this edition yet — the most common outcome by far, and a perfectly good
+one), `fetch_blocked`, `page_ambiguous`, `javascript_only`, or `pdf_only`.
+`not_checked` is reserved for an in-progress checkpoint and is forbidden in the
+final output.
 
 **Finding no page is a normal, successful result.** Most watchlist entries are
-upcoming editions whose CFP has simply not been published. Recording ten
-`no_official_page` entries is a complete, correct audit — not a wasted run, and
-not a reason to write nothing.
+upcoming editions whose CFP has simply not been published. Recording that
+result for every affected record is a complete, correct audit — not a wasted
+run, and not a reason to write nothing.
 
 **Do not propose a `note` on its own.** A note has no value the gate can check
 against a page, so a note-only proposal can never be accepted. If all you can
@@ -258,6 +264,6 @@ entry per record you verified, so the run shows its coverage. That is a
 successful audit, not a failed one. Never invent a proposal to have something
 to show.
 
-Before you finish, check: does `audit-proposals.json` exist, and does every
-watchlist record appear once in `proposals` or `unverifiable`? If not, the run
-fails.
+Before you finish, check: does `audit-proposals.json` exist, does every
+watchlist record appear exactly once in `proposals` or `unverifiable`, and are
+there zero `not_checked` entries? If not, the run fails.
