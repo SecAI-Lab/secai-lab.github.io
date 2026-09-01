@@ -210,14 +210,17 @@
   abstract_deadline: "2025-12-26 23:59"
   note: "Abstract submission precedes the paper deadline; extended from December 12."
 
-# CCS 2026's own site (https://www.sigsac.org/ccs/CCS2026/, fetched 2026-08-19)
-# states NO abstract deadline. The note below armed the frontend's
-# deriveAbstractFromComment regex, which was rendering two invented abstract
-# instants - 2026-01-07 and 2026-04-22 - as fact. Reworded so it no longer
-# fires; no abstract_deadline is asserted because no official source states one.
-# Verified 2026-08-19 against https://www.sigsac.org/ccs/CCS2026/
+# The official CCS 2026 CFP lists a mandatory abstract deadline for each
+# review cycle that is not yet recorded on the record.
+# Verified 2026-09-01 against
+# https://www.sigsac.org/ccs/CCS2026/call-for/call-for-papers.html
+# "Abstract submission deadline Jan 7, 2026"
+# Earlier: Verified 2026-08-19 against https://www.sigsac.org/ccs/CCS2026/
 - title: "CCS"
   year: 2026
+  abstract_deadline:
+    - "2026-01-07 23:59"
+    - "2026-04-22 23:59"
   note: "Review cycles have a mandatory registration step ahead of each paper deadline; see the official CFP for exact dates."
 
 # The note claimed the conference dates were unannounced; the official site now
@@ -227,3 +230,24 @@
 - title: "S&P"
   year: 2027
   note: "Two submission cycles. Venue within Montreal is not announced yet."
+
+# The CCS 2027 page now shows precise conference dates and a plain 'Atlanta,
+# USA' location (no state qualifier); the stored record had the vaguer
+# 'October 2027' and 'Atlanta, GA, USA'. The page still reads 'Coming Soon'
+# for the CFP, so no deadline is proposed.
+# Verified 2026-09-01 against https://www.sigsac.org/ccs/CCS2027/
+# "October 11-15, 2027 Atlanta, USA"
+- title: "CCS"
+  year: 2027
+  date: "October 11-15, 2027"
+
+# Stored record lists the conference date as October 3-9, 2026, but the
+# official conference page shows it running October 4-9, 2026 (Sunday
+# through Friday). Deadline and place were also verified and are already
+# correct.
+# Verified 2026-09-01 against https://conf.researchr.org/home/issta-2026
+# "Sun 4 - Fri 9 October 2026 Oakland, California, United States"
+- title: "ISSTA"
+  year: 2026
+  place: "Oakland, California, United States"
+  date: "October 4-9, 2026"
