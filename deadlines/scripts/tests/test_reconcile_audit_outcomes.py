@@ -23,6 +23,18 @@ class FakeFetcher:
         return self.responses.get(url, (None, "unreachable"))
 
 
+class TypedRecordingFetcher(R.Fetcher):
+    """Fetcher-shaped recorder so redirect confinement is observable offline."""
+
+    def __init__(self, responses=None):
+        self.responses = responses or {}
+        self.calls = []
+
+    def get(self, url, allowed_hosts=None, *, exact_redirect_hosts=False):
+        self.calls.append((url, set(allowed_hosts or ()), exact_redirect_hosts))
+        return self.responses.get(url, (None, "unreachable"))
+
+
 class ReconcileOutcome(unittest.TestCase):
     def test_reachable_fetch_returns_record_to_claude_retry(self):
         first = "https://conf.example/2027"
@@ -88,6 +100,22 @@ class ReconcileOutcome(unittest.TestCase):
                 self.assertEqual(result["cause"], "not_checked")
                 self.assertEqual(fetcher.calls, [])
 
+    def test_oversized_attempt_list_requeues_without_network_io(self):
+        attempted = [f"https://conf.example/route-{index}"
+                     for index in range(R.MAX_ATTEMPTED_URLS + 1)]
+        original = {
+            "title": "X", "year": 2027, "cause": "fetch_blocked",
+            "attempted": attempted,
+        }
+        fetcher = FakeFetcher({url: ("page", None) for url in attempted})
+
+        result, changed = R.reconcile_outcome(original, fetcher)
+
+        self.assertTrue(changed)
+        self.assertEqual(result["cause"], "not_checked")
+        self.assertIn("autonomous bound", result["note"])
+        self.assertEqual(fetcher.calls, [])
+
     def test_no_official_page_check_is_bounded_and_never_fetches(self):
         fetcher = FakeFetcher({"https://conf.example/": ("page", None)})
         complete = {
@@ -106,6 +134,71 @@ class ReconcileOutcome(unittest.TestCase):
         self.assertTrue(changed)
         self.assertEqual(result["cause"], "not_checked")
         self.assertEqual(fetcher.calls, [])
+
+    def test_every_final_nonfetch_cause_rejects_model_only_host(self):
+        policy = R.build_source_trust_policy(
+            [{"title": "X", "year": 2027, "record": {}}], [])
+        for cause in (
+                "no_official_page", "page_ambiguous",
+                "javascript_only", "pdf_only"):
+            with self.subTest(cause=cause):
+                document = {
+                    "proposals": [],
+                    "unverifiable": [{
+                        "title": "X", "year": 2027, "cause": cause,
+                        "attempted": ["https://model-only.example/cfp"],
+                    }],
+                }
+                fetcher = TypedRecordingFetcher()
+
+                result, changed = R.reconcile_document(
+                    document, fetcher, source_trust_policy=policy)
+
+                self.assertTrue(changed)
+                self.assertEqual(
+                    result["unverifiable"][0]["cause"], "not_checked")
+                self.assertIn(
+                    "outside immutable source trust",
+                    result["unverifiable"][0]["note"],
+                )
+                self.assertEqual(fetcher.calls, [])
+
+    def test_every_final_nonfetch_cause_accepts_trusted_attempt_without_io(self):
+        url = "https://x2027.official.example/cfp"
+        policy = R.build_source_trust_policy([{
+            "title": "X", "year": 2027, "record": {},
+            "upstream_link_candidates": [
+                {"source": "ccfddl", "link": url},
+            ],
+        }], [])
+        for cause in (
+                "no_official_page", "page_ambiguous",
+                "javascript_only", "pdf_only"):
+            with self.subTest(cause=cause):
+                document = {
+                    "proposals": [],
+                    "unverifiable": [{
+                        "title": "X", "year": 2027, "cause": cause,
+                        "attempted": [url],
+                    }],
+                }
+                fetcher = TypedRecordingFetcher()
+
+                result, changed = R.reconcile_document(
+                    document, fetcher, source_trust_policy=policy)
+
+                self.assertFalse(changed)
+                self.assertEqual(result, document)
+                self.assertEqual(fetcher.calls, [])
+
+    def test_nonfetch_cause_requeues_inadmissible_tracker_url(self):
+        original = {
+            "title": "X", "year": 2027, "cause": "no_official_page",
+            "attempted": ["https://ccfddl.github.io/conference/X"],
+        }
+        result, changed = R.reconcile_outcome(original, FakeFetcher())
+        self.assertTrue(changed)
+        self.assertEqual(result["cause"], "not_checked")
 
     def test_other_causes_are_untouched_and_never_fetched(self):
         fetcher = FakeFetcher()
@@ -170,6 +263,51 @@ class ReconcileDocumentAndFile(unittest.TestCase):
             document, fetcher,
             trusted_by_title={"X": {"official.example"}},
         )
+        self.assertTrue(changed)
+        self.assertEqual(result["unverifiable"][0]["cause"], "not_checked")
+        self.assertEqual(fetcher.calls, [])
+
+    def test_typed_policy_rechecks_exact_provisional_host_with_confined_redirects(self):
+        url = "https://x2027.official.example/cfp"
+        watchlist = [{
+            "title": "X", "year": 2027, "record": {},
+            "upstream_link_candidates": [
+                {"source": "ccfddl", "link": url},
+            ],
+        }]
+        policy = R.build_source_trust_policy(watchlist, [])
+        document = {
+            "proposals": [],
+            "unverifiable": [{
+                "title": "X", "year": 2027, "cause": "fetch_blocked",
+                "attempted": [url],
+            }],
+        }
+        fetcher = TypedRecordingFetcher({url: ("<html>CFP</html>", None)})
+
+        result, changed = R.reconcile_document(
+            document, fetcher, source_trust_policy=policy)
+
+        self.assertTrue(changed)
+        self.assertEqual(result["unverifiable"][0]["cause"], "not_checked")
+        self.assertEqual(fetcher.calls, [(url, {"x2027.official.example"}, True)])
+
+    def test_typed_policy_never_rechecks_unrelated_model_only_host(self):
+        url = "https://model-only.example/cfp"
+        policy = R.build_source_trust_policy(
+            [{"title": "X", "year": 2027, "record": {}}], [])
+        document = {
+            "proposals": [],
+            "unverifiable": [{
+                "title": "X", "year": 2027, "cause": "fetch_blocked",
+                "attempted": [url],
+            }],
+        }
+        fetcher = TypedRecordingFetcher({url: ("<html>CFP</html>", None)})
+
+        result, changed = R.reconcile_document(
+            document, fetcher, source_trust_policy=policy)
+
         self.assertTrue(changed)
         self.assertEqual(result["unverifiable"][0]["cause"], "not_checked")
         self.assertEqual(fetcher.calls, [])

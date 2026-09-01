@@ -76,6 +76,9 @@ def workflow_contract():
         require(suite in test_script, f"prepare does not run {suite}")
 
     shard = jobs["audit_shard"]
+    require(int(shard.get("timeout-minutes", 0)) >= 120,
+            "the shard envelope must fit both reconciliations, two model "
+            "attempts, and citation backoff")
     require((shard.get("strategy") or {}).get("max-parallel") == 1,
             "audit shards must be serial to bound subscription usage")
     require((shard.get("permissions") or {}).get("contents") == "read",
@@ -90,17 +93,23 @@ def workflow_contract():
             "model shards must check out the immutable prepare-stage revision")
     tamper_steps = [step.get("run", "") for step in shard.get("steps") or []
                     if "WATCHLIST_SHA" in str(step.get("run", ""))]
-    require(len(tamper_steps) == 2
+    require(len(tamper_steps) == 3
             and all("sha256sum --check --strict" in str(run) for run in tamper_steps),
-            "both model attempts must detect root watchlist tampering")
-    reconcile = named_step(shard, "Reconcile transient fetch outcomes").get("run", "")
+            "both model attempts and final reconciliation must detect "
+            "root watchlist tampering")
+    reconcile = named_step(
+        shard, "Reconcile first-pass transient fetch outcomes"
+    ).get("run", "")
     require("--watchlist watchlist.json" in reconcile,
             "transient re-fetches must remain bound to immutable trusted hosts")
-    first_check = named_step(shard, "Check first auditor output completeness").get(
-        "run", ""
-    )
+    first_check = named_step(shard, "Check first auditor output and citations").get(
+        "run", "")
     require("--require-some-proposal" in first_check,
             "an all-unverifiable first pass must receive the bounded retry")
+    require("verify_citations.py" in first_check
+            and "audit-preflight.json" in first_check
+            and '!= "VERIFIED"' in first_check,
+            "a complete first pass with weak evidence must receive citation repair")
     final_check = named_step(shard, "Validate final shard contract").get("run", "")
     require("--require-some-proposal" not in final_check,
             "a fully checked all-unverifiable second pass must be allowed to finish")
@@ -119,8 +128,44 @@ def workflow_contract():
         require("WebFetch" in args and "WebSearch" in args,
                 "auditor needs bounded web tools")
         require("Bash" not in args, "model job must not have arbitrary shell access")
+    retry_prompt = str((claude_steps[1].get("with") or {}).get("prompt", ""))
+    require("audit-preflight.json" in retry_prompt
+            and "detail.status" in retry_prompt
+            and "REJECTED_SOURCE" in retry_prompt
+            and "UNREACHABLE" in retry_prompt
+            and retry_prompt.index("REJECTED_SOURCE")
+            < retry_prompt.index("repair every field")
+            and "strict subset" in retry_prompt
+            and "complete atomic deadline context" in retry_prompt,
+            "the bounded retry must repair top-level source/reachability "
+            "failures before consuming field-level citation diagnostics")
+    step_names = [step.get("name") for step in shard.get("steps") or []]
+    final_reconcile_name = "Reconcile final unverifiable source claims"
+    final_validate_name = "Validate final shard contract"
+    require(final_reconcile_name in step_names,
+            "the final model output must receive deterministic reconciliation")
+    require(step_names.index(final_reconcile_name)
+            < step_names.index(final_validate_name),
+            "final reconciliation must precede exact-coverage validation")
+    final_reconcile = named_step(shard, final_reconcile_name)
+    require("--watchlist watchlist.json" in str(final_reconcile.get("run", "")),
+            "final unverifiable claims must be bound to immutable source trust")
+    require(final_reconcile.get("continue-on-error") is not True,
+            "final source reconciliation must fail closed")
+    post_reconcile_integrity = named_step(
+        shard, "Assert final reconciliation preserved protected files")
+    require(step_names.index(final_reconcile_name)
+            < step_names.index(post_reconcile_integrity.get("name"))
+            < step_names.index(final_validate_name),
+            "protected-file integrity must be rechecked after reconciliation")
+    integrity_run = str(post_reconcile_integrity.get("run", ""))
+    require("sha256sum --check --strict" in integrity_run
+            and "git status --porcelain -- deadlines .github" in integrity_run,
+            "post-reconciliation integrity must cover watchlist and protected files")
 
     apply = jobs["apply"]
+    require(int(apply.get("timeout-minutes", 0)) >= 360,
+            "the merged verifier must fit worst-case bounded retries for the full watchlist")
     require((apply.get("permissions") or {}).get("contents") == "write",
             "only apply should publish repository contents")
     apply_checkout = named_step(apply, "Check out trusted repository")
@@ -131,11 +176,24 @@ def workflow_contract():
             < names.index("Download all completed shard outputs")
             < names.index("Merge exact-once audit output"),
             "apply must start fresh, then download and merge untrusted JSON")
+    clean_reconcile_name = "Reconcile merged unverifiable source claims independently"
+    clean_reconcile = named_step(apply, clean_reconcile_name)
+    require(names.index("Merge exact-once audit output")
+            < names.index(clean_reconcile_name)
+            < names.index("Verify official citations independently"),
+            "clean apply job must reconcile negative claims before citation verification")
+    clean_reconcile_run = str(clean_reconcile.get("run", ""))
+    require("--watchlist watchlist.json" in clean_reconcile_run
+            and "audit_batches.py validate" in clean_reconcile_run
+            and "--audit-date" in clean_reconcile_run
+            and "--require-complete" in clean_reconcile_run,
+            "clean apply reconciliation must trust-bind and reject requeued outcomes")
+    require(clean_reconcile.get("continue-on-error") is not True,
+            "clean apply reconciliation must fail closed")
     merge_script = named_step(apply, "Merge exact-once audit output").get("run", "")
     require("audit_batches.py merge" in merge_script
-            and "--audit-date" in merge_script
-            and "--require-complete" in merge_script,
-            "apply must enforce date-bound exact complete coverage")
+            and "--audit-date" in merge_script,
+            "apply must enforce date-bound exact merge coverage")
     publish = named_step(apply, "Commit verified corrections to default branch").get(
         "run", ""
     )
@@ -216,6 +274,37 @@ def daily_workflow_contract():
             "daily keepalive faults must reach the issue alert step")
 
 
+def documentation_contract():
+    auditor = (REPO / "deadlines" / "scripts" / "AUDITOR.md").read_text(
+        encoding="utf-8")
+    require("`detail.status` first" in auditor
+            and "`REJECTED_SOURCE`" in auditor
+            and "`UNREACHABLE`" in auditor
+            and auditor.index("`REJECTED_SOURCE`")
+            < auditor.index("`detail.fields`"),
+            "auditor retry guidance must repair top-level source/reachability "
+            "failures before per-field evidence")
+
+    readme = (REPO / "deadlines" / "scripts" / "README.md").read_text(
+        encoding="utf-8")
+    require("repairs `REJECTED_SOURCE`/`UNREACHABLE` failures first" in readme,
+            "operator docs must describe the retry failure hierarchy")
+
+    design = (REPO / "deadlines" / "scripts" /
+              "AUTO-APPLY-DESIGN.md").read_text(encoding="utf-8")
+    for stale_claim in (
+        "Held items still land as a PR",
+        "`AUDIT_AUTO_APPLY=false`",
+        "There are no tests in this repo today",
+        "## 11. Build order",
+    ):
+        require(stale_claim not in design,
+                f"design record still presents retired behavior: {stale_claim}")
+    require("There is no `AUDIT_AUTO_APPLY` PR-mode switch" in design
+            and "## 11. Deployed execution order and tests" in design,
+            "design record must identify the live no-review state/telemetry flow")
+
+
 def deterministic_integration():
     temp = Path(tempfile.mkdtemp())
     try:
@@ -292,6 +381,7 @@ def main():
     checks = [
         ("workflow trust/coverage contract", workflow_contract),
         ("daily static workflow contract", daily_workflow_contract),
+        ("auditor/operator documentation contract", documentation_contract),
         ("deterministic shard/state integration", deterministic_integration),
     ]
     failures = []

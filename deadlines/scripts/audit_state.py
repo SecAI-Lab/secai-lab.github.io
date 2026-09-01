@@ -287,14 +287,36 @@ def save(state: dict[str, Any], path: str | Path = STATE_PATH) -> bool:
         raise StateError(f"cannot write audit state {path}: {exc}") from exc
 
 
-def proposal_fingerprint(proposal: dict[str, Any], normalized_fields: dict[str, Any]) -> str:
-    """Hash only validated identity/action/values, excluding model prose."""
+def _verification_basis(value: str | None) -> str | None:
+    """Validate an optional machine-derived digest without storing its input."""
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.startswith("sha256:") \
+            or len(value) != len("sha256:") + 64 \
+            or any(char not in "0123456789abcdef" for char in value[7:]):
+        raise StateError("verification basis must be a lowercase sha256 digest")
+    return value
+
+
+def proposal_fingerprint(
+    proposal: dict[str, Any],
+    normalized_fields: dict[str, Any],
+    basis_digest: str | None = None,
+) -> str:
+    """Hash validated identity/action/values and an optional machine basis.
+
+    The basis binds a quarantined claim to immutable source provenance without
+    persisting a model URL, quote, or other unverified prose.
+    """
     payload = {
         "action": proposal.get("action"),
         "title": proposal.get("title"),
         "year": proposal.get("year"),
         "fields": normalized_fields,
     }
+    basis_digest = _verification_basis(basis_digest)
+    if basis_digest is not None:
+        payload["verification_basis"] = basis_digest
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"),
                          ensure_ascii=False).encode("utf-8")
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
@@ -305,6 +327,7 @@ def observe_verified_claim(
     proposal: dict[str, Any],
     normalized_fields: dict[str, Any],
     audit_date: str,
+    basis_digest: str | None = None,
 ) -> tuple[bool, ClaimRef]:
     """Record one verified risky claim without disturbing disjoint claims."""
     validate(state)
@@ -316,7 +339,8 @@ def observe_verified_claim(
         raise StateError("verified proposal has an invalid action")
     fields = _proposal_scope(action, normalized_fields)
     scope_id = claim_scope_id(action, fields)
-    fingerprint = proposal_fingerprint(proposal, normalized_fields)
+    fingerprint = proposal_fingerprint(
+        proposal, normalized_fields, basis_digest=basis_digest)
     container = state["corroboration"].setdefault(key, {"claims": {}})
     claims = container["claims"]
     old = claims.get(scope_id)
@@ -361,10 +385,12 @@ def observe_verified(
     proposal: dict[str, Any],
     normalized_fields: dict[str, Any],
     audit_date: str,
+    basis_digest: str | None = None,
 ) -> tuple[bool, str]:
     """Backward-compatible wrapper returning the identity rather than claim ref."""
     promoted, ref = observe_verified_claim(
-        state, proposal, normalized_fields, audit_date)
+        state, proposal, normalized_fields, audit_date,
+        basis_digest=basis_digest)
     return promoted, ref.identity
 
 

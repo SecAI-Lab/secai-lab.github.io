@@ -54,11 +54,18 @@ Operational notes:
   have no reliable machine-readable upstream. The weekly official-source audit
   handles their coverage gaps when it can bind the new edition to an older
   stored official host or an `official_hosts` trust anchor in
-  `conferences.yml`. A genuinely new current host can also bootstrap when two
-  independently fetched upstream datasets agree on it. A current link imported
-  from one community tracker is never a trust anchor by itself. Without any of
-  those grounds, the run keeps retrying and never trusts a domain proposed by
-  the model. The sustainable additional fix is contributing the venue to
+  `conferences.yml`. An annual hostname rewrite is strong only beneath an
+  unchanged parent authority established independently of the rewritten host;
+  a registrable domain or hosted tenant is never inferred from its year-shaped
+  name. Cross-conference organizer authority requires older evidence from at
+  least two distinct conference titles, plus a fresh conference-and-year
+  identity check. Two independently fetched upstream datasets may immediately
+  bootstrap an exact new host. A host nominated by only one immutable upstream is
+  provisional: grounded mutations from it need the identical provenance-bound
+  fact on two scheduled audit dates at least six days apart. A model-only host
+  is never admitted. Without any of those grounds, the run keeps retrying and
+  never trusts a domain merely because the model proposed it. The sustainable
+  additional fix is contributing the venue to
   [ccfddl/ccf-deadlines](https://github.com/ccfddl/ccf-deadlines) upstream,
   then switching the mapping from `manual-only` to the new file path.
 
@@ -79,15 +86,21 @@ an old stored deadline passes.
 The workflow splits that watchlist into stable shards of at most ten records.
 Each read-only Claude job verifies every record in its shard against official
 pages (instructions pinned in `deadlines/scripts/AUDITOR.md`) and writes only
-JSON. A completion invocation retries missing, malformed or temporary
-`not_checked` results; a non-empty first pass that returns only unverifiable
-outcomes also receives that one bounded retry. A fully checked second pass may
-still conclude that every source is unverifiable. Final merging rejects a
+JSON. Before the one bounded retry, the deterministic citation verifier checks
+the first answer and writes top-level source/reachability diagnostics followed,
+when a page was admitted and fetched, by field-level diagnostics. The retry
+repairs `REJECTED_SOURCE`/`UNREACHABLE` failures first, then repairs weak field
+quotes while preserving fields that already verified. It also repairs
+missing/malformed coverage and temporary `not_checked` results. A
+non-empty first pass that returns only unverifiable outcomes receives the same
+retry. A fully checked second pass may still conclude that every source is
+unverifiable. Every attempted URL in those negative outcomes is also bound to
+immutable official-source trust after the retry. Final merging rejects a
 missing, duplicate, invented or unfinished identity. The write-capable job then
-starts from a fresh checkout,
-re-fetches citations and writes eligible corrections. Deterministic steps
-converge and lint the result before `github-actions[bot]` pushes. The guardrails
-are:
+starts from a fresh checkout, independently repeats negative-outcome
+reconciliation, re-fetches positive citations and writes eligible corrections.
+Deterministic steps converge and lint the result before `github-actions[bot]`
+pushes. The guardrails are:
 
   1. model jobs have read-only repository permissions, no push credential and
      no arbitrary shell tool; the authoritative watchlist artifact is created
@@ -97,12 +110,19 @@ are:
      write boundary;
   3. schema and repo-contract validation of every proposal (canonical title,
      year in window, overridable fields only, well-formed deadlines, a quote
-     behind every value);
+     behind every value), while every `unverifiable.attempted` URL must bind to
+     immutable official-source trust regardless of the reported cause;
   4. citations are fetched again outside Claude, and both the submitted and
-     redirected hosts must match a curated/historical official anchor or a host
-     independently agreed by two configured upstreams for that conference;
-  5. only independently verified fields pass; coupled deadline/timezone fields
-     remain atomic. Changes outside the one-run safety bounds need the exact
+     redirected hosts must match a curated/historical anchor, a positive-parent
+     annual subdomain or distinct-title organizer authority, a host independently
+     agreed by two configured upstreams, or an exact one-upstream nomination placed into two-run
+     quarantine; model-only and multi-tenant sibling hosts remain rejected. Each
+     network hop must also resolve exclusively to globally routable A/AAAA
+     addresses (the remaining resolver-to-connect DNS-rebinding gap is documented
+     in `AUTO-APPLY-DESIGN.md`);
+  5. only independently verified fields pass; a mutating effective-instant
+     group cannot omit its deadline, abstract-deadline, or timezone context.
+     Changes outside the one-run safety bounds need the exact
      same normalized fact VERIFIED on two audit dates at least six days apart;
   6. the applier's own guards — manual.yml must round-trip byte-for-byte before
      it is touched, records are validated before being written, and the result

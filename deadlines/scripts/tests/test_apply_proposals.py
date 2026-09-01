@@ -9,6 +9,8 @@ actually matters is that a machine write never disturbs an existing entry - and
 that running twice changes nothing the second time.
 """
 
+from contextlib import redirect_stdout
+import io
 import json
 import shutil
 import sys
@@ -224,6 +226,81 @@ class FieldLevelVerdicts(unittest.TestCase):
         self.assertEqual([item for item, _ in deferred], proposals[2:])
         self.assertTrue(all("later audit" in reason for _, reason in deferred))
 
+    def test_outcome_accounting_separates_proposals_from_field_groups(self):
+        first = proposal(title="EuroSec", year=2026,
+                         fields={"date": claim("April 1-3, 2027")})
+        second = proposal(title="DIMVA", year=2026,
+                          fields={"place": claim("Paris, France")})
+        pending = dict(first)
+        pending["fields"] = {"place": claim("Lisbon, Portugal")}
+        accounting = A.outcome_accounting(
+            {"proposals": [first, second]},
+            applied=[(first["id"], "changed date")],
+            skipped=[], held=[(pending, "citation failed")])
+
+        self.assertEqual(accounting["proposals"], 2)
+        self.assertEqual(accounting["field_groups"], 2)
+        self.assertEqual(accounting["split_proposals"], 1)
+        self.assertEqual(accounting["unaccounted"], [second["id"]])
+        self.assertEqual(accounting["unexpected"], [])
+
+    def test_scope_accounting_accepts_an_exact_disjoint_partition(self):
+        p = proposal(fields={
+            "date": claim("April 1-3, 2027"),
+            "place": claim("Lisbon, Portugal"),
+        })
+        pending = dict(p)
+        pending["fields"] = {"place": p["fields"]["place"]}
+        accounting = A.outcome_accounting(
+            {"proposals": [p]}, applied=[(p["id"], "changed date")],
+            skipped=[], held=[(pending, "weak place quote")],
+            scope_rows=[
+                ("applied", p["id"], {"date"}),
+                ("deferred", p["id"], {"place"}),
+            ])
+        self.assertEqual(accounting["scope_errors"], [])
+
+    def test_scope_accounting_detects_a_missing_field_fragment(self):
+        p = proposal(fields={
+            "date": claim("April 1-3, 2027"),
+            "place": claim("Lisbon, Portugal"),
+        })
+        accounting = A.outcome_accounting(
+            {"proposals": [p]}, applied=[(p["id"], "changed date")],
+            skipped=[], held=[],
+            scope_rows=[("applied", p["id"], {"date"})])
+        self.assertTrue(any("unaccounted field(s): place" in error
+                            for error in accounting["scope_errors"]), accounting)
+
+    def test_scope_accounting_detects_duplicate_fragments(self):
+        p = proposal(fields={"date": claim("April 1-3, 2027")})
+        held = [(p, "first"), (p, "duplicate")]
+        accounting = A.outcome_accounting(
+            {"proposals": [p]}, applied=[], skipped=[], held=held,
+            scope_rows=[
+                ("deferred", p["id"], {"date"}),
+                ("deferred", p["id"], {"date"}),
+            ])
+        self.assertTrue(any("duplicate field fragment" in error
+                            for error in accounting["scope_errors"]), accounting)
+
+    def test_scope_accounting_detects_overlapping_fragments(self):
+        p = proposal(fields={
+            "date": claim("April 1-3, 2027"),
+            "place": claim("Lisbon, Portugal"),
+        })
+        pending = dict(p)
+        pending["fields"] = {"place": p["fields"]["place"]}
+        accounting = A.outcome_accounting(
+            {"proposals": [p]}, applied=[(p["id"], "changed both")],
+            skipped=[], held=[(pending, "duplicate place handling")],
+            scope_rows=[
+                ("applied", p["id"], {"date", "place"}),
+                ("deferred", p["id"], {"place"}),
+            ])
+        self.assertTrue(any("overlapping outcome field(s): place" in error
+                            for error in accounting["scope_errors"]), accounting)
+
 
 class Applying(unittest.TestCase):
     def setUp(self):
@@ -305,7 +382,7 @@ class Applying(unittest.TestCase):
         }), encoding="utf-8")
         verdicts_path.write_text(json.dumps({"verdicts": [{
             "id": p["id"], "status": "accepted", "gate": "VERIFIED",
-            "detail": {"status": "VERIFIED", "fields": {
+            "detail": {"status": "VERIFIED", "source_trust": "trusted", "fields": {
                 "place": {"status": "VERIFIED"},
                 "note": {"status": "UNCHECKED", "reason": "no surface form"},
             }},
@@ -326,6 +403,95 @@ class Applying(unittest.TestCase):
         self.assertIn('place: "Lisbon, Portugal"', text)
         self.assertNotIn("Unchecked text must never reach manual.yml", text)
         self.assertIn("note", report_path.read_text(encoding="utf-8"))
+
+    def test_partial_no_change_reports_proposals_and_field_groups_truthfully(self):
+        proposals_path = self.tmp / "partial-proposals.json"
+        verdicts_path = self.tmp / "partial-verdicts.json"
+        report_path = self.tmp / "partial-summary.md"
+        p = proposal(action="no_change", fields={
+            "place": claim("Vienna, Austria", "Conference venue: Vienna, Austria"),
+            "date": claim("April 1-3, 2027", "Conference dates: April 1-3, 2027"),
+        })
+        proposals_path.write_text(json.dumps({
+            "audit_date": "2026-08-19", "proposals": [p], "unverifiable": []
+        }), encoding="utf-8")
+        verdicts_path.write_text(json.dumps({"verdicts": [{
+            "id": p["id"], "status": "rejected", "gate": "UNCONFIRMED",
+            "detail": {"status": "UNCONFIRMED", "source_trust": "trusted", "fields": {
+                "place": {"status": "VERIFIED"},
+                "date": {"status": "UNCONFIRMED", "reason": "weak quote"},
+            }},
+        }]}), encoding="utf-8")
+        existing = {(2026, "system"): {"items": [{"data": {
+            "title": "EuroSec", "year": 2026,
+            "deadline": "2026-02-10 23:59", "timezone": "AoE",
+            "place": "Vienna, Austria",
+        }}]}}
+        argv = ["apply_proposals.py", "--proposals", str(proposals_path),
+                "--verdicts", str(verdicts_path), "--report", str(report_path)]
+        output = io.StringIO()
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(U, "load_existing", return_value=existing), \
+                redirect_stdout(output):
+            code = A.main()
+
+        self.assertEqual(code, 0)
+        rendered = output.getvalue()
+        self.assertIn("Proposal accounting: 1 proposal record(s); 1 split by field; "
+                      "2 field-group outcomes", rendered)
+        self.assertIn("Field-group outcomes: 0 applied, 1 deferred, "
+                      "1 confirmed/no-op", rendered)
+        self.assertIn("Apply/schema errors: 0", rendered)
+        self.assertIn("confirmed/no-op  no_change:EuroSec:2026: [fields: place]",
+                      rendered)
+        self.assertIn("deferred no_change:EuroSec:2026 [fields: date]", rendered)
+        self.assertIn("deferred fields kept unchanged", rendered)
+        self.assertNotIn("existing data kept", rendered)
+
+        report = report_path.read_text(encoding="utf-8")
+        self.assertIn("**Proposal accounting:** 1 proposal record(s); 1 split by field; "
+                      "2 field-group outcomes.", report)
+        self.assertIn("**Deferred field groups (1)**", report)
+        self.assertIn("**Confirmed/no-op field groups (1)**", report)
+        self.assertIn("fields: date", report)
+        self.assertIn("[fields: place]", report)
+
+    def test_unaccounted_proposal_refuses_before_writing(self):
+        proposals_path = self.tmp / "unaccounted-proposals.json"
+        verdicts_path = self.tmp / "unaccounted-verdicts.json"
+        report_path = self.tmp / "unaccounted-summary.md"
+        p = proposal(fields={
+            "place": claim("Lisbon, Portugal", "Conference venue: Lisbon, Portugal")
+        })
+        proposals_path.write_text(json.dumps({
+            "audit_date": "2026-08-19", "proposals": [p], "unverifiable": []
+        }), encoding="utf-8")
+        verdicts_path.write_text(json.dumps({"verdicts": [{
+            "id": p["id"], "status": "accepted", "gate": "VERIFIED",
+            "detail": {"status": "VERIFIED", "source_trust": "trusted", "fields": {
+                "place": {"status": "VERIFIED"},
+            }},
+        }]}), encoding="utf-8")
+        existing = {(2026, "system"): {"items": [{"data": {
+            "title": "EuroSec", "year": 2026,
+            "deadline": "2026-02-10 23:59", "timezone": "AoE",
+            "place": "Vienna, Austria",
+        }}]}}
+        argv = ["apply_proposals.py", "--proposals", str(proposals_path),
+                "--verdicts", str(verdicts_path), "--report", str(report_path)]
+        before = self.path.read_bytes()
+        output = io.StringIO()
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(U, "load_existing", return_value=existing), \
+                mock.patch.object(A, "apply_proposals", return_value=([], [])), \
+                redirect_stdout(output):
+            code = A.main()
+
+        self.assertEqual(code, 1)
+        self.assertIn("unaccounted input proposal(s): " + p["id"],
+                      output.getvalue())
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertFalse(report_path.exists())
 
     def test_mixed_valid_and_invalid_document_is_rejected_before_mutation(self):
         proposals_path = self.tmp / "mixed-proposals.json"
@@ -411,7 +577,8 @@ class PersistentPromotion(unittest.TestCase):
     def tearDown(self):
         A.MANUAL_PATH, A.AUDIT_STATE_PATH, U.MANUAL_PATH = self.saved
 
-    def run_main(self, p, audit_date, current, marker=None, statuses=None):
+    def run_main(self, p, audit_date, current, marker=None, statuses=None,
+                 source_trust="trusted", source_basis=None):
         item = {
             "title": p["title"], "year": p["year"], "record": current,
             "reasons": ["audit-deferred"],
@@ -427,12 +594,18 @@ class PersistentPromotion(unittest.TestCase):
             verdict = {"id": p["id"], "status": "accepted", "gate": "VERIFIED"}
         else:
             statuses = statuses or {name: "VERIFIED" for name in p["fields"]}
-            verdict = {
-                "id": p["id"], "status": "accepted", "gate": "VERIFIED",
-                "detail": {"status": "VERIFIED", "fields": {
+            detail = {
+                "status": "VERIFIED", "source_trust": source_trust,
+                "fields": {
                     name: {"status": statuses.get(name, "UNCONFIRMED")}
                     for name in p["fields"]
-                }},
+                },
+            }
+            if source_basis is not None:
+                detail["source_trust_basis"] = source_basis
+            verdict = {
+                "id": p["id"], "status": "accepted", "gate": "VERIFIED",
+                "detail": detail,
             }
         self.verdicts.write_text(
             json.dumps({"verdicts": [verdict]}), encoding="utf-8")
@@ -449,7 +622,10 @@ class PersistentPromotion(unittest.TestCase):
             return A.main()
 
     def test_large_shift_is_deferred_then_applied_on_second_week(self):
-        p = proposal(fields={"deadline": claim("2026-04-20 23:59")})
+        p = proposal(fields={
+            "deadline": claim("2026-04-20 23:59"),
+            "timezone": claim("AoE", "All deadlines are anywhere on Earth (AoE)."),
+        })
         current = {"deadline": "2026-02-10 23:59", "timezone": "AoE"}
 
         self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
@@ -465,6 +641,217 @@ class PersistentPromotion(unittest.TestCase):
         saved = json.loads(self.state.read_text(encoding="utf-8"))
         self.assertEqual(saved["corroboration"], {})
         self.assertEqual(saved["retry"], {})
+
+    def test_provisional_host_mutation_needs_two_provenance_bound_weeks(self):
+        p = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        basis = "sha256:" + "a" * 64
+
+        self.assertEqual(self.run_main(
+            p, "2026-08-31", current, source_trust="provisional",
+            source_basis=basis), 0)
+        self.assertIn('place: "Vienna, Austria"',
+                      self.manual.read_text(encoding="utf-8"))
+        state_text = self.state.read_text(encoding="utf-8")
+        self.assertNotIn(p["source_url"], state_text)
+        self.assertNotIn(basis, state_text)
+
+        self.assertEqual(self.run_main(
+            p, "2026-09-07", current, source_trust="provisional",
+            source_basis=basis), 0)
+        self.assertIn('place: "Lisbon, Portugal"',
+                      self.manual.read_text(encoding="utf-8"))
+
+    def test_changed_provisional_provenance_resets_the_two_run_streak(self):
+        p = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        first = "sha256:" + "a" * 64
+        second = "sha256:" + "b" * 64
+
+        self.assertEqual(self.run_main(
+            p, "2026-08-31", current, source_trust="provisional",
+            source_basis=first), 0)
+        self.assertEqual(self.run_main(
+            p, "2026-09-07", current, source_trust="provisional",
+            source_basis=second), 0)
+        self.assertIn('place: "Vienna, Austria"',
+                      self.manual.read_text(encoding="utf-8"))
+        self.assertEqual(self.run_main(
+            p, "2026-09-14", current, source_trust="provisional",
+            source_basis=second), 0)
+        self.assertIn('place: "Lisbon, Portugal"',
+                      self.manual.read_text(encoding="utf-8"))
+
+    def test_provisional_noop_confirms_without_clearing_retry_state(self):
+        p = proposal(action="no_change", fields={"place": claim(
+            "Vienna, Austria", "Conference venue: Vienna, Austria")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        basis = "sha256:" + "a" * 64
+        self.assertEqual(self.run_main(
+            p, "2026-08-31", current, source_trust="provisional",
+            source_basis=basis), 0)
+        self.assertIn('place: "Vienna, Austria"',
+                      self.manual.read_text(encoding="utf-8"))
+        self.assertIn("provisional source confirms the rendered fields",
+                      self.report.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(saved["corroboration"], {})
+        self.assertTrue(saved["retry"])
+
+        self.assertEqual(self.run_main(
+            p, "2026-09-07", current, source_trust="provisional",
+            source_basis=basis), 0)
+        self.assertIn("confirmed/no-op", self.report.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(saved["corroboration"], {})
+        self.assertTrue(saved["retry"])
+
+    def test_provisional_noop_preserves_same_scope_pending_correction(self):
+        pending = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        state = A.AS.empty_state()
+        _, ref = A.AS.observe_verified_claim(
+            state, pending, {"place": "Lisbon, Portugal"}, "2026-08-24")
+        A.AS.mark_retry_fields(
+            state, "EuroSec", 2026, "2026-08-24", "corroboration", {"place"})
+        expected = state["corroboration"][ref.identity]["claims"][ref.scope_id][
+            "fingerprint"]
+        A.AS.save(state, self.state)
+
+        confirm = proposal(action="no_change", fields={"place": claim(
+            "Vienna, Austria", "Conference venue: Vienna, Austria")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        self.assertEqual(self.run_main(
+            confirm, "2026-08-31", current, source_trust="provisional",
+            source_basis="sha256:" + "a" * 64), 0)
+
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        claim_state = saved["corroboration"][ref.identity]["claims"][ref.scope_id]
+        self.assertEqual(claim_state["fingerprint"], expected)
+        self.assertEqual(saved["retry"][ref.identity]["fields"], ["place"])
+
+    def test_missing_source_trust_class_cannot_mutate(self):
+        p = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        self.assertEqual(self.run_main(
+            p, "2026-08-31", current, source_trust=None), 0)
+        self.assertIn('place: "Vienna, Austria"',
+                      self.manual.read_text(encoding="utf-8"))
+        self.assertIn("no valid source-trust class",
+                      self.report.read_text(encoding="utf-8"))
+
+    def test_invalid_provisional_basis_never_accumulates_a_streak(self):
+        p = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        for audit_date, bad_basis in (
+                ("2026-08-31", None),
+                ("2026-09-07", "sha256:" + "A" * 64)):
+            self.assertEqual(self.run_main(
+                p, audit_date, current, source_trust="provisional",
+                source_basis=bad_basis), 0)
+            saved = json.loads(self.state.read_text(encoding="utf-8"))
+            self.assertEqual(saved["corroboration"], {})
+            self.assertIn("no valid lowercase sha256 source-trust basis",
+                          self.report.read_text(encoding="utf-8"))
+
+        # The first valid observation must still be quarantined; invalid
+        # attempts above cannot count toward the two-run streak.
+        self.assertEqual(self.run_main(
+            p, "2026-09-14", current, source_trust="provisional",
+            source_basis="sha256:" + "b" * 64), 0)
+        self.assertIn('place: "Vienna, Austria"',
+                      self.manual.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertTrue(saved["corroboration"])
+
+    def test_deadline_only_mutation_is_deferred_for_missing_timezone(self):
+        p = proposal(fields={"deadline": claim("2026-02-17 23:59")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE"}
+
+        self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+        self.assertEqual(self.run_main(p, "2026-09-07", current), 0)
+        self.assertIn('deadline: "2026-02-10 23:59"',
+                      self.manual.read_text(encoding="utf-8"))
+        self.assertIn("missing verified atomic context field(s): timezone",
+                      self.report.read_text(encoding="utf-8"))
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(saved["corroboration"], {})
+        key = A.AS.identity_key("EuroSec", 2026)
+        self.assertEqual(saved["retry"][key]["fields"], ["deadline", "timezone"])
+
+    def test_timezone_only_mutation_is_deferred_for_missing_deadline(self):
+        p = proposal(fields={
+            "timezone": claim("UTC+0", "All deadlines use UTC+0 timezone."),
+        })
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE"}
+
+        self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+        self.assertIn("timezone: AoE", self.manual.read_text(encoding="utf-8"))
+        self.assertIn("missing verified atomic context field(s): deadline",
+                      self.report.read_text(encoding="utf-8"))
+
+    def test_create_without_timezone_is_deferred(self):
+        p = proposal(action="create_record", title="BAR", year=2027, fields={
+            "deadline": claim(
+                "2027-01-15 23:59",
+                "Paper submission deadline: January 15, 2027"),
+        })
+        self.assertEqual(self.run_main(p, "2026-08-31", {}), 0)
+        self.assertNotIn('title: "BAR"', self.manual.read_text(encoding="utf-8"))
+        self.assertIn("missing verified atomic context field(s): timezone",
+                      self.report.read_text(encoding="utf-8"))
+
+    def test_complete_effective_deadline_group_can_mutate(self):
+        p = proposal(fields={
+            "deadline": claim("2026-02-17 23:59"),
+            "abstract_deadline": claim(
+                "2026-02-10 23:59", "Paper abstracts due: February 10, 2026"),
+            "timezone": claim("AoE", "All deadlines are anywhere on Earth (AoE)."),
+        })
+        current = {
+            "deadline": "2026-02-10 23:59",
+            "abstract_deadline": "2026-02-03 23:59",
+            "timezone": "AoE",
+        }
+        self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+        text = self.manual.read_text(encoding="utf-8")
+        self.assertIn('deadline: "2026-02-17 23:59"', text)
+        self.assertIn('abstract_deadline: "2026-02-10 23:59"', text)
+
+    def test_exact_deadline_only_upsert_remains_a_noop_confirmation(self):
+        p = proposal(fields={"deadline": claim("2026-02-10 23:59")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE"}
+        self.assertEqual(self.run_main(p, "2026-08-31", current), 0)
+        self.assertIn("confirmed/no-op", self.report.read_text(encoding="utf-8"))
+
+    def test_post_merge_validation_error_aborts_manual_and_state_transaction(self):
+        p = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        before = self.manual.read_bytes()
+        real_apply = A.apply_proposals
+
+        def inject_late_error(*args, **kwargs):
+            applied, skipped = real_apply(*args, **kwargs)
+            args[5].append("simulated post-merge validation failure")
+            return applied, skipped
+
+        with mock.patch.object(A, "apply_proposals", side_effect=inject_late_error):
+            self.assertEqual(self.run_main(p, "2026-08-31", current), 1)
+        self.assertEqual(self.manual.read_bytes(), before)
+        self.assertFalse(self.state.exists())
+        self.assertFalse(self.report.exists())
 
     def test_obsolete_override_needs_static_agreement_then_two_weeks(self):
         p = proposal(action="delete_manual", title="NDSS", year=2026,
@@ -549,11 +936,13 @@ class PersistentPromotion(unittest.TestCase):
         secret_reason = "UNVERIFIED_SECRET_REASON"
         p = proposal(fields={
             "deadline": claim("2026-04-20 23:59"),
+            "timezone": claim("AoE", "All deadlines are anywhere on Earth (AoE)."),
             "place": claim(secret_value, secret_quote),
         }, source_url=secret_url, reason=secret_reason)
         current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
                    "place": "Vienna, Austria"}
-        statuses = {"deadline": "VERIFIED", "place": "UNCONFIRMED"}
+        statuses = {"deadline": "VERIFIED", "timezone": "VERIFIED",
+                    "place": "UNCONFIRMED"}
 
         self.assertEqual(
             self.run_main(p, "2026-08-31", current, statuses=statuses), 0)
@@ -587,7 +976,8 @@ class GateRejectionIsDeferred(unittest.TestCase):
     def report_for(self, held):
         path = self.tmp / "report.md"
         A.write_report(path, applied=[], skipped=[], errors=[],
-                       proposals={"proposals": [], "unverifiable": []},
+                       proposals={"proposals": [p for p, _ in held],
+                                  "unverifiable": []},
                        gated=True, held=held)
         return path.read_text(encoding="utf-8")
 
@@ -597,7 +987,7 @@ class GateRejectionIsDeferred(unittest.TestCase):
             quote="October 2, 2026 (EST) Submission of regular papers")})
         p["source_url"] = "https://www.sigapp.org/sac/sac2027"
         body = self.report_for([(p, "rejected")])
-        self.assertIn("Deferred automatically (1)", body)
+        self.assertIn("Deferred field groups (1)", body)
         self.assertIn("SAC 2027", body)
         self.assertIn("2026-10-02 23:59", body)
         self.assertIn("https://www.sigapp.org/sac/sac2027", body)
@@ -609,7 +999,7 @@ class GateRejectionIsDeferred(unittest.TestCase):
         self.assertIn("retry", body)
 
     def test_no_deferred_section_when_nothing_is_deferred(self):
-        self.assertNotIn("Deferred automatically", self.report_for([]))
+        self.assertNotIn("Deferred field groups", self.report_for([]))
 
 
 class Coverage(unittest.TestCase):
@@ -621,10 +1011,20 @@ class Coverage(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.wl = self.tmp / "watchlist.json"
+        reasons = {
+            "DIMVA": "tba-upcoming-cycle",
+            "SAC": "manual-override-active",
+            "RAID": "tba-upcoming-cycle",
+        }
         self.wl.write_text(json.dumps([
-            {"title": "DIMVA", "year": 2027, "reasons": ["tba-upcoming-cycle"]},
-            {"title": "SAC", "year": 2027, "reasons": ["manual-override-active"]},
-            {"title": "RAID", "year": 2027, "reasons": ["tba-upcoming-cycle"]},
+            {
+                "title": title, "year": 2027, "reasons": [reason],
+                "upstream_link_candidates": [{
+                    "source": "ccfddl",
+                    "link": f"https://official.example/{title}",
+                }],
+            }
+            for title, reason in reasons.items()
         ]), encoding="utf-8")
 
     def test_proposals_and_unverifiable_both_count(self):
@@ -692,6 +1092,50 @@ class Coverage(unittest.TestCase):
         argv.remove("--require-some-proposal")
         with mock.patch.object(sys, "argv", argv):
             self.assertEqual(A.main(), 0)
+
+    def test_validate_only_rejects_model_only_unverifiable_sources(self):
+        proposals = self.tmp / "untrusted-unverifiable.json"
+        proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31",
+            "proposals": [],
+            "unverifiable": [
+                {"title": title, "year": 2027,
+                 "cause": "no_official_page",
+                 "attempted": [f"https://model-only.example/{title}"]}
+                for title in ("DIMVA", "SAC", "RAID")
+            ],
+        }), encoding="utf-8")
+        argv = ["apply_proposals.py", "--proposals", str(proposals),
+                "--validate-only", "--require-complete",
+                "--watchlist", str(self.wl)]
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 1)
+
+    def test_validate_only_refuses_oversized_attempt_list(self):
+        proposals = self.tmp / "oversized-attempts.json"
+        outcomes = []
+        for title in ("DIMVA", "SAC", "RAID"):
+            count = A.RA.MAX_ATTEMPTED_URLS + 1 if title == "DIMVA" else 1
+            outcomes.append({
+                "title": title,
+                "year": 2027,
+                "cause": "no_official_page",
+                "attempted": [
+                    f"https://official.example/{title}/route-{index}"
+                    for index in range(count)
+                ],
+            })
+        proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31",
+            "proposals": [],
+            "unverifiable": outcomes,
+        }), encoding="utf-8")
+        argv = ["apply_proposals.py", "--proposals", str(proposals),
+                "--validate-only", "--require-complete",
+                "--watchlist", str(self.wl)]
+
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 1)
 
 
 class Seeding(unittest.TestCase):
@@ -818,6 +1262,106 @@ class Validation(unittest.TestCase):
         }}))
         self.assertFalse(ok)
         self.assertTrue(any("has no evidence" in error for error in errors), errors)
+
+    def test_multicycle_deadline_exact_evidence_bindings_pass(self):
+        first = "2026-02-17 23:59"
+        second = "2026-05-14 23:59"
+        ok, errors = self.check(proposal(fields={"deadline": {
+            "value": [first, second],
+            "evidence": [
+                {"for_value": second,
+                 "quote": "Full paper submission due: May 14, 2026"},
+                {"for_value": first,
+                 "quote": "Full paper submission due: February 17, 2026"},
+            ],
+        }}))
+        self.assertTrue(ok, errors)
+
+    def test_multicycle_deadline_rejects_missing_for_value_binding(self):
+        first = "2026-02-17 23:59"
+        second = "2026-05-14 23:59"
+        ok, errors = self.check(proposal(fields={"deadline": {
+            "value": [first, second],
+            "evidence": [
+                {"for_value": first,
+                 "quote": "Full paper submission due: February 17, 2026"},
+                {"quote": "Full paper submission due: May 14, 2026"},
+            ],
+        }}))
+        self.assertFalse(ok)
+        self.assertTrue(any("missing exact for_value binding" in error
+                            for error in errors), errors)
+        self.assertTrue(any(f"for_value {second!r}" in error
+                            for error in errors), errors)
+
+    def test_multicycle_deadline_rejects_unknown_for_value_binding(self):
+        first = "2026-02-17 23:59"
+        second = "2026-05-14 23:59"
+        unknown = "2026-09-24 23:59"
+        ok, errors = self.check(proposal(fields={"deadline": {
+            "value": [first, second],
+            "evidence": [
+                {"for_value": first,
+                 "quote": "Full paper submission due: February 17, 2026"},
+                {"for_value": unknown,
+                 "quote": "Full paper submission due: September 24, 2026"},
+            ],
+        }}))
+        self.assertFalse(ok)
+        self.assertTrue(any(f"unknown for_value {unknown!r}" in error
+                            for error in errors), errors)
+
+    def test_multicycle_deadline_rejects_duplicate_evidence_binding(self):
+        first = "2026-02-17 23:59"
+        second = "2026-05-14 23:59"
+        ok, errors = self.check(proposal(fields={"deadline": {
+            "value": [first, second],
+            "evidence": [
+                {"for_value": first,
+                 "quote": "Full paper submission due: February 17, 2026"},
+                {"for_value": first,
+                 "quote": "Paper deadline cycle one: February 17, 2026"},
+            ],
+        }}))
+        self.assertFalse(ok)
+        self.assertTrue(any("duplicate evidence bindings" in error
+                            for error in errors), errors)
+        self.assertTrue(any(f"for_value {second!r}" in error
+                            for error in errors), errors)
+
+    def test_multicycle_deadline_rejects_duplicate_concrete_value(self):
+        cycle = "2026-02-17 23:59"
+        ok, errors = self.check(proposal(fields={"deadline": {
+            "value": [cycle, cycle],
+            "evidence": [{
+                "for_value": cycle,
+                "quote": "Full paper submission due: February 17, 2026",
+            }],
+        }}))
+        self.assertFalse(ok)
+        self.assertTrue(any("repeats concrete cycle value" in error
+                            for error in errors), errors)
+
+    def test_abstract_multicycle_binding_ignores_null_cycle_safely(self):
+        first = "2026-02-10 23:59"
+        second = "2026-05-07 23:59"
+        ok, errors = self.check(proposal(fields={"abstract_deadline": {
+            "value": [None, first, second],
+            "evidence": [
+                {"for_value": first,
+                 "quote": "Paper abstracts due: February 10, 2026"},
+                {"for_value": second,
+                 "quote": "Paper abstracts due: May 7, 2026"},
+            ],
+        }}))
+        self.assertTrue(ok, errors)
+
+    def test_single_concrete_abstract_cycle_keeps_unbound_compatibility(self):
+        ok, errors = self.check(proposal(fields={"abstract_deadline": {
+            "value": [None, "2026-02-10 23:59"],
+            "evidence": [{"quote": "Paper abstracts due: February 10, 2026"}],
+        }}))
+        self.assertTrue(ok, errors)
 
     def test_timezone_deletion_is_refused(self):
         ok, errors = self.check(proposal(fields={"timezone": {

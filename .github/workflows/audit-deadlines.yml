@@ -128,7 +128,9 @@ jobs:
     name: Audit shard ${{ matrix.shard }}
     needs: prepare
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # Two bounded 24-minute model attempts plus first/final deterministic
+    # reconciliation and citation preflight may exercise network backoff.
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -218,28 +220,57 @@ jobs:
 
       # A deterministic re-fetch of only recorded official URLs requeues a
       # model-side fetch failure when the page is actually reachable.
-      - name: Reconcile transient fetch outcomes
+      - name: Reconcile first-pass transient fetch outcomes
         continue-on-error: true
         if: steps.shard.outputs.count != '0'
         run: |
           python3 deadlines/scripts/reconcile_audit_outcomes.py \
             --proposals audit-proposals.json --watchlist watchlist.json
 
-      - name: Check first auditor output completeness
+      # A syntactically complete model answer can still carry a weak quote or
+      # an inadmissible source.  Run the same deterministic gate used by the
+      # publisher now, while one bounded model retry is still available, and
+      # give the retry source/reachability diagnostics before any field-level
+      # diagnostics.  The write-capable job
+      # later re-fetches everything independently; this is repair feedback,
+      # never publication authority.
+      - name: Check first auditor output and citations
         id: attempt1
         run: |
           complete=false
+          rm -f audit-preflight.json
           if python3 deadlines/scripts/audit_batches.py validate \
                watchlist.json audit-proposals.json \
                --audit-date "${{ needs.prepare.outputs.audit_date }}" \
              && python3 deadlines/scripts/apply_proposals.py --validate-only \
                --require-complete --require-some-proposal \
                --watchlist watchlist.json; then
-            complete=true
+            if python3 deadlines/scripts/verify_citations.py \
+                 --proposals audit-proposals.json --watchlist watchlist.json \
+                 --out audit-preflight.json --report-only \
+              && python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          verdicts = json.loads(
+              Path("audit-preflight.json").read_text(encoding="utf-8")
+          ).get("verdicts", [])
+          failed = [
+              verdict.get("id", "<missing id>")
+              for verdict in verdicts
+              if (verdict.get("detail") or {}).get("status") != "VERIFIED"
+          ]
+          if failed:
+              print("citation repair requested for: " + ", ".join(failed))
+              raise SystemExit(1)
+          PY
+            then
+              complete=true
+            fi
           fi
           echo "complete=$complete" >> "$GITHUB_OUTPUT"
           if [ "$complete" != "true" ]; then
-            echo "::warning::shard output is incomplete or malformed; retrying once"
+            echo "::warning::shard output is incomplete, malformed, or has citation failures; retrying once"
           fi
 
       - name: Run Claude auditor completion retry
@@ -255,9 +286,26 @@ jobs:
           show_full_output: false
           prompt: |
             Read deadlines/scripts/AUDITOR.md and follow it exactly. This is a
-            completion retry for watchlist.json. Preserve valid completed
-            findings in audit-proposals.json, then inspect every missing or
-            not_checked identity. Remove duplicate or unknown identities.
+            completion and evidence-repair retry for watchlist.json. Preserve
+            valid completed findings in audit-proposals.json, then inspect
+            every missing or not_checked identity. If audit-preflight.json
+            exists, inspect each verdict's top-level detail.status first.
+            A top-level REJECTED_SOURCE or UNREACHABLE verdict is a source or
+            reachability failure and may have no field results: repair it first
+            by fetching the correct admissible official edition page. If no
+            permitted official page is reachable, remove the proposal and put
+            that identity in unverifiable with the specific cause. Only after
+            the source is admissible and reachable, repair every field whose
+            detail.fields status is not VERIFIED by supplying a grounded quote
+            or omitting a field the page does not state. A no_change proposal
+            may verify a strict subset of the current fields. Never alter an
+            already VERIFIED field merely to make the top-level status look
+            cleaner.
+            A correction that changes deadline, abstract_deadline, or timezone
+            must keep the complete atomic deadline context required by
+            AUDITOR.md; omission must never turn a held instant into an
+            independently applicable field.
+            Remove duplicate or unknown identities.
             Today's UTC date is ${{ needs.prepare.outputs.audit_date }}.
 
             Work autonomously; there is nobody to ask. Edit only
@@ -276,6 +324,29 @@ jobs:
           tampered=$(git status --porcelain -- deadlines .github)
           if [ -n "$tampered" ]; then
             echo "::error::auditor modified protected repository files"
+            echo "$tampered"
+            exit 1
+          fi
+
+      # The retry is untrusted output too. Re-run source reconciliation so a
+      # final fetch_blocked/no-page/ambiguous claim cannot satisfy exact
+      # coverage with a model-only URL. Any requeued not_checked result is then
+      # rejected by the final shard contract below.
+      - name: Reconcile final unverifiable source claims
+        if: steps.shard.outputs.count != '0'
+        run: |
+          python3 deadlines/scripts/reconcile_audit_outcomes.py \
+            --proposals audit-proposals.json --watchlist watchlist.json
+
+      - name: Assert final reconciliation preserved protected files
+        if: steps.shard.outputs.count != '0'
+        env:
+          WATCHLIST_SHA: ${{ steps.shard.outputs.watchlist_sha }}
+        run: |
+          echo "$WATCHLIST_SHA  watchlist.json" | sha256sum --check --strict
+          tampered=$(git status --porcelain -- deadlines .github)
+          if [ -n "$tampered" ]; then
+            echo "::error::final reconciliation modified protected repository files"
             echo "$tampered"
             exit 1
           fi
@@ -305,7 +376,11 @@ jobs:
   apply:
     needs: [prepare, audit_shard]
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # The clean reconciler and citation verifier can collectively re-fetch one
+    # source per merged record. At the bounded 25-second fetch timeout and retry
+    # schedule, an all-distinct-source outage can exceed two hours; use GitHub's
+    # six-hour job ceiling so failures become verdicts instead of an outer kill.
+    timeout-minutes: 360
     permissions:
       contents: write
       actions: read
@@ -360,6 +435,17 @@ jobs:
           python3 deadlines/scripts/audit_batches.py validate \
             watchlist.json audit-proposals.json \
             --audit-date "$AUDIT_DATE"
+
+      # Start the write-capable trust boundary by independently checking every
+      # negative source claim too. Shard reconciliation is useful repair
+      # feedback, but only this fresh checkout is publication authority.
+      - name: Reconcile merged unverifiable source claims independently
+        run: |
+          python3 deadlines/scripts/reconcile_audit_outcomes.py \
+            --proposals audit-proposals.json --watchlist watchlist.json
+          python3 deadlines/scripts/audit_batches.py validate \
+            watchlist.json audit-proposals.json \
+            --audit-date "${{ needs.prepare.outputs.audit_date }}"
           python3 deadlines/scripts/apply_proposals.py --validate-only \
             --require-complete --watchlist watchlist.json
 

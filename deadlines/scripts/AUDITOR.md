@@ -30,6 +30,21 @@ the retry does not finish it.
 record you skipped silently is reported as an error. An unavailable page is a
 valid result, but use the specific cause that describes the attempted check.
 
+On a completion retry, `audit-preflight.json` may exist beside the proposal
+file. It is read-only diagnostic output from the deterministic citation gate.
+Inspect each verdict's top-level `detail.status` first.
+`REJECTED_SOURCE` and `UNREACHABLE` are source/reachability failures and may
+have no field results at all. Repair those first: fetch the correct admissible
+official page for this conference edition. If no permitted official page is
+reachable, remove that proposal and account for the identity in `unverifiable`
+with the specific cause. Do not keep rewriting quotes against a rejected or
+unreachable source. Only after the source is admitted and fetched should you
+repair each entry in `detail.fields` whose status is not `VERIFIED`, using the
+exact reason it gives. Preserve already verified fields when the source remains
+appropriate.
+Never edit the preflight file: the publisher discards it and independently
+fetches every citation again.
+
 ## Input
 
 `watchlist.json` at the repo root: the records worth checking this week. Each
@@ -51,6 +66,10 @@ do not retype it from memory, and do not tidy it up.
   21 August 2026 (AoE)`.
 - The quote needs at least two words that are not part of the date, so that
   what the date *is* can be identified from the quote alone.
+- For `place` and conference `date`, copy the surrounding venue/header row
+  (`Venue: Rabat, Morocco`, `Conference dates: April 19-23, 2027`), not a bare
+  city or bare date. Short values without their meaning are deliberately
+  refused.
 - If a value exists only in an image, a scanned PDF, or JavaScript you cannot
   read, you have no quote. Record it under `unverifiable`.
 
@@ -67,8 +86,14 @@ do not retype it from memory, and do not tidy it up.
 4. **Unreachable means UNVERIFIABLE.** Make no proposal; add an `unverifiable`
    entry instead.
 5. **Propose only fields you can quote.** Fields are gated independently, while
-   `deadline`, `abstract_deadline` and `timezone` remain atomic when proposed
-   together because applying only half can change the effective instant.
+   a correction to `deadline`, `abstract_deadline`, or `timezone` needs the
+   complete effective-instant group: quote `timezone` plus every paper/abstract
+   deadline field already present or being proposed. Omitting a member does not
+   make the remainder independently applicable; the deterministic applier keeps
+   the whole correction for a later retry.
+   In particular, do not copy every field from `record` into a `no_change`
+   result. A `no_change` proposal may contain a strict subset: include only the
+   fields this official page actually states and that your quotes prove.
 
 ## Actions
 
@@ -84,9 +109,9 @@ do not retype it from memory, and do not tidy it up.
 - `no_change` — you checked and the record is correct. Emit these; they are how
   the run shows its coverage. **They carry the same evidence as a correction**:
   `source_url`, and a `fields` map holding the values you verified — the ones
-  already in the record — each with its quote. "This is already right" is a
-  claim about a page like any other, and an unevidenced one cannot be told
-  apart from not having looked.
+  already in the record — each with its quote. It is normal to verify only a
+  subset of the record. "This is already right" is a claim about a page like
+  any other, and an unevidenced one cannot be told apart from not having looked.
 
 ## Field formats
 
@@ -104,6 +129,18 @@ is `deadline: "2026-02-10 23:59"` with `timezone: "AoE"`. Prefer
 `America/Los_Angeles` over `PST` for Pacific venues — the page pins `PST` to
 -08:00 year-round and gets DST wrong. Do not propose `start`/`end`; they are
 derived from `date`.
+
+For a multi-cycle deadline, make the binding explicit on every evidence item:
+
+```json
+"evidence": [
+  {"for_value": "2026-05-14 23:59", "quote": "Full paper submissions due: Thursday, May 14, 2026"},
+  {"for_value": "2026-09-24 23:59", "quote": "Full paper submissions due: Thursday, September 24, 2026"}
+]
+```
+
+Copy each row separately. Do not use one large quote containing both dates and
+do not reuse the first-cycle quote for the second cycle.
 
 ## Deleting a field
 
@@ -191,28 +228,38 @@ a page:
 
 ## Worked example
 
-The watchlist flags `DIMVA 2026` (`cross-source-disagreement`). You fetch
-`https://www.dimva.org/dimva2026/` and it reads:
+This example is synthetic documentation, not evidence. Never copy wording from
+this file or from stored comments into a proposal; only a page fetched during
+this run can supply a quote.
 
-> Submission deadline (cycle 1): 10 December 2025 (extended!)
-> Submission deadline (cycle 2): 18 February 2026 (extended!)
+Imagine the watchlist contains a fictional `ExampleConf 2027` disagreement.
+The official page fetched during that run reads:
+
+> Paper submission deadline, spring cycle: 10 December 2026
+> Paper submission deadline, fall cycle: 18 February 2027
 > All deadlines are AoE (Anywhere on Earth).
 
 ```json
 {
-  "id": "upsert_manual:DIMVA:2026",
+  "id": "upsert_manual:ExampleConf:2027",
   "action": "upsert_manual",
-  "title": "DIMVA",
-  "year": 2026,
+  "title": "ExampleConf",
+  "year": 2027,
   "watchlist_reasons": ["cross-source-disagreement"],
-  "source_url": "https://www.dimva.org/dimva2026/",
-  "reason": "sec-deadlines carries DIMVA 2026's pre-extension dates; the official page shows both cycles extended.",
+  "source_url": "https://example.invalid/exampleconf-2027/",
+  "reason": "The deterministic upstream differs from the fetched official page.",
   "fields": {
     "deadline": {
-      "value": ["2025-12-10 23:59", "2026-02-18 23:59"],
+      "value": ["2026-12-10 23:59", "2027-02-18 23:59"],
       "evidence": [
-        {"quote": "Submission deadline (cycle 1): 10 December 2025 (extended!)"},
-        {"quote": "Submission deadline (cycle 2): 18 February 2026 (extended!)"}
+        {
+          "for_value": "2026-12-10 23:59",
+          "quote": "Paper submission deadline, spring cycle: 10 December 2026"
+        },
+        {
+          "for_value": "2027-02-18 23:59",
+          "quote": "Paper submission deadline, fall cycle: 18 February 2027"
+        }
       ]
     },
     "timezone": {
@@ -223,8 +270,10 @@ The watchlist flags `DIMVA 2026` (`cross-source-disagreement`). You fetch
 }
 ```
 
-Note the quotes are the page's own words — `10 December 2025`, not the
-reformatted `2025-12-10` that goes in `value`. The checker reconciles the two.
+In a real proposal, replace every fictional value above with the watchlist's
+canonical title/year and text copied from the page fetched in that same run.
+The quote uses the page's words — `10 December 2026`, not the reformatted
+`2026-12-10` stored in `value`.
 
 `id` must be exactly `<action>:<title>:<year>`.
 
@@ -249,6 +298,15 @@ one), `fetch_blocked`, `page_ambiguous`, `javascript_only`, or `pdf_only`.
 `not_checked` is reserved for an in-progress checkpoint and is forbidden in the
 final output.
 
+Every URL in `attempted` is machine-checked against the same immutable official
+source trust used for positive proposals, for every cause above. A tracker,
+model-only domain, malformed URL, or URL belonging to another conference is
+returned to `not_checked` and makes the final shard incomplete. Use only the
+actual official routes you fetched or attempted, omit duplicates, and list at
+most eight URLs for one identity. Larger lists are rejected before any network
+request so model output cannot multiply bounded fetch retries into an unbounded
+job. Changing the cause does not bypass source trust.
+
 **Finding no page is a normal, successful result.** Most watchlist entries are
 upcoming editions whose CFP has simply not been published. Recording that
 result for every affected record is a complete, correct audit — not a wasted
@@ -265,5 +323,7 @@ successful audit, not a failed one. Never invent a proposal to have something
 to show.
 
 Before you finish, check: does `audit-proposals.json` exist, does every
-watchlist record appear exactly once in `proposals` or `unverifiable`, and are
-there zero `not_checked` entries? If not, the run fails.
+watchlist record appear exactly once in `proposals` or `unverifiable`, are
+there zero `not_checked` entries, does each multi-cycle value have its own
+labelled row quote, and did you omit rather than guess every field the page
+does not state? If not, the run fails.

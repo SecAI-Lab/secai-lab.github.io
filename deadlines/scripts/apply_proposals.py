@@ -2,9 +2,9 @@
 """Apply audit proposals to deadlines/data/manual.yml, deterministically.
 
 The auditor emits `audit-proposals.json` and never writes YAML. This program
-validates those proposals and writes the accepted ones. Splitting it that way
-means the model's output is machine-checkable, per-proposal accept/reject is
-trivial, and a whole class of YAML and merge errors cannot happen at all.
+validates those proposals and writes the accepted fields. Splitting it that way
+means the model's output is machine-checkable, field-group outcomes are
+deterministic, and a whole class of YAML and merge errors cannot happen at all.
 
 manual.yml is the pipeline's persistent override layer and may contain legacy
 curated entries. The guiding rule throughout is: never destroy existing work.
@@ -18,11 +18,12 @@ Usage:
 
 Exactly one of --verdicts / --ungated is required.
 
-With --verdicts, a proposal is applied only if the gate VERIFIED it and it stays
-inside the deterministic one-run safety bounds in risk_policy. Identical
-verified claims outside those bounds promote after two distinct weekly audit
-dates. Other proposals are deferred with their existing data intact and kept on
-later watchlists; they never require a person to edit conference data.
+With --verdicts, only fields VERIFIED by the gate can be applied, and coupled
+deadline fields stay together. Verified field groups must also stay inside the
+deterministic one-run safety bounds in risk_policy. Identical verified claims
+outside those bounds promote after two distinct weekly audit dates. Deferred
+fields stay unchanged and remain on later watchlists; they never require a
+person to edit conference data.
 
 --ungated skips the gate entirely. It exists for local diagnostics and is
 spelled out so it cannot be enabled accidentally by the publishing workflow.
@@ -44,6 +45,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import audit_state as AS  # noqa: E402
+import reconcile_audit_outcomes as RA  # noqa: E402
 import risk_policy  # noqa: E402
 import update_deadlines as U  # noqa: E402
 
@@ -355,6 +357,61 @@ def _err(errors, pid, msg):
     errors.append(f"{pid}: {msg}")
 
 
+def validate_multicycle_evidence(name, value, evidence, pid, errors):
+    """Require one explicitly bound quote for every concrete deadline cycle.
+
+    A verifier can prove that two dates both occur on a page without proving
+    which quote supports which proposed list item. Multi-cycle claims therefore
+    use an exact, value-preserving ``for_value`` binding. Single concrete-cycle
+    claims retain the historical unbound evidence format.
+    """
+    if not isinstance(value, list):
+        return True
+    concrete = [item for item in value
+                if item is not None and item.upper() not in ("TBA", "TBD")]
+    if len(concrete) <= 1:
+        return True
+
+    ok = True
+    expected = set(concrete)
+    if len(expected) != len(concrete):
+        duplicates = sorted(item for item, count in Counter(concrete).items()
+                            if count > 1)
+        _err(errors, pid, f"field {name!r} repeats concrete cycle value(s): "
+                          + ", ".join(repr(item) for item in duplicates))
+        ok = False
+
+    bindings = Counter()
+    for index, ev in enumerate(evidence):
+        if not isinstance(ev, dict):
+            # The ordinary evidence-shape check reports this independently.
+            continue
+        if "for_value" not in ev:
+            _err(errors, pid, f"field {name!r} multi-cycle evidence[{index}] "
+                              "is missing exact for_value binding")
+            ok = False
+            continue
+        bound = ev["for_value"]
+        if not isinstance(bound, str) or bound not in expected:
+            choices = ", ".join(repr(item) for item in sorted(expected))
+            _err(errors, pid, f"field {name!r} multi-cycle evidence[{index}] has "
+                              f"unknown for_value {bound!r}; expected one of {choices}")
+            ok = False
+            continue
+        bindings[bound] += 1
+
+    for item in sorted(expected):
+        if bindings[item] == 0:
+            _err(errors, pid, f"field {name!r} is missing evidence bound with "
+                              f"for_value {item!r}")
+            ok = False
+        elif bindings[item] > 1:
+            _err(errors, pid, f"field {name!r} has duplicate evidence bindings "
+                              f"for for_value {item!r}")
+            ok = False
+    return ok
+
+
 def validate_proposal(p, targets_by_key, errors):
     """Schema + repo-contract checks. Returns True when the proposal is usable."""
     pid = p.get("id") or "<no id>"
@@ -432,7 +489,8 @@ def validate_proposal(p, targets_by_key, errors):
             if name == "timezone":
                 _err(errors, pid, "timezone deletion is never applied automatically: "
                                   "the page renders a missing timezone as AoE, i.e. "
-                                  "LATER than the truth. Hand-edit if truly intended")
+                                  "LATER than the truth. Omit this field and retain "
+                                  "the existing timezone")
                 ok = False
             if not U.clean(claim.get("absence_scope_quote")):
                 _err(errors, pid, f"deleting {name!r} requires absence_scope_quote - "
@@ -470,6 +528,10 @@ def validate_proposal(p, targets_by_key, errors):
                     or len(U.clean(ev.get("quote"))) < 8:
                 _err(errors, pid, f"field {name!r} has an empty or trivial quote")
                 ok = False
+        if name in ("deadline", "abstract_deadline") \
+                and not validate_multicycle_evidence(
+                    name, value, evidence, pid, errors):
+            ok = False
         if name == "note":
             if "\n" in str(value):
                 _err(errors, pid, "note must be a single line")
@@ -516,6 +578,12 @@ def validate_unverifiable(items, targets_by_key, errors):
         if cause != "not_checked":
             if not isinstance(attempted, list) or not attempted:
                 errors.append(f"{label}: cause {cause!r} requires attempted official URL(s)")
+                ok = False
+            elif len(attempted) > RA.MAX_ATTEMPTED_URLS:
+                errors.append(
+                    f"{label}: attempted may contain at most "
+                    f"{RA.MAX_ATTEMPTED_URLS} official URLs"
+                )
                 ok = False
             elif any(not re.match(r"^https?://", str(url)) for url in attempted):
                 errors.append(f"{label}: attempted entries must be http(s) URLs")
@@ -660,6 +728,129 @@ def proposal_state_scope(proposal):
     return set((proposal.get("fields") or {}).keys())
 
 
+def scope_text(proposal):
+    """Human-readable scope for one independently handled proposal fragment."""
+    if proposal.get("action") == "delete_manual":
+        return "scope: whole override"
+    fields = sorted((proposal.get("fields") or {}).keys())
+    return "fields: " + (", ".join(fields) if fields else "none")
+
+
+def atomic_context_requirement(proposal, current_record):
+    """Return (required, missing) for a real deadline-related mutation.
+
+    Looking only at fields the model chose to mention is not atomic: a
+    deadline-only proposal could otherwise inherit an unverified timezone or
+    abstract cycle. Exact-current fragments are not mutations and deliberately
+    return an empty requirement so narrow confirmations remain useful.
+    """
+    if proposal.get("action") not in ("upsert_manual", "create_record"):
+        return set(), set()
+    claims = proposal.get("fields") or {}
+    changed = {
+        name for name in DEADLINE_ATOMIC_FIELDS & set(claims)
+        if not fields_match_current({name: claims[name]}, current_record)
+    }
+    if not changed:
+        return set(), set()
+
+    proposed = normalise_fields(claims)
+    required = set(changed)
+    required.add("timezone")
+    for name in ("deadline", "abstract_deadline"):
+        effective = proposed[name] if name in proposed else current_record.get(name)
+        if effective is not None:
+            required.add(name)
+    return required, required - set(claims)
+
+
+def outcome_accounting(proposal_doc, applied, skipped, held, scope_rows=None):
+    """Count original proposals separately from their field-group outcomes.
+
+    A mixed citation verdict deliberately splits one proposal into an accepted
+    fragment and a pending fragment with the same id.  Consequently the outcome
+    row count is not a proposal count and must be reported independently. In
+    production, ``scope_rows`` additionally proves that those fragments form an
+    exact, disjoint partition of every original field scope.
+    """
+    originals = [p for p in (proposal_doc.get("proposals") or [])
+                 if isinstance(p, dict)]
+    original = [p.get("id") for p in originals]
+    rows = ([pid for pid, _ in applied]
+            + [pid for pid, _ in skipped]
+            + [p.get("id") for p, _ in held])
+    frequencies = Counter(rows)
+    original_ids = set(original)
+    outcome_ids = set(rows)
+    result = {
+        "proposals": len(original),
+        "field_groups": len(rows),
+        "split_proposals": sum(frequencies[pid] > 1 for pid in original_ids),
+        "unaccounted": sorted(original_ids - outcome_ids),
+        "unexpected": sorted(outcome_ids - original_ids),
+        "scope_errors": [],
+    }
+    if scope_rows is None:
+        return result
+
+    expected_outcomes = Counter(
+        [("applied", pid) for pid, _ in applied]
+        + [("confirmed/no-op", pid) for pid, _ in skipped]
+        + [("deferred", p.get("id")) for p, _ in held]
+    )
+    scoped_outcomes = Counter((status, pid) for status, pid, _ in scope_rows)
+    if scoped_outcomes != expected_outcomes:
+        result["scope_errors"].append(
+            "scope ledger does not match the reported outcome rows")
+
+    original_counts = Counter(original)
+    for pid, count in sorted(original_counts.items()):
+        if count > 1:
+            result["scope_errors"].append(
+                f"duplicate input proposal id {pid!r}")
+    original_scopes = {
+        p.get("id"): proposal_state_scope(p)
+        for p in originals if original_counts[p.get("id")] == 1
+    }
+    fragments = {}
+    for status, pid, scope in scope_rows:
+        if not isinstance(scope, (set, frozenset)) or not scope \
+                or any(not isinstance(field, str) or not field for field in scope):
+            result["scope_errors"].append(
+                f"{status} outcome {pid!r} has an invalid empty/non-string scope")
+            continue
+        fragments.setdefault(pid, []).append(frozenset(scope))
+
+    for pid, original_scope in original_scopes.items():
+        parts = fragments.get(pid, [])
+        duplicate_parts = [scope for scope, count in Counter(parts).items()
+                           if count > 1]
+        for scope in duplicate_parts:
+            result["scope_errors"].append(
+                f"proposal {pid!r} has duplicate field fragment "
+                f"{sorted(scope)!r}")
+        combined = set()
+        overlap = set()
+        for scope in parts:
+            overlap.update(combined & set(scope))
+            combined.update(scope)
+        if overlap:
+            result["scope_errors"].append(
+                f"proposal {pid!r} has overlapping outcome field(s): "
+                + ", ".join(sorted(overlap)))
+        missing = original_scope - combined
+        extra = combined - original_scope
+        if missing:
+            result["scope_errors"].append(
+                f"proposal {pid!r} has unaccounted field(s): "
+                + ", ".join(sorted(missing)))
+        if extra:
+            result["scope_errors"].append(
+                f"proposal {pid!r} has unexpected outcome field(s): "
+                + ", ".join(sorted(extra)))
+    return result
+
+
 def bound_autonomous_changes(proposals, limit):
     """Take a stable per-run mutation budget and return deferred overflow.
 
@@ -698,19 +889,23 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
         pid = p["id"]
         action, title, year = p["action"], p["title"], p["year"]
         key = (title, year)
+        scope = scope_text(p)
         if action == "no_change":
+            skipped.append((pid, f"[{scope}] no_change performs no mutation"))
             continue
         if action == "delete_manual":
             idx = mf.find(key)
             if idx is None:
-                skipped.append((pid, "no manual.yml entry to delete"))
+                skipped.append((pid, f"[{scope}] no manual.yml entry to delete"))
                 continue
             if pid not in approved_delete_ids:
-                skipped.append((pid, "delete_manual is not applied automatically "
-                                     "without two-run deterministic upstream agreement"))
+                skipped.append((
+                    pid, f"[{scope}] delete_manual is not applied automatically "
+                         "without two-run deterministic upstream agreement"))
                 continue
             del mf.chunks[idx]
-            applied.append((pid, f"retired obsolete override for {title} {year}"))
+            applied.append((pid, f"[{scope}] retired obsolete override for "
+                                 f"{title} {year}"))
             continue
 
         new_fields = normalise_fields(p["fields"])
@@ -722,13 +917,13 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
         U.default_timezone(record)
 
         if not validate_merged(record, canonical_keys, pid, errors):
-            skipped.append((pid, "failed record validation"))
+            skipped.append((pid, f"[{scope}] failed record validation"))
             continue
 
         if idx is not None:
             old = {k: v for k, v in existing.items() if k not in ("title", "year")}
             if U.canon_record(dict(old, title=title, year=year)) == U.canon_record(record):
-                skipped.append((pid, "already matches manual.yml (no-op)"))
+                skipped.append((pid, f"[{scope}] already matches manual.yml (no-op)"))
                 continue
 
         retained = mf.chunks[idx].citation_lines() if idx is not None else []
@@ -738,25 +933,38 @@ def apply_proposals(proposals, mf, audit_date, canonical_keys, targets_by_key, e
         changed = ", ".join(sorted(new_fields))
         if idx is None:
             mf.chunks.append(chunk)
-            applied.append((pid, f"added an override for {title} {year} ({changed})"))
+            applied.append((pid, f"[{scope}] added an override for {title} "
+                                 f"{year} ({changed})"))
         else:
             mf.chunks[idx] = chunk
-            applied.append((pid, f"updated {title} {year} ({changed})"))
+            applied.append((pid, f"[{scope}] updated {title} {year} ({changed})"))
     return applied, skipped
 
 
-def write_report(path, applied, skipped, errors, proposals, gated, held=()):
-    lines = ["Automated deadline audit corrections.", ""]
+def write_report(path, applied, skipped, errors, proposals, gated, held=(),
+                 accounting=None):
+    accounting = accounting or outcome_accounting(
+        proposals, applied, skipped, held)
+    lines = [
+        "Automated deadline audit corrections.", "",
+        f"**Proposal accounting:** {accounting['proposals']} proposal record(s); "
+        f"{accounting['split_proposals']} split by field; "
+        f"{accounting['field_groups']} field-group outcomes.",
+        f"**Field-group outcomes:** {len(applied)} applied, {len(held)} deferred, "
+        f"{len(skipped)} confirmed/no-op.",
+        f"**Apply/schema errors:** {len(errors)}.", "",
+    ]
     if not gated:
         lines += ["> [!NOTE]",
                   "> No automated verification gate ran on these proposals - every"
                   " proposal is ineligible for autonomous publication.", ""]
     if applied:
-        lines += [f"**Applied ({len(applied)})**", ""]
+        lines += [f"**Applied field groups ({len(applied)})**", ""]
         lines += [f"- {desc}" for _, desc in applied] + [""]
     if held:
-        lines += [f"**Deferred automatically ({len(held)})** — the evidence gate or",
-                  "a safety bound did not confirm these. Existing values were kept;",
+        lines += [f"**Deferred field groups ({len(held)})** — the evidence gate or",
+                  "a safety bound did not confirm these. Values for the deferred fields",
+                  "were kept unchanged;",
                   "the scheduler will retry them on a later autonomous audit.",
                   ""]
         for p, why in held:
@@ -764,18 +972,21 @@ def write_report(path, applied, skipped, errors, proposals, gated, held=()):
                                for k, v in (p.get("fields") or {}).items())
             action = p.get("action") or "unknown"
             lines.append(f"- **{p.get('title')} {p.get('year')}** "
-                         f"(`{action}`; {why}): {fields}")
+                         f"(`{action}`; {scope_text(p)}; {why}): {fields}")
             if p.get("source_url"):
                 lines.append(f"  - source: {p['source_url']}")
             for k, v in (p.get("fields") or {}).items():
                 for ev in (v or {}).get("evidence") or []:
-                    lines.append(f"  - quote ({k}): \"{ev.get('quote', '')}\"")
+                    binding = (f" for {ev.get('for_value')}"
+                               if ev.get("for_value") is not None else "")
+                    lines.append(
+                        f"  - quote ({k}{binding}): \"{ev.get('quote', '')}\"")
         lines.append("")
     if skipped:
-        lines += [f"**Skipped ({len(skipped)})**", ""]
+        lines += [f"**Confirmed/no-op field groups ({len(skipped)})**", ""]
         lines += [f"- `{pid}` — {why}" for pid, why in skipped] + [""]
     if errors:
-        lines += [f"**Rejected ({len(errors)})**", ""]
+        lines += [f"**Apply/schema error details ({len(errors)})**", ""]
         lines += [f"- {e}" for e in errors] + [""]
     unverifiable = [u for u in (proposals.get("unverifiable") or [])]
     if unverifiable:
@@ -850,6 +1061,7 @@ def main() -> int:
     errors: list[str] = []
     held: list = []
     pre_skipped: list = []
+    pre_skipped_scopes: dict[str, set[str]] = {}
     approved_delete_ids: set[str] = set()
     state = None
     state_observed: set[AS.ClaimRef] = set()
@@ -859,13 +1071,22 @@ def main() -> int:
     proposals = [p for p in doc["proposals"]
                  if isinstance(p, dict) and validate_proposal(p, targets_by_key, errors)]
     validate_unverifiable(doc.get("unverifiable") or [], targets_by_key, errors)
+    if args.watchlist:
+        try:
+            source_trust_policy = RA.source_trust_policy_for_watchlist(
+                args.watchlist, targets)
+            errors.extend(RA.unverifiable_source_trust_errors(
+                doc, source_trust_policy))
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(
+                f"unverifiable source trust could not be established: {exc}")
 
     # Never perform a partial transaction from a mixed valid/malformed model
     # document. The workflow already treats any schema error as fatal; refusing
     # before manual/state mutation also keeps local invocations byte-identical.
     if errors and not args.validate_only:
         for error in errors:
-            print(f"  [!] rejected {error}")
+            print(f"  [!] apply/schema error {error}")
         print("APPLY REFUSED: proposal document contains validation errors")
         return 1
 
@@ -896,10 +1117,9 @@ def main() -> int:
             print(f"APPLY REFUSED: verdict file unusable ({exc})")
             return 1
         # A rejected citation is a DEFER, not an error and never a request for a
-        # person to edit YAML.  Exact-current findings are resolved before the
-        # gate decision: there is no mutation to protect, and issue #9 showed
-        # that treating rejected confirmations as corrections creates pure
-        # noise.  Real mutations retain the old value and are retried later.
+        # person to edit YAML. Per-field results partition mixed proposals; only
+        # verified fragments can be confirmed or changed, while pending fields
+        # retain their old values and are retried later.
         current_manual = U.load_manual(targets)
         if U.health:
             print("APPLY REFUSED: manual.yml is invalid; current effective values "
@@ -967,10 +1187,70 @@ def main() -> int:
                                      "awaiting the second distinct weekly upstream-agreement run"))
                     continue
 
+                verdict_detail = (verdict or {}).get("detail") or {}
+                source_trust = verdict_detail.get("source_trust")
+                if source_trust not in ("trusted", "provisional"):
+                    held.append((
+                        candidate,
+                        "citation verifier supplied no valid source-trust class",
+                    ))
+                    if state is not None:
+                        AS.mark_retry_fields(
+                            state, *identity, audit_date, "citation",
+                            proposal_state_scope(candidate))
+                    continue
+
+                source_basis = None
+                if source_trust == "provisional":
+                    source_basis = verdict_detail.get("source_trust_basis")
+                    if not isinstance(source_basis, str) or re.fullmatch(
+                            r"sha256:[0-9a-f]{64}", source_basis) is None:
+                        held.append((
+                            candidate,
+                            "provisional official host has no valid lowercase "
+                            "sha256 source-trust basis",
+                        ))
+                        if state is not None:
+                            AS.mark_retry_fields(
+                                state, *identity, audit_date, "citation",
+                                proposal_state_scope(candidate))
+                        continue
+
                 matches = fields_match_current(candidate.get("fields") or {}, current_record)
+                if source_trust == "provisional" and matches \
+                        and candidate.get("action") in ("no_change", "upsert_manual"):
+                    # A grounded provisional page can truthfully confirm that
+                    # no YAML mutation is needed, but it is not strong enough
+                    # to erase a pending correction/corroboration claim.  Do
+                    # not observe it in the same field-scope slot: that would
+                    # overwrite the stronger claim before this source matured.
+                    # Keep the identity scheduled until a strongly trusted
+                    # confirmation or an independently matured correction
+                    # resolves it.
+                    scope = set(proposal_state_scope(candidate))
+                    pre_skipped.append((
+                        candidate["id"],
+                        f"[{scope_text(candidate)}] provisional source confirms "
+                        "the rendered fields; retry state retained",
+                    ))
+                    pre_skipped_scopes[candidate["id"]] = scope
+                    if state is not None:
+                        audited = state_audited.get(state_key)
+                        if isinstance(audited, set):
+                            audited.difference_update(scope)
+                            if not audited:
+                                state_audited.pop(state_key, None)
+                        AS.mark_retry_fields(
+                            state, *identity, audit_date, "citation", scope)
+                    continue
                 if candidate.get("action") == "no_change":
                     if matches:
-                        pre_skipped.append((candidate["id"], "verified current values"))
+                        pre_skipped.append((
+                            candidate["id"],
+                            f"[{scope_text(candidate)}] verified fields match "
+                            "rendered data"))
+                        pre_skipped_scopes[candidate["id"]] = set(
+                            proposal_state_scope(candidate))
                         if state is not None:
                             AS.resolve_fields(
                                 state, *identity, proposal_state_scope(candidate))
@@ -983,11 +1263,59 @@ def main() -> int:
                                 proposal_state_scope(candidate))
                     continue
                 if candidate.get("action") == "upsert_manual" and matches:
-                    pre_skipped.append((candidate["id"],
-                                        "verified fields already match rendered data (no-op)"))
+                    pre_skipped.append((
+                        candidate["id"],
+                        f"[{scope_text(candidate)}] verified fields already match "
+                        "rendered data (no-op)"))
+                    pre_skipped_scopes[candidate["id"]] = set(
+                        proposal_state_scope(candidate))
                     if state is not None:
                         AS.resolve_fields(
                             state, *identity, proposal_state_scope(candidate))
+                    continue
+
+                required_atomic, missing_atomic = atomic_context_requirement(
+                    candidate, current_record)
+                if missing_atomic:
+                    held.append((
+                        candidate,
+                        "deadline mutation is missing verified atomic context "
+                        f"field(s): {', '.join(sorted(missing_atomic))}; required "
+                        f"group: {', '.join(sorted(required_atomic))}",
+                    ))
+                    if state is not None:
+                        AS.mark_retry_fields(
+                            state, *identity, audit_date, "citation",
+                            proposal_state_scope(candidate) | missing_atomic)
+                    continue
+
+                # A page on a brand-new host nominated by exactly one immutable
+                # upstream is grounded but not yet a strong authority.  It can
+                # confirm an existing value without mutation above; every
+                # correction is quarantined until the identical normalized fact
+                # and provenance digest verify again on a scheduled date at
+                # least six days later.  Only the digest enters repository
+                # state--never the model URL, quote, or prose.
+                if source_trust == "provisional":
+                    if state is None:
+                        held.append((
+                            candidate,
+                            "provisional official host requires persistent two-run "
+                            "corroboration",
+                        ))
+                        continue
+                    promoted, observed_ref = AS.observe_verified_claim(
+                        state, candidate, normalise_fields(candidate["fields"]),
+                        audit_date, basis_digest=source_basis)
+                    state_observed.add(observed_ref)
+                    if promoted:
+                        kept.append(candidate)
+                    else:
+                        held.append((
+                            candidate,
+                            "provisional official host is quarantined; awaiting the "
+                            "same provenance-bound fact on a second scheduled run",
+                        ))
                     continue
                 what, why = risk_policy.decide(
                     "VERIFIED", candidate, current_record)
@@ -1020,7 +1348,8 @@ def main() -> int:
         for p in doc["proposals"]:
             if isinstance(p, dict):
                 actions[p.get("action")] = actions.get(p.get("action"), 0) + 1
-        print(f"{len(proposals)} proposal(s) valid, {len(errors)} rejected"
+        print(f"{len(proposals)} proposal(s) valid, "
+              f"{len(errors)} apply/schema error(s)"
               + (f" ({', '.join(f'{k}={v}' for k, v in sorted(actions.items()))})"
                  if actions else ""))
         examined, total, causes = audit_effort(doc)
@@ -1093,10 +1422,46 @@ def main() -> int:
         approved_delete_ids)
     skipped = pre_skipped + apply_skipped
 
+    # validate_merged() can discover a cross-field error only after otherwise
+    # valid proposal fields are overlaid on the existing manual entry. Refuse
+    # the entire in-memory transaction before either manual.yml or audit state
+    # is persisted; never publish the other candidates from a partially invalid
+    # batch.
+    if errors:
+        for error in errors:
+            print(f"  [!] apply/schema error {error}")
+        print("APPLY REFUSED: post-merge record validation failed; nothing written")
+        return 1
+
+    final_scopes = {p.get("id"): set(proposal_state_scope(p)) for p in proposals}
+    scope_rows = (
+        [("applied", pid, final_scopes.get(pid, set())) for pid, _ in applied]
+        + [("confirmed/no-op", pid, pre_skipped_scopes.get(pid, set()))
+           for pid, _ in pre_skipped]
+        + [("confirmed/no-op", pid, final_scopes.get(pid, set()))
+           for pid, _ in apply_skipped]
+        + [("deferred", p.get("id"), set(proposal_state_scope(p)))
+           for p, _ in held]
+    )
+    accounting = outcome_accounting(
+        doc, applied, skipped, held, scope_rows=scope_rows)
+    if accounting["unaccounted"] or accounting["unexpected"] \
+            or accounting["scope_errors"]:
+        details = []
+        if accounting["unaccounted"]:
+            details.append("unaccounted input proposal(s): "
+                           + ", ".join(accounting["unaccounted"]))
+        if accounting["unexpected"]:
+            details.append("unexpected outcome id(s): "
+                           + ", ".join(accounting["unexpected"]))
+        details.extend(accounting["scope_errors"])
+        print("APPLY REFUSED: outcome accounting invariant failed ("
+              + "; ".join(details) + ")")
+        return 1
+
     if state is not None:
         proposal_scopes = {
-            p.get("id"): ((p.get("title"), p.get("year")),
-                          proposal_state_scope(p))
+            p.get("id"): ((p.get("title"), p.get("year")), final_scopes[p.get("id")])
             for p in proposals
         }
         try:
@@ -1155,17 +1520,24 @@ def main() -> int:
             return 1
 
     write_report(args.report, applied, skipped, errors, doc,
-                 gated=bool(args.verdicts), held=held)
+                 gated=bool(args.verdicts), held=held,
+                 accounting=accounting)
     for pid, desc in applied:
         print(f"  applied  {pid}: {desc}")
     for pid, why in skipped:
-        print(f"  skipped  {pid}: {why}")
+        print(f"  confirmed/no-op  {pid}: {why}")
     for p, why in held:
-        print(f"  deferred {p['id']}: {why}; existing data kept for automatic retry")
+        print(f"  deferred {p['id']} [{scope_text(p)}]: {why}; deferred fields "
+              "kept unchanged and queued for automatic retry")
     for e in errors:
-        print(f"  [!] rejected {e}")
-    print(f"\n{len(applied)} applied, {len(held)} deferred, {len(skipped)} skipped, "
-          f"{len(errors)} rejected" + (" (dry run)" if args.dry_run else ""))
+        print(f"  [!] apply/schema error {e}")
+    print(f"\nProposal accounting: {accounting['proposals']} proposal record(s); "
+          f"{accounting['split_proposals']} split by field; "
+          f"{accounting['field_groups']} field-group outcomes")
+    print(f"Field-group outcomes: {len(applied)} applied, {len(held)} deferred, "
+          f"{len(skipped)} confirmed/no-op"
+          + (" (dry run)" if args.dry_run else ""))
+    print(f"Apply/schema errors: {len(errors)}")
     return 3 if errors else 0
 
 

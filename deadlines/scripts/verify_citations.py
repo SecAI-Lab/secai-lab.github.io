@@ -30,6 +30,7 @@ import html as htmllib
 import ipaddress
 import json
 import re
+import socket
 import sys
 import time
 import unicodedata
@@ -37,6 +38,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import urllib.robotparser
+from dataclasses import dataclass
+from html.parser import HTMLParser
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -67,6 +70,26 @@ DENY_HOSTS = (
 )
 DENY_PATH_RE = re.compile(r"raw\.githubusercontent\.com/(ccfddl|sec-deadlines)/", re.I)
 
+# Public wildcard-to-address helpers are useful in development but have no
+# legitimate role as conference authorities.  Denying the best-known suffixes
+# also closes their intentional DNS-to-loopback behavior before resolution.
+DNS_ALIAS_DENY_SUFFIXES = frozenset((
+    "nip.io", "sslip.io", "xip.io", "localtest.me", "lvh.me",
+))
+
+# These domains delegate independent namespaces to unrelated tenants.  A host
+# such as ``dsn2025.github.io`` is an authority only for that exact tenant; its
+# edition year must never be rewritten to authorize ``dsn2026.github.io``.
+# Keep this list deliberately conservative.  It is used only to *refuse*
+# automatic annual-family and cross-title organizer inference; exact configured
+# anchors and independently corroborated upstream hosts still work normally.
+MULTI_TENANT_SUFFIXES = frozenset((
+    "github.io", "gitlab.io", "hotcrp.com", "pages.dev", "netlify.app",
+    "vercel.app", "readthedocs.io", "readthedocs.org", "herokuapp.com",
+    "appspot.com", "web.app", "firebaseapp.com", "sites.google.com",
+    "wordpress.com", "blogspot.com",
+))
+
 MONTHS = ["january", "february", "march", "april", "may", "june", "july",
           "august", "september", "october", "november", "december"]
 ABBR = {m: (m[:3] if m != "september" else "sept") for m in MONTHS}
@@ -92,6 +115,180 @@ FIELD_LABELS = {
     "link": ((), ()),
     "note": ((), ()),
 }
+
+# Short quotes are safe when they carry an unambiguous field label.  This is
+# deliberately separate from FIELD_LABELS: ``Important Dates (AoE)`` identifies
+# a timezone but is not a paper-deadline label, while bare ``Rome, Italy`` and a
+# bare conference date remain too weak to publish from.
+STRONG_CONTEXT_LABELS = {
+    "place": ("venue", "location", "conference venue", "held in",
+              "takes place in"),
+    "date": ("conference dates", "conference date", "event dates", "conference"),
+    "timezone": ("important dates", "all deadlines", "time zone", "timezone"),
+}
+
+STRUCTURAL_UNIT_TAGS = frozenset((
+    "tr", "li", "p", "dd", "dt", "div", "section", "article",
+    "h1", "h2", "h3", "h4", "h5", "h6",
+))
+HEADING_TAGS = frozenset(("h1", "h2", "h3", "h4", "h5", "h6"))
+# A logical schedule row outranks a nested paragraph and either outranks a
+# broad container.  Retain every matching row peer regardless of tag: choosing
+# one globally shortest/preferred row lets a second row carrying a conflicting
+# clock disappear merely because one template uses ``tr`` and another ``li``.
+SEMANTIC_ROW_TAGS = frozenset(("tr", "li", "dd", "dt"))
+REPLACEMENT_WORDS = frozenset((
+    "extended", "postponed", "revised", "replacement", "rescheduled",
+    "cancelled", "canceled", "withdrawn", "tba", "tbd",
+))
+BARE_SUBMISSION_FORBIDS = ("abstract", "artifact", "proposal", "short paper")
+
+
+@dataclass(frozen=True)
+class HtmlUnit:
+    """One bounded HTML unit with struck and active text kept distinct."""
+
+    tag: str
+    active: str
+    struck: str
+    all_text: str
+    heading: str = ""
+    uid: int = -1
+    parent_uid: int | None = None
+    row_hint: bool = False
+
+
+@dataclass
+class _OpenHtmlUnit:
+    tag: str
+    heading: str
+    active: list[str]
+    struck: list[str]
+    all_text: list[str]
+    uid: int
+    parent_uid: int | None
+    row_hint: bool
+
+
+class _StructuralUnitParser(HTMLParser):
+    """Collect visible text by HTML structure without building a full DOM.
+
+    Text is appended to every open structural ancestor.  Callers then select
+    the smallest matching unit, so a table row wins over the surrounding page
+    container and an unrelated sibling clock widget cannot contaminate it.
+    """
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.units: list[HtmlUnit] = []
+        self._open_units: list[_OpenHtmlUnit] = []
+        self._tags: list[tuple[str, bool, _OpenHtmlUnit | None]] = []
+        self._struck_depth = 0
+        self._latest_heading = ""
+        self._next_uid = 0
+
+    @staticmethod
+    def _starts_strike(tag, attrs):
+        if tag in ("s", "del", "strike"):
+            return True
+        attr_text = " ".join(str(value or "") for _, value in attrs).casefold()
+        return "line-through" in attr_text or "strikethrough" in attr_text
+
+    @staticmethod
+    def _is_row_container(tag, attrs):
+        """Recognize explicit div-grid schedule rows without guessing broadly."""
+        values = {str(name or "").casefold(): str(value or "").casefold()
+                  for name, value in attrs}
+        if values.get("role") == "row":
+            return True
+        marker = " ".join(values.get(name, "") for name in ("class", "id"))
+        subject = r"(?:deadline|schedule|date|milestone|important[-_ ]*date)"
+        container = r"(?:row|item|entry)"
+        return bool(re.search(
+            rf"(?:{subject}[-_ ]*{container}|{container}[-_ ]*{subject})",
+            marker,
+        ))
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.casefold()
+        starts_strike = self._starts_strike(tag, attrs)
+        if starts_strike:
+            self._struck_depth += 1
+        frame = None
+        if tag in STRUCTURAL_UNIT_TAGS:
+            parent_uid = (self._open_units[-1].uid
+                          if self._open_units else None)
+            frame = _OpenHtmlUnit(
+                tag, self._latest_heading, [], [], [], self._next_uid,
+                parent_uid, self._is_row_container(tag, attrs),
+            )
+            self._next_uid += 1
+            self._open_units.append(frame)
+        self._tags.append((tag, starts_strike, frame))
+
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    def _close_entry(self, entry):
+        tag, starts_strike, frame = entry
+        if frame is not None:
+            # Malformed pages can close ancestors out of order.  Remove this
+            # exact frame rather than assuming it is the final open unit.
+            for index, opened in enumerate(self._open_units):
+                if opened is frame:
+                    self._open_units.pop(index)
+                    break
+            active = normalize(" ".join(frame.active))
+            struck = normalize(" ".join(frame.struck))
+            all_text = normalize(" ".join(frame.all_text))
+            if all_text:
+                unit = HtmlUnit(
+                    tag, active, struck, all_text, frame.heading,
+                    frame.uid, frame.parent_uid, frame.row_hint,
+                )
+                self.units.append(unit)
+                if tag in HEADING_TAGS:
+                    self._latest_heading = all_text
+        if starts_strike:
+            self._struck_depth = max(0, self._struck_depth - 1)
+
+    def handle_endtag(self, tag):
+        tag = tag.casefold()
+        match = next((i for i in range(len(self._tags) - 1, -1, -1)
+                      if self._tags[i][0] == tag), None)
+        if match is None:
+            return
+        while len(self._tags) > match:
+            self._close_entry(self._tags.pop())
+
+    def handle_data(self, data):
+        if not data or not data.strip():
+            return
+        for frame in self._open_units:
+            frame.all_text.append(data)
+            (frame.struck if self._struck_depth else frame.active).append(data)
+
+    def close(self):
+        super().close()
+        while self._tags:
+            self._close_entry(self._tags.pop())
+
+
+def structural_html_units(raw: str) -> list[HtmlUnit]:
+    """Return bounded visible-text units, retaining strike semantics."""
+    sanitized = re.sub(r"<!--.*?-->", " ", raw, flags=re.S)
+    sanitized = re.sub(
+        r"<(script|style|svg|noscript|template)\b.*?</\1>", " ", sanitized,
+        flags=re.S | re.I,
+    )
+    parser = _StructuralUnitParser()
+    try:
+        parser.feed(sanitized)
+        parser.close()
+    except Exception:  # noqa: BLE001 - malformed HTML must degrade fail-closed
+        return []
+    return parser.units
 
 
 # ------------------------------------------------------------------ normalizing
@@ -348,7 +545,118 @@ def _explicit_clocks(text):
     return _clock_evidence(text)[0]
 
 
-def deadline_time_compatible(value, quote, page_text, field):
+def _exact_submission_row(text: str) -> bool:
+    """Whether ``Submission:`` is an exact structural row label.
+
+    Bare ``submission`` is unsafe in prose (submission-site opening, revised
+    submission, posters, and so on).  A colon immediately after the standalone
+    key is the narrow real-world DIMVA shape we can admit; normal disqualifier
+    and heading checks still apply.
+    """
+    return bool(re.search(
+        r"(?:^|[\n|])\s*(?:[-*]\s*)?(?:cycle\s+\d+\s*:\s*)?submission\s*:",
+        normalize(text), re.I,
+    ))
+
+
+def _strong_context(field: str | None, flat: str) -> bool:
+    return bool(field and any(label_pos(flat, label) >= 0
+                              for label in STRONG_CONTEXT_LABELS.get(field, ())))
+
+
+def _field_label_check(text: str, labels, field: str | None):
+    """Return (accepted, reason, explicit-paper-label).
+
+    This centralizes the quote and structural-unit label rules so clock scoping
+    cannot treat a row as a paper deadline when grounding would reject it.
+    """
+    need, forbid = labels
+    flat = flatten(text)
+    req = [p for p in (label_pos(flat, label) for label in need) if p >= 0]
+    bare_submission = field == "deadline" and _exact_submission_row(text)
+    if need and not req and not bare_submission:
+        return False, "the quote carries no label identifying this field", False
+
+    lead = min(req) if req else (label_pos(flat, "submission")
+                                 if bare_submission else -1)
+    effective_forbid = tuple(forbid) + (BARE_SUBMISSION_FORBIDS
+                                         if bare_submission else ())
+    for bad in effective_forbid:
+        pos = label_pos(flat, bad)
+        if pos < 0:
+            continue
+        # The narrow bare-Submission exception gets no precedence relaxation:
+        # any track/milestone disqualifier makes that generic key unsafe.
+        if not bare_submission and lead >= 0 and pos > lead:
+            continue
+        return False, (f"the quote leads with '{bad}', so it is labelling that, "
+                       "not this field"), False
+    explicit_paper = any(label_pos(flat, label) >= 0
+                         for label in EXPLICIT_PAPER_LABELS)
+    return True, "", explicit_paper
+
+
+def _fallback_text_units(page_text: str) -> list[HtmlUnit]:
+    return [HtmlUnit("line", line, "", line)
+            for line in (item.strip() for item in page_text.splitlines()) if line]
+
+
+def _bounded_context_units(candidates, universe=None):
+    """Choose the narrowest *semantic kind* while retaining peer conflicts.
+
+    Token-count alone is unsafe: an inner ``p`` can omit a clock or active
+    replacement written in its enclosing ``li``.  Conversely, considering a
+    page-sized ``div`` reintroduces unrelated live-widget clocks.  Prefer the
+    logical row surrounding each matching candidate, retain every row peer so
+    conflicting schedule rows fail closed, and use the old shortest-container
+    fallback only when the page provides no semantic row. Explicit ``role=row``
+    and deadline/date row class or id markers make common div grids semantic
+    without treating an arbitrary page wrapper as a schedule row.
+    """
+    candidates = list(candidates)
+    if not candidates:
+        return []
+
+    by_uid = {unit.uid: unit for unit in (universe or ()) if unit.uid >= 0}
+    rows = []
+    seen_rows = set()
+    for candidate in candidates:
+        current = candidate
+        while current is not None:
+            if current.tag in SEMANTIC_ROW_TAGS or current.row_hint:
+                key = current.uid if current.uid >= 0 else id(current)
+                if key not in seen_rows:
+                    seen_rows.add(key)
+                    rows.append(current)
+                break
+            current = by_uid.get(current.parent_uid)
+    if rows:
+        return rows
+    paragraphs = [unit for unit in candidates if unit.tag == "p"]
+    if paragraphs:
+        return paragraphs
+    headings = [unit for unit in candidates if unit.tag in HEADING_TAGS]
+    if headings:
+        return headings
+    shortest = min(len(tokens(unit.active or unit.all_text)) for unit in candidates)
+    return [unit for unit in candidates
+            if len(tokens(unit.active or unit.all_text)) == shortest]
+
+
+def _clock_context_units(page_units, forms, labels, field):
+    """Bounded structural rows that bind this field's label and value."""
+    candidates = []
+    for unit in page_units:
+        flat = flatten(unit.active)
+        if not any(form in flat for form in forms):
+            continue
+        accepted, _, _ = _field_label_check(unit.active, labels, field)
+        if accepted:
+            candidates.append(unit)
+    return _bounded_context_units(candidates, page_units)
+
+
+def deadline_time_compatible(value, quote, page_text, field, page_units=None):
     """Verify clock precision, retaining the date-only end-of-day convention."""
     expected = _deadline_clock(value)
     date = U.parse_dl_date(value)
@@ -362,24 +670,45 @@ def deadline_time_compatible(value, quote, page_text, field):
         return False, (f"the evidence quote states clock time(s) "
                        f"{sorted(quote_clocks)}, not proposed minute {expected}")
 
-    lines = [line.strip() for line in page_text.splitlines() if line.strip()]
     forms = date_forms(date)
-    labels = FIELD_LABELS.get(field, ((), ()))[0]
     relevant_clocks = set()
     relevant_ambiguous = False
-    for start in range(len(lines)):
-        block = " ".join(lines[start:start + 4])
-        flat = flatten(block)
-        if any(form in flat for form in forms) and any(
-                label_pos(flat, label) >= 0 for label in labels):
-            found, ambiguous = _clock_evidence(block)
-            relevant_clocks.update(found)
-            relevant_ambiguous = relevant_ambiguous or ambiguous
-    for line in lines:
-        if "all deadlines" in flatten(line):
-            found, ambiguous = _clock_evidence(line)
-            relevant_clocks.update(found)
-            relevant_ambiguous = relevant_ambiguous or ambiguous
+    units = list(page_units or ())
+    fallback_units = _fallback_text_units(page_text)
+    deadline_units = _clock_context_units(
+        units, forms, FIELD_LABELS.get(field, ((), ())), field
+    )
+    # A page can contain some structural markup while leaving the actual CFP
+    # row as bare text.  In that case, unrelated units must not suppress the
+    # line-scoped fallback and silently authorize the 23:59 convention.
+    if not deadline_units:
+        deadline_units = _clock_context_units(
+            fallback_units, forms, FIELD_LABELS.get(field, ((), ())), field
+        )
+    for unit in deadline_units:
+        found, ambiguous = _clock_evidence(unit.active)
+        relevant_clocks.update(found)
+        relevant_ambiguous = relevant_ambiguous or ambiguous
+    # A page-wide clock rule is authoritative, but only inside the bounded unit
+    # that actually says "all deadlines".  Other schedule/message clocks are
+    # intentionally ignored.
+    def global_contexts(context_units):
+        candidates = []
+        seen = set()
+        for unit in context_units:
+            flat = flatten(unit.active)
+            if "all deadlines" in flat and unit.active not in seen:
+                seen.add(unit.active)
+                candidates.append(unit)
+        return _bounded_context_units(candidates, context_units)
+
+    global_candidates = global_contexts(units)
+    if not global_candidates:
+        global_candidates = global_contexts(fallback_units)
+    for unit in global_candidates:
+        found, ambiguous = _clock_evidence(unit.active)
+        relevant_clocks.update(found)
+        relevant_ambiguous = relevant_ambiguous or ambiguous
 
     if relevant_ambiguous:
         return False, "the official deadline context contains an ambiguous clock time"
@@ -517,7 +846,7 @@ def heading_scope(page_toks, start, forbid, explicit_paper=False):
     return next(b for p, b in hits if p == nearest_bad)
 
 
-def ground_quote(page_toks, quote, forms, labels, single_date=False):
+def ground_quote(page_toks, quote, forms, labels, single_date=False, field=None):
     """Does this quote bind the value to a field-appropriate label, on the page?
 
     Label and value are checked inside the QUOTE, not inside the surrounding
@@ -527,9 +856,15 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
     otherwise poison a perfect match. Grounding then proves the quote is real
     page text rather than a construction.
     """
-    need, forbid = labels
+    _, forbid = labels
     qt = tokens(quote)
-    if len(qt) < QUOTE_MIN_TOKENS:
+    qflat = flatten(quote)
+    strong_context = _strong_context(field, qflat)
+    accepted_label, label_reason, explicit_paper = _field_label_check(
+        quote, labels, field
+    )
+    if len(qt) < QUOTE_MIN_TOKENS and not strong_context \
+            and not (field == "deadline" and _exact_submission_row(quote)):
         return None, "quote too short to be evidence"
     # A raw token minimum is the wrong instrument: it rejected the IEEE TC
     # calendar's complete "Submission deadline: 11/20/26" (5 tokens) while
@@ -537,10 +872,10 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
     # one label word. What matters is that the quote carries real context
     # around the value, so count the tokens that are NOT part of the date.
     context = [t for t in qt if not t.isdigit() and t not in MONTH_TOKENS]
-    if len(context) < 2:
+    if len(context) < 2 and not strong_context \
+            and not (field == "deadline" and _exact_submission_row(quote)):
         return None, ("quote is almost entirely the date itself; it needs the "
                       "surrounding label text to identify what the date is")
-    qflat, qset = flatten(quote), set(qt)
     # Signed view for offsets; flat view for everything else (see tz_forms).
     haystack = qflat + " " + normalize(quote)
     if forms and not any(f in haystack for f in forms):
@@ -554,16 +889,8 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
     # and a blanket forbid on 'src' made that line - the only one stating SAC's
     # deadline - permanently uncitable. "Workshop paper submission deadline"
     # still fails, because there the disqualifying term comes first.
-    req = [p for p in (label_pos(qflat, l) for l in need) if p >= 0]
-    if need and not req:
-        return None, "the quote carries no label identifying this field"
-    lead = min(req) if req else -1
-    for bad in forbid:
-        p = label_pos(qflat, bad)
-        if p < 0 or (lead >= 0 and p > lead):
-            continue
-        return None, (f"the quote leads with '{bad}', so it is labelling that, "
-                      "not this field")
+    if not accepted_label:
+        return None, label_reason
     size = max(len(qt) + WINDOW_SLACK, int(len(qt) * 1.6))
     best, ctx_reject = 0.0, None
     for form in (forms or [" ".join(qt[:3])]):
@@ -575,8 +902,6 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
             # Explicit paper text may outrank unstructured navigation, but never
             # a real HTML heading (e.g. Workshops).  ``heading_scope`` owns that
             # distinction so this call cannot bypass a structural true negative.
-            explicit_paper = any(label_pos(qflat, label) >= 0
-                                 for label in EXPLICIT_PAPER_LABELS)
             bad = heading_scope(page_toks, start, forbid, explicit_paper)
             if bad:
                 ctx_reject = (f"the quote grounds under a '{bad}' heading on the "
@@ -587,6 +912,142 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False):
         return None, ctx_reject
     return None, (f"quote not found on the page (best coverage {best:.2f} "
                   f"< {LCS_THRESHOLD})")
+
+
+def _audit_date_value(value):
+    if isinstance(value, dt.date):
+        return value
+    try:
+        return dt.date.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+
+
+def ground_elapsed_struck_cycle(*, proposal, field, item, quote, forms,
+                                page_units, current_record, audit_date):
+    """Narrow exception for an immutable, already elapsed no-change cycle.
+
+    Struck text normally remains inadmissible.  It is useful only when a site
+    crosses out a completed cycle after it passes.  This function cannot
+    authorize a mutation, a future deadline, a value absent from the immutable
+    watchlist record, or a row that carries an active replacement.
+    """
+    if proposal.get("action") != "no_change" or not isinstance(current_record, dict):
+        return None, "struck evidence is admissible only for an immutable no_change"
+    field_claim = (proposal.get("fields") or {}).get(field)
+    proposed_value = (field_claim.get("value")
+                      if isinstance(field_claim, dict) else object())
+    if proposed_value != current_record.get(field):
+        return None, ("struck evidence requires the complete proposed field to "
+                      "exactly match the immutable current record")
+    if item not in U.as_list(current_record.get(field)):
+        return None, "struck cycle does not exactly match the immutable current record"
+    deadline_date = U.parse_dl_date(item)
+    checked_on = _audit_date_value(audit_date)
+    if deadline_date is None or checked_on is None or deadline_date >= checked_on:
+        return None, "struck cycle is not earlier than audit_date"
+    if not quote:
+        return None, "no evidence supplied"
+
+    labels = FIELD_LABELS.get(field, ((), ()))
+    candidates = []
+    for unit in page_units:
+        struck_flat = flatten(unit.struck)
+        if not unit.struck or not any(form in struck_flat for form in forms):
+            continue
+        accepted, reason, _ = _field_label_check(unit.all_text, labels, field)
+        if not accepted:
+            continue
+        candidates.append(unit)
+    if not candidates:
+        return None, "the cycle is not present in struck text on a labelled row"
+
+    candidates = _bounded_context_units(candidates, page_units)
+    errors = []
+    blockers = []
+    grounded = []
+    for unit in candidates:
+        # Any active date in the same row is a replacement.  Replacement words
+        # are an additional fail-closed signal even on unusual markup where the
+        # replacement date could not be parsed.
+        if count_dates(unit.active):
+            blockers.append("the struck row contains an active replacement date")
+            continue
+        row_clocks, row_clock_ambiguous = _clock_evidence(unit.all_text)
+        expected_clock = _deadline_clock(item)
+        if row_clock_ambiguous:
+            blockers.append("the struck row contains an ambiguous clock time")
+            continue
+        if row_clocks and row_clocks != {expected_clock}:
+            blockers.append(
+                "the struck row states clock time(s) "
+                f"{sorted(row_clocks)}, not proposed minute {expected_clock}"
+            )
+            continue
+        combined_flat = flatten(unit.all_text)
+        if any(word in set(tokens(combined_flat)) for word in REPLACEMENT_WORDS):
+            blockers.append("the struck row is marked as replaced or extended")
+            continue
+        heading_flat = flatten(unit.heading)
+        _, forbid = labels
+        bad_heading = next((bad for bad in forbid
+                            if label_pos(heading_flat, bad) >= 0), None)
+        if bad_heading:
+            blockers.append(f"the struck row is under a '{bad_heading}' heading")
+            continue
+        cov, reason = ground_quote(
+            tokens(unit.all_text), quote, forms, labels,
+            single_date=True, field=field,
+        )
+        if cov is not None:
+            grounded.append(cov)
+        else:
+            errors.append(reason)
+    # A second matching logical row that explicitly replaces or contradicts
+    # the old value is not harmless merely because another peer grounds the
+    # submitted quote. Ambiguity in this narrow exception must fail closed.
+    if blockers:
+        return None, blockers[0]
+    if grounded:
+        return min(grounded), None
+    return None, next((reason for reason in errors if reason),
+                      "struck evidence did not ground safely")
+
+
+def _cycle_evidence_entries(evidence, item):
+    """Bind explicit evidence.for_value entries to exactly one cycle.
+
+    Multi-cycle claims are ambiguous without an exact binding: the same real
+    quote could otherwise be tried against every list item.  Unbound or
+    differently-bound entries therefore cannot satisfy a cycle.
+    """
+    indexed = [(index, entry) for index, entry in enumerate(evidence)
+               if isinstance(entry, dict)]
+    matched = [(index, entry) for index, entry in indexed
+               if entry.get("for_value") == item]
+    if matched:
+        return matched, None
+    return [], "no evidence.for_value exactly matches this cycle"
+
+
+def _bounded_cycle_failure(item, failures):
+    item_text = re.sub(r"\s+", " ", repr(item)).strip()
+    if len(item_text) > 96:
+        item_text = item_text[:93] + "..."
+    clean = []
+    for label, reason in failures:
+        reason = re.sub(r"\s+", " ", str(reason or "unconfirmed")).strip()
+        rendered = f"{label}: {reason[:180]}"
+        if rendered not in clean:
+            clean.append(rendered)
+        if len(clean) == 3:
+            break
+    detail = "; ".join(clean) if clean else "no usable evidence supplied"
+    prefix = f"cycle {item_text} has no grounded quote of its own ("
+    budget = max(0, 500 - len(prefix) - 1)
+    if len(detail) > budget:
+        detail = detail[:max(0, budget - 3)] + "..."
+    return prefix + detail + ")"
 
 
 ABSENCE_VOCAB = {
@@ -651,18 +1112,22 @@ def verify_absence(page_toks, field, scope_quote):
 class SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
     """Keep redirects on pre-authorized public hosts before making the request."""
 
-    def __init__(self, allowed_hosts):
+    def __init__(self, allowed_hosts, *, exact_hosts=False, resolver=None):
         super().__init__()
         self.allowed_hosts = {
             normalized_host(host) for host in (allowed_hosts or ())
             if normalized_host(host)
         }
+        self.exact_hosts = exact_hosts
+        self.resolver = resolver or socket.getaddrinfo
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        ok, why = source_ok(newurl)
+        ok, why = network_source_ok(newurl, resolver=self.resolver)
         host = normalized_host(newurl)
-        if not ok or not any(host_matches_trust(host, trusted)
-                             for trusted in self.allowed_hosts):
+        authorized = (host in self.allowed_hosts if self.exact_hosts else
+                      any(host_matches_trust(host, trusted)
+                          for trusted in self.allowed_hosts))
+        if not ok or not authorized:
             detail = why or f"redirect host {host or '<missing>'} is not authorized"
             raise urllib.error.HTTPError(
                 newurl, code, f"unsafe redirect refused: {detail}", headers, fp
@@ -670,9 +1135,10 @@ class SafeRedirectHandler(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 class Fetcher:
-    def __init__(self, offline=False, fixtures=None):
+    def __init__(self, offline=False, fixtures=None, resolver=None):
         self.offline, self.fixtures = offline, fixtures
         self.cache, self.robots, self.last_hit = {}, {}, {}
+        self.resolver = resolver or socket.getaddrinfo
         # Requested URL -> final URL after redirects.  Keeping this beside the
         # historical two-tuple ``get`` result preserves small fake fetchers and
         # existing tests while still letting the verifier bind redirect targets.
@@ -686,8 +1152,8 @@ class Fetcher:
                 return cand.read_text(encoding="utf-8")
         return None
 
-    def _raw(self, url, allowed_hosts=None):
-        ok, why = source_ok(url)
+    def _raw(self, url, allowed_hosts=None, *, exact_redirect_hosts=False):
+        ok, why = network_source_ok(url, resolver=self.resolver)
         if not ok:
             raise urllib.error.URLError(f"unsafe source refused: {why}")
         host = urllib.parse.urlparse(url).netloc
@@ -697,11 +1163,14 @@ class Fetcher:
         self.last_hit[host] = time.monotonic()
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         allowed = allowed_hosts or {normalized_host(url)}
-        opener = urllib.request.build_opener(SafeRedirectHandler(allowed))
+        opener = urllib.request.build_opener(SafeRedirectHandler(
+            allowed, exact_hosts=exact_redirect_hosts,
+            resolver=self.resolver,
+        ))
         with opener.open(req, timeout=FETCH_TIMEOUT) as r:
             return r.read(MAX_BYTES).decode("utf-8", errors="replace"), r.geturl()
 
-    def robots_allows(self, url, allowed_hosts=None):
+    def robots_allows(self, url, allowed_hosts=None, *, exact_redirect_hosts=False):
         """403 on robots.txt means UNKNOWN, never 'disallow all'.
 
         urllib.robotparser.read() fetches with the default python-urllib UA;
@@ -714,7 +1183,10 @@ class Fetcher:
         if base not in self.robots:
             rp = urllib.robotparser.RobotFileParser()
             try:
-                txt, _ = self._raw(base + "/robots.txt", allowed_hosts)
+                txt, _ = self._raw(
+                    base + "/robots.txt", allowed_hosts,
+                    exact_redirect_hosts=exact_redirect_hosts,
+                )
                 rp.parse(txt.splitlines())
             except Exception:  # noqa: BLE001 - unknown policy, not a refusal
                 rp = None
@@ -722,7 +1194,7 @@ class Fetcher:
         rp = self.robots[base]
         return True if rp is None else rp.can_fetch(UA, url)
 
-    def get(self, url, allowed_hosts=None):
+    def get(self, url, allowed_hosts=None, *, exact_redirect_hosts=False):
         if url in self.cache:
             return self.cache[url]
         if self.offline:
@@ -731,7 +1203,8 @@ class Fetcher:
             self.final_urls[url] = url
             self.cache[url] = res
             return res
-        if not self.robots_allows(url, allowed_hosts):
+        if not self.robots_allows(
+                url, allowed_hosts, exact_redirect_hosts=exact_redirect_hosts):
             res = (None, "robots.txt disallows this path")
         else:
             res, last = (None, "unfetched"), None
@@ -739,7 +1212,10 @@ class Fetcher:
                 if delay:
                     time.sleep(delay)
                 try:
-                    txt, final_url = self._raw(url, allowed_hosts)
+                    txt, final_url = self._raw(
+                        url, allowed_hosts,
+                        exact_redirect_hosts=exact_redirect_hosts,
+                    )
                     res = (txt, None)
                     self.final_urls[url] = final_url
                     break
@@ -792,6 +1268,127 @@ def source_bound_to_hosts(url, trusted_hosts, title=""):
                    f"official host(s): {', '.join(sorted(trusted))}")
 
 
+@dataclass(frozen=True)
+class SourceTrustDecision:
+    """Typed result of binding one proposal URL to immutable trust evidence."""
+
+    level: str
+    host: str
+    allowed_hosts: frozenset[str]
+    basis: str | None = None
+
+
+@dataclass
+class SourceTrustPolicy:
+    """Repository-derived source authority; model output contributes nothing."""
+
+    trusted_by_title: dict[str, set[str]]
+    annual_by_identity: dict[tuple[str, int], set[str]]
+    organizer_hosts: set[str]
+    provisional_by_identity: dict[tuple[str, int], dict[str, str]]
+
+
+def is_multi_tenant_host(host):
+    """Whether independent users control sibling names beneath *host*."""
+    host = normalized_host(host)
+    return any(host == suffix or host.endswith("." + suffix)
+               for suffix in MULTI_TENANT_SUFFIXES)
+
+
+def _watchlist_context(watchlist):
+    items = [item for item in (watchlist if isinstance(watchlist, list) else ())
+             if isinstance(item, dict)]
+    active_years = {}
+    scheduled_years = {}
+    active_identities = set()
+    for item in items:
+        title, year = item.get("title"), item.get("year")
+        if isinstance(title, str) and isinstance(year, int) \
+                and not isinstance(year, bool):
+            active_years.setdefault(title, set()).add(year)
+            active_identities.add((title, year))
+            reasons = item.get("reasons") or []
+            if not (isinstance(reasons, list)
+                    and set(reasons) == {"audit-deferred"}):
+                scheduled_years.setdefault(title, set()).add(year)
+    return items, active_years, scheduled_years, active_identities
+
+
+def _historical_host_anchors(watchlist, historical_records):
+    """Return trusted committed ``(title, year, host)`` edition anchors."""
+    items, active_years, scheduled_years, active_identities = \
+        _watchlist_context(watchlist)
+    anchors = []
+    for record in historical_records:
+        if not isinstance(record, dict):
+            continue
+        title, year = record.get("title"), record.get("year")
+        years = active_years.get(title)
+        anchor_before = min(scheduled_years.get(title) or years or [U.TODAY.year])
+        host = normalized_host(record.get("link"))
+        if host and isinstance(title, str) and title and (
+                not years or (
+                    isinstance(year, int) and not isinstance(year, bool)
+                    and year < anchor_before
+                    and (title, year) not in active_identities
+                )):
+            anchors.append((title, year, host))
+    return items, anchors
+
+
+def _annualized_host(host, edition_year, target_year, parent_authorities=()):
+    """Rewrite one year token strictly below an unchanged trusted parent.
+
+    Merely sharing a suffix is not authority.  In particular, rewriting
+    ``raid2026.org`` would change the registrable-domain label itself, while
+    rewriting ``eurosp2026.ieee-security.org`` leaves the independently
+    established ``ieee-security.org`` parent untouched.  Only the latter is an
+    admissible strong annual template.
+    """
+    host = normalized_host(host)
+    if is_multi_tenant_host(host):
+        return None
+    if not isinstance(edition_year, int) or isinstance(edition_year, bool) \
+            or not isinstance(target_year, int) or isinstance(target_year, bool):
+        return None
+    parents = sorted({normalized_host(parent) for parent in parent_authorities
+                      if normalized_host(parent)}, key=len, reverse=True)
+    for parent in parents:
+        # Strict subordination is load-bearing: a self-anchor containing the
+        # old year cannot authorize rewriting itself, and a TLD/public suffix
+        # is not accepted merely because it is textually a suffix.
+        suffix = "." + parent
+        if "." not in parent or is_multi_tenant_host(parent) \
+                or not host.endswith(suffix):
+            continue
+        prefix = host[:-len(suffix)]
+        forms = ((str(edition_year), str(target_year)),
+                 (f"{edition_year % 100:02d}", f"{target_year % 100:02d}"))
+        for old, new in forms:
+            pattern = rf"(?<!\d){re.escape(old)}(?!\d)"
+            matches = list(re.finditer(pattern, prefix))
+            if len(matches) == 1:
+                candidate_prefix = re.sub(pattern, new, prefix, count=1)
+                candidate = candidate_prefix + suffix
+                return candidate if candidate != host else None
+    return None
+
+
+def provisional_source_basis(title, year, host, sources):
+    """Hash canonical immutable provenance for one quarantined exact host."""
+    canonical_sources = sorted({str(source) for source in sources
+                                if isinstance(source, str) and source})
+    payload = {
+        "title": title,
+        "year": year,
+        "host": normalized_host(host),
+        "sources": canonical_sources,
+    }
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":")).encode("utf-8")
+    return "sha256:" + hashlib.sha256(encoded).hexdigest()
+
+
 def trusted_hosts_by_title(watchlist, historical_records=(), configured_hosts=None):
     """Build title -> hosts without trusting a freshly imported link blindly.
 
@@ -808,29 +1405,10 @@ def trusted_hosts_by_title(watchlist, historical_records=(), configured_hosts=No
         if isinstance(title, str) and title and host:
             out.setdefault(title, set()).add(host)
 
-    items = [item for item in (watchlist if isinstance(watchlist, list) else ())
-             if isinstance(item, dict)]
-    active_years = {}
-    scheduled_years = {}
-    active_identities = set()
-    for item in items:
-        title, year = item.get("title"), item.get("year")
-        if isinstance(title, str) and isinstance(year, int) and not isinstance(year, bool):
-            active_years.setdefault(title, set()).add(year)
-            active_identities.add((title, year))
-            reasons = item.get("reasons") or []
-            if not (isinstance(reasons, list) and set(reasons) == {"audit-deferred"}):
-                scheduled_years.setdefault(title, set()).add(year)
-
-    for record in historical_records:
-        if isinstance(record, dict):
-            title, year = record.get("title"), record.get("year")
-            years = active_years.get(title)
-            anchor_before = min(scheduled_years.get(title) or years or [U.TODAY.year])
-            if (not years or (isinstance(year, int) and not isinstance(year, bool)
-                              and year < anchor_before
-                              and (title, year) not in active_identities)):
-                add(title, record.get("link"))
+    historical_records = list(historical_records)
+    items, anchors = _historical_host_anchors(watchlist, historical_records)
+    for title, _, host in anchors:
+        add(title, host)
     for title, hosts in (configured_hosts or {}).items():
         if isinstance(hosts, str):
             hosts = [hosts]
@@ -861,6 +1439,134 @@ def trusted_hosts_by_title(watchlist, historical_records=(), configured_hosts=No
         if current and any(host_matches_trust(current, anchor) for anchor in anchors):
             anchors.add(current)
     return out
+
+
+def build_source_trust_policy(watchlist, historical_records=(),
+                              configured_hosts=None):
+    """Build typed strong and provisional trust from immutable repository data.
+
+    Strong trust consists of the existing title anchors, annual hostname
+    rewrites strictly beneath a positively established unchanged parent, and
+    organizer parents evidenced by at least two distinct conference titles. A
+    one-source upstream nomination is only provisional and remains scoped to
+    its exact title/year and exact host.
+    """
+    historical_records = list(historical_records)
+    items, anchors = _historical_host_anchors(watchlist, historical_records)
+    trusted = trusted_hosts_by_title(
+        watchlist, historical_records, configured_hosts
+    )
+
+    scheduled_cutoffs = [
+        item.get("year") for item in items
+        if isinstance(item.get("year"), int)
+        and not isinstance(item.get("year"), bool)
+        and not (isinstance(item.get("reasons"), list)
+                 and set(item.get("reasons")) == {"audit-deferred"})
+    ]
+    organizer_before = min(scheduled_cutoffs or [U.TODAY.year])
+    older_anchors = [
+        (title, year, host) for title, year, host in anchors
+        if year < organizer_before and not is_multi_tenant_host(host)
+    ]
+    # A candidate organizer parent must itself be an exact committed host.
+    # Child anchors may then provide the second distinct conference title.
+    organizer_candidates = {host for _, _, host in older_anchors}
+    organizers = set()
+    for parent in organizer_candidates:
+        represented_titles = {
+            title for title, _, host in older_anchors
+            if host_matches_trust(host, parent)
+        }
+        if len(represented_titles) >= 2:
+            organizers.add(parent)
+
+    configured_by_title = {}
+    for title, hosts in (configured_hosts or {}).items():
+        if isinstance(hosts, str):
+            hosts = [hosts]
+        for host in hosts if isinstance(hosts, list) else ():
+            normalized = normalized_host(host)
+            if normalized:
+                configured_by_title.setdefault(title, set()).add(normalized)
+    historical_by_title = {}
+    for title, _, host in anchors:
+        historical_by_title.setdefault(title, set()).add(host)
+
+    annual = {}
+    years_by_title = {}
+    for item in items:
+        title, year = item.get("title"), item.get("year")
+        if isinstance(title, str) and isinstance(year, int) \
+                and not isinstance(year, bool):
+            years_by_title.setdefault(title, set()).add(year)
+    for title, old_year, host in anchors:
+        positive_parents = (configured_by_title.get(title, set())
+                            | historical_by_title.get(title, set())
+                            | organizers)
+        for target_year in years_by_title.get(title, ()):
+            candidate = _annualized_host(
+                host, old_year, target_year, positive_parents
+            )
+            if candidate:
+                annual.setdefault((title, target_year), set()).add(candidate)
+
+    provisional = {}
+    for item in items:
+        title, year = item.get("title"), item.get("year")
+        if not isinstance(title, str) or not isinstance(year, int) \
+                or isinstance(year, bool):
+            continue
+        evidence = {}
+        for candidate in item.get("upstream_link_candidates") or ():
+            if not isinstance(candidate, dict):
+                continue
+            source = candidate.get("source")
+            link = candidate.get("link")
+            host = normalized_host(link)
+            ok, _ = source_ok(link)
+            if isinstance(source, str) and source and host and ok:
+                evidence.setdefault(host, set()).add(source)
+        for host, sources in evidence.items():
+            if len(sources) == 1:
+                provisional.setdefault((title, year), {})[host] = \
+                    provisional_source_basis(title, year, host, sources)
+
+    return SourceTrustPolicy(trusted, annual, organizers, provisional)
+
+
+def classify_source_trust(url, title, year, policy):
+    """Classify a source as strongly trusted, provisional, or unrelated."""
+    host = normalized_host(url)
+    if not isinstance(policy, SourceTrustPolicy):
+        return None, "source trust policy is unavailable"
+    title_hosts = set(policy.trusted_by_title.get(title, ()))
+    annual_hosts = set(policy.annual_by_identity.get((title, year), ()))
+    organizer_hosts = set(policy.organizer_hosts)
+    strong_allowed = title_hosts | annual_hosts | organizer_hosts
+
+    title_match = any(host_matches_trust(host, known) for known in title_hosts)
+    annual_match = host in annual_hosts  # exact template result, never a sibling
+    organizer_match = any(host_matches_trust(host, known)
+                          for known in organizer_hosts)
+    if title_match or annual_match or organizer_match:
+        return SourceTrustDecision(
+            "trusted", host, frozenset(strong_allowed)
+        ), ""
+
+    basis = policy.provisional_by_identity.get((title, year), {}).get(host)
+    if basis:
+        return SourceTrustDecision(
+            "provisional", host, frozenset((host,)), basis
+        ), ""
+
+    if not strong_allowed and not policy.provisional_by_identity.get((title, year)):
+        return None, (f"no trusted official link host or immutable upstream "
+                      f"nomination is recorded for {title}")
+    rendered = ", ".join(sorted(strong_allowed)) or "<none>"
+    return None, (f"source host {host or '<missing>'} is unrelated to trusted "
+                  f"official host(s): {rendered} and is not an exact immutable "
+                  f"upstream nomination for {title} {year}")
 
 
 def configured_official_hosts(targets=None):
@@ -1084,10 +1790,73 @@ def source_ok(url):
     return True, ""
 
 
+def network_source_ok(url, *, resolver=None):
+    """Resolve an otherwise admissible URL and require wholly public A/AAAA.
+
+    ``source_ok`` deliberately remains deterministic and offline-friendly.
+    Every real request passes through this additional boundary immediately
+    before opening the URL, including redirect targets. Rejecting a mixed
+    public/private answer prevents a resolver from selecting the unsafe member.
+
+    This check narrows DNS rebinding but cannot remove the validation/connect
+    time-of-check/time-of-use gap in urllib, which resolves again internally.
+    Known wildcard-to-address helper suffixes are denied above, and redirects
+    repeat this validation; fully pinning the validated address would require a
+    custom HTTP/TLS transport that preserves Host/SNI.
+    """
+    ok, why = source_ok(url)
+    if not ok:
+        return False, why
+    try:
+        parsed = urllib.parse.urlparse(url)
+        host = (parsed.hostname or "").rstrip(".").casefold()
+        ascii_host = host.encode("idna").decode("ascii")
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    except (TypeError, ValueError, UnicodeError):
+        return False, "malformed network host"
+    if any(host == suffix or host.endswith("." + suffix)
+           for suffix in DNS_ALIAS_DENY_SUFFIXES):
+        return False, f"DNS-to-address helper host {host} is not allowed"
+
+    resolver = resolver or socket.getaddrinfo
+    try:
+        answers = resolver(
+            ascii_host, port, family=socket.AF_UNSPEC,
+            type=socket.SOCK_STREAM,
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        return False, f"DNS resolution failed ({type(exc).__name__})"
+
+    addresses = set()
+    for answer in answers or ():
+        if not isinstance(answer, tuple) or len(answer) < 5:
+            return False, "DNS resolution returned a malformed address"
+        family, sockaddr = answer[0], answer[4]
+        if family not in (socket.AF_INET, socket.AF_INET6):
+            continue
+        if not isinstance(sockaddr, tuple) or not sockaddr:
+            return False, "DNS resolution returned a malformed address"
+        raw_address = str(sockaddr[0]).split("%", 1)[0]
+        try:
+            address = ipaddress.ip_address(raw_address)
+        except ValueError:
+            return False, "DNS resolution returned a non-IP address"
+        addresses.add(address)
+    if not addresses:
+        return False, "DNS resolution returned no A/AAAA address"
+    unsafe = sorted(str(address) for address in addresses
+                    if not address.is_global)
+    if unsafe:
+        return False, ("DNS resolution includes non-public address(es): "
+                       + ", ".join(unsafe))
+    return True, ""
+
+
 # -------------------------------------------------------------------- verdicts
 
 def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
-                    identity_catalog=None):
+                    identity_catalog=None, source_trust_policy=None,
+                    current_record=None, audit_date=None):
     """Verify page claims, optionally bound to previously trusted official hosts.
 
     Production ``main`` always supplies host and identity sets, including an
@@ -1109,29 +1878,84 @@ def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
     ok, why = source_ok(url)
     if not ok:
         return {"id": pid, "status": "REJECTED_SOURCE", "reason": why}
-    if trusted_hosts is not None:
+
+    trust_decision = None
+    if source_trust_policy is not None:
+        trust_decision, why = classify_source_trust(
+            url, p.get("title"), p.get("year"), source_trust_policy
+        )
+        if trust_decision is None:
+            return {"id": pid, "status": "REJECTED_SOURCE", "reason": why,
+                    "url": url}
+        trusted_hosts = trust_decision.allowed_hosts
+    elif trusted_hosts is not None:
         ok, why = source_bound_to_hosts(url, trusted_hosts, p.get("title") or "")
         if not ok:
             return {"id": pid, "status": "REJECTED_SOURCE", "reason": why,
                     "url": url}
+
+        trust_decision = SourceTrustDecision(
+            "trusted", normalized_host(url),
+            frozenset(normalized_host(host) for host in trusted_hosts
+                      if normalized_host(host)),
+        )
+
+    trust_metadata = {}
+    if trust_decision is not None:
+        trust_metadata["source_trust"] = trust_decision.level
+        if trust_decision.basis:
+            trust_metadata["source_trust_basis"] = trust_decision.basis
+
+    def result(payload):
+        payload.update(trust_metadata)
+        return payload
+
     if isinstance(fetcher, Fetcher):
-        page, err = fetcher.get(url, trusted_hosts)
+        exact_redirects = bool(
+            trust_decision and trust_decision.level == "provisional"
+        )
+        if exact_redirects:
+            page, err = fetcher.get(
+                url, trusted_hosts, exact_redirect_hosts=True
+            )
+        else:
+            page, err = fetcher.get(url, trusted_hosts)
     else:
         page, err = fetcher.get(url)
     if page is None:
-        return {"id": pid, "status": "UNREACHABLE", "reason": err, "url": url}
+        return result({"id": pid, "status": "UNREACHABLE", "reason": err,
+                       "url": url})
     final_url = (getattr(fetcher, "final_urls", {}) or {}).get(url, url)
     ok, why = source_ok(final_url)
     if not ok:
-        return {"id": pid, "status": "REJECTED_SOURCE",
-                "reason": f"redirect target rejected: {why}", "url": url,
-                "final_url": final_url}
-    if trusted_hosts is not None:
-        ok, why = source_bound_to_hosts(final_url, trusted_hosts, p.get("title") or "")
+        return result({"id": pid, "status": "REJECTED_SOURCE",
+                       "reason": f"redirect target rejected: {why}", "url": url,
+                       "final_url": final_url})
+    if source_trust_policy is not None:
+        final_decision, why = classify_source_trust(
+            final_url, p.get("title"), p.get("year"), source_trust_policy
+        )
+        if trust_decision.level == "provisional":
+            final_ok = (final_decision is not None
+                        and final_decision.level == "provisional"
+                        and final_decision.host == trust_decision.host
+                        and final_decision.basis == trust_decision.basis)
+        else:
+            final_ok = final_decision is not None \
+                and final_decision.level == "trusted"
+        if not final_ok:
+            detail = why or "redirect changed the source trust class"
+            return result({"id": pid, "status": "REJECTED_SOURCE",
+                           "reason": f"redirect target rejected: {detail}",
+                           "url": url, "final_url": final_url})
+    elif trusted_hosts is not None:
+        ok, why = source_bound_to_hosts(
+            final_url, trusted_hosts, p.get("title") or ""
+        )
         if not ok:
-            return {"id": pid, "status": "REJECTED_SOURCE",
-                    "reason": f"redirect target rejected: {why}", "url": url,
-                    "final_url": final_url}
+            return result({"id": pid, "status": "REJECTED_SOURCE",
+                           "reason": f"redirect target rejected: {why}",
+                           "url": url, "final_url": final_url})
     identity_required = trusted_hosts is not None or identity_aliases is not None
     if identity_required:
         aliases = ([p.get("title")] if identity_aliases is None
@@ -1141,15 +1965,18 @@ def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
             identity_catalog,
         )
         if not ok:
-            return {"id": pid, "status": "REJECTED_SOURCE",
-                    "reason": f"page identity rejected: {why}", "url": url,
-                    "final_url": final_url}
+            return result({"id": pid, "status": "REJECTED_SOURCE",
+                           "reason": f"page identity rejected: {why}",
+                           "url": url, "final_url": final_url})
     page_text = strip_html(page)
     page_toks = tokens(page_text)
+    page_units = structural_html_units(page)
     results = {}
     for name, claim in fields.items():
         value = claim.get("value")
-        quotes = [e.get("quote", "") for e in (claim.get("evidence") or [])]
+        evidence = claim.get("evidence") or []
+        quotes = [entry.get("quote", "") for entry in evidence
+                  if isinstance(entry, dict)]
 
         if value is None:                       # a deletion: a negative claim
             ok, why = verify_absence(page_toks, name, claim.get("absence_scope_quote", ""))
@@ -1160,7 +1987,8 @@ def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
         # Checking the union with any() let one real quote validate a whole
         # list, including a fabricated second cycle - and the venues with lists
         # (NDSS, DIMVA, EuroSys) are exactly the ones at risk.
-        if name in ("deadline", "abstract_deadline") and isinstance(value, list)                 and len(value) > 1:
+        if name in ("deadline", "abstract_deadline") and isinstance(value, list) \
+                and len(value) > 1:
             per, bad = [], None
             for item in value:
                 f_i, req_i = value_forms(name, item)
@@ -1168,21 +1996,41 @@ def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
                     bad = f"cycle {item!r} has no checkable form"
                     break
                 hit = None
-                for q in [q for q in quotes if q]:
+                entries, binding_error = _cycle_evidence_entries(evidence, item)
+                failures = []
+                if binding_error:
+                    failures.append(("binding", binding_error))
+                for evidence_index, entry in entries:
+                    q = entry.get("quote", "")
+                    if not q:
+                        failures.append((f"evidence[{evidence_index}]", "empty quote"))
+                        continue
                     time_ok, time_reason = deadline_time_compatible(
-                        item, q, page_text, name
+                        item, q, page_text, name, page_units
                     )
                     if not time_ok:
-                        err_i = time_reason
+                        failures.append((f"evidence[{evidence_index}]", time_reason))
                         continue
                     cov, err_i = ground_quote(page_toks, q, f_i,
                                               FIELD_LABELS.get(name, ((), ())),
-                                              single_date=True)
+                                              single_date=True, field=name)
                     if cov is not None:
                         hit = cov
                         break
+                    struck_error = None
+                    if p.get("action") == "no_change":
+                        struck_cov, struck_error = ground_elapsed_struck_cycle(
+                            proposal=p, field=name, item=item, quote=q, forms=f_i,
+                            page_units=page_units, current_record=current_record,
+                            audit_date=audit_date,
+                        )
+                        if struck_cov is not None:
+                            hit = struck_cov
+                            break
+                    failures.append((f"evidence[{evidence_index}]",
+                                     struck_error or err_i))
                 if hit is None:
-                    bad = f"cycle {item!r} has no grounded quote of its own"
+                    bad = _bounded_cycle_failure(item, failures)
                     break
                 per.append(hit)
             if bad:
@@ -1204,18 +2052,31 @@ def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
         for q in [q for q in quotes if q]:
             if name in ("deadline", "abstract_deadline"):
                 time_ok, time_reason = deadline_time_compatible(
-                    value, q, page_text, name
+                    value, q, page_text, name, page_units
                 )
                 if not time_ok:
                     best_err = time_reason
                     continue
             cov, err2 = ground_quote(
                 page_toks, q, forms, FIELD_LABELS.get(name, ((), ())),
-                single_date=name in ('deadline', 'abstract_deadline'))
+                single_date=name in ('deadline', 'abstract_deadline'), field=name)
             if cov is not None:
                 results[name] = {"status": "VERIFIED", "coverage": cov}
                 ok = True
                 break
+            if name in ("deadline", "abstract_deadline"):
+                struck_cov, struck_error = ground_elapsed_struck_cycle(
+                    proposal=p, field=name, item=value, quote=q, forms=forms,
+                    page_units=page_units, current_record=current_record,
+                    audit_date=audit_date,
+                )
+                if struck_cov is not None:
+                    results[name] = {"status": "VERIFIED", "coverage": struck_cov,
+                                     "basis": "elapsed-struck-no-change"}
+                    ok = True
+                    break
+                if p.get("action") == "no_change" and struck_error:
+                    err2 = struck_error
             best_err = err2
         if not ok:
             results[name] = {"status": "UNCONFIRMED", "reason": best_err}
@@ -1231,9 +2092,11 @@ def verify_proposal(p, fetcher, trusted_hosts=None, identity_aliases=None,
         status = "UNCONFIRMED"
     else:
         status = "UNCHECKED"
-    return {"id": pid, "status": status, "url": url, "final_url": final_url,
-            "fields": results,
-            "sha256": hashlib.sha256(page.encode("utf-8", "replace")).hexdigest()[:16]}
+    return result({
+        "id": pid, "status": status, "url": url, "final_url": final_url,
+        "fields": results,
+        "sha256": hashlib.sha256(page.encode("utf-8", "replace")).hexdigest()[:16],
+    })
 
 
 def main() -> int:
@@ -1259,10 +2122,16 @@ def main() -> int:
         if not isinstance(watchlist, list):
             raise ValueError("expected a JSON array")
         targets = U.load_config()
-        trusted_by_title = trusted_hosts_by_title(
-            watchlist, stored_records(), configured_official_hosts(targets)
+        historical_records = list(stored_records())
+        trust_policy = build_source_trust_policy(
+            watchlist, historical_records, configured_official_hosts(targets)
         )
         identities_by_title = configured_conference_identities(targets)
+        watchlist_by_identity = {
+            (item.get("title"), item.get("year")): item
+            for item in watchlist if isinstance(item, dict)
+        }
+        audit_date = _audit_date_value(doc.get("audit_date"))
     except Exception as exc:  # noqa: BLE001 - missing trust must fail closed
         print(f"FATAL: cannot build official-host trust from {args.watchlist} ({exc})")
         return 1
@@ -1270,13 +2139,16 @@ def main() -> int:
     fetcher = Fetcher(offline=args.offline, fixtures=args.fixtures)
     verdicts, counts = [], {}
     for p in doc.get("proposals") or []:
-        # ``set()`` is intentional: a conference with no known official link
-        # cannot bootstrap trust from the source it is asking us to approve.
+        watch_item = watchlist_by_identity.get((p.get("title"), p.get("year")), {})
         v = verify_proposal(
             p, fetcher,
-            trusted_by_title.get(p.get("title"), set()),
+            trust_policy.trusted_by_title.get(p.get("title"), set()),
             identities_by_title.get(p.get("title"), ()),
             identities_by_title,
+            source_trust_policy=trust_policy,
+            current_record=(watch_item.get("record")
+                            if isinstance(watch_item, dict) else None),
+            audit_date=audit_date,
         )
         # The applier consumes `status: accepted`; only a full VERIFIED earns it.
         v["accepted"] = v["status"] == "VERIFIED"

@@ -575,7 +575,354 @@ class OrdinalDates(unittest.TestCase):
             self.ground("Paper Submission Deadline: July 24th, 2026", dt.date(2026, 7, 25))[0])
 
 
+class StructuralClockScoping(unittest.TestCase):
+    """Researchr puts a changing message timestamp immediately after its dates
+    table.  It is a sibling widget, never part of the paper-deadline row."""
+
+    BASE = """<html><body><div id='page'>
+    <p>All deadlines are anywhere on Earth (AoE).</p><table>
+    <tr href='/track' class='clickable-row past'>
+      <td><strong>Thu 26 Mar 2026</strong>
+          <span title='Timezone: AoE (UTC-12h)'>clock</span></td>
+      <td><strong>Research Papers</strong></td>
+      <td><strong>Paper Submission</strong>{row_clock}</td>
+    </tr></table>
+    <div id='messages-placeholder'><a>x</a><em>Tue 1 Sep 07:37</em></div>
+    </div></body></html>"""
+    QUOTE = "Thu 26 Mar 2026 Research Papers Paper Submission"
+
+    def verify(self, row_clock=""):
+        url = "https://researchr-clock.example/dates"
+        directory = fixture_dir({url: self.BASE.format(row_clock=row_clock)})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        return V.verify_proposal(proposal(url, {"deadline": claim(
+            "2026-03-26 23:59", self.QUOTE)}),
+            V.Fetcher(offline=True, fixtures=directory))
+
+    def test_sibling_live_clock_does_not_poison_deadline(self):
+        self.assertEqual(self.verify()["status"], "VERIFIED")
+
+    def test_conflicting_clock_inside_same_row_still_fails_closed(self):
+        verdict = self.verify(" at 5 PM")
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("not proposed minute", verdict["fields"]["deadline"]["reason"])
+
+    def verify_custom(self, html):
+        url = "https://nested-clock.example/cfp"
+        directory = fixture_dir({url: html})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        return V.verify_proposal(
+            proposal(url, {"deadline": claim(
+                "2026-09-24 23:59",
+                "Submission deadline: September 24, 2026",
+            )}),
+            V.Fetcher(offline=True, fixtures=directory),
+        )
+
+    def test_clock_in_enclosing_logical_row_cannot_be_omitted_from_quote(self):
+        html = ("<li><p>Submission deadline: September 24, 2026</p>"
+                "<span>at 17:00 AoE</span></li>")
+        verdict = self.verify_custom(html)
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("not proposed minute",
+                      verdict["fields"]["deadline"]["reason"])
+
+    def test_unrelated_structural_unit_does_not_disable_line_fallback(self):
+        html = ("<div>Navigation</div> Submission deadline: "
+                "September 24, 2026 at 17:00 AoE")
+        verdict = self.verify_custom(html)
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("not proposed minute",
+                      verdict["fields"]["deadline"]["reason"])
+
+    def test_div_grid_row_cannot_hide_clock_in_sibling_cell(self):
+        html = ("<div class='deadline-row'>"
+                "<div>Submission deadline: September 24, 2026</div>"
+                "<div>at 17:00 AoE</div></div>")
+        verdict = self.verify_custom(html)
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("not proposed minute",
+                      verdict["fields"]["deadline"]["reason"])
+
+
+class StrongShortContext(unittest.TestCase):
+    def verify(self, html, field, value, quote):
+        url = f"https://short-{field}.example/"
+        directory = fixture_dir({url: html})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        return V.verify_proposal(
+            proposal(url, {field: claim(value, quote)}),
+            V.Fetcher(offline=True, fixtures=directory),
+        )["status"]
+
+    def test_short_labelled_place_is_complete_evidence(self):
+        self.assertEqual(self.verify("<p>Venue: Rome, Italy</p>", "place",
+                                     "Rome, Italy", "Venue: Rome, Italy"),
+                         "VERIFIED")
+
+    def test_bare_city_country_remains_too_weak(self):
+        self.assertEqual(self.verify("<p>Rome, Italy</p>", "place",
+                                     "Rome, Italy", "Rome, Italy"),
+                         "UNCONFIRMED")
+
+    def test_short_labelled_conference_date_is_complete_evidence(self):
+        quote = "Conference: September 14-18, 2026"
+        self.assertEqual(self.verify(f"<p>{quote}</p>", "date",
+                                     "September 14-18, 2026", quote),
+                         "VERIFIED")
+
+    def test_bare_conference_date_remains_too_weak(self):
+        quote = "September 14-18, 2026"
+        self.assertEqual(self.verify(f"<p>{quote}</p>", "date",
+                                     "September 14-18, 2026", quote),
+                         "UNCONFIRMED")
+
+    def test_short_important_dates_timezone_heading_verifies(self):
+        quote = "Important Dates (AoE)"
+        self.assertEqual(self.verify(f"<h3>{quote}</h3>", "timezone", "AoE", quote),
+                         "VERIFIED")
+
+    def test_exact_submission_key_is_narrowly_accepted(self):
+        quote = "Submission: 10 December 2025 (extended!)"
+        self.assertEqual(self.verify(f"<h3>Important Dates (AoE)</h3><li>{quote}</li>",
+                                     "deadline", "2025-12-10 23:59", quote),
+                         "VERIFIED")
+
+    def test_submission_site_and_revised_submission_remain_rejected(self):
+        for quote in ("Submission site opens: 10 December 2025",
+                      "Submission: revised papers 10 December 2025",
+                      "Submission: abstract 10 December 2025",
+                      "Submission: artifact 10 December 2025"):
+            with self.subTest(quote=quote):
+                self.assertEqual(self.verify(f"<li>{quote}</li>", "deadline",
+                                             "2025-12-10 23:59", quote),
+                                 "UNCONFIRMED")
+
+    def test_generic_submission_under_poster_heading_remains_rejected(self):
+        quote = "Submission: 10 December 2025"
+        html = f"<h3>Poster Submissions</h3><li>{quote}</li>"
+        self.assertEqual(self.verify(html, "deadline", "2025-12-10 23:59", quote),
+                         "UNCONFIRMED")
+
+
+class ElapsedStruckDeadlines(unittest.TestCase):
+    EUROSYS = """<html><body><h1>EuroSys 2027</h1>
+    <p>All deadlines are anywhere on Earth (AoE).</p>
+    <h3>Spring Deadline</h3><ul>
+      <li>Paper titles and abstracts due: <s>Thursday, May 7, 2026</s></li>
+      <li>Full paper submissions due: <del>Thursday, May 14, 2026</del></li>
+    </ul><h3>Fall Deadline</h3><ul>
+      <li>Paper titles and abstracts due: Thursday, September 17, 2026</li>
+      <li>Full paper submissions due: Thursday, September 24, 2026</li>
+    </ul></body></html>"""
+
+    DEADLINES = ["2026-05-14 23:59", "2026-09-24 23:59"]
+    EVIDENCE = [
+        {"for_value": "2026-05-14 23:59",
+         "quote": "Full paper submissions due: Thursday, May 14, 2026"},
+        {"for_value": "2026-09-24 23:59",
+         "quote": "Full paper submissions due: Thursday, September 24, 2026"},
+    ]
+    ABSTRACTS = ["2026-05-07 23:59", "2026-09-17 23:59"]
+    ABSTRACT_EVIDENCE = [
+        {"for_value": "2026-05-07 23:59",
+         "quote": "Paper titles and abstracts due: Thursday, May 7, 2026"},
+        {"for_value": "2026-09-17 23:59",
+         "quote": "Paper titles and abstracts due: Thursday, September 17, 2026"},
+    ]
+
+    def verify(self, html, values, evidence, *, action="no_change",
+               current=None, audit_date="2026-09-01"):
+        url = "https://elapsed.example/cfp"
+        directory = fixture_dir({url: html})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        p = proposal(url, {"deadline": {"value": values, "evidence": evidence}},
+                     action=action, title="EuroSys", year=2027)
+        return V.verify_proposal(
+            p, V.Fetcher(offline=True, fixtures=directory),
+            current_record=current, audit_date=audit_date,
+        )
+
+    def test_elapsed_struck_cycle_can_confirm_exact_immutable_no_change(self):
+        verdict = self.verify(
+            self.EUROSYS, self.DEADLINES, self.EVIDENCE,
+            current={"deadline": list(self.DEADLINES)},
+        )
+        self.assertEqual(verdict["status"], "VERIFIED", verdict)
+
+    def test_elapsed_struck_abstract_cycle_uses_the_same_safe_path(self):
+        url = "https://elapsed-abstract.example/cfp"
+        directory = fixture_dir({url: self.EUROSYS})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        p = proposal(url, {"abstract_deadline": {
+            "value": list(self.ABSTRACTS),
+            "evidence": list(self.ABSTRACT_EVIDENCE),
+        }}, action="no_change", title="EuroSys", year=2027)
+        verdict = V.verify_proposal(
+            p, V.Fetcher(offline=True, fixtures=directory),
+            current_record={"abstract_deadline": list(self.ABSTRACTS)},
+            audit_date="2026-09-01",
+        )
+        self.assertEqual(verdict["status"], "VERIFIED", verdict)
+
+    def test_struck_cycle_can_never_authorize_a_mutation(self):
+        verdict = self.verify(
+            self.EUROSYS, self.DEADLINES, self.EVIDENCE,
+            action="upsert_manual", current={"deadline": list(self.DEADLINES)},
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+
+    def test_struck_cycle_requires_the_complete_no_change_field_to_match(self):
+        verdict = self.verify(
+            self.EUROSYS, self.DEADLINES[0], [self.EVIDENCE[0]],
+            current={"deadline": list(self.DEADLINES)},
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("complete proposed field",
+                      verdict["fields"]["deadline"]["reason"])
+
+    def test_future_struck_deadline_remains_unconfirmed(self):
+        quote = "Paper Submission Deadline: September 24, 2026"
+        html = f"<p>Paper Submission Deadline: <s>September 24, 2026</s></p>"
+        verdict = self.verify(
+            html, "2026-09-24 23:59", [{"quote": quote}],
+            current={"deadline": "2026-09-24 23:59"}, audit_date="2026-09-01",
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+
+    def test_struck_date_with_active_replacement_remains_unconfirmed(self):
+        quote = "Submission: 03 December 2025"
+        html = ("<h3>Important Dates (AoE)</h3><li>Submission: "
+                "<s>03 December 2025</s> <b>10 December 2025 (extended!)</b></li>")
+        verdict = self.verify(
+            html, "2025-12-03 23:59", [{"quote": quote}],
+            current={"deadline": "2025-12-03 23:59"},
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+
+    def test_struck_child_cannot_hide_active_ancestor_extension(self):
+        quote = "Submission: 03 December 2025"
+        html = ("<li><p><del>Submission: 03 December 2025</del></p>"
+                "<span>Extended to 10 December 2025</span></li>")
+        verdict = self.verify(
+            html, "2025-12-03 23:59", [{"quote": quote}],
+            current={"deadline": "2025-12-03 23:59"},
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("active replacement date",
+                      verdict["fields"]["deadline"]["reason"])
+
+    def test_struck_date_with_tba_replacement_remains_unconfirmed(self):
+        quote = "Submission: 03 December 2025"
+        html = ("<h3>Important Dates (AoE)</h3><li>Submission: "
+                "<del>03 December 2025</del> <b>TBA (rescheduled)</b></li>")
+        verdict = self.verify(
+            html, "2025-12-03 23:59", [{"quote": quote}],
+            current={"deadline": "2025-12-03 23:59"},
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+
+    def test_omitted_conflicting_clock_in_struck_row_remains_unconfirmed(self):
+        quote = "Submission: 03 December 2025"
+        html = ("<h3>Important Dates (AoE)</h3><li>Submission: "
+                "<del>03 December 2025 at 5 PM</del></li>")
+        verdict = self.verify(
+            html, "2025-12-03 23:59", [{"quote": quote}],
+            current={"deadline": "2025-12-03 23:59"},
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("not proposed minute",
+                      verdict["fields"]["deadline"]["reason"])
+
+
+class MultiCycleEvidenceBinding(unittest.TestCase):
+    PAGE = """<html><body><h2>Important Dates</h2><ul>
+      <li>Paper Submission Deadline: May 14, 2026</li>
+      <li>Paper Submission Deadline: September 24, 2026</li>
+    </ul></body></html>"""
+    VALUES = ["2026-05-14 23:59", "2026-09-24 23:59"]
+
+    def verify(self, evidence, values=None, action="upsert_manual"):
+        url = "https://cycles.example/cfp"
+        directory = fixture_dir({url: self.PAGE})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        p = proposal(url, {"deadline": {
+            "value": self.VALUES if values is None else values,
+            "evidence": evidence,
+        }}, action=action)
+        return V.verify_proposal(p, V.Fetcher(offline=True, fixtures=directory))
+
+    def test_for_value_binds_each_quote_to_exactly_one_cycle(self):
+        evidence = [
+            {"for_value": self.VALUES[0],
+             "quote": "Paper Submission Deadline: May 14, 2026"},
+            {"for_value": self.VALUES[1],
+             "quote": "Paper Submission Deadline: September 24, 2026"},
+        ]
+        self.assertEqual(self.verify(evidence)["status"], "VERIFIED")
+
+    def test_misbound_quotes_cannot_cross_validate_and_diagnostic_is_bounded(self):
+        evidence = [
+            {"for_value": self.VALUES[0],
+             "quote": "Paper Submission Deadline: September 24, 2026"},
+            {"for_value": self.VALUES[1],
+             "quote": "Paper Submission Deadline: May 14, 2026"},
+        ]
+        verdict = self.verify(evidence)
+        reason = verdict["fields"]["deadline"]["reason"]
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("evidence[0]", reason)
+        self.assertLessEqual(len(reason), 500)
+
+    def test_unbound_multi_cycle_evidence_remains_unconfirmed(self):
+        evidence = [
+            {"quote": "Paper Submission Deadline: May 14, 2026"},
+            {"quote": "Paper Submission Deadline: September 24, 2026"},
+        ]
+        verdict = self.verify(evidence)
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("for_value", verdict["fields"]["deadline"]["reason"])
+
+    def test_null_cycle_in_mutation_remains_fail_closed(self):
+        evidence = [{"for_value": self.VALUES[0],
+                     "quote": "Paper Submission Deadline: May 14, 2026"}]
+        verdict = self.verify(evidence, values=[self.VALUES[0], None])
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("no checkable form", verdict["fields"]["deadline"]["reason"])
+
+    def test_null_abstract_cycle_in_mutation_remains_fail_closed(self):
+        url = "https://abstract-cycles.example/cfp"
+        html = ("<p>Paper titles and abstracts due: May 7, 2026</p>"
+                "<p>Paper titles and abstracts due: September 17, 2026</p>")
+        directory = fixture_dir({url: html})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        value = "2026-05-07 23:59"
+        p = proposal(url, {"abstract_deadline": {
+            "value": [value, None],
+            "evidence": [{
+                "for_value": value,
+                "quote": "Paper titles and abstracts due: May 7, 2026",
+            }],
+        }}, action="upsert_manual")
+        verdict = V.verify_proposal(
+            p, V.Fetcher(offline=True, fixtures=directory)
+        )
+        self.assertEqual(verdict["status"], "UNCONFIRMED", verdict)
+        self.assertIn("no checkable form",
+                      verdict["fields"]["abstract_deadline"]["reason"])
+
+
 class SourceAuthority(unittest.TestCase):
+    @staticmethod
+    def dns_answers(*addresses):
+        answers = []
+        for address in addresses:
+            family = V.socket.AF_INET6 if ":" in address else V.socket.AF_INET
+            sockaddr = ((address, 443, 0, 0) if family == V.socket.AF_INET6
+                        else (address, 443))
+            answers.append((family, V.socket.SOCK_STREAM, 6, "", sockaddr))
+        return answers
+
     def test_trackers_are_rejected(self):
         for url in ("https://ccfddl.github.io/conference/",
                     "https://sec-deadlines.github.io/",
@@ -605,6 +952,49 @@ class SourceAuthority(unittest.TestCase):
         ):
             self.assertFalse(V.source_ok(url)[0], url)
 
+    def test_network_source_requires_only_public_resolved_addresses(self):
+        public = self.dns_answers("93.184.216.34", "2606:4700:4700::1111")
+        private = self.dns_answers("127.0.0.1")
+        mixed = self.dns_answers("93.184.216.34", "10.0.0.8")
+
+        self.assertTrue(V.network_source_ok(
+            "https://official.example/cfp", resolver=lambda *a, **k: public)[0])
+        self.assertFalse(V.network_source_ok(
+            "https://official.example/cfp", resolver=lambda *a, **k: private)[0])
+        ok, why = V.network_source_ok(
+            "https://official.example/cfp", resolver=lambda *a, **k: mixed)
+        self.assertFalse(ok)
+        self.assertIn("non-public", why)
+
+    def test_network_source_rejects_failed_or_empty_resolution(self):
+        self.assertFalse(V.network_source_ok(
+            "https://official.example/cfp", resolver=lambda *a, **k: [])[0])
+
+        def failed(*args, **kwargs):
+            raise V.socket.gaierror("no answer")
+
+        self.assertFalse(V.network_source_ok(
+            "https://official.example/cfp", resolver=failed)[0])
+
+    def test_dns_alias_helpers_are_denied_without_resolution(self):
+        resolver = mock.Mock(return_value=self.dns_answers("93.184.216.34"))
+        ok, why = V.network_source_ok(
+            "https://127.0.0.1.nip.io/cfp", resolver=resolver)
+        self.assertFalse(ok)
+        self.assertIn("helper host", why)
+        resolver.assert_not_called()
+
+    def test_fetcher_never_builds_an_opener_for_unsafe_dns(self):
+        resolver = mock.Mock(return_value=self.dns_answers("192.168.1.10"))
+        fetcher = V.Fetcher(resolver=resolver)
+        with mock.patch.object(V.time, "sleep"), \
+                mock.patch.object(V.urllib.request, "build_opener") as opener:
+            page, error = fetcher.get(
+                "https://official.example/cfp", {"official.example"})
+        self.assertIsNone(page)
+        self.assertIn("URLError", error)
+        opener.assert_not_called()
+
     def test_redirect_handler_refuses_untrusted_target_before_following(self):
         handler = V.SafeRedirectHandler({"official.example"})
         request = V.urllib.request.Request("https://official.example/cfp")
@@ -612,6 +1002,19 @@ class SourceAuthority(unittest.TestCase):
             handler.redirect_request(
                 request, None, 302, "Found", {}, "http://127.0.0.1/private"
             )
+
+    def test_redirect_handler_resolves_target_before_following(self):
+        handler = V.SafeRedirectHandler(
+            {"official.example"},
+            resolver=lambda *a, **k: self.dns_answers("10.0.0.9"),
+        )
+        request = V.urllib.request.Request("https://official.example/cfp")
+        with self.assertRaises(V.urllib.error.HTTPError) as caught:
+            handler.redirect_request(
+                request, None, 302, "Found", {},
+                "https://sub.official.example/private",
+            )
+        self.assertIn("non-public", str(caught.exception))
 
     def test_rejected_source_short_circuits_before_fetching(self):
         f = V.Fetcher(offline=True, fixtures=None)
@@ -728,6 +1131,252 @@ class OfficialHostBinding(unittest.TestCase):
         v = V.verify_proposal(self.p(url), self.fixture_fetcher(url),
                               {"official.example"})
         self.assertEqual(v["status"], "VERIFIED", v)
+        self.assertEqual(v["source_trust"], "trusted")
+
+    def test_annual_template_accepts_curated_or_historical_exact_parent(self):
+        cases = [
+            ([{"title": "X", "year": 2025,
+               "link": "https://x2025.series.example/"}],
+             {"X": ["series.example"]}),
+            ([{"title": "X", "year": 2024,
+               "link": "https://series.example/"},
+              {"title": "X", "year": 2025,
+               "link": "https://x2025.series.example/"}],
+             None),
+        ]
+        for historical, configured in cases:
+            with self.subTest(configured=bool(configured)):
+                watchlist = [{"title": "X", "year": 2027, "record": {}}]
+                policy = V.build_source_trust_policy(
+                    watchlist, historical, configured
+                )
+                decision, why = V.classify_source_trust(
+                    "https://x2027.series.example/cfp", "X", 2027, policy
+                )
+                self.assertIsNotNone(decision, why)
+                self.assertEqual(decision.level, "trusted")
+                self.assertIn("x2027.series.example",
+                              policy.annual_by_identity[("X", 2027)])
+
+    def test_parent_plus_child_distinct_titles_establishes_organizer(self):
+        watchlist = [{"title": "EuroS&P", "year": 2027, "record": {}}]
+        historical = [
+            {"title": "S&P", "year": 2024,
+             "link": "https://www.ieee-security.org/TC/SP2024/"},
+            {"title": "EuroS&P", "year": 2025,
+             "link": "https://eurosp2025.ieee-security.org/"},
+        ]
+        policy = V.build_source_trust_policy(watchlist, historical)
+        self.assertIn("ieee-security.org", policy.organizer_hosts)
+        decision, why = V.classify_source_trust(
+            "https://eurosp2027.ieee-security.org/cfp",
+            "EuroS&P", 2027, policy,
+        )
+        self.assertIsNotNone(decision, why)
+        self.assertEqual(decision.level, "trusted")
+        self.assertIn("eurosp2027.ieee-security.org",
+                      policy.annual_by_identity[("EuroS&P", 2027)])
+
+    def test_annual_templates_never_cross_multi_tenant_siblings(self):
+        cases = [
+            ("DSN", "dsn2025.github.io", "dsn2026.github.io"),
+            ("EuroSec", "eurosec25.hotcrp.com", "eurosec26.hotcrp.com"),
+            ("X", "x2025.pages.dev", "x2026.pages.dev"),
+        ]
+        for title, old_host, new_host in cases:
+            with self.subTest(new_host=new_host):
+                watchlist = [{"title": title, "year": 2026, "record": {}}]
+                historical = [{"title": title, "year": 2025,
+                               "link": f"https://{old_host}/"}]
+                policy = V.build_source_trust_policy(watchlist, historical)
+                decision, _ = V.classify_source_trust(
+                    f"https://{new_host}/cfp", title, 2026, policy
+                )
+                self.assertIsNone(decision)
+                self.assertNotIn((title, 2026), policy.annual_by_identity)
+
+        self.assertIsNone(V._annualized_host(
+            "dsn2025.github.io", 2025, 2026, {"github.io"}
+        ))
+        self.assertIsNone(V._annualized_host(
+            "event2025.wordpress.com", 2025, 2026, {"wordpress.com"}
+        ))
+
+    def test_registrable_and_unproven_tenant_year_rewrites_are_not_strong(self):
+        cases = [
+            ("RAID", 2026, "raid2026.org", 2027, "raid2027.org"),
+            ("Workshop", 2025, "event2025.wordpress.com", 2026,
+             "event2026.wordpress.com"),
+        ]
+        for title, old_year, old_host, new_year, new_host in cases:
+            with self.subTest(new_host=new_host):
+                watchlist = [{"title": title, "year": new_year, "record": {}}]
+                historical = [{"title": title, "year": old_year,
+                               "link": f"https://{old_host}/"}]
+                policy = V.build_source_trust_policy(watchlist, historical)
+                decision, _ = V.classify_source_trust(
+                    f"https://{new_host}/cfp", title, new_year, policy
+                )
+                self.assertIsNone(decision)
+                self.assertNotIn((title, new_year), policy.annual_by_identity)
+
+                nominated = dict(watchlist[0])
+                nominated["upstream_link_candidates"] = [
+                    {"source": "ccfddl", "link": f"https://{new_host}/cfp"},
+                ]
+                provisional = V.build_source_trust_policy(
+                    [nominated], historical
+                )
+                decision, why = V.classify_source_trust(
+                    f"https://{new_host}/cfp", title, new_year, provisional
+                )
+                self.assertIsNotNone(decision, why)
+                self.assertEqual(decision.level, "provisional")
+
+    def test_same_title_repetition_is_not_global_organizer_authority(self):
+        watchlist = [{"title": "Other", "year": 2026, "record": {}}]
+        historical = [
+            {"title": "DIMVA", "year": 2024, "link": "https://dimva.org/a"},
+            {"title": "DIMVA", "year": 2025, "link": "https://dimva.org/b"},
+        ]
+        policy = V.build_source_trust_policy(watchlist, historical)
+        self.assertNotIn("dimva.org", policy.organizer_hosts)
+        decision, _ = V.classify_source_trust(
+            "https://dimva.org/other-2026", "Other", 2026, policy
+        )
+        self.assertIsNone(decision)
+
+    def test_repeated_historical_organizer_host_is_cross_title_authority(self):
+        url = "https://sigops.org/s/conferences/atc/2026/"
+        watchlist = [{"title": "ATC", "year": 2026, "record": {}}]
+        historical = [
+            {"title": "SOSP", "year": 2024,
+             "link": "https://sigops.org/s/conferences/sosp/2024/"},
+            {"title": "HotOS", "year": 2025,
+             "link": "https://sigops.org/s/conferences/hotos/2025/"},
+        ]
+        policy = V.build_source_trust_policy(watchlist, historical)
+        self.assertIn("sigops.org", policy.organizer_hosts)
+        page = ("<title>ATC 2026</title>"
+                "<p>Paper Submission Deadline: February 10, 2026</p>")
+        directory = fixture_dir({url: page})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        p = proposal(url, {"deadline": claim("2026-02-10 23:59", self.QUOTE)},
+                     title="ATC")
+        v = V.verify_proposal(
+            p, V.Fetcher(offline=True, fixtures=directory), set(), ["ATC"],
+            {"ATC": ["ATC"], "FSE": ["FSE"]},
+            source_trust_policy=policy,
+        )
+        self.assertEqual(v["status"], "VERIFIED", v)
+        self.assertEqual(v["source_trust"], "trusted")
+
+    def test_organizer_authority_does_not_replace_page_identity(self):
+        url = "https://sigops.org/s/conferences/atc/2026/"
+        watchlist = [{"title": "ATC", "year": 2026, "record": {}}]
+        historical = [
+            {"title": "SOSP", "year": 2024, "link": "https://sigops.org/a"},
+            {"title": "HotOS", "year": 2025, "link": "https://sigops.org/b"},
+        ]
+        policy = V.build_source_trust_policy(watchlist, historical)
+        page = ("<title>FSE 2026 - Research Papers</title>"
+                "<nav>ATC 2026</nav>"
+                "<p>Paper Submission Deadline: February 10, 2026</p>")
+        directory = fixture_dir({url: page})
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        p = proposal(url, {"deadline": claim("2026-02-10 23:59", self.QUOTE)},
+                     title="ATC")
+        v = V.verify_proposal(
+            p, V.Fetcher(offline=True, fixtures=directory), set(), ["ATC"],
+            {"ATC": ["ATC"], "FSE": ["FSE"]},
+            source_trust_policy=policy,
+        )
+        self.assertEqual(v["status"], "REJECTED_SOURCE", v)
+        self.assertIn("identifies conference 'FSE', not 'ATC'", v["reason"])
+
+    def test_one_upstream_exact_host_is_provisional_and_fetch_is_confined(self):
+        url = "https://new-official.example/cfp"
+        watchlist = [{
+            "title": "X", "year": 2026, "record": {},
+            "upstream_link_candidates": [
+                {"source": "ccfddl", "link": url},
+            ],
+        }]
+        policy = V.build_source_trust_policy(watchlist, ())
+
+        class RecordingFetcher(V.Fetcher):
+            def __init__(self):
+                super().__init__(offline=True)
+                self.call = None
+
+            def get(self, requested, allowed_hosts=None, *,
+                    exact_redirect_hosts=False):
+                self.call = (requested, set(allowed_hosts or ()),
+                             exact_redirect_hosts)
+                self.final_urls[requested] = requested
+                return OfficialHostBinding.PAGE, None
+
+        fetcher = RecordingFetcher()
+        v = V.verify_proposal(
+            self.p(url), fetcher, set(), ["X"], {"X": ["X"]},
+            source_trust_policy=policy,
+        )
+        self.assertEqual(v["status"], "VERIFIED", v)
+        self.assertEqual(v["source_trust"], "provisional")
+        self.assertRegex(v["source_trust_basis"], r"^sha256:[0-9a-f]{64}$")
+        self.assertEqual(fetcher.call,
+                         (url, {"new-official.example"}, True))
+
+    def test_provisional_nomination_is_exact_and_model_only_host_is_rejected(self):
+        nominated = "https://new-official.example/cfp"
+        watchlist = [{
+            "title": "X", "year": 2026,
+            # A current record link is not authority either.
+            "record": {"link": "https://model-only.example/cfp"},
+            "upstream_link_candidates": [
+                {"source": "ccfddl", "link": nominated},
+            ],
+        }]
+        policy = V.build_source_trust_policy(watchlist, ())
+        for url in ("https://sub.new-official.example/cfp",
+                    "https://model-only.example/cfp"):
+            with self.subTest(url=url):
+                fetcher = self.fixture_fetcher(url)
+                v = V.verify_proposal(
+                    self.p(url), fetcher, set(), ["X"], {"X": ["X"]},
+                    source_trust_policy=policy,
+                )
+                self.assertEqual(v["status"], "REJECTED_SOURCE", v)
+                self.assertNotIn(url, fetcher.cache)
+
+    def test_provisional_basis_is_stable_and_provenance_bound(self):
+        first = V.provisional_source_basis(
+            "X", 2026, "WWW.New-Official.Example.",
+            ["secdl", "ccfddl", "secdl"],
+        )
+        reordered = V.provisional_source_basis(
+            "X", 2026, "new-official.example", ["ccfddl", "secdl"],
+        )
+        changed = V.provisional_source_basis(
+            "X", 2026, "new-official.example", ["ccfddl"],
+        )
+        self.assertEqual(first, reordered)
+        self.assertNotEqual(first, changed)
+
+    def test_two_upstream_exact_host_is_strong_not_provisional(self):
+        url = "https://new-official.example/cfp"
+        watchlist = [{
+            "title": "X", "year": 2026, "record": {},
+            "upstream_link_candidates": [
+                {"source": "ccfddl", "link": url},
+                {"source": "secdl", "link": "https://new-official.example/dates"},
+            ],
+        }]
+        policy = V.build_source_trust_policy(watchlist, ())
+        decision, why = V.classify_source_trust(url, "X", 2026, policy)
+        self.assertIsNotNone(decision, why)
+        self.assertEqual(decision.level, "trusted")
+        self.assertNotIn(("X", 2026), policy.provisional_by_identity)
 
     def test_redirect_cannot_escape_to_an_unrelated_host(self):
         url = "https://official.example/cfp"
@@ -812,6 +1461,40 @@ class OfficialHostBinding(unittest.TestCase):
                          ["accepted", "rejected"])
         self.assertIn("no trusted official link host",
                       verdicts[1]["detail"]["reason"])
+
+    def test_production_main_emits_provisional_source_basis(self):
+        directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        url = "https://new-official.example/cfp"
+        fixtures = fixture_dir({url: self.PAGE})
+        self.addCleanup(shutil.rmtree, fixtures, ignore_errors=True)
+        proposals_path = directory / "audit-proposals.json"
+        watchlist_path = directory / "watchlist.json"
+        out_path = directory / "audit-verdicts.json"
+        proposals_path.write_text(json.dumps({"proposals": [self.p(url)]}),
+                                  encoding="utf-8")
+        watchlist_path.write_text(json.dumps([{
+            "title": "X", "year": 2026, "record": {},
+            "upstream_link_candidates": [
+                {"source": "ccfddl", "link": url},
+            ],
+        }]), encoding="utf-8")
+        argv = ["verify_citations.py", "--proposals", str(proposals_path),
+                "--watchlist", str(watchlist_path), "--out", str(out_path),
+                "--offline", "--fixtures", str(fixtures)]
+        targets = [{"key": "X", "full_name": "Example Conference",
+                    "aliases": ["X"]}]
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(V.U, "load_existing", return_value={}), \
+                mock.patch.object(V.U, "load_config", return_value=targets):
+            code = V.main()
+
+        self.assertEqual(code, 0)
+        detail = json.loads(out_path.read_text(
+            encoding="utf-8"))["verdicts"][0]["detail"]
+        self.assertEqual(detail["source_trust"], "provisional")
+        self.assertRegex(detail["source_trust_basis"],
+                         r"^sha256:[0-9a-f]{64}$")
 
 
 class ConferenceEditionIdentity(unittest.TestCase):

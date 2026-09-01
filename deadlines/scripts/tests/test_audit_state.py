@@ -93,6 +93,31 @@ class Corroboration(unittest.TestCase):
         self.assertEqual(current["verified_runs"], 1)
         self.assertEqual(current["first_seen"], "2026-09-07")
 
+    def test_changed_machine_verification_basis_resets_streak(self):
+        state = S.empty_state()
+        first_basis = "sha256:" + "a" * 64
+        second_basis = "sha256:" + "b" * 64
+        S.observe_verified(
+            state, proposal(), {"deadline": "2027-03-15 23:59"},
+            "2026-08-31", basis_digest=first_basis)
+        promoted, key = S.observe_verified(
+            state, proposal(), {"deadline": "2027-03-15 23:59"},
+            "2026-09-07", basis_digest=second_basis)
+        self.assertFalse(promoted)
+        current = claim_for(state, key, "fields:deadline")
+        self.assertEqual(current["verified_runs"], 1)
+        self.assertEqual(current["first_seen"], "2026-09-07")
+        rendered = S.render(state)
+        self.assertNotIn(first_basis, rendered)
+        self.assertNotIn(second_basis, rendered)
+
+    def test_invalid_machine_verification_basis_fails_closed(self):
+        with self.assertRaises(S.StateError):
+            S.observe_verified(
+                S.empty_state(), proposal(),
+                {"deadline": "2027-03-15 23:59"}, "2026-08-31",
+                basis_digest="sha256:not-a-digest")
+
     def test_unverified_completed_audit_resets_streak(self):
         state = S.empty_state()
         _, key = S.observe_verified(

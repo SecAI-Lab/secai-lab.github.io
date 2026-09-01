@@ -1,7 +1,8 @@
-# Tier 2 auto-apply: design
+# Autonomous deadline audit: implementation and design record
 
-Status: **Threat-model and design record. The autonomous sharded core was
-implemented 2026-08-31; exploratory tiers below are not all live.**
+Status: **The autonomous sharded publisher is live. Sections explicitly marked
+historical or exploratory are rationale only, not descriptions of the deployed
+workflow. The current operational flow is summarized in §§6, 7 and 11.**
 
 The design below records the threat model and trade-offs that led to the live
 implementation. The publisher now verifies official citations independently,
@@ -17,16 +18,17 @@ zero rather than pretending it is empty.
 
 ---
 
-## 1. Why the original design stopped at a PR
+## 1. Historical baseline — why the old design stopped at a PR
 
-The auditor edits YAML directly. The only automated check is `audit_lint.py`:
-files touched are inside `deadlines/data/`, and every `manual.yml` entry has a
-comment containing `Verified` and some URL. Neither check looks at the cited
-page. **Nothing verifies that the URL says the date.**
+Before the autonomous pipeline, the auditor edited YAML directly and
+`audit_lint.py` was the only automated check. It checked the write allowlist and
+required a `Verified` comment with a URL, but did not fetch that URL or prove it
+said the proposed value.
 
-So the PR is not bureaucracy — it is the only step that checks the claim.
-Automating it means replacing it with something that checks the same claim
-mechanically.
+At that time the PR was the only claim-checking step. That baseline is retired:
+the model now writes untrusted JSON, the deterministic verifier re-fetches and
+grounds each citation, and the publisher either applies, defers, or refuses the
+result without creating a conference-fact review PR.
 
 ---
 
@@ -46,8 +48,10 @@ from the page:
     "deadline": {
       "value": ["2025-12-10 23:59", "2026-02-18 23:59"],
       "evidence": [
-        {"quote": "Submission deadline (cycle 1): 10 December 2025 (extended!)"},
-        {"quote": "Submission deadline (cycle 2): 18 February 2026 (extended!)"}
+        {"for_value": "2025-12-10 23:59",
+         "quote": "Submission deadline (cycle 1): 10 December 2025 (extended!)"},
+        {"for_value": "2026-02-18 23:59",
+         "quote": "Submission deadline (cycle 2): 18 February 2026 (extended!)"}
       ]
     },
     "timezone": {"value": "AoE",
@@ -61,7 +65,8 @@ Three things follow at once:
 - the claim becomes machine-verifiable — a program can re-fetch and check it;
 - the model never writes YAML, so a whole class of syntax and merge errors
   disappears;
-- accept/reject becomes per-proposal instead of per-diff.
+- acceptance becomes per independently safe field group instead of per-diff;
+  multi-cycle deadline evidence is explicitly bound to one concrete value.
 
 JSON is the right intermediate format for one specific reason: it natively
 distinguishes *key absent* (no override) from *key present with `null`* (delete
@@ -179,10 +184,21 @@ struck-through markup.
 
 Community trackers are denied outright — ccfddl, sec-deadlines, WikiCFP,
 conferencelists, aideadlin.es and their GitHub raw paths — as are archive, cache
-and translate hosts. Officialness is then decided by a publisher allowlist plus a
-host/path token heuristic, with a per-venue `official_hosts` escape hatch in
-`conferences.yml`. The heuristic was regression-tested against all ten citation
-URLs currently in `manual.yml`: 10/10.
+and translate hosts. The proposed URL and the current record's link never create
+authority by themselves. Strong trust comes only from immutable repository
+evidence: configured `official_hosts`, older same-title committed hosts,
+directional descendants of those hosts, exact hosts independently nominated by
+two upstream datasets, or an organizer parent evidenced by at least two distinct
+conference titles. An annual hostname rewrite is strong only when the year label
+is below an unchanged, positively established parent; registrable-domain rewrites
+and hosted-tenant siblings such as `github.io` and `hotcrp.com` are refused.
+
+An exact host nominated by one immutable upstream is classified `provisional`,
+not trusted. It is scoped to that title/year and its redirects cannot leave the
+nominated host. A mutation needs the identical normalized fact and the same
+provenance-bound SHA-256 basis on two scheduled audit dates at least six days
+apart. Page conference/year identity is checked after every fetch for every
+trust class.
 
 Redirects are followed but the **final** URL is re-classified, so an official
 host redirecting onto a tracker fails.
@@ -192,7 +208,13 @@ host redirecting onto a tracker fails.
 
 ---
 
-## 4. Gate 2 — adversarial, and measured rather than trusted
+## 4. Exploratory Gate 2 — not deployed
+
+This section records an evaluated refuter design. Production does **not** run
+`REFUTER.md`, a blind extractor, or a second model as publication authority. Its
+second Claude invocation is one bounded repair retry guided by deterministic
+preflight diagnostics; the write-capable job then re-fetches and verifies all
+citations independently.
 
 A second Claude run (`REFUTER.md`) with a filesystem-enforced fresh context:
 `audit-proposals.json` is moved out of the tree, and the refuter receives only
@@ -226,9 +248,9 @@ second opinion does.
 
 ## 5. Direction-awareness: the rule that makes this safe
 
-Both gates answer *"is this value on the page"*. Neither answers *"what does
-being wrong cost"*. Define the **effective instant** = date + clock time +
-timezone offset. Then:
+The citation gate answers *"is this value on an admissible official page"*.
+The risk policy separately asks *"what does being wrong cost"*. Define the
+**effective instant** = date + clock time + timezone offset. Then:
 
 - **Safe-direction** — moves the effective instant *earlier*, leaves it
   unchanged, or fills a previously-absent value.
@@ -246,79 +268,55 @@ baseline for a record with **no** timezone is UTC-12, matching the frontend
 default — which makes *adding* a timezone to a record that lacks one always
 safe-direction, and *removing* one always risk-direction.
 
-This also settles a genuine conflict between two design passes. Clock time is
-**not** required as evidence — `23:59` is this repo's end-of-day convention, not
-a claim about page text, and gating on it would manufacture constant false
-negatives. But a **risk-direction** change must have its clock time and timezone
-explicitly grounded in the quote. A convention is fine exactly as long as it
-cannot hurt you.
+Clock time is treated conservatively. `23:59` may be the repo's end-of-day
+normalization when the page states no clock, but an explicit clock on the page
+must agree with the proposed minute. A mutating deadline, abstract-deadline, or
+timezone claim must also carry the complete effective-instant field group, so a
+partial quote cannot move the rendered instant by omission.
 
 ### Extensions
 
-Deadline extensions are the most common risk-direction change, and blanket-holding
-them would push the majority of real deadline corrections back to a human. They
-are also unusually quotable — the real DIMVA and EuroSec pages literally contain
-"(extended!)". So they auto-apply, at a strictly higher bar: an extension token in
-the grounded quote, gate 1 VERIFIED, refuter CONFIRMED with matching
-`observed_values`, an independent blind extractor agreeing, and a shift ≤ 30 days.
-
-The blind extractor therefore runs for **every risk-direction proposal, not only
-R3** — an extension 90 days out is risk-direction but outside R3, and the bar must
-not name a step the wiring never executes. This costs no extra invocation: the
-blind extractor handles all flagged proposals in one call, so widening its scope
-adds items to that call rather than another run, and the ~38-minute worst-case job
-budget is unchanged.
+The live one-run bound accepts a fully grounded later shift of at most 30 days
+and an earlier correction of at most 120 days. A larger shift is not sent to a
+person: the existing value stays published while a hash of the normalized claim
+is retained. The identical VERIFIED claim may promote after a second scheduled
+observation at least six days later. The extension-token/refuter/blind-extractor
+scheme described in earlier revisions was never deployed.
 
 ---
 
-## 6. Policy
+## 6. Live policy
 
-Risk tiers, computed deterministically:
+There is no refuter matrix, residual review PR, or human fact queue. The
+deterministic verifier and applier produce these outcomes:
 
-| tier | definition |
+| evidence and mutation | live outcome |
 |---|---|
-| R0 fill | no concrete deadline today; proposal adds one |
-| R1 metadata | only `place`/`date`/`note`/`link`, deadline > 45d out |
-| R2 deadline, far | concrete deadline changed, > 45d away |
-| R3 deadline, near | any deadline ≤ 45d away |
-| R4 deletion | a field set to `null`, or an override removed |
+| all fields VERIFIED on a strongly trusted source; values already match | confirm/no-op and resolve the matching retry scope |
+| strongly trusted, VERIFIED mutation inside one-run bounds | apply, subject to the stable per-run change budget |
+| strongly trusted, VERIFIED mutation outside one-run bounds | keep existing fields and retain a value-free retry plus claim hash; promote only after the identical claim verifies on a second scheduled date at least six days later |
+| provisional exact source, VERIFIED mutation | the same two-run rule, additionally bound to the immutable source-provenance digest |
+| some fields VERIFIED and others not | apply only independently safe verified field groups; keep the rest unchanged and queued; effective-instant fields stay atomic |
+| `UNCONFIRMED`, `UNCHECKED`, `UNREACHABLE`, or `REJECTED_SOURCE` | keep existing fields and persist their retry scope; telemetry records the reason |
+| malformed schema, corrupt state, failed exact coverage, or failed convergence | fail the run and publish nothing |
 
-**APPLY** = commit to master · **HOLD** = goes in the residual PR · **DISCARD** =
-job summary only.
+`timezone: null` is rejected by the proposal contract because the frontend
+would reinterpret it as AoE. Retiring an entire manual override (`delete_manual`)
+requires agreement from every healthy configured deterministic upstream and the
+same provenance-bound result on two scheduled audit dates.
 
-| gate 1 ↓ / refuter → | CONFIRMED | UNSURE | REFUTED |
-|---|---|---|---|
-| VERIFIED | APPLY (risk-direction: §5 extension rules; R3 or risk-direction: blind extractor must agree) | APPLY if R0/R1 · HOLD otherwise | HOLD |
-| UNCONFIRMED | APPLY if R0/R1 **and** the refuter's own quote grounded · else HOLD | HOLD | DISCARD |
-| UNREACHABLE | HOLD | HOLD | DISCARD |
-| REJECTED_SOURCE | DISCARD | DISCARD | DISCARD |
+### Deletions — historical exploration, not deployed
 
-The load-bearing cells:
-
-- **VERIFIED + UNSURE → APPLY for R0/R1.** Gate 1 mechanically proved the quote is
-  on the official page, contains the value, and carries a label appropriate to the
-  field (§3 check 4); the refuter only failed to resolve the remaining semantics.
-  For a record showing "TBA", holding leaves the site useless another week. This is
-  the system's highest-volume auto-apply path, and it rests on gate 1 alone — which
-  is precisely why check 4 is not optional.
-- **VERIFIED + REFUTED → HOLD, never DISCARD.** Mechanical evidence against a
-  semantic objection is precisely what a human settles in thirty seconds with both
-  quotes side by side.
-- **UNREACHABLE + CONFIRMED → HOLD.** Our fetcher failed where the model claims
-  success. Benign explanations exist; so does "it did not really fetch."
-
-### Never auto-applied
-
-- **`timezone: null`.** Deleting a timezone silently moves the deadline to the
-  latest possible reading. Permanent, no exceptions — see below.
-- **Risk-direction changes that miss the §5 extension bar.**
-
-### Deletions
+The structural absence algorithm below was considered but is not part of the
+live publisher. Valid field deletions instead use the same citation and bounded
+two-run machinery as other out-of-bound mutations; timezone deletion remains a
+schema error. Nothing in this historical subsection creates a manual review
+queue.
 
 Earlier drafts refused all deletions, on the argument that a deletion's
 justification is a universal negative and quote-grounding proves presence, never
-absence. That argument is beatable, and beating it removes the last structural
-reason to keep a human in the loop.
+absence. The remainder of this subsection records the structural algorithm that
+was explored to answer that objection; it is not production behavior.
 
 The claim a deletion actually needs is not *"this page has no abstract
 deadline"*. CFPs do not scatter milestones through prose — they publish an
@@ -377,20 +375,22 @@ S ∧ P ∧ (cross-source ∧ fingerprint) → auto-applies. The same machinery
 **refuses** DSN 2027, whose table row reads `November 25, 2026 | Abstract
 Submission Deadline`.
 
-**`timezone` deletion stays permanently manual.** Not caution: the frontend
-renders a missing timezone as AoE, so a correct-but-unverifiable deletion and a
-wrong one fail identically, both in the direction that costs a paper. The
-structural test barely applies anyway — timezones live in footers and
-parentheses, not enumerated milestones, so the anchor has nothing to bind to.
+**Current timezone behavior:** `timezone` deletion is rejected by proposal
+validation. The frontend renders a missing timezone as AoE, so a
+correct-but-unverifiable deletion and a wrong one fail identically, both in the
+direction that costs a paper. It is retained, not placed in a manual queue.
 
-**`delete_manual`** — retiring an override upstream has caught up on — is a
-repo-state computation, not a page claim. Now that `manual_matches_upstream`
-returns False for vacuous and `null`-valued matches (§8.1, §8.2), its True is
-finally meaningful. Auto-retire needs no model gate at all, but does require the
-same verdict on two consecutive runs, since one run's agreement can reflect a
-transient upstream state and waiting a week costs nothing.
+**Current `delete_manual` behavior:** retiring an override after upstream has
+caught up is a repo-state computation, not a page claim. It requires complete
+agreement from every healthy configured deterministic upstream, a
+provenance-bound basis digest, and the identical result on two scheduled audit
+dates at least six days apart.
 
-### 6.1 The evidence ladder
+### 6.1 Exploratory evidence ladder — not deployed
+
+The tier ladder in this subsection is retained as research context. Production
+uses the typed host policy in §3; it does not fetch archives, publisher stubs,
+or source repositories as alternative evidence tiers.
 
 A binary "official page or nothing" rule refuses whenever the front door is shut,
 even when the venue's own words are available by another permitted route.
@@ -456,129 +456,78 @@ the index (the TC calendar index lists 1,761 CFPs), and the URL must match
 snapshot timestamp and a digest, which makes T3 the most auditable tier after the
 fact.
 
-### 6.2 Corroboration state, for records nothing can verify
+### 6.2 Live retry and corroboration state
 
-Verification is not the only decision available. We cannot automatically *verify*
-an uncorroborated deadline, but we can automatically *observe* that it is
-uncorroborated, classify the record, and act on that. The fact stays unverified;
-the decision stops being a human's.
+The machine-owned sidecar `deadlines/data/audit-state.json` contains two bounded
+maps: value-free retry scopes and SHA-256 fingerprints of already-VERIFIED
+claims awaiting a second observation. It stores no model prose, quotes, source
+URLs, or unverified values. Provisional claims add the verifier's immutable
+source-provenance digest to the fingerprint.
 
-Per `(title, year)` each run: `NOT_APPLICABLE` (no concrete deadline) ·
-`VERIFIED_OFFICIAL` (T0/T1 grounds it) · `CORROBORATED_SECONDARY` (T2/T3 grounds
-it) · `TRACKER_ONLY` · `NO_SOURCE` (not even a tracker) · `CONTRADICTED` (a source
-grounds a *different* value, which feeds the normal proposal path).
+Promotion requires the same normalized identity, action, field scope, values,
+and any required provenance basis on two scheduled audit dates at least six days
+apart. A changed claim restarts that scope's observation count. Disjoint field
+scopes survive independently; a later strong no-change or applied correction
+resolves only the matching scope. The file is capped and pruned to the rendered
+year window, and invalid or corrupt state fails publication closed.
 
-The live bounded retry/promotion state uses the machine-owned sidecar
-`deadlines/data/audit-state.json`, read
-as a **fourth input** to `update_deadlines.py`. Not in `manual.yml`: that is the
-human override channel, and machine bookkeeping there would be indistinguishable
-from a verified human decision, would be swept by `manual_matches_upstream`, and
-would mark `note` as `owned`, permanently disabling `maybe_clear_stale_note`. As
-an input, generated files stay a pure function of their inputs and there is
-exactly one writer. The file is committed, so `git log` on it is the metrics
-history.
+Citation failures, unverifiable sources, and change-budget overflow add retry
+scopes. `update_deadlines.py --watchlist` carries those identities into later
+weekly audits, so deferral cannot disappear when a stored deadline passes or a
+calendar year rolls over. This is operational state and telemetry, not a review
+queue and not a user-visible uncertainty annotation.
 
-A `TRACKER_ONLY` / `NO_SOURCE` record gets a bracketed suffix appended to whatever
-note it already has (57 of 123 records have one):
+### 6.3 Live fetch policy
 
-```
-<existing note> [unconfirmed: deadline from community trackers; no official CFP page found]
-```
+The verifier always identifies itself as
+`secai-lab-deadline-auditor/1.0 (+https://secai-lab.github.io/deadlines/)`. It
+fetches `robots.txt` with that same user agent; a failure to fetch the policy is
+unknown rather than an invented `disallow_all`. A real path disallow is not
+circumvented. Permitted source requests use bounded 0/5/30-second retries for
+transient HTTP failures, a per-host pacing floor, a 25-second request timeout,
+and a 5 MiB response cap.
 
-A single strip rule (`\s*\[unconfirmed:[^\]]*\]\s*$`) governs the lifecycle: the
-annotator strips, recomputes and re-appends every run, so it is idempotent and can
-never mangle the human half. **No date in the text**, or every annotated record
-diffs weekly.
+Immediately before every robots, page, and redirect request, the verifier
+resolves all A/AAAA answers and requires every returned address to be globally
+routable. Failed or empty lookups, mixed public/private answers, and common
+wildcard-to-IP helper domains fail closed. `urllib` performs its own resolution
+again when it connects, so a narrow DNS-rebinding time-of-check/time-of-use gap
+remains; eliminating it requires an address-pinned HTTP/TLS transport that still
+preserves the original Host header and SNI.
 
-Two constraints on the wording, both verified against the code:
+Every redirect is checked before it is followed and again after the fetch.
+Strong sources may move only within their directional trusted host boundary;
+provisional sources are confined to the exact nominated host. Fetch or robots
+failures remain non-VERIFIED and are retried by the scheduled pipeline.
 
-- It must not match `STALE_NOTE_RE`. "CFP not yet announced" and "official CFP
-  not available" both match, and a matching note re-nominates that record to the
-  watchlist *every run, forever*.
-- It must not match `deriveAbstractFromComment` (`deadline-tracker.js:131`),
-  which **fabricates** an abstract deadline at paper − 7 days when a note matches
-  `/abstract.*1 week before|1 week before.*abstract/i`. The annotation avoids the
-  word "abstract" entirely.
-
-**Hysteresis:** demotion needs 2 consecutive confirming observations, promotion
-takes 1. The asymmetry is the point — promotion carries proof (a grounded quote),
-demotion is merely an absence of proof. An UNREACHABLE observation never promotes
-and never removes an annotation. Annotations are added at most once per record per
-21 days and removed immediately, always. A record whose state changes 3+ times in
-56 days is frozen at the more cautious state until stable for 28 days.
-
-**Inside 45 days, escalate effort, not severity.** Never suppress the value:
-showing nothing reads as *not announced*, which is more wrong and less actionable
-than an unverified date. Instead the note switches to an imperative form, the
-probe moves to daily cadence in the Tier-1 run so a newly published CFP clears it
-within a day rather than a week, and auto-apply is refused for that record.
-
-### 6.3 Fetch policy
-
-Reach depends entirely on fetching correctly, and three traps here are each
-capable of silently disabling large parts of the ladder.
-
-**One honest user agent, always.** `secai-lab-deadline-auditor/1.0
-(+https://secai-lab.github.io/deadlines/)`, never a browser string. Retrying a
-refusal with a different identity is both a circumvention of the host's stated
-wishes and — as DFRWS proved — counterproductive: it reads as abuse to a rate
-limiter and turns a transient 403 into a persistent one. A verifier that lies
-about who it is cannot be the foundation of a system whose purpose is
-establishing truth.
-
-**Spaced retries, and `Disallow` ≠ blocked.** Back off 0 / 5 / 30 s and honor
-`Retry-After`. Then distinguish two things that look alike and mean opposite
-things:
-
-- a `robots.txt` **Disallow** is the owner's *policy*. Stable, final, maps to
-  `REJECTED_SOURCE`. Retrying is a violation.
-- a **403/429 while robots permits** is an *operational* condition — rate
-  limiting, a WAF heuristic. Transient, maps to `UNREACHABLE`, retried later.
-
-Conflating them is exactly what produced the false "dfrws blocks bots" belief
-that was written into `AUDITOR.md` and had to be retracted.
-
-**`urllib.robotparser` fails dangerously closed.** `RobotFileParser.read()`
-fetches with the default `python-urllib` UA. USENIX's WAF 403s that, and the
-parser then sets `disallow_all = True`, so **every** USENIX path reports as
-forbidden. Verified: with the default UA,
-`can_fetch(".../conference/osdi27/call-for-papers")` returns `False`; fetching
-`robots.txt` with our own UA and calling `parse()` returns `True` with
-`Crawl-delay: 10`. A naive integration would silently lock the auditor out of
-OSDI, ATC, NSDI, USENIX Security and WOOT while reporting a policy that does not
-exist. **Fetch `robots.txt` with the same honest UA, and treat a 403 on
-`robots.txt` itself as "unknown", never as "disallow all".**
-
-**Honor `Crawl-delay`.** It is not decorative and it is not uniform:
-`usenix.org` asks 10 s, `sigapp.org` asks **20 s**. Per-host pacing must read the
-declared value rather than assume a floor.
-
-**Conditional requests.** Store `ETag` / `Last-Modified` per URL. A **304** is
-evidence, not just saved bandwidth: it proves the page has not changed since the
-last verification, so a previously VERIFIED value is still current and the record
-can be skipped entirely this run.
+Earlier drafts proposed `Retry-After`/`Crawl-delay` persistence, conditional
+`ETag` requests, and archive/source-repository transports. Those refinements are
+not deployed and must not be inferred from this document.
 
 ---
 
 ## 7. Circuit breakers
 
-| breaker | value | why |
+| live rail | value | effect |
 |---|---|---|
-| max auto-applied / run | 6 | steady state is 0–3; caps a runaway without ever binding normally |
-| max proposals / run | 8 | a stable prefix makes bounded progress; overflow remains in persistent retry state |
-| max deadline shift | 120 days | above the ~4-month gap between cycles at EuroSys/NDSS/DIMVA, well below a 365-day year-offset error |
-| max risk-direction shift | 30 days | real extensions run days to weeks; today's entries move 1–14 days |
-| oscillation | 2 auto-applies to the same `(title, year, field)` within 28 days that revert to a prior value → permanent quarantine until a human clears it |
-| cooldown | 14 days per `(title, year)` after an auto-apply |
-| kill switch | Actions variable `AUDIT_AUTO_APPLY=false` → degrades to today's PR-only behaviour, no code change |
+| applied field-group changes / run | 8 | a stable prefix applies; overflow is recorded in retry state for later weekly runs |
+| one-run earlier deadline shift | 120 days | larger wrong-cycle corrections require an identical second VERIFIED observation |
+| one-run later deadline shift | 30 days | larger extensions require an identical second VERIFIED observation |
+| corroboration | 2 scheduled dates, at least 6 days apart | risky, destructive, or provisional mutations cannot promote twice in one run |
+| source boundary | typed trust plus conference/year page identity | redirects, model-only domains, annual registrable-domain rewrites, and tenant siblings fail closed |
+| state bound | 500 identities/claims, rendered-year pruning | corrupted or unbounded retry state refuses publication |
 
-**Post-apply verification**, before any push: re-run `update_deadlines.py`, then
-`--dry-run` must print `no file changes` **and** `HEALTH: ok`; `audit_lint.py` must
-pass; record count must not decrease; no record may lose its `deadline` unless a
-proposal said so. Any failure → `git reset --hard`, no push, red run, alert issue.
+There is no `AUDIT_AUTO_APPLY` PR-mode switch. The operational emergency stop is
+to disable the GitHub Actions workflow (or revoke its write credential); that
+stops publication rather than routing conference facts to a person. Missing
+model credentials and all other infrastructure failures produce the normal
+pipeline alert.
 
-One terminal commit carrying an `Audit-Proposals: <ids>` trailer, so
-`git revert <sha>` is a documented one-step undo.
+Before any push, the updater must converge, its second dry run must report no
+file changes, and `audit_lint.py` must pass. The publisher also refuses stale
+inputs, rebases onto the current default-branch tip, reruns convergence and
+linting after the rebase, and pushes directly as `github-actions[bot]`. Any
+failure leaves the default branch unchanged and retains the run telemetry.
 
 ---
 
@@ -726,48 +675,53 @@ structure rules A–D do not handle, and the residue will grow again. The claim
 established here is that three specific blockers dissolved, not that the web is
 uniformly machine-readable.
 
-What genuinely stays manual, after all of the above:
+What remains automatically deferred:
 
-- **`timezone` deletion**, permanently. The frontend renders a missing timezone
-  as AoE, so a correct-but-unverifiable deletion and a wrong one fail
-  identically, in the direction that costs a paper.
-- **A field no authoritative source has stated.** EuroS&P 2027's timezone is the
-  live example: the T2 stub gives a date and no zone, and the design forbids
-  defaulting one. This is not a tooling limit — there is nothing to verify yet.
-- **Risk-direction changes that miss the §5 extension bar**, and anything a
-  circuit breaker, cooldown or quarantine trips.
-- **Deadlines published only in prose or in an image**, where no enumeration
-  exists to anchor against; and **venues with fewer than 3 prior editions**,
-  where the cross-edition prior cannot form.
-- **Genuinely varying venues.** CCS, ESORICS and EuroS&P have added and dropped
-  abstract deadlines between editions, so the prior correctly refuses — and
-  correctly keeps refusing.
+- **`timezone` deletion** is a schema error. The frontend renders a missing
+  timezone as AoE, so the existing value is retained.
+- **A field no authoritative source states** is omitted from the proposal or
+  kept unchanged with a citation retry scope. The pipeline never guesses a
+  missing timezone, city, date, or deadline.
+- **A rejected or unreachable source** cannot contribute field evidence. The
+  bounded retry repairs source identity/reachability first; if that fails, the
+  result remains in telemetry and on a later scheduled watchlist.
+- **A VERIFIED mutation outside one-run bounds**, a provisional source
+  mutation, and `delete_manual` wait for their respective provenance-bound
+  second scheduled observation.
+- **Change-budget overflow** keeps its existing fields and advances in stable
+  order on later weekly runs.
+- **Image-only, JavaScript-only, ambiguous, or not-yet-published evidence** is
+  recorded as unverifiable and retried automatically when nominated again.
 
-Held items still land as a PR on `deadline-audit`, written out by the applier, so
-a human reads a diff and clicks merge rather than hand-editing YAML. The PR body
-is regenerated wholesale each week, so stale items disappear on their own and no
-dedup state is needed.
+Deferred facts do not create a branch or PR. The committed `audit-state.json`
+keeps only bounded retry scopes and verified claim fingerprints; run artifacts
+retain detailed telemetry. GitHub issues are reserved for pipeline/lifecycle
+failures, not conference-fact approval.
 
 ---
 
-## 11. Build order
+## 11. Deployed execution order and tests
 
-The bug fixes are not preparatory chores; several of them are the reason
-auto-apply is currently unsafe. Suggested sequence:
+The live weekly workflow runs in this order:
 
-1. **Fixes only** — §8.1–8.2, §8.4, §8.6, §8.7, §8.9–8.12. Ship on the existing
-   PR-based pipeline and let it run a couple of weeks. Every one of these is an
-   improvement even if auto-apply is never enabled.
-2. **Proposal schema + applier + round-trip tests** — still PR-based. The auditor
-   emits JSON, the applier writes the branch. Same human gate, new plumbing, so the
-   diff quality becomes observable before anything is trusted.
-3. **Gate 1** — run it in report-only mode alongside step 2 for a few weeks and
-   compare its verdicts against what the human actually merged. This is the
-   calibration data that tells you whether 0.85 is the right threshold.
-4. **Gate 2 + the policy matrix**, with `AUDIT_AUTO_APPLY=false`.
-5. **Flip the switch**, R0/R1 only at first, then widen.
+1. A read-only prepare job runs every deterministic unit suite and the workflow
+   simulation, builds the complete watchlist, and publishes immutable shards.
+2. Read-only Claude shards produce untrusted JSON. A deterministic first-pass
+   schema/citation preflight can trigger one bounded repair attempt; exact-once
+   coverage is then required.
+3. A fresh write-capable job downloads only the immutable watchlist and completed
+   shard artifacts, validates and merges them, and independently re-fetches every
+   proposed citation.
+4. The field-group applier enforces typed source trust, atomic effective-instant
+   context, one-run bounds, provenance-bound corroboration, and the stable
+   eight-change budget while updating `audit-state.json`.
+5. The updater converges, lint and branch-drift gates run, the result rebases and
+   is checked again, and eligible data is pushed directly to the default branch.
+6. Telemetry artifacts are uploaded on every outcome. A lifecycle job opens or
+   updates only infrastructure-failure alerts and closes them after a healthy run.
 
-There are no tests in this repo today. Steps 2 and 3 add the first ones, and they
-are where the real safety comes from — the round-trip and idempotence tests in
-particular, because they guard the property that a human's hand-written override
-survives a machine write.
+The repository has offline regression suites for update/render behavior, lint,
+proposal validation/application, audit state, shard merging, outcome
+reconciliation, risk policy, citation/source trust, and both daily and weekly
+workflow contracts. The workflow runs all of them before invoking Claude; the
+commands are listed in `deadlines/scripts/README.md`.
