@@ -77,7 +77,9 @@
   tier: T1
   link: https://www.sigsac.org/ccs/CCS2027/
   place: "Atlanta, GA, USA"
-  date: "October 2027"
+  date: "October 11-15, 2027"
+  start: 2027-10-11
+  end: 2027-10-15
   note: "Official CCS 2027 page is available and lists Atlanta, USA in October 2027; CFP and deadlines are not announced yet."
 
 - title: "CCS-LAMPS"
