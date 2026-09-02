@@ -707,11 +707,17 @@ The live weekly workflow runs in this order:
 1. A read-only prepare job runs every deterministic unit suite and the workflow
    simulation, builds the complete watchlist, and publishes immutable shards.
 2. Read-only Claude shards produce untrusted JSON. A deterministic first-pass
-   schema/citation preflight can trigger one bounded repair attempt; exact-once
-   coverage is then required.
+   schema/citation preflight can trigger one bounded repair attempt. Exact-once
+   identity coverage is required, but raw `not_checked` checkpoints remain
+   explicitly unfinished rather than aborting independently useful shards.
 3. A fresh write-capable job downloads only the immutable watchlist and completed
-   shard artifacts, validates and merges them, and independently re-fetches every
-   proposed citation.
+   shard artifacts, validates and merges them, and independently reconciles all
+   negative source claims. In the same trusted process it replaces residual
+   checkpoints with value-free `machine_deferred` identities, distinguishes
+   source claims invalidated by that reconciliation from untouched seed records,
+   and rejects a global zero-substantive-work run. Machine deferrals never count
+   as examined and remain scheduled, while safe findings continue to publication.
+   It then independently re-fetches every proposed citation.
 4. The field-group applier enforces typed source trust, atomic effective-instant
    context, one-run bounds, provenance-bound corroboration, and the stable
    eight-change budget while updating `audit-state.json`.

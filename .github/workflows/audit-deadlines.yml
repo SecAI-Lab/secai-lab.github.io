@@ -328,38 +328,28 @@ jobs:
             exit 1
           fi
 
-      # The retry is untrusted output too. Re-run source reconciliation so a
-      # final fetch_blocked/no-page/ambiguous claim cannot satisfy exact
-      # coverage with a model-only URL. Any requeued not_checked result is then
-      # rejected by the final shard contract below.
-      - name: Reconcile final unverifiable source claims
-        if: steps.shard.outputs.count != '0'
-        run: |
-          python3 deadlines/scripts/reconcile_audit_outcomes.py \
-            --proposals audit-proposals.json --watchlist watchlist.json
-
-      - name: Assert final reconciliation preserved protected files
-        if: steps.shard.outputs.count != '0'
-        env:
-          WATCHLIST_SHA: ${{ steps.shard.outputs.watchlist_sha }}
-        run: |
-          echo "$WATCHLIST_SHA  watchlist.json" | sha256sum --check --strict
-          tampered=$(git status --porcelain -- deadlines .github)
-          if [ -n "$tampered" ]; then
-            echo "::error::final reconciliation modified protected repository files"
-            echo "$tampered"
-            exit 1
-          fi
-
       - name: Validate final shard contract
+        env:
+          AUDITOR1_OUTCOME: ${{ steps.auditor1.outcome }}
+          AUDITOR2_OUTCOME: ${{ steps.auditor2.outcome }}
         run: |
+          echo "auditor outcomes: first=$AUDITOR1_OUTCOME retry=$AUDITOR2_OUTCOME" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$AUDITOR1_OUTCOME" = "failure" ] || \
+             [ "$AUDITOR1_OUTCOME" = "cancelled" ] || \
+             [ "$AUDITOR2_OUTCOME" = "failure" ] || \
+             [ "$AUDITOR2_OUTCOME" = "cancelled" ]; then
+            echo "::warning::Claude action degradation: first=$AUDITOR1_OUTCOME retry=$AUDITOR2_OUTCOME; unfinished records will be finalized only in the clean apply job"
+          fi
           python3 deadlines/scripts/audit_batches.py validate \
             watchlist.json audit-proposals.json \
-            --audit-date "${{ needs.prepare.outputs.audit_date }}"
+            --audit-date "${{ needs.prepare.outputs.audit_date }}" \
+            --allow-unfinished
           python3 deadlines/scripts/apply_proposals.py --validate-only \
-            --require-complete --watchlist watchlist.json
+            --allow-unfinished
 
       - name: Name shard output
+        if: always()
         env:
           SHARD: ${{ matrix.shard }}
         run: cp audit-proposals.json "audit-proposals-$SHARD.json"
@@ -426,28 +416,43 @@ jobs:
             shard=${shard%.json}
             python3 deadlines/scripts/audit_batches.py validate \
               "audit-input/audit-shards/watchlist-$shard.json" "$proposal" \
-              --audit-date "$AUDIT_DATE"
+              --audit-date "$AUDIT_DATE" --allow-unfinished
           done
           python3 deadlines/scripts/audit_batches.py merge \
             watchlist.json audit-proposals.json \
-            --audit-date "$AUDIT_DATE" \
+            --audit-date "$AUDIT_DATE" --allow-unfinished \
             shard-output/audit-proposals-*.json
           python3 deadlines/scripts/audit_batches.py validate \
             watchlist.json audit-proposals.json \
-            --audit-date "$AUDIT_DATE"
+            --audit-date "$AUDIT_DATE" --allow-unfinished
 
       # Start the write-capable trust boundary by independently checking every
       # negative source claim too. Shard reconciliation is useful repair
       # feedback, but only this fresh checkout is publication authority.
       - name: Reconcile merged unverifiable source claims independently
         run: |
+          set +e
           python3 deadlines/scripts/reconcile_audit_outcomes.py \
-            --proposals audit-proposals.json --watchlist watchlist.json
+            --proposals audit-proposals.json --watchlist watchlist.json \
+            --finalize-deferred --require-substantive \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          code=${PIPESTATUS[0]}
+          set -e
+          if [ "$code" -ne 0 ]; then
+            echo "::error::clean audit reconciliation/finalization failed"
+            exit "$code"
+          fi
+          deferred=$(python3 -c "import json; print(len(json.load(open('audit-proposals.json')).get('machine_deferred', [])))")
+          if [ "$deferred" -ne 0 ]; then
+            echo "::warning::AUDIT DEGRADED: $deferred record(s) were not counted as examined and remain on automatic retry"
+          fi
           python3 deadlines/scripts/audit_batches.py validate \
             watchlist.json audit-proposals.json \
-            --audit-date "${{ needs.prepare.outputs.audit_date }}"
+            --audit-date "${{ needs.prepare.outputs.audit_date }}" \
+            --allow-machine-deferred
           python3 deadlines/scripts/apply_proposals.py --validate-only \
-            --require-complete --watchlist watchlist.json
+            --require-complete --watchlist watchlist.json \
+            --allow-machine-deferred
 
       - name: Verify official citations independently
         run: |
@@ -469,6 +474,7 @@ jobs:
           python3 deadlines/scripts/apply_proposals.py \
             --verdicts audit-verdicts.json \
             --watchlist watchlist.json --require-complete \
+            --allow-machine-deferred \
             --report audit-summary.md | tee -a "$GITHUB_STEP_SUMMARY"
           code=${PIPESTATUS[0]}
           set -e
@@ -630,7 +636,7 @@ jobs:
           for n in $(gh issue list --state open --label deadline-pipeline --limit 1000 \
             --json number,title \
             --jq '.[] | select((.title | startswith("Deadline audit failed:")) or (.title | startswith("Deadline audit lifecycle failed:"))) | .number'); do
-            gh issue close "$n" --comment "Resolved by a complete autonomous audit: $RUN_URL"
+            gh issue close "$n" --comment "Resolved by a successful autonomous pipeline run. Any machine-deferred records remain on automatic retry: $RUN_URL"
           done
 
       - name: Keep the schedule alive

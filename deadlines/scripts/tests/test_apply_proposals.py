@@ -642,6 +642,92 @@ class PersistentPromotion(unittest.TestCase):
         self.assertEqual(saved["corroboration"], {})
         self.assertEqual(saved["retry"], {})
 
+    def test_machine_deferral_queues_retry_without_resetting_corroboration(self):
+        pending = proposal(fields={"place": claim(
+            "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
+        state = A.AS.empty_state()
+        _, ref = A.AS.observe_verified_claim(
+            state, pending, {"place": "Lisbon, Portugal"}, "2026-08-24")
+        A.AS.save(state, self.state)
+        self.watchlist.write_text(json.dumps([{
+            "title": "EuroSec", "year": 2026, "record": {},
+            "reasons": ["audit-deferred"],
+        }]), encoding="utf-8")
+        self.proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31", "watchlist_size": 1,
+            "proposals": [], "unverifiable": [],
+            "machine_deferred": [{
+                "title": "EuroSec", "year": 2026,
+                "reason": "audit-incomplete-after-retry",
+            }],
+        }), encoding="utf-8")
+        self.verdicts.write_text(json.dumps({"verdicts": []}), encoding="utf-8")
+        argv = [
+            "apply_proposals.py", "--proposals", str(self.proposals),
+            "--verdicts", str(self.verdicts), "--watchlist", str(self.watchlist),
+            "--require-complete", "--allow-machine-deferred",
+            "--report", str(self.report),
+        ]
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(U, "load_existing", return_value={}):
+            self.assertEqual(A.main(), 0)
+
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertIn(ref.scope_id, saved["corroboration"][ref.identity]["claims"])
+        self.assertTrue(saved["retry"][ref.identity]["whole_record"])
+        self.assertIn("Machine-deferred (1)", self.report.read_text(encoding="utf-8"))
+
+        # A later substantive result removes the whole-record scheduling flag
+        # and resolves the verified scope normally; it cannot persist forever.
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        confirmed = proposal(action="no_change", fields={"place": claim(
+            "Vienna, Austria", "Conference venue: Vienna, Austria")})
+        self.assertEqual(self.run_main(
+            confirmed, "2026-09-07", current), 0)
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertNotIn(ref.identity, saved["retry"])
+        self.assertNotIn(ref.identity, saved["corroboration"])
+
+    def test_rejected_followup_keeps_the_whole_record_completion_retry(self):
+        state = A.AS.empty_state()
+        A.AS.mark_retry(
+            state, "EuroSec", 2026, "2026-08-31", "unverifiable")
+        A.AS.save(state, self.state)
+        current = {"deadline": "2026-02-10 23:59", "timezone": "AoE",
+                   "place": "Vienna, Austria"}
+        rejected = proposal(action="no_change", fields={"place": claim(
+            "Vienna, Austria", "Conference venue: Vienna, Austria")})
+        self.watchlist.write_text(json.dumps([{
+            "title": "EuroSec", "year": 2026, "record": current,
+            "reasons": ["audit-deferred"],
+        }]), encoding="utf-8")
+        self.proposals.write_text(json.dumps({
+            "audit_date": "2026-09-07", "watchlist_size": 1,
+            "proposals": [rejected], "unverifiable": [],
+        }), encoding="utf-8")
+        self.verdicts.write_text(json.dumps({"verdicts": [{
+            "id": rejected["id"], "status": "rejected",
+            "gate": "REJECTED_SOURCE",
+            "detail": {"status": "REJECTED_SOURCE", "fields": {}},
+        }]}), encoding="utf-8")
+        argv = [
+            "apply_proposals.py", "--proposals", str(self.proposals),
+            "--verdicts", str(self.verdicts), "--watchlist", str(self.watchlist),
+            "--require-complete", "--report", str(self.report),
+        ]
+        existing = {(2026, "system"): {"items": [{"data": {
+            "title": "EuroSec", "year": 2026, **current,
+        }}]}}
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.object(U, "load_existing", return_value=existing):
+            self.assertEqual(A.main(), 0)
+
+        saved = json.loads(self.state.read_text(encoding="utf-8"))
+        retry = saved["retry"][A.AS.identity_key("EuroSec", 2026)]
+        self.assertTrue(retry["whole_record"])
+        self.assertEqual(retry["fields"], ["place"])
+
     def test_provisional_host_mutation_needs_two_provenance_bound_weeks(self):
         p = proposal(fields={"place": claim(
             "Lisbon, Portugal", "Conference venue: Lisbon, Portugal")})
@@ -1034,6 +1120,22 @@ class Coverage(unittest.TestCase):
         self.assertEqual(total, 3)
         self.assertEqual(missing, [("RAID", 2027)])
 
+    def test_machine_deferred_participates_in_exact_coverage_but_not_effort(self):
+        doc = {
+            "proposals": [{"title": "DIMVA", "year": 2027}],
+            "unverifiable": [{"title": "SAC", "year": 2027,
+                               "cause": "no_official_page"}],
+            "machine_deferred": [{
+                "title": "RAID", "year": 2027,
+                "reason": "audit-incomplete-after-retry",
+            }],
+        }
+        self.assertEqual(A.coverage(doc, self.wl)[1], [])
+        self.assertEqual(A.exact_coverage(doc, self.wl), [])
+        examined, total, causes = A.audit_effort(doc)
+        self.assertEqual((examined, total), (2, 3))
+        self.assertEqual(causes["machine_deferred"], 1)
+
     def test_a_fully_accounted_run_has_no_gaps(self):
         doc = {"proposals": [{"title": "DIMVA", "year": 2027},
                              {"title": "RAID", "year": 2027}],
@@ -1134,6 +1236,69 @@ class Coverage(unittest.TestCase):
                 "--validate-only", "--require-complete",
                 "--watchlist", str(self.wl)]
 
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 1)
+
+    def test_raw_unfinished_shard_is_allowed_only_by_explicit_stage_flag(self):
+        proposals = self.tmp / "unfinished.json"
+        proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31", "watchlist_size": 3,
+            "proposals": [],
+            "unverifiable": [
+                {"title": title, "year": 2027, "cause": "not_checked",
+                 "attempted": []}
+                for title in ("DIMVA", "SAC", "RAID")
+            ],
+        }), encoding="utf-8")
+        argv = ["apply_proposals.py", "--proposals", str(proposals),
+                "--validate-only"]
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 1)
+        argv.append("--allow-unfinished")
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 0)
+
+    def test_explicit_checkpoint_stage_rejects_a_missing_proposal_file(self):
+        missing = self.tmp / "missing.json"
+        argv = ["apply_proposals.py", "--proposals", str(missing),
+                "--validate-only", "--allow-unfinished"]
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(A.main(), 1)
+
+    def test_all_machine_deferred_is_safe_degraded_and_never_examined(self):
+        proposals = self.tmp / "machine-deferred.json"
+        proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31", "watchlist_size": 3,
+            "proposals": [], "unverifiable": [],
+            "machine_deferred": [
+                {"title": title, "year": 2027,
+                 "reason": "source-recheck-requeued"}
+                for title in ("DIMVA", "SAC", "RAID")
+            ],
+        }), encoding="utf-8")
+        base = ["apply_proposals.py", "--proposals", str(proposals),
+                "--validate-only", "--require-complete",
+                "--watchlist", str(self.wl)]
+        with mock.patch.object(sys, "argv", base):
+            self.assertEqual(A.main(), 1)
+        with mock.patch.object(
+                sys, "argv", base + ["--allow-machine-deferred"]):
+            self.assertEqual(A.main(), 0)
+
+    def test_require_complete_blocks_raw_checkpoint_before_ungated_apply(self):
+        proposals = self.tmp / "raw-production.json"
+        proposals.write_text(json.dumps({
+            "audit_date": "2026-08-31", "watchlist_size": 3,
+            "proposals": [],
+            "unverifiable": [
+                {"title": title, "year": 2027, "cause": "not_checked",
+                 "attempted": []}
+                for title in ("DIMVA", "SAC", "RAID")
+            ],
+        }), encoding="utf-8")
+        argv = ["apply_proposals.py", "--proposals", str(proposals),
+                "--ungated", "--require-complete",
+                "--watchlist", str(self.wl)]
         with mock.patch.object(sys, "argv", argv):
             self.assertEqual(A.main(), 1)
 

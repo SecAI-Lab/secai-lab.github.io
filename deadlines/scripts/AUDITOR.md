@@ -22,8 +22,11 @@ it.
 record the concrete reason its official evidence could not be obtained. During
 the run you may use `not_checked` as a temporary checkpoint for work that is
 still pending, but replace every such entry before finishing. An output that
-still contains `not_checked` is incomplete, is retried once, and is rejected if
-the retry does not finish it.
+still contains `not_checked` is incomplete and receives one repair retry. If it
+remains afterward, the trusted publisher records it as unexamined and keeps it
+on the automatic retry queue; it never treats the checkpoint as a completed
+finding. A total run that leaves every record untouched still fails its
+zero-work circuit breaker.
 
 **Account for every watchlist record.** Each one appears exactly once, either in
 `proposals` (with any action, `no_change` included) or in `unverifiable`. A
@@ -296,16 +299,18 @@ The quote uses the page's words — `10 December 2026`, not the reformatted
 for this edition yet — the most common outcome by far, and a perfectly good
 one), `fetch_blocked`, `page_ambiguous`, `javascript_only`, or `pdf_only`.
 `not_checked` is reserved for an in-progress checkpoint and is forbidden in the
-final output.
+output you are expected to finish. It is not an unverifiable cause and never counts as examined.
 
 Every URL in `attempted` is machine-checked against the same immutable official
 source trust used for positive proposals, for every cause above. A tracker,
 model-only domain, malformed URL, or URL belonging to another conference is
-returned to `not_checked` and makes the final shard incomplete. Use only the
-actual official routes you fetched or attempted, omit duplicates, and list at
-most eight URLs for one identity. Larger lists are rejected before any network
-request so model output cannot multiply bounded fetch retries into an unbounded
-job. Changing the cause does not bypass source trust.
+returned to `not_checked`. After your bounded retry, the fresh publisher
+independently repeats this check and machine-defers any invalidated record for
+a later audit without applying its claims. Use only the actual official routes
+you fetched or attempted, omit duplicates, and list at most eight URLs for one
+identity. Larger lists are rejected before any network request so model output
+cannot multiply bounded fetch retries into an unbounded job. Changing the cause
+does not bypass source trust.
 
 **Finding no page is a normal, successful result.** Most watchlist entries are
 upcoming editions whose CFP has simply not been published. Recording that
@@ -326,4 +331,5 @@ Before you finish, check: does `audit-proposals.json` exist, does every
 watchlist record appear exactly once in `proposals` or `unverifiable`, are
 there zero `not_checked` entries, does each multi-cycle value have its own
 labelled row quote, and did you omit rather than guess every field the page
-does not state? If not, the run fails.
+does not state? If not, your output is incomplete; it will not count as examined
+and the affected identity will remain scheduled for another autonomous run.

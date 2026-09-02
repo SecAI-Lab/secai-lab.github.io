@@ -49,15 +49,29 @@ def unverifiable(record, cause="no_official_page"):
     }
 
 
-def audit(proposals=(), unverifiable_records=(), audit_date=AUDIT_DATE):
+def machine_deferred(record, reason="audit-incomplete-after-retry"):
+    return {
+        "title": record["title"],
+        "year": record["year"],
+        "reason": reason,
+    }
+
+
+def audit(proposals=(), unverifiable_records=(), machine_records=None,
+          audit_date=AUDIT_DATE):
     proposals = list(proposals)
     unverifiable_records = list(unverifiable_records)
-    return {
+    machine_records = None if machine_records is None else list(machine_records)
+    result = {
         "audit_date": audit_date,
-        "watchlist_size": len(proposals) + len(unverifiable_records),
+        "watchlist_size": (len(proposals) + len(unverifiable_records)
+                           + len(machine_records or [])),
         "proposals": proposals,
         "unverifiable": unverifiable_records,
     }
+    if machine_records is not None:
+        result["machine_deferred"] = machine_records
+    return result
 
 
 class Split(unittest.TestCase):
@@ -153,6 +167,49 @@ class Merge(unittest.TestCase):
         )
         with self.assertRaisesRegex(B.BatchError, "still not_checked"):
             self.merge(doc)
+
+    def test_raw_not_checked_requires_explicit_unfinished_stage(self):
+        doc = audit(
+            proposals=[proposal(record) for record in self.watchlist[:-1]],
+            unverifiable_records=[unverifiable(self.watchlist[-1], "not_checked")],
+        )
+        merged = B.merge_audit_documents(
+            self.watchlist, [("raw.json", doc)],
+            allow_unfinished=True,
+        )
+        self.assertEqual(merged["unverifiable"][-1]["cause"], "not_checked")
+
+    def test_machine_deferred_requires_explicit_trusted_stage(self):
+        doc = audit(
+            proposals=[proposal(record) for record in self.watchlist[:-1]],
+            machine_records=[machine_deferred(self.watchlist[-1])],
+        )
+        with self.assertRaisesRegex(B.BatchError, "reserved for trusted finalization"):
+            self.merge(doc)
+        merged = B.merge_audit_documents(
+            self.watchlist, [("final.json", doc)],
+            allow_machine_deferred=True,
+        )
+        self.assertEqual(len(merged["machine_deferred"]), 1)
+
+    def test_machine_deferred_shape_and_reason_are_fixed(self):
+        item = machine_deferred(self.watchlist[-1], "model-says-so")
+        item["note"] = "forged"
+        doc = audit(
+            proposals=[proposal(record) for record in self.watchlist[:-1]],
+            machine_records=[item],
+        )
+        with self.assertRaisesRegex(B.BatchError, "exactly title, year, and reason"):
+            B.validate_audit_document(
+                self.watchlist, doc, allow_machine_deferred=True)
+
+    def test_unfinished_and_machine_deferred_stages_are_mutually_exclusive(self):
+        doc = audit(proposals=[proposal(record) for record in self.watchlist])
+        with self.assertRaisesRegex(B.BatchError, "mutually exclusive"):
+            B.validate_audit_document(
+                self.watchlist, doc,
+                allow_unfinished=True, allow_machine_deferred=True,
+            )
 
     def test_audit_date_mismatch_is_rejected(self):
         left = audit(proposals=[proposal(record) for record in self.watchlist[:2]])

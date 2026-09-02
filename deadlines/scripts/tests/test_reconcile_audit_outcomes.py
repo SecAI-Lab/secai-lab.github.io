@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -311,6 +312,134 @@ class ReconcileDocumentAndFile(unittest.TestCase):
         self.assertTrue(changed)
         self.assertEqual(result["unverifiable"][0]["cause"], "not_checked")
         self.assertEqual(fetcher.calls, [])
+
+    def test_finalizer_replaces_forged_machine_group_with_value_free_records(self):
+        document = {
+            "audit_date": "2026-08-31", "watchlist_size": 1,
+            "proposals": [],
+            "unverifiable": [{
+                "title": "X", "year": 2027, "cause": "not_checked",
+                "attempted": ["https://model.example/"],
+                "note": "model prose must not survive",
+            }],
+            "machine_deferred": [{
+                "title": "FORGED", "year": 2027, "reason": "model-says-so",
+            }],
+        }
+
+        result, changed = R.finalize_machine_deferred(document)
+
+        self.assertTrue(changed)
+        self.assertEqual(result["unverifiable"], [])
+        self.assertEqual(result["machine_deferred"], [{
+            "title": "X", "year": 2027,
+            "reason": "audit-incomplete-after-retry",
+        }])
+        self.assertNotIn("model prose", json.dumps(result))
+        self.assertNotIn("model.example", json.dumps(result))
+
+    def test_finalizer_distinguishes_same_process_source_invalidation(self):
+        document = {
+            "proposals": [],
+            "unverifiable": [
+                {"title": "X", "year": 2027, "cause": "not_checked"},
+                {"title": "Y", "year": 2027, "cause": "not_checked"},
+            ],
+        }
+        result, _ = R.finalize_machine_deferred(
+            document, requeued={("Y", 2027)})
+        self.assertEqual(
+            [item["reason"] for item in result["machine_deferred"]],
+            ["audit-incomplete-after-retry", "source-recheck-requeued"],
+        )
+        # Neither reason is an examined audit outcome; the latter only proves
+        # activity for the global total-outage circuit breaker.
+        self.assertEqual(R.substantive_work_count(result), 1)
+
+    def test_zero_substantive_finalization_fails_without_writing(self):
+        document = {
+            "audit_date": "2026-08-31", "watchlist_size": 1,
+            "proposals": [],
+            "unverifiable": [{
+                "title": "X", "year": 2027, "cause": "not_checked",
+                "attempted": [],
+            }],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "audit-proposals.json"
+            watchlist = Path(directory) / "watchlist.json"
+            original = json.dumps(document)
+            path.write_text(original, encoding="utf-8")
+            watchlist.write_text(json.dumps([{
+                "title": "X", "year": 2027,
+            }]), encoding="utf-8")
+            with mock.patch.object(
+                    R, "source_trust_policy_for_watchlist", return_value=None):
+                with self.assertRaisesRegex(ValueError, "zero substantive"):
+                    R.reconcile_file(
+                        path, FakeFetcher(), watchlist_path=watchlist,
+                        finalize_deferred=True, require_substantive=True,
+                    )
+            self.assertEqual(path.read_text(encoding="utf-8"), original)
+
+    def test_partial_finalization_keeps_safe_result_and_defers_idle_record(self):
+        document = {
+            "audit_date": "2026-08-31", "watchlist_size": 2,
+            "proposals": [{
+                "id": "no_change:X:2027", "action": "no_change",
+                "title": "X", "year": 2027,
+            }],
+            "unverifiable": [{
+                "title": "Y", "year": 2027, "cause": "not_checked",
+                "attempted": [],
+            }],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "audit-proposals.json"
+            watchlist = Path(directory) / "watchlist.json"
+            path.write_text(json.dumps(document), encoding="utf-8")
+            watchlist.write_text(json.dumps([
+                {"title": "X", "year": 2027},
+                {"title": "Y", "year": 2027},
+            ]), encoding="utf-8")
+            with mock.patch.object(
+                    R, "source_trust_policy_for_watchlist", return_value=None):
+                changed = R.reconcile_file(
+                    path, FakeFetcher(), watchlist_path=watchlist,
+                    finalize_deferred=True, require_substantive=True,
+                )
+            result = json.loads(path.read_text(encoding="utf-8"))
+            self.assertTrue(changed)
+            self.assertEqual([p["title"] for p in result["proposals"]], ["X"])
+            self.assertEqual(result["machine_deferred"], [{
+                "title": "Y", "year": 2027,
+                "reason": "audit-incomplete-after-retry",
+            }])
+
+    def test_finalize_entrypoint_rejects_preexisting_machine_group(self):
+        document = {
+            "audit_date": "2026-08-31", "watchlist_size": 1,
+            "proposals": [], "unverifiable": [],
+            "machine_deferred": [{
+                "title": "X", "year": 2027,
+                "reason": "audit-incomplete-after-retry",
+            }],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "audit-proposals.json"
+            watchlist = Path(directory) / "watchlist.json"
+            path.write_text(json.dumps(document), encoding="utf-8")
+            watchlist.write_text(
+                json.dumps([{"title": "X", "year": 2027}]),
+                encoding="utf-8")
+            with mock.patch.object(
+                    R, "source_trust_policy_for_watchlist", return_value=None):
+                with self.assertRaisesRegex(
+                        R.B.BatchError, "reserved for trusted finalization"):
+                    R.reconcile_file(
+                        path, FakeFetcher(), watchlist_path=watchlist,
+                        finalize_deferred=True,
+                    )
 
 
 if __name__ == "__main__":

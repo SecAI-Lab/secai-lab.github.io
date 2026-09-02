@@ -251,6 +251,27 @@ class Persistence(unittest.TestCase):
         S.resolve(state, "FSE", 2027)
         self.assertNotIn(key, state["retry"])
 
+    def test_record_retry_resolution_preserves_scoped_work_and_corroboration(self):
+        state = S.empty_state()
+        _, ref = S.observe_verified_claim(
+            state, proposal(), {"deadline": "2027-03-15 23:59"},
+            "2026-08-31")
+        S.mark_retry(state, "FSE", 2027, "2026-09-01", "unverifiable")
+        self.assertTrue(state["retry"][ref.identity]["whole_record"])
+
+        S.resolve_record_retry(state, "FSE", 2027)
+
+        self.assertFalse(state["retry"][ref.identity]["whole_record"])
+        self.assertEqual(state["retry"][ref.identity]["fields"], ["deadline"])
+        self.assertIn(ref.scope_id, claims(state, ref.identity))
+
+    def test_record_retry_resolution_removes_an_unscoped_machine_retry(self):
+        state = S.empty_state()
+        key = S.identity_key("FSE", 2027)
+        S.mark_retry(state, "FSE", 2027, "2026-08-31", "unverifiable")
+        S.resolve_record_retry(state, "FSE", 2027)
+        self.assertNotIn(key, state["retry"])
+
     def test_legacy_singleton_claim_loads_and_renders_canonically(self):
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "state.json"

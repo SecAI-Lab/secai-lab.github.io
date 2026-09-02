@@ -44,6 +44,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import audit_batches as B  # noqa: E402
 import audit_state as AS  # noqa: E402
 import reconcile_audit_outcomes as RA  # noqa: E402
 import risk_policy  # noqa: E402
@@ -284,8 +285,12 @@ def audit_effort(doc):
         c = u.get("cause") or "unspecified"
         causes[c] = causes.get(c, 0) + 1
     not_checked = causes.get("not_checked", 0)
-    total = len(doc.get("proposals") or []) + len(unver)
-    return total - not_checked, total, causes
+    machine_deferred = doc.get("machine_deferred") or []
+    if machine_deferred:
+        causes["machine_deferred"] = len(machine_deferred)
+    total = (len(doc.get("proposals") or []) + len(unver)
+             + len(machine_deferred))
+    return total - not_checked - len(machine_deferred), total, causes
 
 
 def coverage(doc, watchlist_path):
@@ -309,6 +314,8 @@ def coverage(doc, watchlist_path):
     want = {(i.get("title"), i.get("year")) for i in items}
     seen = {(p.get("title"), p.get("year")) for p in doc.get("proposals") or []}
     seen |= {(u.get("title"), u.get("year")) for u in doc.get("unverifiable") or []}
+    seen |= {(u.get("title"), u.get("year"))
+             for u in doc.get("machine_deferred") or []}
     return len(want), sorted(want - seen)
 
 
@@ -319,7 +326,9 @@ def exact_coverage(doc, watchlist_path):
     except Exception as exc:  # noqa: BLE001
         return [f"watchlist unreadable ({exc})"]
     expected = Counter((i.get("title"), i.get("year")) for i in items)
-    accounted = list(doc.get("proposals") or []) + list(doc.get("unverifiable") or [])
+    accounted = (list(doc.get("proposals") or [])
+                 + list(doc.get("unverifiable") or [])
+                 + list(doc.get("machine_deferred") or []))
     observed = Counter((i.get("title"), i.get("year")) for i in accounted
                        if isinstance(i, dict))
     problems = []
@@ -993,6 +1002,15 @@ def write_report(path, applied, skipped, errors, proposals, gated, held=(),
         lines += [f"**Unverifiable ({len(unverifiable)})**", ""]
         lines += [f"- {u.get('title')} {u.get('year')} — {u.get('cause')}"
                   for u in unverifiable] + [""]
+    machine_deferred = [u for u in (proposals.get("machine_deferred") or [])]
+    if machine_deferred:
+        lines += [
+            f"**Machine-deferred ({len(machine_deferred)})** — these records",
+            "were not counted as examined and remain on the autonomous retry queue.",
+            "",
+        ]
+        lines += [f"- {u.get('title')} {u.get('year')} — {u.get('reason')}"
+                  for u in machine_deferred] + [""]
     Path(path).write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -1013,6 +1031,14 @@ def main() -> int:
                     help="report which watchlist records went unaddressed")
     ap.add_argument("--require-complete", action="store_true",
                     help="fail validation if any watchlist record is missing or not_checked")
+    ap.add_argument(
+        "--allow-unfinished", action="store_true",
+        help="accept raw not_checked checkpoints during the pre-finalization stage",
+    )
+    ap.add_argument(
+        "--allow-machine-deferred", action="store_true",
+        help="accept the trusted finalizer's retry-only coverage group",
+    )
     ap.add_argument("--require-some-proposal", action="store_true",
                     help="for a non-empty watchlist, fail validation when every "
                          "outcome is unverifiable (used to trigger one bounded retry)")
@@ -1030,6 +1056,17 @@ def main() -> int:
         print(f"seeded {args.proposals} with {n} record(s) marked not_checked")
         return 0
 
+    if args.allow_unfinished and args.allow_machine_deferred:
+        print("APPLY REFUSED: --allow-unfinished and --allow-machine-deferred "
+              "are mutually exclusive")
+        return 1
+    if args.allow_unfinished and not args.validate_only:
+        print("APPLY REFUSED: --allow-unfinished is validation-only")
+        return 1
+    if args.require_complete and not args.watchlist:
+        print("APPLY REFUSED: --require-complete requires --watchlist")
+        return 1
+
     if args.max_changes < 0:
         print("APPLY REFUSED: --max-changes must be non-negative")
         return 1
@@ -1040,6 +1077,10 @@ def main() -> int:
 
     path = Path(args.proposals)
     if not path.exists():
+        if args.require_complete or args.allow_unfinished \
+                or args.allow_machine_deferred:
+            print(f"APPLY REFUSED: required proposal checkpoint does not exist: {path}")
+            return 1
         print(f"no {path} - the auditor proposed nothing")
         return 0
     try:
@@ -1049,6 +1090,29 @@ def main() -> int:
         return 1
     if not isinstance(doc, dict) or not isinstance(doc.get("proposals"), list):
         print("APPLY REFUSED: expected an object with a 'proposals' array")
+        return 1
+
+    if args.allow_machine_deferred:
+        if "machine_deferred" not in doc:
+            print("APPLY REFUSED: --allow-machine-deferred requires trusted "
+                  "finalizer output")
+            return 1
+        if not args.watchlist:
+            print("APPLY REFUSED: --allow-machine-deferred requires --watchlist")
+            return 1
+        try:
+            final_watchlist = B.validate_watchlist(json.loads(
+                Path(args.watchlist).read_text(encoding="utf-8")
+            ))
+            B.validate_audit_document(
+                final_watchlist, doc, str(path),
+                allow_machine_deferred=True,
+            )
+        except (B.BatchError, OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"APPLY REFUSED: invalid trusted-finalizer document ({exc})")
+            return 1
+    elif "machine_deferred" in doc:
+        print("APPLY REFUSED: machine_deferred is reserved for trusted finalization")
         return 1
 
     targets = U.load_config()
@@ -1081,6 +1145,18 @@ def main() -> int:
             errors.append(
                 f"unverifiable source trust could not be established: {exc}")
 
+    # Completion is a publication invariant, not merely a workflow preflight.
+    # Enforce it before any persistent state or manual YAML can be mutated.
+    if args.require_complete:
+        _, _, completion_causes = audit_effort(doc)
+        if completion_causes.get("not_checked", 0):
+            errors.append(
+                f"incomplete audit: {completion_causes['not_checked']} "
+                "record(s) remain not_checked"
+            )
+        for problem in exact_coverage(doc, args.watchlist):
+            errors.append(f"incomplete audit: {problem}")
+
     # Never perform a partial transaction from a mixed valid/malformed model
     # document. The workflow already treats any schema error as fatal; refusing
     # before manual/state mutation also keeps local invocations byte-identical.
@@ -1105,6 +1181,12 @@ def main() -> int:
                                   audit_date, "unverifiable")
                     state_audited[AS.identity_key(item.get("title"),
                                                   item.get("year"))] = None
+            # Trusted machine deferrals are scheduling state, not audit
+            # outcomes. Queue them without marking the identity as audited;
+            # doing so would reset unrelated corroboration claims.
+            for item in doc.get("machine_deferred") or []:
+                AS.mark_retry(state, item.get("title"), item.get("year"),
+                              audit_date, "unverifiable")
         except (AS.StateError, OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"APPLY REFUSED: persistent audit state/watchlist unusable ({exc})")
             return 1
@@ -1174,6 +1256,10 @@ def main() -> int:
                                 state, *identity, audit_date, "citation",
                                 proposal_state_scope(candidate))
                         continue
+                    # The immutable upstream agreement is a substantive
+                    # record-level result. Only now may it discharge a prior
+                    # whole-record completion retry.
+                    AS.resolve_record_retry(state, *identity)
                     promoted, observed_ref = AS.observe_verified_claim(
                         state, candidate,
                         {"upstream_agreement": marker["basis_digest"]},
@@ -1215,6 +1301,14 @@ def main() -> int:
                                 state, *identity, audit_date, "citation",
                                 proposal_state_scope(candidate))
                         continue
+
+                if state is not None:
+                    # At least one field has verified against a trusted (or
+                    # provenance-bound provisional) source. Only such a
+                    # substantive result may discharge a prior whole-record
+                    # machine deferral; a missing/rejected verdict above keeps
+                    # the full completion obligation intact.
+                    AS.resolve_record_retry(state, *identity)
 
                 matches = fields_match_current(candidate.get("fields") or {}, current_record)
                 if source_trust == "provisional" and matches \
@@ -1386,9 +1480,16 @@ def main() -> int:
         if total:
             print(f"examined: {examined}/{total} record(s) actually checked")
             if examined == 0:
-                print("  [!] the auditor examined nothing: every record is still "
-                      "marked not_checked from the seed")
-                return 1
+                if args.allow_machine_deferred and doc.get("machine_deferred"):
+                    print("  [!] audit degraded: every record is machine-deferred; "
+                          "none count as examined and all remain scheduled")
+                elif args.allow_unfinished:
+                    print("  [!] shard checkpoint is entirely unfinished; the clean "
+                          "global finalizer will enforce the zero-work circuit breaker")
+                else:
+                    print("  [!] the auditor examined nothing: every record is still "
+                          "marked not_checked from the seed")
+                    return 1
         return 1 if errors or retry_needed \
             or (args.require_complete and incomplete) else 0
 

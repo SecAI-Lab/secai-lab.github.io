@@ -5,7 +5,9 @@ The reconciler does not discover sources and does not decide conference facts.
 It binds every attempted URL in a final unverifiable outcome to immutable
 official-source trust. For ``fetch_blocked`` it also checks whether the claimed
 failure is still true. An untrusted URL or reachable page is returned to the
-``not_checked`` queue so the auditor must inspect it again.
+``not_checked`` queue. In the clean publishing job, ``--finalize-deferred``
+atomically converts every residual checkpoint into a value-free, retry-only
+machine deferral after reconciliation.
 
 Usage:
   reconcile_audit_outcomes.py --proposals audit-proposals.json \
@@ -19,10 +21,12 @@ import copy
 import json
 import sys
 import urllib.parse
+from collections import Counter
 from pathlib import Path
 from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import audit_batches as B  # noqa: E402
 from verify_citations import (  # noqa: E402
     Fetcher,
     SourceTrustPolicy,
@@ -310,6 +314,112 @@ def reconcile_document(
     return result, changed
 
 
+def _newly_requeued_identities(
+    before: object,
+    after: object,
+) -> set[tuple[object, object]]:
+    """Identify records this reconciliation moved back to ``not_checked``."""
+    if not isinstance(before, dict) or not isinstance(after, dict):
+        return set()
+    old = before.get("unverifiable")
+    new = after.get("unverifiable")
+    if not isinstance(old, list) or not isinstance(new, list):
+        return set()
+    requeued = set()
+    for prior, current in zip(old, new):
+        if not isinstance(prior, dict) or not isinstance(current, dict):
+            continue
+        if prior.get("cause") != "not_checked" \
+                and current.get("cause") == "not_checked":
+            requeued.add((current.get("title"), current.get("year")))
+    return requeued
+
+
+def _machine_deferral_reason(
+    item: dict,
+    requeued: set[tuple[object, object]],
+) -> str:
+    """Choose one fixed machine reason without retaining model-authored prose."""
+    if (item.get("title"), item.get("year")) in requeued:
+        return "source-recheck-requeued"
+    return "audit-incomplete-after-retry"
+
+
+def finalize_machine_deferred(
+    document: object,
+    *,
+    requeued: set[tuple[object, object]] | None = None,
+) -> tuple[object, bool]:
+    """Move terminal ``not_checked`` records into a machine-owned queue.
+
+    The model-facing document has no authority to create this group.  Any
+    pre-existing value is discarded and reconstructed solely from terminal
+    ``not_checked`` entries.  The caller must reject such pre-existing data
+    before invoking this function; replacement here is defense in depth.
+    """
+    if not isinstance(document, dict):
+        raise ValueError("audit proposals must be a JSON object")
+    result = copy.deepcopy(document)
+    result.pop("machine_deferred", None)
+
+    outcomes = result.get("unverifiable")
+    if not isinstance(outcomes, list):
+        raise ValueError("unverifiable must be a JSON array")
+    retained = []
+    deferred = []
+    requeued = requeued or set()
+    for item in outcomes:
+        if isinstance(item, dict) and item.get("cause") == "not_checked":
+            deferred.append({
+                "title": item.get("title"),
+                "year": item.get("year"),
+                "reason": _machine_deferral_reason(item, requeued),
+            })
+        else:
+            retained.append(item)
+    result["unverifiable"] = retained
+    result["machine_deferred"] = deferred
+    return result, result != document
+
+
+def machine_deferred_counts(document: object) -> Counter:
+    """Return fixed-reason telemetry for a finalized document."""
+    if not isinstance(document, dict):
+        return Counter()
+    entries = document.get("machine_deferred")
+    if not isinstance(entries, list):
+        return Counter()
+    return Counter(
+        item.get("reason", "invalid")
+        for item in entries
+        if isinstance(item, dict)
+    )
+
+
+def substantive_work_count(document: object) -> int:
+    """Count outcomes proving that at least one auditor record was processed.
+
+    Machine-deferred records never count as examined.  For the sole purpose of
+    detecting a total model outage, however, a negative outcome invalidated by
+    this same trusted reconciliation is evidence that the model produced a
+    substantive claim.  Untouched seeded records are not.
+    """
+    if not isinstance(document, dict):
+        return 0
+    proposals = document.get("proposals")
+    unverifiable = document.get("unverifiable")
+    deferred = document.get("machine_deferred")
+    count = len(proposals) if isinstance(proposals, list) else 0
+    count += len(unverifiable) if isinstance(unverifiable, list) else 0
+    if isinstance(deferred, list):
+        count += sum(
+            1 for item in deferred
+            if isinstance(item, dict)
+            and item.get("reason") == "source-recheck-requeued"
+        )
+    return count
+
+
 def source_trust_policy_for_watchlist(
     watchlist_path: str | Path,
     targets: list[dict] | None = None,
@@ -332,17 +442,54 @@ def reconcile_file(
     *,
     watchlist_path: str | Path | None = None,
     source_checker: Callable[[str], tuple[bool, str]] = source_ok,
+    finalize_deferred: bool = False,
+    require_substantive: bool = False,
 ) -> bool:
     """Reconcile *path* and write it only when its data actually changes."""
     proposals_path = Path(path)
     document = json.loads(proposals_path.read_text(encoding="utf-8"))
     trust_policy = None
+    watchlist = None
     if watchlist_path is not None:
         trust_policy = source_trust_policy_for_watchlist(watchlist_path)
+        watchlist = B.validate_watchlist(json.loads(
+            Path(watchlist_path).read_text(encoding="utf-8")
+        ))
+    if require_substantive and not finalize_deferred:
+        raise ValueError("requiring substantive work requires finalization")
+    if finalize_deferred:
+        if watchlist is None:
+            raise ValueError("machine deferral finalization requires a watchlist")
+        # This is the raw, model-authored stage.  It may be unfinished, but it
+        # must cover the immutable watchlist exactly and may not pre-create the
+        # trusted finalizer's output group.
+        B.validate_audit_document(
+            watchlist, document, str(proposals_path),
+            allow_unfinished=True,
+        )
     reconciled, changed = reconcile_document(
         document, fetcher if fetcher is not None else Fetcher(),
         source_checker=source_checker, source_trust_policy=trust_policy,
     )
+    if finalize_deferred:
+        if watchlist is None:
+            raise ValueError("machine deferral finalization requires a watchlist")
+        requeued = _newly_requeued_identities(document, reconciled)
+        reconciled, finalized_changed = finalize_machine_deferred(
+            reconciled,
+            requeued=requeued,
+        )
+        changed = changed or finalized_changed
+        if require_substantive and watchlist \
+                and substantive_work_count(reconciled) == 0:
+            raise ValueError(
+                "global audit produced zero substantive outcomes; all records "
+                "remain untouched machine deferrals"
+            )
+        B.validate_audit_document(
+            watchlist, reconciled, str(proposals_path),
+            allow_machine_deferred=True,
+        )
     if changed:
         proposals_path.write_text(
             json.dumps(reconciled, indent=2, ensure_ascii=False) + "\n",
@@ -355,13 +502,37 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--proposals", default="audit-proposals.json")
     parser.add_argument("--watchlist", required=True)
+    parser.add_argument(
+        "--finalize-deferred", action="store_true",
+        help="move terminal not_checked records to the machine-owned retry queue",
+    )
+    parser.add_argument(
+        "--require-substantive", action="store_true",
+        help="fail a non-empty final audit when every record is an untouched checkpoint",
+    )
     args = parser.parse_args(argv)
     try:
-        changed = reconcile_file(args.proposals, watchlist_path=args.watchlist)
-    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        changed = reconcile_file(
+            args.proposals,
+            watchlist_path=args.watchlist,
+            finalize_deferred=args.finalize_deferred,
+            require_substantive=args.require_substantive,
+        )
+        document = json.loads(Path(args.proposals).read_text(encoding="utf-8"))
+    except (B.BatchError, OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"audit outcome reconciliation failed: {exc}", file=sys.stderr)
         return 1
     print("audit outcomes reconciled" if changed else "audit outcomes unchanged")
+    if args.finalize_deferred:
+        counts = machine_deferred_counts(document)
+        total = sum(counts.values())
+        if total:
+            detail = ", ".join(
+                f"{reason}={count}" for reason, count in sorted(counts.items())
+            )
+            print(f"AUDIT DEGRADED: {total} machine-deferred record(s); {detail}")
+        else:
+            print("audit deferral finalization: complete (0 machine-deferred)")
     return 0
 
 

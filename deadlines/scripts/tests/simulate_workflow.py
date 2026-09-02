@@ -25,6 +25,7 @@ sys.path.insert(0, str(REPO / "deadlines" / "scripts"))
 
 import audit_batches as B  # noqa: E402
 import audit_state as S  # noqa: E402
+import reconcile_audit_outcomes as R  # noqa: E402
 
 
 class SimulationFailure(AssertionError):
@@ -93,10 +94,9 @@ def workflow_contract():
             "model shards must check out the immutable prepare-stage revision")
     tamper_steps = [step.get("run", "") for step in shard.get("steps") or []
                     if "WATCHLIST_SHA" in str(step.get("run", ""))]
-    require(len(tamper_steps) == 3
+    require(len(tamper_steps) == 2
             and all("sha256sum --check --strict" in str(run) for run in tamper_steps),
-            "both model attempts and final reconciliation must detect "
-            "root watchlist tampering")
+            "both model attempts must detect root watchlist tampering")
     reconcile = named_step(
         shard, "Reconcile first-pass transient fetch outcomes"
     ).get("run", "")
@@ -113,6 +113,11 @@ def workflow_contract():
     final_check = named_step(shard, "Validate final shard contract").get("run", "")
     require("--require-some-proposal" not in final_check,
             "a fully checked all-unverifiable second pass must be allowed to finish")
+    require("--allow-unfinished" in final_check
+            and "--require-complete" not in final_check,
+            "shards must retain raw unfinished checkpoints for clean global finalization")
+    require("AUDITOR1_OUTCOME" in final_check and "AUDITOR2_OUTCOME" in final_check,
+            "continued auditor action failures must be reported explicitly")
 
     claude_steps = [step for step in shard.get("steps") or []
                     if str(step.get("uses", "")).startswith(
@@ -140,28 +145,11 @@ def workflow_contract():
             "the bounded retry must repair top-level source/reachability "
             "failures before consuming field-level citation diagnostics")
     step_names = [step.get("name") for step in shard.get("steps") or []]
-    final_reconcile_name = "Reconcile final unverifiable source claims"
-    final_validate_name = "Validate final shard contract"
-    require(final_reconcile_name in step_names,
-            "the final model output must receive deterministic reconciliation")
-    require(step_names.index(final_reconcile_name)
-            < step_names.index(final_validate_name),
-            "final reconciliation must precede exact-coverage validation")
-    final_reconcile = named_step(shard, final_reconcile_name)
-    require("--watchlist watchlist.json" in str(final_reconcile.get("run", "")),
-            "final unverifiable claims must be bound to immutable source trust")
-    require(final_reconcile.get("continue-on-error") is not True,
-            "final source reconciliation must fail closed")
-    post_reconcile_integrity = named_step(
-        shard, "Assert final reconciliation preserved protected files")
-    require(step_names.index(final_reconcile_name)
-            < step_names.index(post_reconcile_integrity.get("name"))
-            < step_names.index(final_validate_name),
-            "protected-file integrity must be rechecked after reconciliation")
-    integrity_run = str(post_reconcile_integrity.get("run", ""))
-    require("sha256sum --check --strict" in integrity_run
-            and "git status --porcelain -- deadlines .github" in integrity_run,
-            "post-reconciliation integrity must cover watchlist and protected files")
+    require("Reconcile final unverifiable source claims" not in step_names,
+            "model shards must not perform publication-authority finalization")
+    shard_name = named_step(shard, "Name shard output")
+    require(str(shard_name.get("if", "")).strip() == "always()",
+            "failed shard validation must still retain its raw checkpoint")
 
     apply = jobs["apply"]
     require(int(apply.get("timeout-minutes", 0)) >= 360,
@@ -184,16 +172,29 @@ def workflow_contract():
             "clean apply job must reconcile negative claims before citation verification")
     clean_reconcile_run = str(clean_reconcile.get("run", ""))
     require("--watchlist watchlist.json" in clean_reconcile_run
+            and "--finalize-deferred" in clean_reconcile_run
+            and "--require-substantive" in clean_reconcile_run
             and "audit_batches.py validate" in clean_reconcile_run
             and "--audit-date" in clean_reconcile_run
-            and "--require-complete" in clean_reconcile_run,
-            "clean apply reconciliation must trust-bind and reject requeued outcomes")
+            and "--allow-machine-deferred" in clean_reconcile_run
+            and "--require-complete" in clean_reconcile_run
+            and "AUDIT DEGRADED" in clean_reconcile_run,
+            "clean apply reconciliation must canonicalize retry-only deferrals, "
+            "reject total idleness, report degradation, and enforce the strict "
+            "final contract")
     require(clean_reconcile.get("continue-on-error") is not True,
             "clean apply reconciliation must fail closed")
     merge_script = named_step(apply, "Merge exact-once audit output").get("run", "")
     require("audit_batches.py merge" in merge_script
-            and "--audit-date" in merge_script,
-            "apply must enforce date-bound exact merge coverage")
+            and "--audit-date" in merge_script
+            and merge_script.count("--allow-unfinished") >= 3,
+            "apply must enforce date-bound exact merge coverage while retaining "
+            "raw unfinished checkpoints")
+    apply_run = named_step(apply, "Apply independently verified fields").get(
+        "run", "")
+    require("--allow-machine-deferred" in apply_run
+            and "--require-complete" in apply_run,
+            "production mutation must independently require canonical finalizer output")
     publish = named_step(apply, "Commit verified corrections to default branch").get(
         "run", ""
     )
@@ -284,11 +285,18 @@ def documentation_contract():
             < auditor.index("`detail.fields`"),
             "auditor retry guidance must repair top-level source/reachability "
             "failures before per-field evidence")
+    require("never counts as examined" in auditor
+            and "zero-work circuit breaker" in auditor,
+            "auditor docs must distinguish unfinished checkpoints from findings")
 
     readme = (REPO / "deadlines" / "scripts" / "README.md").read_text(
         encoding="utf-8")
     require("repairs `REJECTED_SOURCE`/`UNREACHABLE` failures first" in readme,
             "operator docs must describe the retry failure hierarchy")
+    require("`machine_deferred`" in readme
+            and "global zero-substantive-work guard" in readme
+            and "cannot block independently safe corrections" in readme,
+            "operator docs must describe safe partial publication and retry")
 
     design = (REPO / "deadlines" / "scripts" /
               "AUTO-APPLY-DESIGN.md").read_text(encoding="utf-8")
@@ -303,6 +311,9 @@ def documentation_contract():
     require("There is no `AUDIT_AUTO_APPLY` PR-mode switch" in design
             and "## 11. Deployed execution order and tests" in design,
             "design record must identify the live no-review state/telemetry flow")
+    require("`machine_deferred`" in design
+            and "rejects a global zero-substantive-work run" in design,
+            "design record must include trusted terminal deferral finalization")
 
 
 def deterministic_integration():
@@ -361,6 +372,27 @@ def deterministic_integration():
         require([item["title"] for item in merged["unverifiable"]]
                 == [item["title"] for item in watchlist],
                 "merge did not preserve stable watchlist order")
+
+        raw_partial = {
+            "audit_date": "2026-08-31", "watchlist_size": 2,
+            "proposals": [{"title": "C00", "year": 2027}],
+            "unverifiable": [{
+                "title": "C01", "year": 2027, "cause": "not_checked",
+            }],
+        }
+        B.validate_audit_document(
+            watchlist[:2], raw_partial, "raw partial", "2026-08-31",
+            allow_unfinished=True)
+        finalized, _ = R.finalize_machine_deferred(raw_partial)
+        B.validate_audit_document(
+            watchlist[:2], finalized, "trusted final", "2026-08-31",
+            allow_machine_deferred=True)
+        require(R.substantive_work_count(finalized) == 1
+                and finalized["machine_deferred"] == [{
+                    "title": "C01", "year": 2027,
+                    "reason": "audit-incomplete-after-retry",
+                }],
+                "partial finalization did not retain safe work and queue the idle record")
 
         state = S.empty_state()
         proposal = {

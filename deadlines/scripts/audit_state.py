@@ -512,6 +512,25 @@ def resolve_fields(
             del state["corroboration"][key]
 
 
+def resolve_record_retry(state: dict[str, Any], title: str, year: int) -> None:
+    """Resolve only a record-wide retry, preserving scoped work and claims.
+
+    A later completed audit may replace a machine-owned whole-record deferral
+    with field-scoped citation/corroboration work in the same transaction.  It
+    must not erase that narrower work or unrelated corroboration streaks.
+    """
+    validate(state)
+    _migrate_in_place(state)
+    key = identity_key(title, year)
+    retry = state["retry"].get(key)
+    if retry is None or not retry["whole_record"]:
+        return
+    if retry["fields"]:
+        retry["whole_record"] = False
+    else:
+        del state["retry"][key]
+
+
 def resolve(state: dict[str, Any], title: str, year: int) -> None:
     """Explicitly resolve every claim for an identity (legacy API)."""
     key = identity_key(title, year)

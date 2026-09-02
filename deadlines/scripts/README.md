@@ -95,10 +95,15 @@ missing/malformed coverage and temporary `not_checked` results. A
 non-empty first pass that returns only unverifiable outcomes receives the same
 retry. A fully checked second pass may still conclude that every source is
 unverifiable. Every attempted URL in those negative outcomes is also bound to
-immutable official-source trust after the retry. Final merging rejects a
-missing, duplicate, invented or unfinished identity. The write-capable job then
-starts from a fresh checkout, independently repeats negative-outcome
-reconciliation, re-fetches positive citations and writes eligible corrections.
+immutable official-source trust. Shard merging rejects a missing, duplicate or
+invented identity but deliberately retains raw `not_checked` checkpoints. The
+write-capable job then starts from a fresh checkout, independently repeats
+negative-outcome reconciliation, and converts residual checkpoints into a
+value-free `machine_deferred` group. Those records do not count as examined,
+remain on the automatic retry queue, and cannot block independently safe corrections
+from other records or shards. A global zero-substantive-work guard
+still fails a total auditor outage. The job then re-fetches positive citations
+and writes eligible corrections.
 Deterministic steps converge and lint the result before `github-actions[bot]`
 pushes. The guardrails are:
 
@@ -112,6 +117,8 @@ pushes. The guardrails are:
      year in window, overridable fields only, well-formed deadlines, a quote
      behind every value), while every `unverifiable.attempted` URL must bind to
      immutable official-source trust regardless of the reported cause;
+     `machine_deferred` is rejected before trusted finalization and afterward
+     may contain only identity plus a fixed machine reason;
   4. citations are fetched again outside Claude, and both the submitted and
      redirected hosts must match a curated/historical anchor, a positive-parent
      annual subdomain or distinct-title organizer authority, a host independently
@@ -148,7 +155,9 @@ successive weekly runs without allowing one audit to rewrite everything at once.
 Deferred identities and corroboration hashes live in the bounded,
 machine-owned `deadlines/data/audit-state.json`; this keeps them on later
 watchlists even across a year boundary. The state stores no model prose or
-unverified values. Obsolete manual overrides need two weekly confirmations plus
+unverified values. A later substantive result clears a whole-record machine
+retry without erasing unrelated field-scoped work or corroboration. Obsolete
+manual overrides need two weekly confirmations plus
 agreement from every healthy configured deterministic upstream source.
 
 A **degraded** updater run (exit 2 — typically one upstream source unreachable)

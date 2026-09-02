@@ -29,6 +29,10 @@ from typing import Any, Iterable, Sequence
 
 
 DEFAULT_SHARD_SIZE = 10
+MACHINE_DEFERRED_REASONS = frozenset((
+    "source-recheck-requeued",
+    "audit-incomplete-after-retry",
+))
 
 
 class BatchError(ValueError):
@@ -151,23 +155,43 @@ def _audit_entries(
     doc: Any,
     where: str,
     allowed: set[tuple[str, int]],
-) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
+    *,
+    allow_machine_deferred: bool = False,
+    allow_unfinished: bool = False,
+) -> tuple[
+    str,
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
     """Validate one complete-or-partial audit document and return its entries."""
+    if allow_machine_deferred and allow_unfinished:
+        raise BatchError(
+            "allow_machine_deferred and allow_unfinished are mutually exclusive"
+        )
     if not isinstance(doc, dict):
         raise BatchError(f"{where} must be a JSON object")
     audit_date = _audit_date(doc, where)
 
     proposals = doc.get("proposals")
     unverifiable = doc.get("unverifiable")
+    if "machine_deferred" in doc and not allow_machine_deferred:
+        raise BatchError(
+            f"{where}.machine_deferred is reserved for trusted finalization"
+        )
+    machine_deferred = doc.get("machine_deferred", [])
     if not isinstance(proposals, list):
         raise BatchError(f"{where}.proposals must be a JSON array")
     if not isinstance(unverifiable, list):
         raise BatchError(f"{where}.unverifiable must be a JSON array")
+    if not isinstance(machine_deferred, list):
+        raise BatchError(f"{where}.machine_deferred must be a JSON array")
 
     seen: dict[tuple[str, int], str] = {}
     for group_name, entries in (
         ("proposals", proposals),
         ("unverifiable", unverifiable),
+        ("machine_deferred", machine_deferred),
     ):
         for index, entry in enumerate(entries):
             location = f"{where}.{group_name}[{index}]"
@@ -181,33 +205,58 @@ def _audit_entries(
                 )
             seen[key] = location
             if entry.get("cause") == "not_checked":
-                raise BatchError(
-                    f"unfinished audit record at {location}: {_format_key(key)} "
-                    "is still not_checked"
-                )
+                if group_name != "unverifiable":
+                    raise BatchError(
+                        f"unfinished marker is invalid at {location}: "
+                        "not_checked belongs only in unverifiable"
+                    )
+                if not allow_unfinished:
+                    raise BatchError(
+                        f"unfinished audit record at {location}: {_format_key(key)} "
+                        "is still not_checked"
+                    )
+            if group_name == "machine_deferred":
+                expected_keys = {"title", "year", "reason"}
+                if set(entry) != expected_keys:
+                    raise BatchError(
+                        f"{location} must contain exactly title, year, and reason"
+                    )
+                reason = entry.get("reason")
+                if reason not in MACHINE_DEFERRED_REASONS:
+                    raise BatchError(
+                        f"{location}.reason is not a machine-owned deferral reason: "
+                        f"{reason!r}"
+                    )
 
     size = doc.get("watchlist_size")
     if not isinstance(size, int) or isinstance(size, bool):
         raise BatchError(f"{where}.watchlist_size must be an integer")
-    actual_size = len(proposals) + len(unverifiable)
+    actual_size = len(proposals) + len(unverifiable) + len(machine_deferred)
     if size != actual_size:
         raise BatchError(
             f"{where}.watchlist_size is {size}, but the document accounts for "
             f"{actual_size} record(s)"
         )
-    return audit_date, proposals, unverifiable
+    return audit_date, proposals, unverifiable, machine_deferred
 
 
 def validate_audit_document(
     watchlist: Sequence[dict[str, Any]], doc: Any, where: str = "audit",
     expected_audit_date: str | None = None,
+    *,
+    allow_machine_deferred: bool = False,
+    allow_unfinished: bool = False,
 ) -> dict[str, Any]:
     """Require a final audit document to cover the watchlist exactly once."""
     watchlist = validate_watchlist(watchlist)
     wanted = [_record_key(record, f"watchlist[{index}]")
               for index, record in enumerate(watchlist)]
     allowed = set(wanted)
-    audit_date, proposals, unverifiable = _audit_entries(doc, where, allowed)
+    audit_date, proposals, unverifiable, machine_deferred = _audit_entries(
+        doc, where, allowed,
+        allow_machine_deferred=allow_machine_deferred,
+        allow_unfinished=allow_unfinished,
+    )
     if expected_audit_date is not None and audit_date != expected_audit_date:
         raise BatchError(
             f"{where}.audit_date is {audit_date}, expected {expected_audit_date}"
@@ -220,6 +269,10 @@ def validate_audit_document(
         _record_key(entry, f"{where}.unverifiable[{index}]")
         for index, entry in enumerate(unverifiable)
     )
+    present.update(
+        _record_key(entry, f"{where}.machine_deferred[{index}]")
+        for index, entry in enumerate(machine_deferred)
+    )
     missing = [key for key in wanted if key not in present]
     if missing:
         rendered = ", ".join(_format_key(key) for key in missing)
@@ -231,6 +284,9 @@ def merge_audit_documents(
     watchlist: Sequence[dict[str, Any]],
     documents: Iterable[tuple[str, Any]],
     expected_audit_date: str | None = None,
+    *,
+    allow_machine_deferred: bool = False,
+    allow_unfinished: bool = False,
 ) -> dict[str, Any]:
     """Merge completed shard documents, rejecting any coverage ambiguity."""
     watchlist = validate_watchlist(watchlist)
@@ -244,9 +300,14 @@ def merge_audit_documents(
     dates: dict[str, str] = {}
     combined_proposals: list[dict[str, Any]] = []
     combined_unverifiable: list[dict[str, Any]] = []
+    combined_machine_deferred: list[dict[str, Any]] = []
     owner: dict[tuple[str, int], str] = {}
     for where, doc in documents:
-        audit_date, proposals, unverifiable = _audit_entries(doc, where, allowed)
+        audit_date, proposals, unverifiable, machine_deferred = _audit_entries(
+            doc, where, allowed,
+            allow_machine_deferred=allow_machine_deferred,
+            allow_unfinished=allow_unfinished,
+        )
         if expected_audit_date is not None and audit_date != expected_audit_date:
             raise BatchError(
                 f"{where}.audit_date is {audit_date}, expected {expected_audit_date}"
@@ -255,6 +316,7 @@ def merge_audit_documents(
         for group_name, entries, destination in (
             ("proposals", proposals, combined_proposals),
             ("unverifiable", unverifiable, combined_unverifiable),
+            ("machine_deferred", machine_deferred, combined_machine_deferred),
         ):
             for index, entry in enumerate(entries):
                 key = _record_key(entry, f"{where}.{group_name}[{index}]")
@@ -283,14 +345,21 @@ def merge_audit_documents(
     combined_unverifiable.sort(
         key=lambda entry: order[_record_key(entry, "merged unverifiable entry")]
     )
+    combined_machine_deferred.sort(
+        key=lambda entry: order[_record_key(entry, "merged machine-deferred entry")]
+    )
     merged = {
         "audit_date": next(iter(distinct_dates)),
         "watchlist_size": len(watchlist),
         "proposals": combined_proposals,
         "unverifiable": combined_unverifiable,
     }
+    if allow_machine_deferred:
+        merged["machine_deferred"] = combined_machine_deferred
     validate_audit_document(
-        watchlist, merged, "merged audit", expected_audit_date
+        watchlist, merged, "merged audit", expected_audit_date,
+        allow_machine_deferred=allow_machine_deferred,
+        allow_unfinished=allow_unfinished,
     )
     return merged
 
@@ -313,6 +382,14 @@ def _build_parser() -> argparse.ArgumentParser:
     merge.add_argument("output", type=Path)
     merge.add_argument("shards", type=Path, nargs="+")
     merge.add_argument("--audit-date", dest="expected_audit_date")
+    merge.add_argument(
+        "--allow-machine-deferred", action="store_true",
+        help="accept trusted-finalizer deferrals (post-model stages only)",
+    )
+    merge.add_argument(
+        "--allow-unfinished", action="store_true",
+        help="accept raw not_checked checkpoints (pre-finalization stages only)",
+    )
 
     validate = commands.add_parser(
         "validate", help="validate exact coverage of one final audit document"
@@ -320,6 +397,14 @@ def _build_parser() -> argparse.ArgumentParser:
     validate.add_argument("watchlist", type=Path)
     validate.add_argument("audit_proposals", type=Path)
     validate.add_argument("--audit-date", dest="expected_audit_date")
+    validate.add_argument(
+        "--allow-machine-deferred", action="store_true",
+        help="accept trusted-finalizer deferrals (post-model stages only)",
+    )
+    validate.add_argument(
+        "--allow-unfinished", action="store_true",
+        help="accept raw not_checked checkpoints (pre-finalization stages only)",
+    )
     return parser
 
 
@@ -340,6 +425,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             validate_audit_document(
                 watchlist, doc, str(args.audit_proposals),
                 args.expected_audit_date,
+                allow_machine_deferred=args.allow_machine_deferred,
+                allow_unfinished=args.allow_unfinished,
             )
             print(f"valid: {len(watchlist)} watchlist record(s) accounted for exactly once")
             return 0
@@ -348,7 +435,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             (str(path), _read_json(path, "shard audit")) for path in args.shards
         ]
         merged = merge_audit_documents(
-            watchlist, documents, args.expected_audit_date
+            watchlist, documents, args.expected_audit_date,
+            allow_machine_deferred=args.allow_machine_deferred,
+            allow_unfinished=args.allow_unfinished,
         )
         _write_json(args.output, merged)
         print(
