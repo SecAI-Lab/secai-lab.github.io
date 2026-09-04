@@ -1,3 +1,13 @@
+- title: "Attack via Overfitting: 10-shot Benign Fine-tuning to Jailbreak LLMs"
+  link: "https://openreview.net/pdf?id=utvu4PJ0Ct"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/byungsoo_0904_Attack_via_Overfitting.pdf"
+  code_link: "https://github.com/hdhacker416/tenBenign"
+  presenter: Byungsoo
+  conference: NeurIPS
+  date: 2026.09.04
+  pub_year: 2025
+  discussion: ""
+
 - title: "GaussMark: A Practical Approach for Structural Watermarking of Language Models"
   link: "https://openreview.net/pdf?id=YG3DbpAQBf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_0904_GaussMark.pdf"
