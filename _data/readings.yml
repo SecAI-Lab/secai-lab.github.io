@@ -1,3 +1,13 @@
+- title: "GaussMark: A Practical Approach for Structural Watermarking of Language Models"
+  link: "https://openreview.net/pdf?id=YG3DbpAQBf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_0904_GaussMark.pdf"
+  code_link: ""
+  presenter: Gahyun
+  conference: ICML
+  date: 2026.09.04
+  pub_year: 2025
+  discussion: ""
+  
 - title: "Recover Function Signature from Combined Constraints"
   link: "https://dl.acm.org/doi/10.1145/3719027.3765089"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/woomin_CDA0825.pdf"
