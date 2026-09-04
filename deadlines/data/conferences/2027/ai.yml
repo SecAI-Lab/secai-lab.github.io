@@ -35,9 +35,9 @@
   full_name: "The Web Conference"
   type: conference
   tier: T1
-  link: https://acmweb2027.org/
-  abstract_deadline: "2026-10-11 23:59"
-  deadline: "2026-10-18 23:59"
+  link: https://www2027.thewebconf.org/
+  abstract_deadline: "2026-10-18 23:59"
+  deadline: "2026-10-25 23:59"
   timezone: AoE
   place: "Dublin, Ireland"
   date: "May 10 - 14, 2027"
