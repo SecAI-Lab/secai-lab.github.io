@@ -14,10 +14,11 @@
   research: Computer Security, Reversing
   github: https://github.com/GahBaek
   joined: Spring 2026
-# - name: Garrett Ennis
-#   photo: garrett.jpg
-#   info: Master student
-#   email: redrobe9 AT g.skku.edu
-#   research:
-#   github:
-#   joined: Fall 2026
+
+- name: Garrett Ennis
+  photo: GarretEnnisPhoto.jpg
+  info: Master studentss
+  email: redrobe9 AT g.skku.edu
+  research: Anti-Adversarial AI, Offensive Security
+  github:
+  joined: Fall 2026
