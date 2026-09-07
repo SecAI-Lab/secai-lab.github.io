@@ -41,9 +41,10 @@ sitemap: true
 }
 
 .member-card img {
-  width: auto;
+  width: 150px;
   height: 195px;
   object-fit: cover;
+  object-position: top;
   border-radius: 12px;
   flex-shrink: 0;
 }
