@@ -6,7 +6,7 @@
   conference: NeurIPS
   date: 2026.09.04
   pub_year: 2025
-  discussion: ""
+  discussion: "(Discussion) This paper demonstrates that LLM safety can be weakened through overfitting on only a small amount of benign fine-tuning data, revealing that security risks arise not only from harmful training content but also from the optimization process itself. The attack achieves a high success rate across multiple model families while largely preserving general capabilities, suggesting that conventional dataset screening alone may be insufficient. Although the authors provide evidence linking overfitting, loss-landscape sharpness, and catastrophic forgetting, the mechanistic analysis and defense evaluation remain limited to a smaller set of models and methods. Overall, the study highlights the need for fine-tuning services to monitor training dynamics, parameter changes, and post-training safety behavior in addition to filtering training data. (Woomin)"
 
 - title: "GaussMark: A Practical Approach for Structural Watermarking of Language Models"
   link: "https://openreview.net/pdf?id=YG3DbpAQBf"
