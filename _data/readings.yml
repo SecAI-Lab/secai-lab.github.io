@@ -16,7 +16,7 @@
   conference: ICML
   date: 2026.09.04
   pub_year: 2025
-  discussion: ""
+  discussion: "(Discussion) This paper shows how watermarking techniques are embedded into LLMs. The key idea is using the small perturbation of model weights. With the null hypothesis and alternative hypothesis, it can detect the LLM's output is wartermarked or not. In the generate step, it clearly shows how to add Gaussian perturbation without token-level biasing. In the detecting step, with log-likelihood, it can calculate backpropagation to obtain gradient which will be measured with key. The model shows the performance is preserved while adopting this techniques and also it only changes weights so there is no latency degradation. This paper is based on zero-bit watermarking which is classify this output is watermarked or not. So it can be expaned to mult-bit watermarking schemes in future. Also this model requires base model and white-box access, so we could think about what is 'practical' environment of watermarking. (Hyoungjun)"
   
 - title: "Recover Function Signature from Combined Constraints"
   link: "https://dl.acm.org/doi/10.1145/3719027.3765089"
