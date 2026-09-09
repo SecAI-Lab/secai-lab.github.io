@@ -358,42 +358,8 @@ sitemap: true
     text-decoration: none;
 }
 
-/* GitHub button styling */
-.github-link {
-    padding: 0.3rem 0.6rem;
-    background: #f8f9fa;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 3px;
-    font-size: 0.8rem;
-    border: 1px solid #dee2e6;
-    transition: all 0.2s ease;
-}
-
-
-/* Slides button styling */
-.slides-link {
-    padding: 0.3rem 0.6rem;
-    background: #f8f9fa;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 3px;
-    font-size: 0.8rem;
-    border: 1px solid #dee2e6;
-    transition: all 0.2s ease;
-}
-
-/* Web button styling */
-.web-link {
-    padding: 0.3rem 0.6rem;
-    background: #f8f9fa;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 3px;
-    font-size: 0.8rem;
-    border: 1px solid #dee2e6;
-    transition: all 0.2s ease;
-}
+/* Code / Slides / Web buttons inherit the unified button style
+   from .entry-link / .publication-link — no size overrides here */
 
 /* Icon spacing */
 .github-link i, .slides-link i, .web-link i {
@@ -581,7 +547,7 @@ sitemap: true
                     <div class="publication-content">
                         <h3 class="publication-title">{{ publi.title }}</h3>
                         <p class="publication-authors">{{ publi.authors }}</p>
-                        <p class="publication-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display }}</span>{% endif %}</p>
+                        <p class="publication-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display | strip }}</span>{% endif %}</p>
                     </div>
                 </div>
 
@@ -595,25 +561,19 @@ sitemap: true
 
                 <div class="publication-links">
                     {% if publi.link.url and publi.link.url != "To appear" %}
-                    <a href="{{ publi.link.url }}" class="publication-link" target="_blank"> Paper</a>
+                    <a href="{{ publi.link.url }}" class="publication-link" target="_blank">Paper</a>
                     {% endif %}
                     {% if publi.link.arXiv %}
-                    <a href="{{ publi.link.arXiv }}" class="publication-link" target="_blank"> arXiv</a>
+                    <a href="{{ publi.link.arXiv }}" class="publication-link" target="_blank">arXiv</a>
                     {% endif %}
                     {% if publi.github %}
-                    <a href="{{ publi.github }}" class="publication-link github-link" target="_blank">
-                        Code
-                    </a>
+                    <a href="{{ publi.github }}" class="publication-link github-link" target="_blank">Code</a>
                     {% endif %}
                     {% if publi.slides %}
-                    <a href="{{ publi.slides }}" class="publication-link slides-link" target="_blank">
-                         Slides
-                    </a>
+                    <a href="{{ publi.slides }}" class="publication-link slides-link" target="_blank">Slides</a>
                     {% endif %}
                     {% if publi.web %}
-                    <a href="{{ publi.web }}" class="publication-link web-link" target="_blank">
-                         Web
-                    </a>
+                    <a href="{{ publi.web }}" class="publication-link web-link" target="_blank">Web</a>
                     {% endif %}
                 </div>
             </div>
@@ -631,32 +591,24 @@ sitemap: true
                 <h4 class="entry-title">{{ publi.title }}</h4>
                 <div class="entry-links">
                     {% if publi.link.url and publi.link.url != "To appear" %}
-                    <a href="{{ publi.link.url }}" class="entry-link" target="_blank">
-                     Paper</a>
+                    <a href="{{ publi.link.url }}" class="entry-link" target="_blank">Paper</a>
                     {% endif %}
                     {% if publi.link.arXiv %}
-                    <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank">
-                     arXiv</a>
+                    <a href="{{ publi.link.arXiv }}" class="entry-link" target="_blank">arXiv</a>
                     {% endif %}
                     {% if publi.github %}
-                    <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">
-                         Code
-                    </a>
+                    <a href="{{ publi.github }}" class="entry-link github-link" target="_blank">Code</a>
                     {% endif %}
                     {% if publi.slides %}
-                    <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">
-                        Slides
-                    </a>
+                    <a href="{{ publi.slides }}" class="entry-link slides-link" target="_blank">Slides</a>
                     {% endif %}
                     {% if publi.web %}
-                    <a href="{{ publi.web }}" class="entry-link web-link" target="_blank">
-                        Web
-                    </a>
+                    <a href="{{ publi.web }}" class="entry-link web-link" target="_blank">Web</a>
                     {% endif %}
                 </div>
             </div>
             <p class="entry-authors">{{ publi.authors }}</p>
-            <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display }}</span>{% endif %}</p>
+            <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display | strip }}</span>{% endif %}</p>
         </div>
         {% endfor %}
     </div>
@@ -684,12 +636,7 @@ sitemap: true
             </div>
         </div>
         <p class="entry-authors">{{ publi.authors }}</p>
-        <p class="entry-venue">
-            {{ publi.link.display }}
-            {% if publi.link2.display contains "Award" %}
-            <span class="award-badge">{{ publi.link2.display }}</span>
-            {% endif %}
-        </p>
+        <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display | strip }}</span>{% endif %}</p>
       </div>
       {% endfor %}
     </div>
@@ -717,12 +664,7 @@ sitemap: true
             </div>
         </div>
         <p class="entry-authors">{{ publi.authors }}</p>
-        <p class="entry-venue">
-            {{ publi.link.display }}
-            {% if publi.link2.display contains "Award" %}
-            <span class="award-badge">{{ publi.link2.display }}</span>
-            {% endif %}
-        </p>
+        <p class="entry-venue">{{ publi.link.display }}{% if publi.link2.display contains "Award" %}<span class="award-badge">{{ publi.link2.display | strip }}</span>{% endif %}</p>
       </div>
       {% endfor %}
     </div>
