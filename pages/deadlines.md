@@ -50,7 +50,7 @@ hide_title: true
   </footer>
 </div>
 
-<link rel="stylesheet" href="{{ site.baseurl }}/deadlines/assets/style.css">
+<link rel="stylesheet" href="{{ site.baseurl }}/deadlines/assets/style.css?v={{ site.time | date: '%Y%m%d%H%M%S' }}">
 <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-<script src="{{ site.baseurl }}/deadlines/assets/deadline-tracker.js"></script>
+<script src="{{ site.baseurl }}/deadlines/assets/deadline-tracker.js?v={{ site.time | date: '%Y%m%d%H%M%S' }}"></script>
