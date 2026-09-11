@@ -27,7 +27,6 @@ hide_title: true
     </div>
     <div class="controls-row">
       <label><input id="futureOnly" type="checkbox" checked /> Upcoming only</label>
-      <label><input id="includeWorkshops" type="checkbox" /> Include workshops</label>
     </div>
   </section>
 

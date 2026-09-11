@@ -22,7 +22,7 @@ CITED_MANUAL = """\
 
 # Upstream is wrong about this one.
 # Verified 2026-08-18 against https://example.org/cfp
-- title: "EuroSec"
+- title: "ESORICS"
   year: 2026
   deadline: "2026-02-10 23:59"
 """

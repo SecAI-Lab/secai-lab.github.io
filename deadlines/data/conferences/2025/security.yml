@@ -85,35 +85,6 @@
   end: 2025-06-06
   note: "Abstract deadline is for research papers."
 
-- title: "DFRWS APAC"
-  year: 2025
-  id: dfrws-apac25
-  full_name: "Digital Forensics Research Conference APAC"
-  type: workshop
-  tier: "N/A"
-  link: https://dfrws.org/conferences/dfrws-apac-2025/
-  deadline: "2025-05-23 23:59"
-  timezone: AoE
-  place: "Seoul, South Korea"
-  date: "November 10-12, 2025"
-  start: 2025-11-10
-  end: 2025-11-12
-
-- title: "DFRWS EU"
-  year: 2025
-  id: dfrws-eu25
-  full_name: "Digital Forensics Research Conference Europe"
-  type: workshop
-  tier: "N/A"
-  link: https://dfrws.org/conferences/dfrws-eu-2025/
-  abstract_deadline: "2024-09-20 23:59"
-  deadline: "2024-09-27 23:59"
-  timezone: AoE
-  place: "Brno, Czech Republic"
-  date: "April 1-4, 2025"
-  start: 2025-04-01
-  end: 2025-04-04
-
 - title: "DIMVA"
   year: 2025
   id: dimva25
@@ -274,18 +245,3 @@
   start: 2025-08-13
   end: 2025-08-15
   note: "No separate abstract deadline listed in the official CFP."
-
-- title: "WOOT"
-  year: 2025
-  id: woot25
-  full_name: "USENIX WOOT Conference on Offensive Technologies"
-  type: workshop
-  tier: "N/A"
-  link: https://www.usenix.org/conference/woot25
-  deadline: "2025-03-11 23:59"
-  timezone: UTC-12
-  place: "Seattle, WA, USA"
-  date: "August 11-12, 2025"
-  start: 2025-08-11
-  end: 2025-08-12
-  note: "Academic track deadline; Up-and-coming track deadline was 2025-03-04."

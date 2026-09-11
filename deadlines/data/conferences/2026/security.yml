@@ -32,20 +32,6 @@
   start: 2026-12-07
   end: 2026-12-11
 
-- title: "AISec"
-  year: 2026
-  id: aisec26
-  full_name: "ACM Workshop on Artificial Intelligence and Security"
-  type: workshop
-  tier: "N/A"
-  link: https://aisec.cc
-  deadline: "2026-07-24 23:59"
-  timezone: AoE
-  place: "The Hague, The Netherlands"
-  date: "November 15, 2026"
-  start: 2026-11-15
-  end: 2026-11-15
-
 - title: "ASIACCS"
   year: 2026
   id: asiaccs26
@@ -97,21 +83,6 @@
   start: 2026-06-23
   end: 2026-06-25
   note: "Abstract submission precedes the paper deadline; extended from December 12."
-
-- title: "DFRWS EU"
-  year: 2026
-  id: dfrws-eu26
-  full_name: "Digital Forensics Research Conference Europe"
-  type: workshop
-  tier: "N/A"
-  link: https://dfrws.org/conferences/dfrws-eu-2026/
-  abstract_deadline: "2025-09-19 23:59"
-  deadline: "2025-09-26 23:59"
-  timezone: AoE
-  place: "Linköping, Sweden"
-  date: "March 24-27, 2026"
-  start: 2026-03-24
-  end: 2026-03-27
 
 - title: "DIMVA"
   year: 2026
@@ -274,20 +245,3 @@
   start: 2026-08-12
   end: 2026-08-14
   note: "Mandatory registration deadline 1 week before paper deadline."
-
-- title: "WOOT"
-  year: 2026
-  id: woot26
-  full_name: "USENIX WOOT Conference on Offensive Technologies"
-  type: workshop
-  tier: "N/A"
-  link: https://www.usenix.org/conference/woot26/call-for-papers
-  deadline:
-    - "2025-12-12 23:59"
-    - "2026-03-03 23:59"
-  timezone: UTC-12
-  place: "Baltimore, MD, USA"
-  date: "August 10–11, 2026"
-  start: 2026-08-10
-  end: 2026-08-11
-  note: "Co-located with USENIX Security. Second deadline is up-and-coming track."

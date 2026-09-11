@@ -32,21 +32,6 @@
   end: 2025-06-26
   note: "Research Track. All dates refer to AoE."
 
-- title: "EuroSec"
-  year: 2025
-  id: eurosec25
-  full_name: "European Workshop on Systems Security"
-  type: workshop
-  tier: "N/A"
-  link: https://eurosec25.hotcrp.com/
-  deadline: "2025-02-07 23:59"
-  timezone: UTC-12
-  place: "Rotterdam, Netherlands"
-  date: "March 31, 2025"
-  start: 2025-03-31
-  end: 2025-03-31
-  note: "18th European Workshop on Systems Security. Deadline derived from HotCRP: Feb 8, 2025 11:59:59 UTC, equivalent to Feb 7, 2025 23:59:59 AoE. Co-located with EuroSys 2025."
-
 - title: "EuroSys"
   year: 2025
   id: eurosys25

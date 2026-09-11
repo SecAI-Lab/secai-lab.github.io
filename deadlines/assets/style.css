@@ -135,16 +135,6 @@
   font-weight: 700;
   font-size: 12px;
 }
-.deadline-page .badge-workshop {
-  display: inline-flex;
-  padding: 2px 6px;
-  border-radius: 999px;
-  background: #fef3c7;
-  color: #92400e;
-  font-weight: 600;
-  font-size: 11px;
-  vertical-align: middle;
-}
 .deadline-page .conf-name-highlight { color: var(--dl-accent); }
 .deadline-page .conf-name-default { color: var(--dl-text); }
 .deadline-page .days strong { font-size: 15px; }

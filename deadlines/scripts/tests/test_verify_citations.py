@@ -1096,19 +1096,26 @@ class OfficialHostBinding(unittest.TestCase):
         self.assertNotIn("X", V.trusted_hosts_by_title(watchlist, ()))
 
     def test_curated_host_bootstraps_a_linkless_coverage_gap(self):
-        watchlist = [{"title": "DFRWS US", "year": 2027, "record": {}}]
+        watchlist = [{"title": "SAC", "year": 2027, "record": {}}]
         trusted = V.trusted_hosts_by_title(
-            watchlist, (), {"DFRWS US": ["dfrws.org"]}
+            watchlist, (), {"SAC": ["sigapp.org"]}
         )
-        self.assertEqual(trusted["DFRWS US"], {"dfrws.org"})
+        self.assertEqual(trusted["SAC"], {"sigapp.org"})
         self.assertTrue(V.source_bound_to_hosts(
-            "https://dfrws.org/conferences/dfrws-usa-2027/",
-            trusted["DFRWS US"],
+            "https://sigapp.org/sac/sac2027/",
+            trusted["SAC"],
         )[0])
 
     def test_repo_config_anchors_every_manual_only_target(self):
-        configured = V.configured_official_hosts()
-        self.assertTrue({"BAR", "CCS-LAMPS", "DFRWS US"}.issubset(configured))
+        # A manual-only target has no upstream link to bootstrap a trusted
+        # host from, so conferences.yml must anchor it with `official_hosts`
+        # or the weekly audit can never verify its editions. Vacuously true
+        # while no target is manual-only; it bites the moment one is added
+        # without an anchor.
+        targets = V.U.load_config()
+        configured = V.configured_official_hosts(targets)
+        manual_only = {t["key"] for t in targets if t.get("manual_only")}
+        self.assertEqual(manual_only - set(configured), set())
 
     def test_unrelated_source_is_rejected_before_fetch(self):
         url = "https://evil.example/cfp"
@@ -1180,7 +1187,7 @@ class OfficialHostBinding(unittest.TestCase):
     def test_annual_templates_never_cross_multi_tenant_siblings(self):
         cases = [
             ("DSN", "dsn2025.github.io", "dsn2026.github.io"),
-            ("EuroSec", "eurosec25.hotcrp.com", "eurosec26.hotcrp.com"),
+            ("ACSAC", "acsac25.hotcrp.com", "acsac26.hotcrp.com"),
             ("X", "x2025.pages.dev", "x2026.pages.dev"),
         ]
         for title, old_host, new_host in cases:

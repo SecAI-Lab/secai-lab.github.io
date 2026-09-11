@@ -28,18 +28,6 @@
   start: 2027-06-22
   end: 2027-06-25
 
-- title: "EuroSec"
-  year: 2027
-  id: eurosec27
-  full_name: "European Workshop on Systems Security"
-  type: workshop
-  tier: "N/A"
-  link: https://eurosec-workshop.github.io/
-  deadline: "TBA"
-  place: "TBA"
-  date: "TBA"
-  note: "Official EuroSec 2027 CFP/page not announced yet; dates, place, and deadline are not available."
-
 - title: "EuroSys"
   year: 2027
   id: eurosys27

@@ -29,18 +29,6 @@
   date: "TBA"
   note: "Official ACSAC 2027 conference page/CFP not publicly available yet."
 
-- title: "AISec"
-  year: 2027
-  id: aisec27
-  full_name: "ACM Workshop on Artificial Intelligence and Security"
-  type: workshop
-  tier: "N/A"
-  link: https://aisec.cc/
-  deadline: "TBA"
-  place: "TBA"
-  date: "TBA"
-  note: "Co-located with ACM CCS. AISec 2027 CFP not announced yet."
-
 - title: "ASIACCS"
   year: 2027
   id: asiaccs27
@@ -57,18 +45,6 @@
   start: 2027-07-12
   end: 2027-07-16
 
-- title: "BAR"
-  year: 2027
-  id: bar27
-  full_name: "Workshop on Binary Analysis Research"
-  type: workshop
-  tier: "N/A"
-  link: https://www.ndss-symposium.org/ndss2027/
-  deadline: "TBA"
-  place: "TBA"
-  date: "TBA"
-  note: "Official BAR 2027 CFP/page not announced yet; NDSS 2027 is announced, but BAR 2027 workshop details are not."
-
 - title: "CCS"
   year: 2027
   id: ccs27
@@ -82,18 +58,6 @@
   end: 2027-10-15
   note: "Official CCS 2027 page is available and lists Atlanta, USA in October 2027; CFP and deadlines are not announced yet."
 
-- title: "CCS-LAMPS"
-  year: 2027
-  id: ccs-lamps27
-  full_name: "ACM Workshop on Large AI Systems and Models with Privacy and Safety Analysis"
-  type: workshop
-  tier: "N/A"
-  link: https://lamps-ccs.github.io/home/
-  deadline: "TBA"
-  place: "TBA"
-  date: "TBA"
-  note: "Co-located with ACM CCS. CCS-LAMPS 2027 CFP not announced yet."
-
 - title: "CODASPY"
   year: 2027
   id: codaspy27
@@ -104,22 +68,6 @@
   place: "TBA"
   date: "TBA"
   note: "Official CODASPY 2027 conference page/CFP not publicly available yet."
-
-- title: "DFRWS EU"
-  year: 2027
-  id: dfrws-eu27
-  full_name: "Digital Forensics Research Conference Europe"
-  type: workshop
-  tier: "N/A"
-  link: https://dfrws.org/conferences/dfrws-eu-2027/
-  abstract_deadline: "2026-09-18 23:59"
-  deadline: "2026-09-25 23:59"
-  timezone: AoE
-  place: "Edinburgh, Scotland"
-  date: "March 30 - April 2, 2027"
-  start: 2027-03-30
-  end: 2027-04-02
-  note: "Full-paper deadlines per the official DFRWS EU 2027 page. That page states no timezone for these two rows - its only AoE marking belongs to the DFDS doctoral symposium track - so the timezone is deliberately left unset."
 
 - title: "DIMVA"
   year: 2027
@@ -263,15 +211,3 @@
   start: 2027-08-11
   end: 2027-08-13
   note: "Official CFP lists mandatory registration and paper submission deadlines as AoE. Mandatory registration is mapped to abstract_deadline for site compatibility."
-
-- title: "WOOT"
-  year: 2027
-  id: woot27
-  full_name: "USENIX WOOT Conference on Offensive Technologies"
-  type: workshop
-  tier: "N/A"
-  link: https://www.usenix.org/conferences
-  deadline: "TBA"
-  place: "TBA"
-  date: "TBA"
-  note: "WOOT 2027 CFP not announced yet. WOOT is typically co-located with USENIX Security."

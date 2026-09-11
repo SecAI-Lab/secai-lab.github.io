@@ -5,7 +5,8 @@
 #   key         canonical title emitted into the data files; must match the
 #               frontend TARGETS keys in deadlines/assets/deadline-tracker.js.
 #   category    output bucket: system | software | security | ai
-#   type        conference | workshop  (used for the `type` field of NEW records)
+#   type        conference  (used for the `type` field of NEW records; workshop
+#               venues are not tracked)
 #   slug        id prefix; record ids are "<slug><2-digit year>", e.g. ccs26
 #   full_name   long name for records; enforced on current/future editions
 #               (past editions keep their historical values)
@@ -349,96 +350,3 @@ conferences:
     sources:
       ccfddl: "SC/acns.yml"
       secdl: "ACNS"
-
-  # ---------------- workshops ----------------
-  - key: "WOOT"
-    category: security
-    type: workshop
-    slug: woot
-    full_name: "USENIX WOOT Conference on Offensive Technologies"
-    tier: "N/A"
-    aliases: ["WOOT", "Workshop on Offensive Technologies", "USENIX WOOT Conference on Offensive Technologies"]
-    sources:
-      # Not in ccfddl. Note: sec-deadlines lists the 'up-and-coming track'
-      # deadline as a second cycle.
-      secdl: "WOOT"
-
-  - key: "BAR"
-    category: security
-    type: workshop
-    slug: bar
-    full_name: "Workshop on Binary Analysis Research"
-    tier: "N/A"
-    aliases: ["BAR", "Workshop on Binary Analysis Research"]
-    official_hosts: ["ndss-symposium.org"]
-    # In neither dataset; the NDSS co-located-events page is prose-only HTML.
-    sources: manual-only
-
-  - key: "AISec"
-    category: security
-    type: workshop
-    slug: aisec
-    full_name: "ACM Workshop on Artificial Intelligence and Security"
-    tier: "N/A"
-    aliases: ["AISec", "Workshop on Artificial Intelligence and Security"]
-    sources:
-      secdl: "AISec"
-
-  - key: "CCS-LAMPS"
-    category: security
-    type: workshop
-    slug: ccs-lamps
-    full_name: "ACM Workshop on Large AI Systems and Models with Privacy and Safety Analysis"
-    tier: "N/A"
-    aliases: ["CCS-LAMPS", "LAMPS", "Workshop on Large AI Systems and Models with Privacy and Safety Analysis"]
-    official_hosts: ["lamps-ccs.github.io"]
-    # In neither dataset; the weekly auditor watches the official host above.
-    sources: manual-only
-
-  - key: "EuroSec"
-    category: system
-    type: workshop
-    slug: eurosec
-    full_name: "European Workshop on Systems Security"
-    tier: "N/A"
-    aliases: ["EuroSec", "European Workshop on Systems Security"]
-    sources:
-      # Not in ccfddl. sec-deadlines files it under security; our category is
-      # system (co-located with EuroSys), matching the frontend.
-      secdl: "EuroSec"
-
-  - key: "DFRWS EU"
-    category: security
-    type: workshop
-    slug: dfrws-eu
-    full_name: "Digital Forensics Research Conference Europe"
-    tier: "N/A"
-    aliases: ["DFRWS EU", "Digital Forensics Research Conference Europe", "Digital Forensics Conference Europe"]
-    sources:
-      # ccfddl record is titled just 'DFRWS' but tracks only EU editions
-      # (all links are dfrws.org/conferences/dfrws-eu-*).
-      ccfddl: "SC/dfrws.yml"
-
-  - key: "DFRWS US"
-    category: security
-    type: workshop
-    slug: dfrws-us
-    full_name: "Digital Forensics Research Conference USA"
-    tier: "N/A"
-    aliases: ["DFRWS US", "DFRWS USA", "Digital Forensics Research Conference USA"]
-    official_hosts: ["dfrws.org"]
-    # In neither dataset. Community calendars remain inadmissible evidence; the
-    # weekly auditor retries the official DFRWS host directly.
-    sources: manual-only
-
-  - key: "DFRWS APAC"
-    category: security
-    type: workshop
-    slug: dfrws-apac
-    full_name: "Digital Forensics Research Conference APAC"
-    tier: "N/A"
-    aliases: ["DFRWS APAC", "Digital Forensics Research Conference APAC"]
-    sources:
-      # ccfddl coverage is stale (2025 edition only); the weekly official-source
-      # audit owns current-cycle discovery and persists verified corrections.
-      ccfddl: "SC/dfrws-apac.yml"

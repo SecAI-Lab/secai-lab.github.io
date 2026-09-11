@@ -52,16 +52,7 @@ const TARGETS = [
   { key: 'SecureComm', category: 'security', aliases: ['SecureComm', 'Security and Privacy in Communication Networks'] },
   { key: 'SAC', category: 'security', aliases: ['SAC', 'Symposium on Applied Computing'] },
   { key: 'IFIP-Sec', category: 'security', aliases: ['IFIP SEC', 'IFIP-Sec', 'IFIP Sec'] },
-  { key: 'ACNS', category: 'security', aliases: ['ACNS', 'Applied Cryptography and Network Security'] },
-
-  { key: 'WOOT', category: 'security', workshop: true, aliases: ['WOOT', 'Workshop on Offensive Technologies', 'USENIX WOOT Conference on Offensive Technologies'] },
-  { key: 'BAR', category: 'security', workshop: true, aliases: ['BAR', 'Workshop on Binary Analysis Research'] },
-  { key: 'AISec', category: 'security', workshop: true, aliases: ['AISec', 'Workshop on Artificial Intelligence and Security'] },
-  { key: 'CCS-LAMPS', category: 'security', workshop: true, aliases: ['CCS-LAMPS', 'Workshop on Large AI Systems and Models with Privacy and Safety Analysis'] },
-  { key: 'EuroSec', category: 'system', workshop: true, aliases: ['EuroSec', 'European Workshop on Systems Security'] },
-  { key: 'DFRWS EU', category: 'security', workshop: true, aliases: ['DFRWS EU', 'Digital Forensics Research Conference Europe'] },
-  { key: 'DFRWS US', category: 'security', workshop: true, aliases: ['DFRWS US', 'Digital Forensics Research Conference'] },
-  { key: 'DFRWS APAC', category: 'security', workshop: true, aliases: ['DFRWS APAC'] }
+  { key: 'ACNS', category: 'security', aliases: ['ACNS', 'Applied Cryptography and Network Security'] }
 ];
 
 const CATEGORY_ORDER = ['system', 'software', 'security', 'ai'];
@@ -178,7 +169,6 @@ function expandRecord(record, source) {
       priority: source.priority,
       id: cleanName(record.id || `${target.key.toLowerCase()}-${year}-${i}`),
       cycle: paperDeadlines.length > 1 ? `cycle ${i + 1}` : '',
-      isWorkshop: Boolean(target.workshop),
       tier: String(record.tier || '')
     });
   }
@@ -446,7 +436,6 @@ function render(rows) {
   const yearValue = document.getElementById('yearFilter').value;
   const catValue = document.getElementById('categoryFilter').value;
   const futureOnly = document.getElementById('futureOnly').checked;
-  const includeWorkshops = document.getElementById('includeWorkshops').checked;
 
   let filtered = rows.filter(row => {
     const days = daysLabel(row).value;
@@ -458,8 +447,7 @@ function render(rows) {
       (yearValue === 'all' || String(row.year) === yearValue) &&
       (catValue === 'all' || row.category === catValue) &&
       (!futureOnly || paperDaysValue >= 0) &&
-      !row.isTrack &&
-      (includeWorkshops || !row.isWorkshop);
+      !row.isTrack;
   });
 
   filtered.sort((a, b) =>
@@ -509,7 +497,7 @@ function render(rows) {
       const subtitleHtml = subtitleParts.length ? `<small>${subtitleParts.join(' · ')}</small>` : '';
       const nameClass = NAME_HIGHLIGHT_CONFS.has(row.canonicalName) ? 'conf-name-highlight' : 'conf-name-default';
       const nameHtml = `<span class="${nameClass}">${escapeHtml(row.canonicalName)}</span>`;
-      tr.querySelector('.conf').innerHTML = `<strong>${row.link ? `<a href="${escapeHtml(row.link)}" target="_blank" rel="noreferrer">${nameHtml}</a>` : nameHtml}</strong>${row.isWorkshop ? ' <span class="badge-workshop">Workshop</span>' : ''}${subtitleHtml}`;
+      tr.querySelector('.conf').innerHTML = `<strong>${row.link ? `<a href="${escapeHtml(row.link)}" target="_blank" rel="noreferrer">${nameHtml}</a>` : nameHtml}</strong>${subtitleHtml}`;
       tr.querySelector('.category').innerHTML = `<span class="badge">${CATEGORY_LABELS[row.category] || row.category}</span>`;
       tr.querySelector('.deadline').innerHTML = deadlineCellHtml(row);
       tr.querySelector('.days').innerHTML = daysCellHtml(row);
@@ -522,17 +510,70 @@ function render(rows) {
   }
 }
 
+function overrideKey(record) {
+  const target = matchTarget(record);
+  const year = Number(record.year);
+  return target && year ? `${target.key}|${year}` : null;
+}
+
+// manual.yml entries are OVERRIDES of the generated records (the updater in
+// deadlines/scripts/update_deadlines.py propagates them into
+// data/conferences/<year>/*.yml on every run); they are not records of their
+// own. Rendering them as records turned every partial override - e.g. a
+// place/date-only correction with no deadline - into a phantom "TBA" row next
+// to the real one. Overlay each entry onto the generated records for the same
+// venue and year instead: a field set in manual.yml wins, an explicit null
+// deletes the field. An entry with no generated counterpart still renders on
+// its own, so a fresh manual addition shows up before the daily run lands.
+function applyManualOverrides(loaded) {
+  const manual = new Map();
+  for (const { source, records } of loaded) {
+    if (source.name !== 'manual') continue;
+    for (const record of records) {
+      const key = overrideKey(record);
+      if (key) manual.set(key, record);
+    }
+  }
+  const applied = new Set();
+  const out = [];
+  for (const { source, records } of loaded) {
+    if (source.name === 'manual') continue;
+    out.push({
+      source,
+      records: records.map(record => {
+        const key = overrideKey(record);
+        const override = key ? manual.get(key) : null;
+        if (!override) return record;
+        applied.add(key);
+        const merged = { ...record };
+        for (const [field, value] of Object.entries(override)) {
+          if (field === 'title' || field === 'year') continue;
+          if (value === null) delete merged[field];
+          else merged[field] = value;
+        }
+        return merged;
+      })
+    });
+  }
+  for (const { source, records } of loaded) {
+    if (source.name !== 'manual') continue;
+    out.push({ source, records: records.filter(record => !applied.has(overrideKey(record))) });
+  }
+  return out;
+}
+
 async function main() {
   document.getElementById('todayLabel').textContent = DateTime.now().setZone(CONFIG.displayZone).toFormat('yyyy-LL-dd HH:mm');
   const status = document.getElementById('statusBox');
   const results = await Promise.allSettled(CONFIG.sourceUrls.map(async source => ({ source, records: await fetchSource(source) })));
   const failures = results.filter(r => r.status === 'rejected').map(r => r.reason.message);
-  const loaded = results.filter(r => r.status === 'fulfilled').flatMap(r => r.value.records.flatMap(rec => expandRecord(rec, r.value.source)));
+  const loaded = applyManualOverrides(results.filter(r => r.status === 'fulfilled').map(r => r.value))
+    .flatMap(({ source, records }) => records.flatMap(rec => expandRecord(rec, source)));
   const rows = dedupe(loaded);
   buildFilters(rows);
   status.textContent = failures.length ? `Failed sources: ${failures.join(', ')}` : '';
 
-  for (const id of ['searchInput', 'yearFilter', 'categoryFilter', 'futureOnly', 'includeWorkshops']) {
+  for (const id of ['searchInput', 'yearFilter', 'categoryFilter', 'futureOnly']) {
     document.getElementById(id).addEventListener('input', () => render(rows));
   }
   render(rows);

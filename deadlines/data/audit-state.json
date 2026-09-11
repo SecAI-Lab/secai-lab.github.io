@@ -49,23 +49,6 @@
       "fields": [],
       "whole_record": true
     },
-    "AISec\t2026": {
-      "last_seen": "2026-09-07",
-      "reason": "citation",
-      "fields": [
-        "date",
-        "deadline",
-        "place",
-        "timezone"
-      ],
-      "whole_record": false
-    },
-    "AISec\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
     "ASE\t2026": {
       "last_seen": "2026-09-01",
       "reason": "citation",
@@ -107,12 +90,6 @@
       "fields": [],
       "whole_record": true
     },
-    "BAR\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
     "CCS\t2027": {
       "last_seen": "2026-09-07",
       "reason": "citation",
@@ -121,37 +98,7 @@
       ],
       "whole_record": false
     },
-    "CCS-LAMPS\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
     "CODASPY\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
-    "DFRWS APAC\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
-    "DFRWS EU\t2026": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
-    "DFRWS EU\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
-    "DFRWS US\t2027": {
       "last_seen": "2026-09-07",
       "reason": "unverifiable",
       "fields": [],
@@ -215,23 +162,6 @@
         "deadline"
       ],
       "whole_record": false
-    },
-    "EuroSec\t2026": {
-      "last_seen": "2026-09-07",
-      "reason": "citation",
-      "fields": [
-        "date",
-        "deadline",
-        "place",
-        "timezone"
-      ],
-      "whole_record": false
-    },
-    "EuroSec\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
     },
     "EuroSys\t2026": {
       "last_seen": "2026-09-07",
@@ -424,18 +354,6 @@
         "timezone"
       ],
       "whole_record": false
-    },
-    "WOOT\t2026": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
-    },
-    "WOOT\t2027": {
-      "last_seen": "2026-09-07",
-      "reason": "unverifiable",
-      "fields": [],
-      "whole_record": true
     },
     "WWW\t2026": {
       "last_seen": "2026-09-07",

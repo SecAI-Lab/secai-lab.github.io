@@ -50,7 +50,7 @@ Operational notes:
   45 otherwise quiet days. This supplies actual repository activity before the
   documented inactivity threshold instead of assuming an API enable call resets
   it.
-- Venues mapped `manual-only` in `conferences.yml` (DFRWS US, BAR, CCS-LAMPS)
+- Venues mapped `manual-only` in `conferences.yml` (none at present)
   have no reliable machine-readable upstream. The weekly official-source audit
   handles their coverage gaps when it can bind the new edition to an older
   stored official host or an `official_hosts` trust anchor in

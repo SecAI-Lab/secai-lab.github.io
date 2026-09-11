@@ -31,21 +31,6 @@
   start: 2026-06-22
   end: 2026-06-25
 
-- title: "EuroSec"
-  year: 2026
-  id: eurosec26
-  full_name: "European Workshop on Systems Security"
-  type: workshop
-  tier: "N/A"
-  link: https://eurosec-workshop.github.io/
-  deadline: "2026-02-10 23:59"
-  timezone: AoE
-  place: "Edinburgh, UK"
-  date: "April 27, 2026"
-  start: 2026-04-27
-  end: 2026-04-27
-  note: "Deadline extended from February 3 to February 10, 2026."
-
 - title: "EuroSys"
   year: 2026
   id: eurosys26

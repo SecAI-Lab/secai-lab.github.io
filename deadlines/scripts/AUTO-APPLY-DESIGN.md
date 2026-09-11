@@ -92,7 +92,7 @@ Check (1) alone accepts "February 10" when the page means the *notification*
 date. Check (2) alone accepts a paraphrase wrapped around a hallucinated number.
 Together they bind the **label** to the **value** at one place on the page.
 
-Calibrated against real entries already in `manual.yml`:
+Calibrated against real entries then in `manual.yml`:
 
 | case | coverage | outcome |
 |---|---|---|
@@ -204,7 +204,7 @@ Redirects are followed but the **final** URL is re-classified, so an official
 host redirecting onto a tracker fails.
 
 **UNREACHABLE is never VERIFIED.** TLS errors are not bypassed; bot-blocked sites
-(`usenix.org`, `dfrws.org`) are reported, not worked around.
+(`usenix.org`, for example) are reported, not worked around.
 
 ---
 
@@ -653,13 +653,14 @@ causes exactly one data-file change and then stabilises.
 ## 10. What this does not automate
 
 Every venue that looked unautomatable turned out to be a defect in our own
-checking tools rather than a property of the world. All 36 tracked venues were
-probed on 2026-08-18; the three that failed were:
+checking tools rather than a property of the world. All 36 venues tracked at the
+time (the eight workshop venues have since been dropped) were probed on
+2026-08-18; the three that failed were:
 
 | venue | looked like | actually was |
 |---|---|---|
 | **SAC 2027** | no CFP; own links 404 | its landing page carries `IMPORTANT DATES … October 2, 2026 (EST) Submission of regular papers`, grounding both the stored deadline and the `UTC-5` override. Missed because the classifier's label vocabulary required the word "deadline", which that page never uses |
-| **DFRWS EU** | bot-blocked (403) | `robots.txt` is `User-agent: * / Disallow:` — everything permitted. The 403 was rate limiting provoked by retrying immediately with a different user agent. One honest UA and spaced retries returns 200 with the deadline table |
+| **DFRWS EU** (no longer tracked) | bot-blocked (403) | `robots.txt` is `User-agent: * / Disallow:` — everything permitted. The 403 was rate limiting provoked by retrying immediately with a different user agent. One honest UA and spaced retries returns 200 with the deadline table |
 | **EuroS&P 2027** | tracker-only, official site is "Coming soon" | already corroborated at T2: `ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html` states `Submission deadline: 11/20/26`, matching the stored value — and the record's own `note` already said so |
 
 That is the honest headline for these three: **the residue was our bugs, not the

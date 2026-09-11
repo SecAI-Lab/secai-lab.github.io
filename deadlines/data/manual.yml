@@ -45,16 +45,6 @@
   start: 2026-04-27
   end: 2026-04-30
 
-# sec-deadlines still lists the pre-extension deadline.
-# Verified 2026-07-30 against https://eurosec-workshop.github.io/ :
-# "Paper Submission Deadline: [struck: February 3, 2026 (AoE)] February 10,
-# 2026 (AoE)".
-- title: "EuroSec"
-  year: 2026
-  deadline: "2026-02-10 23:59"
-  timezone: AoE
-  note: "Deadline extended from February 3 to February 10, 2026."
-
 # The official NDSS 2026 CFP lists ONLY paper deadlines and no abstract
 # deadline at all; both upstream trackers carry a fabricated "one week
 # before" abstract date. Explicit null deletes the field.
@@ -88,17 +78,6 @@
     - "2026-01-15 23:59"
     - "2026-02-15 23:59"
   timezone: UTC-12
-
-# AISec is a one-day workshop on November 15, 2026; upstream carries the
-# full CCS 2026 week as its date span.
-# Verified 2026-08-07 against https://aisec.cc
-- title: "AISec"
-  year: 2026
-  deadline: "2026-07-24 23:59"
-  timezone: AoE
-  date: "November 15, 2026"
-  start: 2026-11-15
-  end: 2026-11-15
 
 # Venue is the Wang Center at Stony Brook University, not New York City.
 # Verified 2026-08-07 against https://acns2026.github.io/index.html
@@ -164,18 +143,6 @@
   year: 2027
   place: "Lisbon, Portugal"
   note: "Deadline and host city per the IEEE S&P TC CFP calendar (verified 2026-08-18 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); the conference's own site is still a placeholder."
-
-# The official deadlines table now gives both full-paper dates; the record
-# still says TBA. No timezone is proposed: the page's only AoE marking is on
-# the DFDS doctoral symposium row, not the full-paper rows.
-# Verified 2026-08-19 against https://dfrws.org/conferences/dfrws-eu-2027/
-# "September 18, 2026 Full papers: Submission of Abstract & Title via
-# EasyChair"
-- title: "DFRWS EU"
-  year: 2027
-  abstract_deadline: "2026-09-18 23:59"
-  deadline: "2026-09-25 23:59"
-  note: "Full-paper deadlines per the official DFRWS EU 2027 page. That page states no timezone for these two rows - its only AoE marking belongs to the DFDS doctoral symposium track - so the timezone is deliberately left unset."
 
 # The frontend FABRICATES an abstract deadline at paper-minus-7-days from any
 # note matching /abstract.*1 week before/i (deadline-tracker.js:131), rendering

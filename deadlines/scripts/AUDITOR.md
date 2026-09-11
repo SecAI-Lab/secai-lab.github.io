@@ -183,17 +183,18 @@ read-only auditor job. Do not save fetched pages or edit any file other than
 `audit-proposals.json`.
 
 `usenix.org` serves automated requests fine — go to the USENIX page itself for
-OSDI / NSDI / USENIX Security / WOOT rather than a second-hand calendar.
+OSDI / NSDI / USENIX Security rather than a second-hand calendar.
 (Measured 2026-08-18: the OSDI 27 and USENIX Security 27 CFPs both return 200.)
 
 **ATC is no longer a USENIX conference.** It moved to ACM SIGOPS after 2025;
 `conferences.yml` records this and the stored link is `sigops.org`. Do not look
 for ATC on usenix.org.
 
-`dfrws.org` does not block either. Its robots.txt is `User-agent: * /
-Disallow:` — everything permitted — and the DFRWS EU 2027 page returns 200 with
-the deadline text (measured 2026-08-18). An earlier 403 turned out to be rate
-limiting caused by retrying immediately with a different user agent.
+A 403 is not always a block. One host probed on 2026-08-18 (`dfrws.org`, for a
+venue tracked at the time) had a robots.txt of `User-agent: * / Disallow:` —
+everything permitted — and its edition page returned 200 with the deadline
+text; the earlier 403 turned out to be rate limiting caused by retrying
+immediately with a different user agent.
 
 So before concluding that a host blocks you: **space your retries** (wait
 5-30s, not instantly) and keep the same honest user agent. Do not retry with a
@@ -207,7 +208,7 @@ If a host genuinely refuses, try the IEEE S&P TC CFP calendar
 (ieee-security.org/Calendar/cfps/) or an official mirror; if nothing official is
 reachable, the record is UNVERIFIABLE — say so rather than citing a tracker.
 
-Four things a probe of all 36 venues found, worth knowing before you give up on
+Four things a probe of every tracked venue found, worth knowing before you give up on
 a page:
 
 - **The stored `link` is often a homepage, not the CFP.** EuroSys, OSDI, S&P,
@@ -224,9 +225,9 @@ a page:
   milestone labels is a CFP whatever it calls itself.
 - **Dates sometimes come before their labels.** DSN 2027's table is
   `December 2, 2026 | Paper Submission Deadline`; NDSS writes
-  `Wed, 23 April 2025: Paper submission deadline`; EuroSec writes
-  `Paper Submission Deadline: Feb 10`. Read the row or list item as a unit and
-  work out which way round it is — reading DSN as label-then-date gives a
+  `Wed, 23 April 2025: Paper submission deadline`; other pages put the label
+  first (`Paper Submission Deadline: Feb 10`). Read the row or list item as a
+  unit and work out which way round it is — reading DSN as label-then-date gives a
   deadline 55 days late.
 
 ## Worked example
@@ -288,8 +289,8 @@ The quote uses the page's words — `10 December 2026`, not the reformatted
   "watchlist_size": 30,
   "proposals": [ ... ],
   "unverifiable": [
-    {"title": "DFRWS US", "year": 2027, "cause": "no_official_page",
-     "attempted": ["https://dfrws.org/conferences/"],
+    {"title": "CODASPY", "year": 2027, "cause": "no_official_page",
+     "attempted": ["https://www.codaspy.org/"],
      "note": "No 2027 edition page exists yet."}
   ]
 }

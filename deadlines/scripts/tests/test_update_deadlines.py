@@ -273,7 +273,7 @@ class ManualBigMoveWarning(unittest.TestCase):
 
     def test_small_move_is_quiet(self):
         U.warn_manual_big_move({"deadline": "2026-02-03 23:59"},
-                               {"deadline": "2026-02-10 23:59"}, "EuroSec", 2026)
+                               {"deadline": "2026-02-10 23:59"}, "ESORICS", 2026)
         self.assertEqual(U.warnings, [])
 
     def test_no_existing_record_is_quiet(self):
@@ -350,17 +350,17 @@ class WatchlistPriority(unittest.TestCase):
         self.assertEqual(reasons, [])
 
     def test_manual_only_rendered_row_remains_in_weekly_audit_records(self):
-        rec = {"title": "BAR", "year": 2027, "deadline": "2026-12-01 23:59"}
-        manual = {("BAR", 2027): rec}
-        rows = U.audit_record_rows({}, [], manual, [("BAR", 2027)])
-        self.assertEqual(rows, [("BAR", 2027, rec)])
+        rec = {"title": "CODASPY", "year": 2027, "deadline": "2026-12-01 23:59"}
+        manual = {("CODASPY", 2027): rec}
+        rows = U.audit_record_rows({}, [], manual, [("CODASPY", 2027)])
+        self.assertEqual(rows, [("CODASPY", 2027, rec)])
 
     def test_deferred_gap_survives_january_rollover_without_a_record(self):
-        deferred = {("BAR", 2027)}
+        deferred = {("CODASPY", 2027)}
         missing = U.missing_deferred_audits(
-            deferred, {("BAR", 2028)}, {"BAR": {"category": "security"}}
+            deferred, {("CODASPY", 2028)}, {"CODASPY": {"category": "security"}}
         )
-        self.assertEqual(missing, [("BAR", 2027)])
+        self.assertEqual(missing, [("CODASPY", 2027)])
 
 
 class ExplicitTimezone(unittest.TestCase):
