@@ -98,10 +98,12 @@
   type: conference
   tier: "N/A"
   link: https://eurosp2027.ieee-security.org/
-  deadline: "2026-11-20 23:59"
+  deadline: "2026-12-02 23:59"
   timezone: AoE
   place: "Lisbon, Portugal"
-  date: "TBA"
+  date: "July 5 - 9, 2027"
+  start: 2027-07-05
+  end: 2027-07-09
   note: "Deadline and host city per the IEEE S&P TC CFP calendar (verified 2026-08-18 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); the conference's own site is still a placeholder."
 
 - title: "IFIP-Sec"
