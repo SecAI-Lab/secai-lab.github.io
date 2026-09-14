@@ -16,7 +16,7 @@
   conference: ICML (AI4Good Workshop)
   date: 2026.09.11
   pub_year: 2026
-  discussion: "(Discussion) Later :) ()"
+  discussion: "(Discussion) This paper proposes a new multi-bit watermarking scheme for LLM-generated text based on binomial encoding. The biggest difference from previous watermarking methods is that it tries to embed information about every message bit into each generated token, while many previous methods assign only a part of the message or a single bit to each token. By spreading the information across all tokens, the method can improve message recovery and robustness against text modifications. Another interesting point is that the paper considers text quality directly during generation. Instead of only measuring text quality after generating the watermarked text, the method tries to control the distortion caused by watermarking while selecting tokens. This is important because a watermarking method should achieve high message accuracy without significantly degrading the quality of the generated text. Overall, I think the main strength of this paper is that it considers capacity, robustness, and text quality together rather than improving only one of them. (Gahyun)"
 
 - title: "Attack via Overfitting: 10-shot Benign Fine-tuning to Jailbreak LLMs"
   link: "https://openreview.net/pdf?id=utvu4PJ0Ct"
