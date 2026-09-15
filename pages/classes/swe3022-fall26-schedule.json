@@ -1,0 +1,237 @@
+{
+  "course": {
+    "code": "SWE3022",
+    "title": "컴퓨터네트워크개론 (Introduction to Computer Networks)",
+    "subtitle": "Computer Networks",
+    "semester": "2026 Fall Semester",
+    "period": "2026.09.01 — 2026.12.18"
+  },
+  "schedule": [
+    {
+      "week": 1,
+      "date": "2026.08.31–2026.09.04",
+      "type": "intro",
+      "topic": "Course introduction; syllabus & logistics",
+      "reading": [],
+      "flip": "",
+      "note": "No recorded lecture this week"
+    },
+    {
+      "week": 2,
+      "date": "2026.09.07–2026.09.11",
+      "type": "lecture",
+      "topic": "Internet overview; network edge & core; delay/loss/throughput; protocol layering",
+      "reading": [
+        "Kurose & Ross Ch. 1 / Tanenbaum Ch. 1"
+      ],
+      "flip": "",
+      "note": "",
+      "noteLinks": [
+        {
+          "label": "The weird history of the Internet",
+          "url": "https://www.youtube.com/watch?v=7B0ydm64cV8"
+        },
+        {
+          "label": "Delay, Loss, and Throughput",
+          "url": "https://www.youtube.com/watch?v=21rH9rOHsmc"
+        }
+      ]
+    },
+    {
+      "week": 3,
+      "date": "2026.09.14–2026.09.18",
+      "type": "lecture",
+      "topic": "App architectures; Sockets; HTTP (persistent/caching); HTTP/2 & HTTP/3",
+      "reading": [
+        "Kurose & Ross §2.1–2.2 / Tanenbaum Ch. 7"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab: HTTP traffic"
+      ],
+      "note": ""
+    },
+    {
+      "week": 4,
+      "date": "2026.09.21–2026.09.25",
+      "type": "lecture",
+      "topic": "E-mail (SMTP/IMAP); DNS; P2P (BitTorrent); video streaming & CDNs; socket programming",
+      "reading": [
+        "Kurose & Ross §2.3–2.7 / Tanenbaum Ch. 7"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 5,
+      "date": "2026.09.28–2026.10.02",
+      "type": "lecture",
+      "topic": "Multiplexing/demultiplexing; UDP; reliable data transfer (rdt 1.0 → 3.0)",
+      "reading": [
+        "Kurose & Ross §3.1–3.4.1 / Tanenbaum Ch. 6"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 6,
+      "date": "2026.10.05–2026.10.09",
+      "type": "lecture",
+      "topic": "Pipelining; Go-Back-N & Selective Repeat; TCP segment structure; Flow control",
+      "reading": [
+        "Kurose & Ross §3.4.2–3.5.5 / Tanenbaum Ch. 6"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 7,
+      "date": "2026.10.12–2026.10.16",
+      "type": "lecture",
+      "topic": "Network-layer overview; Router architecture; Forwarding; Queueing",
+      "reading": [
+        "Kurose & Ross Ch. 4 / Tanenbaum Ch. 5"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 8,
+      "date": "2026.10.19–2026.10.23",
+      "type": "midterm",
+      "topic": "Midterm Exam",
+      "reading": [
+        "Covers Weeks 2–7: Internet overview, application layer, transport layer"
+      ],
+      "flip": "",
+      "note": ""
+    },
+    {
+      "week": 9,
+      "date": "2026.10.26–2026.10.30",
+      "type": "lecture",
+      "topic": "IP datagram; IP addressing; CIDR; DHCP; NAT; IPv6; generalized forwarding",
+      "reading": [
+        "Kurose & Ross Ch. 4 / Tanenbaum Ch. 5"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 10,
+      "date": "2026.11.02–2026.11.06",
+      "type": "lecture",
+      "topic": "Routing algorithms; OSPF; BGP; SDN control plane; ICMP; network management",
+      "reading": [
+        "Kurose & Ross Ch. 5 / Tanenbaum Ch. 5"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 11,
+      "date": "2026.11.09–2026.11.13",
+      "type": "lecture",
+      "topic": "Error detection (parity, CRC); multiple access (ALOHA, CSMA/CD); Ethernet",
+      "reading": [
+        "Kurose & Ross §6.1–6.3, 6.4.2 / Tanenbaum Ch. 3–4"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 12,
+      "date": "2026.11.16–2026.11.20",
+      "type": "lecture",
+      "topic": "MAC addressing & ARP; Ethernet switches; VLANs; datacenter networks",
+      "reading": [
+        "Kurose & Ross §6.4.1, 6.4.3–6.7 / Tanenbaum Ch. 3–4"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 13,
+      "date": "2026.11.23–2026.11.27",
+      "type": "lecture",
+      "topic": "Cryptography (symmetric-key, RSA); authentication protocols; digital signatures",
+      "reading": [
+        "Kurose & Ross §8.1–8.4 / Tanenbaum Ch. 8"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 14,
+      "date": "2026.11.30–2026.12.04",
+      "type": "lecture",
+      "topic": "Secure e-mail; TLS; IPsec & VPNs; firewalls & intrusion detection",
+      "reading": [
+        "Kurose & Ross §8.5–8.9 / Tanenbaum Ch. 8"
+      ],
+      "flip": [
+        "Quiz",
+        "Presentations",
+        "Hands-on Lab"
+      ],
+      "note": ""
+    },
+    {
+      "week": 15,
+      "date": "2026.12.07–2026.12.11",
+      "type": "noclass",
+      "topic": "No class",
+      "reading": [],
+      "flip": "",
+      "note": "Instructor travel"
+    },
+    {
+      "week": 16,
+      "date": "2026.12.14–2026.12.18",
+      "type": "final",
+      "topic": "Final Exam",
+      "reading": [
+        "Covers Weeks 9–14: network layer, link layer, network security"
+      ],
+      "flip": "",
+      "note": ""
+    }
+  ]
+}

@@ -48,6 +48,10 @@ li:has(details) {
 }
 </style>
 
+#### Fall 2026
+- [SWE3022] <a href="/pages/classes/swe3022-fall26.html">Computer Networks (Undergraudate)</a>
+- [ESW5042] Software Security Paper Writing and Presentation (소프트웨어 보안연구 논문작성; Graduate)
+
 #### Spring 2026
 
 - [DASF004] <a href="/pages/classes/dasf004-spring26-c.html">Basis and Practice in Programming (프로그래밍기초와실습; C Programming)</a>
