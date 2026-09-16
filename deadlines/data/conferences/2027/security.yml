@@ -64,10 +64,14 @@
   full_name: "ACM Conference on Data and Application Security and Privacy"
   type: conference
   tier: "N/A"
-  link: https://www.codaspy.org/
-  place: "TBA"
-  date: "TBA"
-  note: "Official CODASPY 2027 conference page/CFP not publicly available yet."
+  link: https://www.codaspy.org/2027/
+  abstract_deadline: "2026-11-16 23:59"
+  deadline: "2026-11-23 23:59"
+  timezone: AoE
+  place: "Fort Collins, Colorado, USA"
+  date: "June 14-17, 2027"
+  start: 2027-06-14
+  end: 2027-06-17
 
 - title: "DIMVA"
   year: 2027
