@@ -16,7 +16,7 @@
   conference: S&P
   date: 2026.09.18
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) EnCP provides certified robustness against learning-phase data poisoning while considering both coverage and prediction-set size in conformal prediction. The ensemble-based design is sensible because it limits the influence of poisoned samples instead of relying only on empirical robustness. However, the method appears strongly tied to its poisoning assumptions and attack budget, and robustness may weaken as the attacker controls more portion of the data. The ensemble construction can also introduce nontrivial computational overhead and potential accuracy–robustness trade-offs. Moreover, the evaluation mainly focuses on classification tasks, so it remains unclear how well EnCP generalizes to more complex conformal prediction settings such as retrieval or open-ended LLM outputs. Overall, EnCP is a meaningful step toward certified poisoning-robust conformal prediction, but its practicality depends on certificate tightness, scalability, and robustness beyond the evaluated settings. (Minseok)"
   
 - title: "Can LLMs Deobfuscate Binary Code? (BinDeObfBench)"
   link: "https://arxiv.org/pdf/2604.08083"
