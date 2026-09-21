@@ -6,7 +6,7 @@
   conference: arXiv
   date: 2026.09.11
   pub_year: 2026
-  discussion: "(Discussion) Later :) ()"
+  discussion: "(Discussion) This paper introduces BINDEOBFBENCH, a benchmark for evaluating how well LLMs can deobfuscate binary code across different obfuscation techniques, architectures, and optimization settings. The main finding is that reasoning ability and task-specific training matter more than model size alone. Reasoning models were more robust when the obfuscation became complex, while task-specific fine-tuning was especially effective for recovering program semantics. I found this comparison interesting because the two approaches seem to have different strengths rather than one simply being better than the other. The paper also shows that LLMs can improve code readability and simplify complicated control flow, which suggests that they could be useful in practical reverse engineering tasks. At the same time, the evaluation of semantic preservation is still indirect, so it does not fully guarantee that the recovered code is behaviorally identical to the original. Overall, I think the paper gives a clear and useful picture of both the potential and the current limitations of LLM-based binary deobfuscation. (Byungsoo)"
 
 - title: "Every Bit, Everywhere, All at Once: A Binomial Multibit LLM Watermark"
   link: "https://openreview.net/pdf?id=RCpUVMZDHx"
