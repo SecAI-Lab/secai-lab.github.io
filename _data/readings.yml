@@ -1,3 +1,13 @@
+- title: "Ensemble Conformal Predictor (EnCP): A New Conformal Predictor with Robustness Guarantees Against Data Poisoning Attacks"
+  link: "https://ieeexplore.ieee.org/document/11573410"
+  ppt_link: "https://drive.google.com/file/d/1vCBZM44G--1M2J2sSphl9lvPf7G9qFxg/view?usp=drive_link"
+  code_link: "https://github.com/Yuxin104/EnCP"
+  presenter: Yiyue
+  conference: S&P
+  date: 2026.09.18
+  pub_year: 2026
+  discussion: "(Discussion)"
+  
 - title: "Can LLMs Deobfuscate Binary Code? (BinDeObfBench)"
   link: "https://arxiv.org/pdf/2604.08083"
   ppt_link: "https://drive.google.com/file/d/1nUb3BWN9fx9SjzbglS9LjV_rB1JcED3l/view?usp=sharing"
