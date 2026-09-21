@@ -1,3 +1,13 @@
+- title: "SCRIBE: Practical Static Binary Patching via Binary-Aware Recompilation of Decompiled Code"
+  link: "https://arxiv.org/abs/2605.02121"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_Scribe_EUROSP26.pdf"
+  code_link: "https://github.com/purseclab/scribe"
+  presenter: Jiyong
+  conference: Euro S&P
+  date: 2026.09.18
+  pub_year: 2026
+  discussion: "(Discussion)"
+
 - title: "Ensemble Conformal Predictor (EnCP): A New Conformal Predictor with Robustness Guarantees Against Data Poisoning Attacks"
   link: "https://ieeexplore.ieee.org/document/11573410"
   ppt_link: "https://drive.google.com/file/d/1vCBZM44G--1M2J2sSphl9lvPf7G9qFxg/view?usp=drive_link"
