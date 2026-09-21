@@ -6,7 +6,7 @@
   conference: Euro S&P
   date: 2026.09.18
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) SCRIBE presents a static binary patching framework that modifies decompiled code, recompiles the patched function in a binary-aware manner, and integrates it back into the original binary. Rather than relying solely on the accuracy of decompilation, SCRIBE preserves binary-level constraints such as stack layout and symbol addresses during recompilation. This design makes source-like patching practical even when the recovered code is not a perfect reconstruction of the original source. However, its effectiveness still depends on decompiler quality and compiler optimizations, and some errors related to complex type recovery and ABI behavior remain difficult to handle. Thus, SCRIBE improves the practicality of decompilation-based binary patching, while broader validation across architectures and more complex binaries remains important. (Yujeong)"
 
 - title: "Ensemble Conformal Predictor (EnCP): A New Conformal Predictor with Robustness Guarantees Against Data Poisoning Attacks"
   link: "https://ieeexplore.ieee.org/document/11573410"
