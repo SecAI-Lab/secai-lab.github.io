@@ -191,7 +191,9 @@
   type: conference
   tier: "N/A"
   link: https://securecomm.eai-conferences.org/2027/
-  deadline: "2027-03-01 23:59"
+  deadline:
+    - "2027-02-01 23:59"
+    - "2027-04-15 23:59"
   timezone: AoE
   place: "Hefei, China"
   date: "October 15-18, 2027"
