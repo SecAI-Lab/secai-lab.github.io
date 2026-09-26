@@ -24,7 +24,7 @@
   full_name: "Annual Computer Security Applications Conference"
   type: conference
   tier: T3
-  link: https://www.acsac.org/
+  link: https://www.acsac.org/2024/
   deadline: "2024-05-28 23:59"
   timezone: UTC-12
   place: "Waikiki, Hawaii, USA"
@@ -103,6 +103,7 @@
   type: conference
   tier: "N/A"
   link: https://eurosp2024.ieee-security.org/
+  abstract_deadline: "2023-10-30 23:59"
   deadline: "2023-11-02 23:59"
   timezone: UTC-12
   place: "Vienna, Austria"

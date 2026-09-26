@@ -24,7 +24,7 @@
   full_name: "Annual Computer Security Applications Conference"
   type: conference
   tier: T3
-  link: https://www.acsac.org/
+  link: https://www.acsac.org/2025/
   deadline: "2025-05-30 23:59"
   timezone: UTC-12
   place: "Honolulu, Hawaii, USA"
@@ -222,7 +222,7 @@
   tier: "N/A"
   link: https://securecomm.eai-conferences.org/2025/
   deadline: "2025-03-01 23:59"
-  timezone: UTC-12
+  timezone: UTC+0
   place: "Xiangtan, China"
   date: "July 4-6, 2025"
   start: 2025-07-04
