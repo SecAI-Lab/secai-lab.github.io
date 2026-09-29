@@ -102,6 +102,9 @@
   type: conference
   tier: "N/A"
   link: https://esorics2024.org/
+  abstract_deadline:
+    - "2024-01-08 23:59"
+    - "2024-04-19 23:59"
   deadline:
     - "2024-01-08 23:59"
     - "2024-04-19 23:59"
