@@ -9,9 +9,7 @@
   type: conference
   tier: "N/A"
   link: https://wp.nyu.edu/acns2024/
-  deadline:
-    - "2023-07-20 23:59"
-    - "2023-10-20 23:59"
+  deadline: "2023-07-20 23:59"
   timezone: AoE
   place: "Abu Dhabi, UAE"
   date: "March 5-8, 2024"
@@ -88,11 +86,11 @@
   link: https://dimva.org/dimva2024/
   deadline:
     - "2023-12-19 23:59"
-    - "2024-02-14 23:59"
+    - "2024-02-21 23:59"
   timezone: AoE
   place: "Lausanne, Switzerland"
-  date: "July 17-19, 2024"
-  start: 2024-07-17
+  date: "July 18-19, 2024"
+  start: 2024-07-18
   end: 2024-07-19
 
 - title: "ESORICS"
