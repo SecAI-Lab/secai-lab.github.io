@@ -44,8 +44,8 @@
     - "2025-12-12 23:59"
   timezone: UTC-12
   place: "Bangalore, India"
-  date: "June 1-5, 2026"
-  start: 2026-06-01
+  date: "June 3-5, 2026"
+  start: 2026-06-03
   end: 2026-06-05
 
 - title: "CCS"
@@ -74,7 +74,7 @@
   full_name: "ACM Conference on Data and Application Security and Privacy"
   type: conference
   tier: "N/A"
-  link: http://www.codaspy.org/2026/
+  link: https://www.codaspy.org/2026/
   abstract_deadline: "2025-12-26 23:59"
   deadline: "2026-01-02 23:59"
   timezone: UTC-12
@@ -127,9 +127,9 @@
   deadline: "2025-11-20 23:59"
   timezone: UTC-12
   place: "Lisbon, Portugal"
-  date: "July 6 - 10, 2026"
-  start: 2026-07-06
-  end: 2026-07-10
+  date: "July 7-9, 2026"
+  start: 2026-07-07
+  end: 2026-07-09
   note: "Abstract registration is mandatory and precedes the paper deadline."
 
 - title: "IFIP-Sec"
@@ -158,9 +158,9 @@
     - "2025-08-06 23:59"
   timezone: UTC-12
   place: "San Diego, California"
-  date: "February 23 - February 27, 2026"
-  start: 2026-02-23
-  end: 2026-02-27
+  date: "February 24-26, 2026"
+  start: 2026-02-24
+  end: 2026-02-26
 
 - title: "RAID"
   year: 2026
@@ -191,9 +191,9 @@
     - "2025-11-13 23:59"
   timezone: UTC-12
   place: "SAN FRANCISCO, CA"
-  date: "MAY 18-21, 2026"
+  date: "May 18-20, 2026"
   start: 2026-05-18
-  end: 2026-05-21
+  end: 2026-05-20
   note: "Abstract registration is mandatory and precedes each paper deadline. Workshops held on May 21, 2026."
 
 - title: "SAC"

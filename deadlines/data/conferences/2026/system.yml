@@ -12,8 +12,8 @@
   deadline: "2026-06-11 11:59"
   timezone: UTC+0
   place: "Hyatt Hotel, Shatin, Hong Kong, China"
-  date: "November 15-18, 2026"
-  start: 2026-11-15
+  date: "November 16-18, 2026"
+  start: 2026-11-16
   end: 2026-11-18
   note: "No separate abstract registration period; abstracts, extended abstracts, and full papers are submitted together."
 
@@ -27,8 +27,8 @@
   deadline: "2025-12-04 23:59"
   timezone: UTC-12
   place: "Charlotte, USA"
-  date: "June 22-25, 2026"
-  start: 2026-06-22
+  date: "June 23-25, 2026"
+  start: 2026-06-23
   end: 2026-06-25
 
 - title: "EuroSys"
@@ -95,6 +95,6 @@
   deadline: "2026-04-01 23:59"
   timezone: UTC-12
   place: "Clarion Congress Hotel Prague, Prague, Czechia"
-  date: "September 29 - October 2, 2026"
-  start: 2026-09-29
+  date: "September 30 - October 2, 2026"
+  start: 2026-09-30
   end: 2026-10-02

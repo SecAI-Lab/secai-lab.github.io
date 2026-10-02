@@ -11,9 +11,9 @@
   deadline: "2025-05-30 23:59"
   timezone: UTC-12
   place: "Seoul, South Korea"
-  date: "November 16 - November 20, 2025"
-  start: 2025-11-16
-  end: 2025-11-20
+  date: "November 17-19, 2025"
+  start: 2025-11-17
+  end: 2025-11-19
   note: "No separate abstract deadline listed in the official important dates."
 
 - title: "FSE"
@@ -27,9 +27,9 @@
   deadline: "2024-09-12 23:59"
   timezone: UTC-12
   place: "Trondheim, Norway"
-  date: "June 23-27, 2025"
+  date: "June 23-25, 2025"
   start: 2025-06-23
-  end: 2025-06-27
+  end: 2025-06-25
   note: "Paper registration required title, abstract, author list, and metadata."
 
 - title: "ICSE"
@@ -47,9 +47,9 @@
     - "2024-08-02 23:59"
   timezone: UTC-12
   place: "Ottawa, Ontario, Canada"
-  date: "April 26- May 04, 2025"
-  start: 2025-04-26
-  end: 2025-05-04
+  date: "April 30-May 2, 2025"
+  start: 2025-04-30
+  end: 2025-05-02
   note: "Dual submission cycles; abstract deadlines are mandatory."
 
 - title: "ISSTA"
@@ -61,7 +61,7 @@
   deadline: "2024-10-31 23:59"
   timezone: UTC-12
   place: "Trondheim, Norway"
-  date: "June 25-28, 2025"
+  date: "June 25-27, 2025"
   start: 2025-06-25
-  end: 2025-06-28
+  end: 2025-06-27
   note: "No separate abstract deadline listed in the official important dates."

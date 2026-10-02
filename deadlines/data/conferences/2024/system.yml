@@ -27,8 +27,8 @@
   deadline: "2023-12-06 23:59"
   timezone: AoE
   place: "Brisbane, Australia"
-  date: "June 24-27, 2024"
-  start: 2024-06-24
+  date: "June 25-27, 2024"
+  start: 2024-06-25
   end: 2024-06-27
 
 - title: "EuroSys"
@@ -43,9 +43,9 @@
     - "2023-10-19 23:59"
   timezone: UTC+0
   place: "Athens, Greece"
-  date: "April 23-26, 2024"
+  date: "April 23-25, 2024"
   start: 2024-04-23
-  end: 2024-04-26
+  end: 2024-04-25
 
 - title: "NSDI"
   year: 2024

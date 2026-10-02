@@ -8,13 +8,13 @@
   full_name: "IEEE/ACM International Conference on Automated Software Engineering"
   type: conference
   link: https://conf.researchr.org/home/ase-2024
-  abstract_deadline: "2024-05-31 23:59"
+  abstract_deadline: "2024-06-03 23:59"
   deadline: "2024-06-07 23:59"
   timezone: AoE
   place: "Sacramento, California, United States"
-  date: "October 27- November 01, 2024"
-  start: 2024-10-27
-  end: 2024-11-01
+  date: "October 29-31, 2024"
+  start: 2024-10-29
+  end: 2024-10-31
 
 - title: "FSE"
   year: 2024
@@ -26,9 +26,9 @@
   abstract_deadline: "2023-09-21 23:59"
   deadline: "2023-09-28 23:59"
   timezone: AoE
-  place: "Porto de Galinas, Brazil"
-  date: "July 15-19, 2024"
-  start: 2024-07-15
+  place: "Porto de Galinhas, Brazil"
+  date: "July 17-19, 2024"
+  start: 2024-07-17
   end: 2024-07-19
 
 - title: "ICSE"
@@ -43,9 +43,9 @@
     - "2023-08-01 23:59"
   timezone: AoE
   place: "Lisbon, Portugal"
-  date: "April 12-21, 2024"
-  start: 2024-04-12
-  end: 2024-04-21
+  date: "April 17-19, 2024"
+  start: 2024-04-17
+  end: 2024-04-19
 
 - title: "ISSTA"
   year: 2024
@@ -58,6 +58,6 @@
     - "2024-04-12 23:59"
   timezone: AoE
   place: "Vienna, Austria"
-  date: "September 16-20, 2024"
-  start: 2024-09-16
+  date: "September 18-20, 2024"
+  start: 2024-09-18
   end: 2024-09-20

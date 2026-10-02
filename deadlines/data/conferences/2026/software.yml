@@ -11,9 +11,9 @@
   deadline: "2026-03-26 23:59"
   timezone: UTC-12
   place: "Munich, Germany"
-  date: "October 12 - 16, 2026"
-  start: 2026-10-12
-  end: 2026-10-16
+  date: "October 13-15, 2026"
+  start: 2026-10-13
+  end: 2026-10-15
 
 - title: "FSE"
   year: 2026
@@ -45,9 +45,9 @@
     - "2025-07-18 23:59"
   timezone: AoE
   place: "Rio De Janeiro, Brazil"
-  date: "April 12-18, 2026"
-  start: 2026-04-12
-  end: 2026-04-18
+  date: "April 15-17, 2026"
+  start: 2026-04-15
+  end: 2026-04-17
 
 - title: "ISSTA"
   year: 2026

@@ -13,9 +13,9 @@
   deadline: "2024-08-15 23:59"
   timezone: UTC-12
   place: "PHILADELPHIA, PENNSYLVANIA, USA"
-  date: "February 25 - March 4, 2025"
-  start: 2025-02-25
-  end: 2025-03-04
+  date: "February 27-March 2, 2025"
+  start: 2025-02-27
+  end: 2025-03-02
 
 - title: "IJCAI"
   year: 2025
@@ -28,8 +28,8 @@
   deadline: "2025-01-23 23:59"
   timezone: UTC-12
   place: "Montreal, Canada."
-  date: "August 16-22, 2025"
-  start: 2025-08-16
+  date: "August 19-22, 2025"
+  start: 2025-08-19
   end: 2025-08-22
 
 - title: "WWW"
@@ -43,6 +43,6 @@
   deadline: "2024-10-14 23:59"
   timezone: UTC-12
   place: "Sydney, Australia"
-  date: "April 28 - May 2, 2025"
-  start: 2025-04-28
+  date: "April 30 - May 2, 2025"
+  start: 2025-04-30
   end: 2025-05-02

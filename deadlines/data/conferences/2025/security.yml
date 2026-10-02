@@ -28,8 +28,8 @@
   deadline: "2025-05-30 23:59"
   timezone: UTC-12
   place: "Honolulu, Hawaii, USA"
-  date: "December 8-12, 2025"
-  start: 2025-12-08
+  date: "December 10-12, 2025"
+  start: 2025-12-10
   end: 2025-12-12
   note: "Paper title/abstract registration was not required ahead of paper submission."
 
@@ -45,8 +45,8 @@
     - "2025-01-20 23:59"
   timezone: UTC-12
   place: "Hanoi, Vietnam"
-  date: "August 25-29, 2025"
-  start: 2025-08-25
+  date: "August 27-29, 2025"
+  start: 2025-08-27
   end: 2025-08-29
 
 - title: "CCS"
@@ -64,9 +64,9 @@
     - "2025-04-14 23:59"
   timezone: UTC-12
   place: "TICC, Taipei, Taiwan"
-  date: "October 13-17, 2025"
-  start: 2025-10-13
-  end: 2025-10-17
+  date: "October 14-16, 2025"
+  start: 2025-10-14
+  end: 2025-10-16
   note: "Mandatory abstract deadlines."
 
 - title: "CODASPY"
@@ -116,9 +116,9 @@
     - "2025-04-29 23:59"
   timezone: UTC-12
   place: "Toulouse, France"
-  date: "September 22-26, 2025"
+  date: "September 22-24, 2025"
   start: 2025-09-22
-  end: 2025-09-26
+  end: 2025-09-24
   note: "Title/abstract and full-paper deadlines were on the same dates."
 
 - title: "EuroS&P"
@@ -132,9 +132,9 @@
   deadline: "2024-10-24 23:59"
   timezone: UTC-12
   place: "Venice, Italy"
-  date: "June 30-July 4, 2025"
-  start: 2025-06-30
-  end: 2025-07-04
+  date: "July 1-3, 2025"
+  start: 2025-07-01
+  end: 2025-07-03
   note: "Registration deadline included topics and abstracts."
 
 - title: "IFIP-Sec"
@@ -163,9 +163,9 @@
     - "2024-07-10 23:59"
   timezone: UTC-12
   place: "San Diego, California"
-  date: "February 23 - February 28, 2025"
-  start: 2025-02-23
-  end: 2025-02-28
+  date: "February 25-27, 2025"
+  start: 2025-02-25
+  end: 2025-02-27
 
 - title: "RAID"
   year: 2025
@@ -177,8 +177,8 @@
   deadline: "2025-04-24 23:59"
   timezone: UTC-12
   place: "Gold Coast, Australia"
-  date: "October 19-22, 2025"
-  start: 2025-10-19
+  date: "October 20-22, 2025"
+  start: 2025-10-20
   end: 2025-10-22
   note: "Submission deadline was extended from 2025-04-17 to 2025-04-24."
 
@@ -194,9 +194,9 @@
     - "2024-11-14 23:59"
   timezone: UTC-12
   place: "SAN FRANCISCO, CA"
-  date: "MAY 12-15, 2025"
+  date: "May 12-14, 2025"
   start: 2025-05-12
-  end: 2025-05-15
+  end: 2025-05-14
   note: "No separate abstract deadline listed in the official CFP."
 
 - title: "SAC"
