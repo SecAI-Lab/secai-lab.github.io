@@ -45,11 +45,15 @@
   start: 2026-04-27
   end: 2026-04-30
 
-# The official NDSS 2026 CFP lists ONLY paper deadlines and no abstract
-# deadline at all; both upstream trackers carry a fabricated "one week
-# before" abstract date. Explicit null deletes the field.
-# Verified 2026-08-07 against
+# The stored conference date (February 24-26, 2026) does not match the
+# official call-for-papers page, which states 23 to 27 February 2026; the
+# page also abbreviates the venue state as 'CA' rather than 'California'.
+# Summer/fall cycle deadlines and timezone are confirmed correct.
+# Verified 2026-10-05 against
 # https://www.ndss-symposium.org/ndss2026/submissions/call-for-papers/
+# "The NDSS Symposium 2026 and co-located workshops will take place in San
+# Diego, CA, from 23 to 27 February 2026."
+# Earlier: Verified 2026-08-07 against
 - title: "NDSS"
   year: 2026
   abstract_deadline: null
@@ -57,6 +61,8 @@
     - "2025-04-23 23:59"
     - "2025-08-06 23:59"
   timezone: UTC-12
+  place: "San Diego, CA"
+  date: "February 23-27, 2026"
 
 # sec-deadlines carries DIMVA 2026's pre-extension dates. The official page
 # shows both cycles extended: "10 December 2025 (extended!)" and
@@ -160,12 +166,24 @@
     - "2025-11-06 23:59"
   note: "Abstract registration is mandatory and precedes each paper deadline. Workshops held on May 21, 2026."
 
-# Verified 2026-08-19 against https://eurosp2026.ieee-security.org/cfp.html :
-# "Abstract Registration All papers must complete a mandatory registration by
-# 13 November 2025."
+# Official site states the conference runs 6-10 July 2026 (five days,
+# Mon-Fri), not July 7-9 as currently stored. Deadline, timezone and place
+# are confirmed correct on the same page. The page calls the earlier
+# milestone 'Registration deadline' and nowhere uses the word 'abstract' for
+# the research-paper track (the only 'abstract' occurrence on the page is
+# the unrelated poster-track deadline), so abstract_deadline cannot be
+# grounded under this gate's label rule and is left unconfirmed rather than
+# guessed.
+# Verified 2026-10-05 against https://eurosp2026.ieee-security.org/
+# "Conference Lisbon, Portugal 6 - 10 July 2026 (Monday to Friday)"
+# Earlier: Verified 2026-08-19 against https://eurosp2026.ieee-security.org/cfp.html :
 - title: "EuroS&P"
   year: 2026
   abstract_deadline: "2025-11-13 23:59"
+  deadline: "2025-11-20 23:59"
+  timezone: UTC-12
+  place: "Lisbon, Portugal"
+  date: "July 6-10, 2026"
   note: "Abstract registration is mandatory and precedes the paper deadline."
 
 # Verified 2026-08-19 against https://www.codaspy.org/2026/ :
@@ -218,3 +236,37 @@
   year: 2026
   place: "Oakland, California, United States"
   date: "October 4-9, 2026"
+
+# The official site now states concrete conference dates for SEC 2027
+# (previously TBA); the CFP/deadline itself is still not announced.
+# Verified 2026-10-05 against https://ifipsec.org/
+# "We invite you to join us for the 42nd IFIP SEC Conference 2027 in
+# Linköping, Sweden - 14-16 June 2027."
+- title: "IFIP-Sec"
+  year: 2027
+  place: "Linköping, Sweden"
+  date: "June 14-16, 2027"
+
+# The stored conference date (October 13-15, 2026) does not match the
+# official dates page, which states October 12-16, 2026. Deadline and place
+# are confirmed correct.
+# Verified 2026-10-05 against https://conf.researchr.org/dates/ase-2026
+# "ASE 2026 Mon 12 - Fri 16 October 2026 Munich, Germany"
+- title: "ASE"
+  year: 2026
+  deadline: "2026-03-26 23:59"
+  timezone: AoE
+  place: "Munich, Germany"
+  date: "October 12-16, 2026"
+  note: "Timezone not stated by the official page; AoE assumed, which is the CFP convention."
+
+# The official conference site states the event runs September 29 - October
+# 2, 2026; the stored record's date starts one day later (September 30).
+# Verified 2026-10-05 against
+# https://sigops.org/s/conferences/sosp/2026/index.html
+# "September 29th - October 2nd, 2026 · Clarion Congress Hotel Prague,
+# Prague, Czechia"
+- title: "SOSP"
+  year: 2026
+  place: "Clarion Congress Hotel Prague, Prague, Czechia"
+  date: "September 29 - October 2, 2026"

@@ -9,11 +9,12 @@
   type: conference
   link: https://conf.researchr.org/home/ase-2026
   deadline: "2026-03-26 23:59"
-  timezone: UTC-12
+  timezone: AoE
   place: "Munich, Germany"
-  date: "October 13-15, 2026"
-  start: 2026-10-13
-  end: 2026-10-15
+  date: "October 12-16, 2026"
+  start: 2026-10-12
+  end: 2026-10-16
+  note: "Timezone not stated by the official page; AoE assumed, which is the CFP convention."
 
 - title: "FSE"
   year: 2026

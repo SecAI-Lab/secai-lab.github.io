@@ -119,7 +119,9 @@
   tier: "N/A"
   link: https://ifipsec.org/
   place: "Linköping, Sweden"
-  date: "TBA"
+  date: "June 14-16, 2027"
+  start: 2027-06-14
+  end: 2027-06-16
   note: "Official IFIP SEC page indicates the next SEC after 2026 will be in Linköping, Sweden; dates and deadlines are not yet available."
 
 - title: "NDSS"

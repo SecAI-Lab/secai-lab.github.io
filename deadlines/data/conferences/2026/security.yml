@@ -127,9 +127,9 @@
   deadline: "2025-11-20 23:59"
   timezone: UTC-12
   place: "Lisbon, Portugal"
-  date: "July 7-9, 2026"
-  start: 2026-07-07
-  end: 2026-07-09
+  date: "July 6-10, 2026"
+  start: 2026-07-06
+  end: 2026-07-10
   note: "Abstract registration is mandatory and precedes the paper deadline."
 
 - title: "IFIP-Sec"
@@ -157,10 +157,10 @@
     - "2025-04-23 23:59"
     - "2025-08-06 23:59"
   timezone: UTC-12
-  place: "San Diego, California"
-  date: "February 24-26, 2026"
-  start: 2026-02-24
-  end: 2026-02-26
+  place: "San Diego, CA"
+  date: "February 23-27, 2026"
+  start: 2026-02-23
+  end: 2026-02-27
 
 - title: "RAID"
   year: 2026
