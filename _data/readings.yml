@@ -17,7 +17,7 @@
   conference: ASIA CCS
   date: 2026.10.02
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents a contextual binary diffing framework for rediscovering the same function across different software versions. Instead of relying only on the similarity of individual functions, the approach recursively incorporates caller and callee relationships from the surrounding call graph and can be combined with existing BCSA methods such as SAFE and Asm2Vec. This contextual information improves matching accuracy, especially when function bodies change or when multiple functions appear similar, with improvements of up to 38% over the evaluated BCSA techniques. However, the approach assumes that updates generally preserve enough call-graph context, and its effectiveness depends on Ghidra’s ability to recover functions and call relationships. Inlined functions, indirect calls, heavily modified binaries, and obfuscated binaries remain challenging. Thus, the work shows that cross-version function matching can benefit significantly from contextual information, while handling larger structural changes and incomplete call graphs remains an important direction for future work. (Yiyue)"
 
 - title: "SCRIBE: Practical Static Binary Patching via Binary-Aware Recompilation of Decompiled Code"
   link: "https://arxiv.org/abs/2605.02121"
