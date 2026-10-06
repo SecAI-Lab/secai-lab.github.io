@@ -126,13 +126,14 @@ sitemap: true
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     margin: 2rem 0;
+    align-items: start;
 }
 
 .featured-publication {
     background: white;
     border: 1px solid #e1e8ed;
     padding: 1.5rem;
-    padding-bottom: 4rem;
+    padding-bottom: 3.3rem;
     border-radius: 4px;
     height: 500px;
     position: relative;
@@ -142,13 +143,13 @@ sitemap: true
 .featured-publication.expanded {
     height: auto;
     min-height: 500px;
-    padding-bottom: 4rem;
+    padding-bottom: 3.3rem;
 }
 
 .publication-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
+    margin-bottom: 0.4rem;
 }
 
 .publication-image {
@@ -183,14 +184,14 @@ sitemap: true
 .publication-venue {
     color: #3498db;
     font-weight: 500;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.3rem;
     font-size: 0.9rem;
 }
 
 .abstract-container {
     flex: 1;
     overflow: hidden;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
     display: flex;
     flex-direction: column;
 }
@@ -247,27 +248,41 @@ sitemap: true
     gap: 0.8rem;
     flex-wrap: wrap;
     position: absolute;
-    bottom: 1.5rem;
+    bottom: 1rem;
     left: 1.5rem;
     right: 1.5rem;
 }
 
 .publication-link {
-    padding: 0.3rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.32rem 0.8rem;
     background: #f8f9fa;
-    color: #495057;
+    color: #34495e;
     text-decoration: none;
+    border: 1px solid #d6dce1;
     border-radius: 3px;
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.8rem;
-    border: 1px solid #dee2e6;
-    transition: all 0.2s ease;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: all 0.18s ease;
+}
+
+.publication-link:focus,
+.publication-link:active,
+.publication-link:visited {
+    color: #34495e;
+    text-decoration: none;
+    outline: none;
 }
 
 .publication-link:hover {
-    background: #f8f9fa;
-    color: black;
-    border-color: #dee2e6;
+    background: #2c3e50;
+    color: #fff;
+    border-color: #2c3e50;
     text-decoration: none;
+    box-shadow: 0 2px 6px rgba(44, 62, 80, 0.18);
 }
 
 
@@ -280,7 +295,7 @@ sitemap: true
     font-size: 0.75rem;
     font-weight: 500;
     margin-left: 0.5rem;
-    vertical-align: middle;
+    vertical-align: baseline;
 }
 
 .featured-publication .award-badge {
@@ -304,15 +319,16 @@ sitemap: true
     border-bottom: none;
 }
 
-.title-with-buttons {
+.entry-row {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-bottom: 0.0rem;
+    align-items: baseline;
+    gap: 0.3rem 0.75rem;
+    margin-bottom: 0.1rem;
 }
 
 .entry-title {
+    flex: 0 1 auto;
+    min-width: 0;
     font-size: 1.05rem;
     font-weight: 600;
     color: #2c3e50;
@@ -339,31 +355,41 @@ sitemap: true
     gap: 0.5rem;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
 }
 
 .entry-link {
-    padding: 0.25rem 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.7rem;
     background: #f8f9fa;
-    color: #495057;
+    color: #34495e;
     text-decoration: none;
+    border: 1px solid #d6dce1;
     border-radius: 3px;
-    font-size: 0.8rem;
-    border: 1px solid #dee2e6;
-    transition: all 0.2s ease;
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transform: translateY(-6px);
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.entry-link:focus,
+.entry-link:active,
+.entry-link:visited {
+    color: #34495e;
+    text-decoration: none;
+    outline: none;
 }
 
 .entry-link:hover {
-    background: #f8f9fa;
-    color: black;
+    background: #2c3e50;
+    color: #fff;
+    border-color: #2c3e50;
     text-decoration: none;
-}
-
-/* Code / Slides / Web buttons inherit the unified button style
-   from .entry-link / .publication-link — no size overrides here */
-
-/* Icon spacing */
-.github-link i, .slides-link i, .web-link i {
-    margin-right: 0.3rem;
+    box-shadow: 0 2px 6px rgba(44, 62, 80, 0.18);
 }
 
 
@@ -445,11 +471,11 @@ sitemap: true
     .featured-publication {
         height: auto;
         min-height: 450px;
-        padding-bottom: 4rem;
+        padding-bottom: 3.3rem;
     }
     
     .abstract-container {
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.5rem;
     }
 }
 
@@ -490,14 +516,15 @@ sitemap: true
         /* min-width: 60px; */
     }
 
-    .title-with-buttons {
+    .entry-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.8rem;
+        gap: 0.5rem;
     }
 
     .entry-links {
-        margin-top: 0.5rem;
+        justify-content: flex-start;
+        margin-top: 0.3rem;
     }
 
     .entry-link {
@@ -587,7 +614,7 @@ sitemap: true
 
         {% for publi in site.data.publist-international %}
         <div class="publication-entry" data-type="international">
-            <div class="title-with-buttons">
+            <div class="entry-row">
                 <h4 class="entry-title">{{ publi.title }}</h4>
                 <div class="entry-links">
                     {% if publi.link.url and publi.link.url != "To appear" %}
@@ -618,7 +645,7 @@ sitemap: true
 
       {% for publi in site.data.publist-domestic %}
       <div class="publication-entry" data-type="domestic">
-        <div class="title-with-buttons">
+        <div class="entry-row">
             <h4 class="entry-title">{{ publi.title }}</h4>
             <div class="entry-links">
                 {% if publi.link.url %}
@@ -646,7 +673,7 @@ sitemap: true
 
       {% for publi in site.data.publist-workshops %}
       <div class="publication-entry" data-type="workshop">
-        <div class="title-with-buttons">
+        <div class="entry-row">
             <h4 class="entry-title">{{ publi.title }}</h4>
             <div class="entry-links">
                 {% if publi.link.url %}
@@ -843,9 +870,9 @@ function calculateLineClamp(desc) {
     // Desktop/tablet logic
     const containerHeight = 500; // Fixed height
     const headerHeight = container.querySelector('.publication-header').offsetHeight;
-    const reservedBottomSpace = 64; // 4rem bottom padding for button area
+    const reservedBottomSpace = 56; // bottom padding for button area
     const topPadding = 24; // 1.5rem top padding
-    const containerMargin = 16; // 1rem margin for abstract container
+    const containerMargin = 5; // margin for abstract container
     
     const availableSpace = containerHeight - headerHeight - reservedBottomSpace - topPadding - containerMargin;
     
