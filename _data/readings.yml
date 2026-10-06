@@ -1,3 +1,24 @@
+- title: "Oxidizer: Toward Concise and High-fidelity Rust Decompilation"
+  link: "https://ieeexplore.ieee.org/abstract/document/11573448"
+  ppt_link: ""
+  code_link: ""
+  presenter: Hyoungjun
+  conference: S&P
+  date: 2026.10.02
+  pub_year: 2026
+  discussion: "(Discussion) "
+
+  
+- title: "Enhancing Binary Code Similarity Analysis for Software Updates: A Contextual Diffing Framework"
+  link: "https://dl.acm.org/doi/10.1145/3708821.3736207"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/mijin_CG2_261002.pdf"
+  code_link: ""
+  presenter: Mijin
+  conference: ASIA CCS
+  date: 2026.10.02
+  pub_year: 2025
+  discussion: "(Discussion) "
+
 - title: "SCRIBE: Practical Static Binary Patching via Binary-Aware Recompilation of Decompiled Code"
   link: "https://arxiv.org/abs/2605.02121"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_Scribe_EUROSP26.pdf"
