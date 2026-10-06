@@ -186,6 +186,7 @@ sitemap: true
     font-weight: 500;
     margin-bottom: 0.3rem;
     font-size: 0.9rem;
+    cursor: pointer;
 }
 
 .abstract-container {
@@ -350,6 +351,7 @@ sitemap: true
     font-weight: 500;
     margin-bottom: 0.6rem;
     font-size: 0.95rem;
+    cursor: pointer;
 }
 
 .entry-links {
