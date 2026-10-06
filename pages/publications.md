@@ -292,8 +292,10 @@ sitemap: true
     color: white;
     padding: 0.25rem 0.5rem;
     border-radius: 3px;
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem;
     font-weight: 500;
+    letter-spacing: 0.02em;
     margin-left: 0.5rem;
     vertical-align: baseline;
 }
@@ -322,7 +324,7 @@ sitemap: true
 .entry-row {
     display: flex;
     align-items: baseline;
-    gap: 0.3rem 0.75rem;
+    gap: 0.3rem 0.6rem;
     margin-bottom: 0.1rem;
 }
 
@@ -429,7 +431,7 @@ sitemap: true
     
     .abstract-container {
         height: auto !important;
-        margin-bottom: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
         flex: 1;
         min-height: 0;
     }
@@ -444,9 +446,9 @@ sitemap: true
         bottom: auto !important;
         left: auto !important;
         right: auto !important;
-        margin-top: auto;
+        margin-top: 0;
         margin-bottom: 0;
-        padding-top: 1rem;
+        padding-top: 0.6rem;
         border-top: 1px solid #f0f0f0;
     }
     
@@ -507,7 +509,7 @@ sitemap: true
         gap: 0.5rem;
         justify-content: flex-start;
         flex-wrap: wrap;
-        padding-top: 1rem;
+        padding-top: 0.6rem;
         border-top: none;
     }
     
