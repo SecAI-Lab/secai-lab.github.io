@@ -6,7 +6,7 @@
   conference: S&P
   date: 2026.10.02
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Decompilers play an important role in reverse engineering. However, popular decompilers are primarily designed for binaries compiled from C/C++, which poses challenges when analyzing programs written in Rust. At first glance, applying C/C++ decompilers to Rust binaries appears to be a reasonable approach. Modern C decompilers are highly sophisticated, and Rust's backend compiler uses LLVM compiler toolchain (used by Clang compiler). Nevertheless, this paper demonstrates that this approach suffers from various fidelity issues. In particular, existing C/C++ decompilers often fail to reconstruct high-level abstractions specific to Rust. The authors therefore highlight the need for a specialized Rust decompiler. To address this gap, they present Oxidizer, a Rust-specific decompiler that outperforms existing baselines on most conciseness and fidelity metrics. Oxidizer is specifically designed to recover a range of high-level Rust abstractions that are difficult for conventional C/C++ decompilers to reconstruct. (Jiyong)"
 
   
 - title: "Enhancing Binary Code Similarity Analysis for Software Updates: A Contextual Diffing Framework"
