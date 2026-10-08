@@ -65,6 +65,25 @@ including, but not limited to, executable binary analysis
 (e.g., benign software and malware), code semantics, 
 advanced attack detection and prevention, digital forensics, etc.
 
+<div id="galleryCarousel" class="carousel slide" data-ride="carousel" style="max-width: 540px; margin: 1.5em auto;">
+  <div class="carousel-inner" style="border-radius: 8px;">
+    {% assign main_images = site.static_files | where_exp: "f", "f.path contains '/images/main/'" | sort: "name" %}
+    {% for image in main_images %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <img class="d-block w-100" src="{{ image.path | relative_url }}" alt="SecAI Lab" style="height: 400px; object-fit: cover;">
+    </div>
+    {% endfor %}
+  </div>
+  <a class="carousel-control-prev" href="#galleryCarousel" role="button" data-slide="prev" style="justify-content: flex-start; width: auto; padding-left: 10px;">
+    <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#galleryCarousel" role="button" data-slide="next" style="justify-content: flex-end; width: auto; padding-right: 10px;">
+    <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0 0 2px rgba(0,0,0,0.6));"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
 <!-- <div class="card-sliders ">
 	<div class="container">
 		<div class="row align-items-center">
@@ -95,8 +114,6 @@ advanced attack detection and prevention, digital forensics, etc.
 	</div> 
 -->
 
-
-<br> <br>
 Since 2021, the lab has been steadily growing with <a href="publications/">active research underway</a>.
 <!-- We are looking for a passionate Ph.D. student (Preferred fields: binary analysis with AI, privacy) to join our lab!-->
 
