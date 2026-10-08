@@ -1,12 +1,32 @@
+- title: "Prompt Injection Attack to Tool Selection in LLM Agents"
+  link: "https://www.ndss-symposium.org/ndss-paper/prompt-injection-attack-to-tool-selection-in-llm-agents/"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/Woomin_26_10_08_ToolHijacker.pdf"
+  code_link: ""
+  presenter: Woomin
+  conference: NDSS
+  date: 2026.10.08
+  pub_year: 2026
+  discussion: ""
+
+- title: "IS IT THINKING OR CHEATING? DETECTING IMPLICIT REWARD HACKING BY MEASURING REASONING EFFORT"
+  link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/9d0ee47d732bd526c4a03d4aecc39bc1-Paper-Conference.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/byungsoo_1008_trace.pdf"
+  code_link: ""
+  presenter: Byungsoo
+  conference: ICLR
+  date: 2026.10.08
+  pub_year: 2026
+  discussion: ""
+
 - title: "Oxidizer: Toward Concise and High-fidelity Rust Decompilation"
   link: "https://ieeexplore.ieee.org/abstract/document/11573448"
-  ppt_link: ""
-  code_link: ""
+  ppt_link: "https://drive.google.com/file/d/12aUQxEh2Xsp8dxcRwWr7jYzyTFykD5u-/view?usp=drive_link"
+  code_link: "https://github.com/sefcom/oxidizer.git"
   presenter: Hyoungjun
   conference: S&P
   date: 2026.10.02
   pub_year: 2026
-  discussion: "(Discussion) "
+  discussion: "(Discussion) Decompilers play an important role in reverse engineering. However, popular decompilers are primarily designed for binaries compiled from C/C++, which poses challenges when analyzing programs written in Rust. At first glance, applying C/C++ decompilers to Rust binaries appears to be a reasonable approach. Modern C decompilers are highly sophisticated, and Rust's backend compiler uses LLVM compiler toolchain (used by Clang compiler). Nevertheless, this paper demonstrates that this approach suffers from various fidelity issues. In particular, existing C/C++ decompilers often fail to reconstruct high-level abstractions specific to Rust. The authors therefore highlight the need for a specialized Rust decompiler. To address this gap, they present Oxidizer, a Rust-specific decompiler that outperforms existing baselines on most conciseness and fidelity metrics. Oxidizer is specifically designed to recover a range of high-level Rust abstractions that are difficult for conventional C/C++ decompilers to reconstruct. (Jiyong)"
 
   
 - title: "Enhancing Binary Code Similarity Analysis for Software Updates: A Contextual Diffing Framework"
@@ -17,7 +37,7 @@
   conference: ASIA CCS
   date: 2026.10.02
   pub_year: 2025
-  discussion: "(Discussion) "
+  discussion: "(Discussion) This paper presents a contextual binary diffing framework for rediscovering the same function across different software versions. Instead of relying only on the similarity of individual functions, the approach recursively incorporates caller and callee relationships from the surrounding call graph and can be combined with existing BCSA methods such as SAFE and Asm2Vec. This contextual information improves matching accuracy, especially when function bodies change or when multiple functions appear similar, with improvements of up to 38% over the evaluated BCSA techniques. However, the approach assumes that updates generally preserve enough call-graph context, and its effectiveness depends on Ghidra’s ability to recover functions and call relationships. Inlined functions, indirect calls, heavily modified binaries, and obfuscated binaries remain challenging. Thus, the work shows that cross-version function matching can benefit significantly from contextual information, while handling larger structural changes and incomplete call graphs remains an important direction for future work. (Yiyue)"
 
 - title: "SCRIBE: Practical Static Binary Patching via Binary-Aware Recompilation of Decompiled Code"
   link: "https://arxiv.org/abs/2605.02121"
