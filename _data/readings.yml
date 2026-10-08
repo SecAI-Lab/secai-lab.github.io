@@ -1,3 +1,13 @@
+- title: "IS IT THINKING OR CHEATING? DETECTING IMPLICIT REWARD HACKING BY MEASURING REASONING EFFORT"
+  link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/9d0ee47d732bd526c4a03d4aecc39bc1-Paper-Conference.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/byungsoo_1008_trace.pdf"
+  code_link: ""
+  presenter: Byungsoo
+  conference: ICLR
+  date: 2026.10.08
+  pub_year: 2026
+  discussion: ""
+
 - title: "Oxidizer: Toward Concise and High-fidelity Rust Decompilation"
   link: "https://ieeexplore.ieee.org/abstract/document/11573448"
   ppt_link: "https://drive.google.com/file/d/12aUQxEh2Xsp8dxcRwWr7jYzyTFykD5u-/view?usp=drive_link"
