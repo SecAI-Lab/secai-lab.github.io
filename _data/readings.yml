@@ -1,3 +1,13 @@
+- title: "Prompt Injection Attack to Tool Selection in LLM Agents"
+  link: "https://www.ndss-symposium.org/ndss-paper/prompt-injection-attack-to-tool-selection-in-llm-agents/"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/Woomin_26_10_08_ToolHijacker.pdf"
+  code_link: ""
+  presenter: Woomin
+  conference: NDSS
+  date: 2026.10.08
+  pub_year: 2026
+  discussion: ""
+
 - title: "IS IT THINKING OR CHEATING? DETECTING IMPLICIT REWARD HACKING BY MEASURING REASONING EFFORT"
   link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/9d0ee47d732bd526c4a03d4aecc39bc1-Paper-Conference.pdf"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/byungsoo_1008_trace.pdf"
