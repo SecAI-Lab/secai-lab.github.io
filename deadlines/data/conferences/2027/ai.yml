@@ -23,10 +23,14 @@
   full_name: "International Joint Conference on Artificial Intelligence"
   type: conference
   tier: T2
-  link: https://www.ijcai.org/future_conferences
-  deadline: "TBA"
-  place: "TBA"
-  date: "TBA"
+  link: https://2027.ijcai.org/
+  abstract_deadline: "2027-01-04 23:59"
+  deadline: "2027-01-11 23:59"
+  timezone: AoE
+  place: "Kyoto, Japan"
+  date: "August 7-13, 2027"
+  start: 2027-08-07
+  end: 2027-08-13
   note: "Official IJCAI page says IJCAI-2027 host will be announced at the preceding conference; CFP, dates, place, and deadlines are not announced yet."
 
 - title: "WWW"
