@@ -218,7 +218,7 @@ body {
 	&.has-cover {
 		color: $white;
 		text-shadow: 0 2px 1px rgba(0, 0, 0, 0.67) !important;
-		background-position: 50% 50%;
+		background-position: 50% 60%;
 		background-size: cover;
 
 		.title {
@@ -236,10 +236,10 @@ body {
 
 		&.has-cover {
 			background-color: rgba(0, 0, 0, 0.2);
-			padding: 5.5em 1em !important;
+			padding: 3.5em 1em !important;
 
 			@include media($tablet) {
-				padding: 5.5em 1em !important;
+				padding: 3.5em 1em !important;
 			}
 		}
 	}
