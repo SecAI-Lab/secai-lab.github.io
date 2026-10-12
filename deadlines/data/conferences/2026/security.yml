@@ -220,7 +220,7 @@
   deadline:
     - "2026-01-15 23:59"
     - "2026-02-15 23:59"
-  timezone: UTC-12
+  timezone: UTC+0
   place: "Lancaster, United Kingdom"
   date: "July 21-24, 2026"
   start: 2026-07-21

@@ -75,15 +75,22 @@
     - "2026-02-18 23:59"
   timezone: AoE
 
-# Upstream lists only cycle 1; the official page has a second submission
-# cycle on 15 February 2026.
-# Verified 2026-08-07 against https://securecomm.eai-conferences.org/2026/
+# The stored timezone (UTC-12) does not match the official CFP page, which
+# states submissions close at 23:59 UTC, not AoE. Deadline calendar dates
+# and place/date are unchanged but quoted together per the effective-instant
+# grouping rule.
+# Verified 2026-10-12 against
+# https://securecomm.eai-conferences.org/2026/call-for-papers/
+# "Full Paper Submission deadline: 15th January 2026"
+# Earlier: Verified 2026-08-07 against https://securecomm.eai-conferences.org/2026/
 - title: "SecureComm"
   year: 2026
   deadline:
     - "2026-01-15 23:59"
     - "2026-02-15 23:59"
-  timezone: UTC-12
+  timezone: UTC+0
+  place: "Lancaster, United Kingdom"
+  date: "July 21-24, 2026"
 
 # Venue is the Wang Center at Stony Brook University, not New York City.
 # Verified 2026-08-07 against https://acns2026.github.io/index.html
@@ -138,16 +145,21 @@
   timezone: America/New_York
   note: "The CFP writes (EST); October 2 falls in US Eastern Daylight Time, so the zone is stored as America/New_York to resolve the offset correctly."
 
-# The TC CFP calendar now names the host city, so the record's TBA place and its
-# "city is not confirmed yet" note are both out of date. The conference's own
-# site is still a placeholder, so the calendar remains the only source.
-# Verified 2026-08-18 against
-# https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html :
-# "IEEE European Symposium on Security and Privacy Lisbon, Portugal Submission
-# deadline: 11/20/26"
+# The IEEE S&P TC CFP calendar (the record's own cited source) lists Madrid,
+# Spain as the EuroS&P 2027 host city, not Lisbon, Portugal as currently
+# stored. The conference's own site (eurosp2027.ieee-security.org/cfp.html)
+# independently confirms the dates and submission deadlines already stored
+# are still correct, so only the place field is corrected here;
+# date/deadline/abstract_deadline/timezone are left untouched since they are
+# not being changed.
+# Verified 2026-10-12 against
+# https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html
+# "EuroS&P 2027 https://eurosp2027.ieee-security.org/ Madrid, Spain 7/05/27
+# - 7/09/27"
+# Earlier: Verified 2026-08-18 against
 - title: "EuroS&P"
   year: 2027
-  place: "Lisbon, Portugal"
+  place: "Madrid, Spain"
   note: "Deadline and host city per the IEEE S&P TC CFP calendar (verified 2026-08-18 against https://www.ieee-security.org/Calendar/cfps/cfp-EuroSnP2027.html); the conference's own site is still a placeholder."
 
 # The frontend FABRICATES an abstract deadline at paper-minus-7-days from any
@@ -270,3 +282,38 @@
   year: 2026
   place: "Clarion Congress Hotel Prague, Prague, Czechia"
   date: "September 29 - October 2, 2026"
+
+# Official conference page states the AAAI-26 conference dates as January 20
+# to January 27, 2026; the stored record had January 22-25, 2026, which does
+# not match the official span. Deadline, abstract deadline, timezone and
+# venue were re-verified as already correct.
+# Verified 2026-10-12 against https://aaai.org/conference/aaai/aaai-26/
+# "the Fortieth AAAI Conference on Artificial Intelligence (AAAI-26), which
+# will be held in Singapore EXPO from January 20 to January 27, 2026."
+- title: "AAAI"
+  year: 2026
+  place: "Singapore EXPO"
+  date: "January 20-27, 2026"
+
+# The official DSN 2026 homepage states the conference runs June 22-25,
+# 2026, one day earlier than the stored "June 23-25, 2026".
+# Verified 2026-10-12 against https://dsn2026.github.io
+# "Charlotte, USA, June 22-25, 2026"
+- title: "DSN"
+  year: 2026
+  date: "June 22-25, 2026"
+
+# The stored 'date' value (April 15-17, 2026) is the core technical-program
+# span, which the official homepage states only in a sentence with no year
+# in the same clause ('Core conference days will be Wednesday April 15 to
+# Friday April 17'), so it cannot be grounded under this run's quote rules.
+# The homepage's own dated banner gives the full conference span instead
+# ('Sun 12 - Sat 18 April 2026'), consistent with how sibling records (FSE
+# 2026/2027, ICSE 2027) all cite their official banner span for `date`.
+# Correcting to that span. Venue is reconfirmed from the same banner.
+# Verified 2026-10-12 against https://conf.researchr.org/home/icse-2026
+# "Sun 12 - Sat 18 April 2026 Rio de Janeiro, Brazil"
+- title: "ICSE"
+  year: 2026
+  place: "Rio De Janeiro, Brazil"
+  date: "April 12-18, 2026"

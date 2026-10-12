@@ -27,8 +27,8 @@
   deadline: "2025-12-04 23:59"
   timezone: UTC-12
   place: "Charlotte, USA"
-  date: "June 23-25, 2026"
-  start: 2026-06-23
+  date: "June 22-25, 2026"
+  start: 2026-06-22
   end: 2026-06-25
 
 - title: "EuroSys"

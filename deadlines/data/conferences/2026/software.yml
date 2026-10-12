@@ -46,9 +46,9 @@
     - "2025-07-18 23:59"
   timezone: AoE
   place: "Rio De Janeiro, Brazil"
-  date: "April 15-17, 2026"
-  start: 2026-04-15
-  end: 2026-04-17
+  date: "April 12-18, 2026"
+  start: 2026-04-12
+  end: 2026-04-18
 
 - title: "ISSTA"
   year: 2026
