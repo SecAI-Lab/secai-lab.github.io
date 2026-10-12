@@ -62,6 +62,7 @@ jobs:
           python3 deadlines/scripts/tests/test_update_deadlines.py
           python3 deadlines/scripts/tests/test_audit_lint.py
           python3 deadlines/scripts/tests/test_apply_proposals.py
+          python3 deadlines/scripts/tests/test_defer_invalid_audit_claims.py
           python3 deadlines/scripts/tests/test_audit_state.py
           python3 deadlines/scripts/tests/test_audit_batches.py
           python3 deadlines/scripts/tests/test_reconcile_audit_outcomes.py
@@ -239,12 +240,14 @@ jobs:
         run: |
           complete=false
           rm -f audit-preflight.json
-          if python3 deadlines/scripts/audit_batches.py validate \
-               watchlist.json audit-proposals.json \
-               --audit-date "${{ needs.prepare.outputs.audit_date }}" \
-             && python3 deadlines/scripts/apply_proposals.py --validate-only \
-               --require-complete --require-some-proposal \
-               --watchlist watchlist.json; then
+          if { python3 deadlines/scripts/audit_batches.py validate \
+                 watchlist.json audit-proposals.json \
+                 --audit-date "${{ needs.prepare.outputs.audit_date }}" \
+               && python3 deadlines/scripts/apply_proposals.py --validate-only \
+                 --require-complete --require-some-proposal \
+                 --watchlist watchlist.json; } \
+               > audit-schema-feedback.txt 2>&1; then
+            rm -f audit-schema-feedback.txt
             if python3 deadlines/scripts/verify_citations.py \
                  --proposals audit-proposals.json --watchlist watchlist.json \
                  --out audit-preflight.json --report-only \
@@ -267,6 +270,8 @@ jobs:
             then
               complete=true
             fi
+          else
+            sed -n '1,80p' audit-schema-feedback.txt
           fi
           echo "complete=$complete" >> "$GITHUB_OUTPUT"
           if [ "$complete" != "true" ]; then
@@ -288,8 +293,15 @@ jobs:
             Read deadlines/scripts/AUDITOR.md and follow it exactly. This is a
             completion and evidence-repair retry for watchlist.json. Preserve
             valid completed findings in audit-proposals.json, then inspect
-            every missing or not_checked identity. If audit-preflight.json
-            exists, inspect each verdict's top-level detail.status first.
+            every missing or not_checked identity.
+            If audit-schema-feedback.txt exists, read it and repair every
+            reported schema or coverage error first. If it only asks for a
+            retry because every result is unverifiable, continue checking
+            official sources. Every proposed field, including
+            note, needs its own evidence list with a quote copied from the
+            fetched official page. Omit a field you cannot evidence.
+            If audit-preflight.json exists, inspect each verdict's top-level
+            detail.status first.
             A top-level REJECTED_SOURCE or UNREACHABLE verdict is a source or
             reachability failure and may have no field results: repair it first
             by fetching the correct admissible official edition page. If no
@@ -327,6 +339,12 @@ jobs:
             echo "$tampered"
             exit 1
           fi
+
+      - name: Defer malformed claims remaining after auditor retry
+        run: |
+          python3 deadlines/scripts/defer_invalid_audit_claims.py \
+            --watchlist watchlist.json --proposals audit-proposals.json \
+            --audit-date "${{ needs.prepare.outputs.audit_date }}"
 
       - name: Validate final shard contract
         env:

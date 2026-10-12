@@ -110,6 +110,15 @@ def workflow_contract():
             and "audit-preflight.json" in first_check
             and '!= "VERIFIED"' in first_check,
             "a complete first pass with weak evidence must receive citation repair")
+    require("audit-schema-feedback.txt" in first_check
+            and "apply_proposals.py --validate-only" in first_check,
+            "a failed schema check must leave readable feedback for the retry")
+    schema_deferral = named_step(
+        shard, "Defer malformed claims remaining after auditor retry"
+    ).get("run", "")
+    require("defer_invalid_audit_claims.py" in schema_deferral
+            and "--watchlist watchlist.json" in schema_deferral,
+            "malformed final claims must be returned to the retry queue")
     final_check = named_step(shard, "Validate final shard contract").get("run", "")
     require("--require-some-proposal" not in final_check,
             "a fully checked all-unverifiable second pass must be allowed to finish")
@@ -118,6 +127,10 @@ def workflow_contract():
             "shards must retain raw unfinished checkpoints for clean global finalization")
     require("AUDITOR1_OUTCOME" in final_check and "AUDITOR2_OUTCOME" in final_check,
             "continued auditor action failures must be reported explicitly")
+    shard_steps = [step.get("name") for step in shard.get("steps") or []]
+    require(shard_steps.index("Defer malformed claims remaining after auditor retry")
+            < shard_steps.index("Validate final shard contract"),
+            "schema deferral must precede the final shard validation")
 
     claude_steps = [step for step in shard.get("steps") or []
                     if str(step.get("uses", "")).startswith(
@@ -134,7 +147,8 @@ def workflow_contract():
                 "auditor needs bounded web tools")
         require("Bash" not in args, "model job must not have arbitrary shell access")
     retry_prompt = str((claude_steps[1].get("with") or {}).get("prompt", ""))
-    require("audit-preflight.json" in retry_prompt
+    require("audit-schema-feedback.txt" in retry_prompt
+            and "audit-preflight.json" in retry_prompt
             and "detail.status" in retry_prompt
             and "REJECTED_SOURCE" in retry_prompt
             and "UNREACHABLE" in retry_prompt

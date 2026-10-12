@@ -33,8 +33,15 @@ zero-work circuit breaker.
 record you skipped silently is reported as an error. An unavailable page is a
 valid result, but use the specific cause that describes the attempted check.
 
-On a completion retry, `audit-preflight.json` may exist beside the proposal
-file. It is read-only diagnostic output from the deterministic citation gate.
+On a completion retry, read `audit-schema-feedback.txt` if it exists and fix
+every reported contract error before checking citations. In particular, every
+field in `fields`, including `note`, needs its own nonempty `evidence` list.
+Omit a field if no fetched official page can support it. The final machine
+check returns any still malformed claim to `not_checked` for a later audit;
+it does not count that claim as examined.
+
+`audit-preflight.json` may also exist beside the proposal file. It is read-only
+diagnostic output from the deterministic citation gate.
 Inspect each verdict's top-level `detail.status` first.
 `REJECTED_SOURCE` and `UNREACHABLE` are source/reachability failures and may
 have no field results at all. Repair those first: fetch the correct admissible

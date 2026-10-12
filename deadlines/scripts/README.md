@@ -86,12 +86,16 @@ an old stored deadline passes.
 The workflow splits that watchlist into stable shards of at most ten records.
 Each read-only Claude job verifies every record in its shard against official
 pages (instructions pinned in `deadlines/scripts/AUDITOR.md`) and writes only
-JSON. Before the one bounded retry, the deterministic citation verifier checks
-the first answer and writes top-level source/reachability diagnostics followed,
+JSON. Before the one bounded retry, schema errors are saved as repair feedback.
+Once the schema passes, the deterministic citation verifier checks the first
+answer and writes top-level source/reachability diagnostics followed,
 when a page was admitted and fetched, by field-level diagnostics. The retry
 repairs `REJECTED_SOURCE`/`UNREACHABLE` failures first, then repairs weak field
 quotes while preserving fields that already verified. It also repairs
-missing/malformed coverage and temporary `not_checked` results. A
+missing/malformed coverage and temporary `not_checked` results. If a claim is
+still malformed after the retry, the shard returns that identity to
+`not_checked`; the clean job machine-defers it and retries it on the next audit
+without discarding valid findings from other identities. A
 non-empty first pass that returns only unverifiable outcomes receives the same
 retry. A fully checked second pass may still conclude that every source is
 unverifiable. Every attempted URL in those negative outcomes is also bound to
