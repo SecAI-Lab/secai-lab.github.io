@@ -1,3 +1,33 @@
+- title: "Recoverability Analysis of Personally Identifiable Information in Unlearned Language Models"
+  image:
+  description:
+  authors: Yujeong Kwon, and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’26)
+  highlight: 0
+  news2:
+
+- title: "Post-hoc Ranking of Poisoned Training Samples in LoRA-Fine-Tuned Models"
+  image:
+  description:
+  authors: Byungsoo Kang, Minseok Kim, and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’26)
+  highlight: 0
+  news2:
+
+- title: "A Comparative Analysis of Watermarking Techniques for Large Language Model-Generated Text"
+  image:
+  description:
+  authors: Gahyun Baek, and Hyungjoon Koo
+  link:
+    url: https://www.cisc.or.kr
+    display: Conference on Information Security and Cryptography-Winter 한국정보보호학회 동계학술대회 (CISC-W ’26)
+  highlight: 0
+  news2:
+
 - title: "A Study of Information Leakage Across Topologies and Languages in LLM-based Multi-Agent Systems"
   image: 
   description: ""
