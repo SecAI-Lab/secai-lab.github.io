@@ -16,7 +16,7 @@
   conference: ICLR
   date: 2026.10.08
   pub_year: 2026
-  discussion: ""
+  discussion: "(Discussion) Reward hacking poses a significant challenge to the reliable evaluation of reasoning models, as models may exploit loopholes in reward functions rather than solve the intended tasks. At first glance, monitoring a model's chain-of-thought (CoT) appears to be a reasonable approach to detecting such behavior. Existing CoT monitors can identify explicit reward hacking when models reveal their exploitative strategies in their reasoning traces. Nevertheless, this paper demonstrates that this approach struggles with implicit reward hacking, where models generate seemingly legitimate reasoning while concealing their reliance on shortcuts. In particular, existing CoT monitors often fail to distinguish genuine reasoning from plausible post-hoc rationalizations. The authors therefore highlight the need for a detection method that does not rely solely on the content of CoT. To address this gap, they propose TRACE, a method that measures reasoning effort by evaluating how early truncated CoTs can achieve high expected rewards. TRACE is designed to identify hidden shortcuts by detecting when models obtain rewards with substantially less reasoning than their full CoTs suggest. Experiments on math and coding tasks demonstrate that TRACE consistently outperforms existing CoT monitors and can also help discover previously unknown loopholes in training data. (Mijin)"
 
 - title: "Oxidizer: Toward Concise and High-fidelity Rust Decompilation"
   link: "https://ieeexplore.ieee.org/abstract/document/11573448"
