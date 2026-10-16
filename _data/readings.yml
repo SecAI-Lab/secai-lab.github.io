@@ -1,3 +1,13 @@
+- title: "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs"
+  link: "https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen"
+  ppt_link: "https://drive.google.com/file/d/18_OJ1TgAYKfsrIX3gGcOwOtk4ZMURxmb/view?usp=sharing"
+  code_link: ""
+  presenter: Susanna
+  conference: USENIX
+  date: 2026.10.16
+  pub_year: 2025
+  discussion: ""
+
 - title: "Prompt Injection Attack to Tool Selection in LLM Agents"
   link: "https://www.ndss-symposium.org/ndss-paper/prompt-injection-attack-to-tool-selection-in-llm-agents/"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/Woomin_26_10_08_ToolHijacker.pdf"
