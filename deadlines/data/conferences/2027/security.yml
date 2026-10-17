@@ -79,10 +79,15 @@
   full_name: "Conference on Detection of Intrusions and Malware & Vulnerability Assessment"
   type: conference
   tier: "N/A"
-  link: https://www.dimva.org/
-  place: "TBA"
-  date: "TBA"
-  note: "Official DIMVA 2027 conference page/CFP not publicly available yet."
+  link: https://www.dimva.org/dimva2027/
+  deadline:
+    - "2026-12-10 23:59"
+    - "2027-02-18 23:59"
+  timezone: AoE
+  place: "Enschede, The Netherlands"
+  date: "June 30 - July 2, 2027"
+  start: 2027-06-30
+  end: 2027-07-02
 
 - title: "ESORICS"
   year: 2027
