@@ -1,3 +1,13 @@
+- title: "SoK: Automated TTP Extraction from CTI Reports – Are We There Yet?"
+  link: "https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen"
+  ppt_link: "https://docs.google.com/presentation/d/1fee73DbmROrq_bU-SjMTbzn6TZZTc4-BKkAkacR2JjU/edit?usp=sharing"
+  code_link: ""
+  presenter: Garrett
+  conference: USENIX
+  date: 2026.10.16
+  pub_year: 2025
+  discussion: ""
+  
 - title: "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs"
   link: "https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen"
   ppt_link: "https://drive.google.com/file/d/18_OJ1TgAYKfsrIX3gGcOwOtk4ZMURxmb/view?usp=sharing"
