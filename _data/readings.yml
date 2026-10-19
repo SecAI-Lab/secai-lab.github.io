@@ -26,7 +26,7 @@
   conference: NDSS
   date: 2026.10.08
   pub_year: 2026
-  discussion: ""
+  discussion: "(Discussion) This paper proposes ToolHijacker, a no-box prompt injection attack in which a single malicious tool document, split into a retriever-targeted description (R) and an LLM-targeted instruction (S), is optimized on a shadow agent. The work has several limitations. First, it covers only tool selection, so the real-world harm after selection is never measured. Second, each target task needs its own optimized document, limiting scalability. Third, some target models also serve as shadow models, so the results are not fully no-box. The authors therefore highlight the need for defenses that verify tool provenance rather than trusting tool self-descriptions. (Hyoungjun)"
 
 - title: "IS IT THINKING OR CHEATING? DETECTING IMPLICIT REWARD HACKING BY MEASURING REASONING EFFORT"
   link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/9d0ee47d732bd526c4a03d4aecc39bc1-Paper-Conference.pdf"
