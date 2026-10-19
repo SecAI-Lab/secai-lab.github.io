@@ -16,7 +16,7 @@
   conference: USENIX
   date: 2026.10.16
   pub_year: 2025
-  discussion: ""
+  discussion: "(Discussion) This paper usefully frames package hallucination as a supply-chain attack vector, but its core claims are weakly supported. Most package names come from asking the model to list packages rather than from the generated code itself, so the study measures recommendation tendencies, not the dependencies a user would actually install. Exploitability is never tested and rests on an external blog post. The paper’s own finding that hallucinations rarely overlap across models also undercuts its claim of a broad threat. The mitigation section highlights fine-tuning despite its large cost to code quality, and it dismisses install-time allowlisting, arguably the most practical defense, without evaluating it. The recency analysis ignores topical confounds. Root causes are deferred to future work. The outdated model set and the omission of agentic coding tools leave unclear how well the conclusions apply today. Overall, it is a valuable problem-raising measurement study, but not a convincing account of either the attack or its defenses. (Woomin)"
 
 - title: "Prompt Injection Attack to Tool Selection in LLM Agents"
   link: "https://www.ndss-symposium.org/ndss-paper/prompt-injection-attack-to-tool-selection-in-llm-agents/"
