@@ -80,6 +80,9 @@
   type: conference
   tier: "N/A"
   link: https://www.dimva.org/dimva2027/
+  abstract_deadline:
+    - "2026-12-03 23:59"
+    - "2027-02-11 23:59"
   deadline:
     - "2026-12-10 23:59"
     - "2027-02-18 23:59"

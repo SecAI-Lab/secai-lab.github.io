@@ -317,3 +317,32 @@
   year: 2026
   place: "Rio De Janeiro, Brazil"
   date: "April 12-18, 2026"
+
+# The conference homepage states November 15-18, 2026 (confirmed in two
+# separate places on the page), not November 16-18 as currently recorded.
+# The separate CFP page's dates table shows 16-18, but the homepage's
+# repeated primary statement is treated as authoritative. The
+# no-separate-abstract-registration note is confirmed by the CFP page.
+# Verified 2026-10-19 against
+# https://sigops.org/s/conferences/atc/2026/index.html
+# "November 15-18, 2026 · Hyatt Hotel, Shatin, Hong Kong"
+- title: "ATC"
+  year: 2026
+  date: "November 15-18, 2026"
+
+# The official CFP lists abstract registration deadlines for both cycles
+# that are missing from the stored record. Paper deadlines, timezone, date
+# and place are confirmed correct as stored.
+# Verified 2026-10-19 against https://www.dimva.org/dimva2027/
+# "Abstract registration: 03 December 2026"
+- title: "DIMVA"
+  year: 2027
+  abstract_deadline:
+    - "2026-12-03 23:59"
+    - "2027-02-11 23:59"
+  deadline:
+    - "2026-12-10 23:59"
+    - "2027-02-18 23:59"
+  timezone: AoE
+  place: "Enschede, The Netherlands"
+  date: "June 30 - July 2, 2027"
