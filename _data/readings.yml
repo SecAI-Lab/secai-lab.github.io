@@ -6,7 +6,7 @@
   conference: USENIX
   date: 2026.10.16
   pub_year: 2025
-  discussion: ""
+  discussion: "(Discussion) This paper is a Systematization of Knowledge (SoK) study that reviews and compares existing approaches for automatically extracting TTPs from Cyber Threat Intelligence (CTI) reports. It evaluates three main approaches: NER, classification, and LLM-based methods. The results show that classification and fine-tuned LLMs perform well with a limited set of labels, while NER performs better when the number of possible labels increases. One interesting challenge highlighted in this paper is label ambiguity, where similar descriptions can correspond to different TTPs depending on context. This suggests that simply improving model performance may not be sufficient for reliable TTP extraction. I think incorporating more contextual information from the entire report, rather than analyzing individual sentences, could help improve the accuracy and reliability of TTP extraction. (Byungsoo)"
   
 - title: "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs"
   link: "https://www.usenix.org/conference/usenixsecurity25/presentation/spracklen"
