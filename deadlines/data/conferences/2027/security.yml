@@ -125,12 +125,13 @@
   full_name: "IFIP International Information Security and Privacy Conference"
   type: conference
   tier: "N/A"
-  link: https://ifipsec.org/
+  link: https://ifipsec.org/cfp.html
+  deadline: "2026-12-15 23:59"
+  timezone: AoE
   place: "Linköping, Sweden"
   date: "June 14-16, 2027"
   start: 2027-06-14
   end: 2027-06-16
-  note: "Official IFIP SEC page indicates the next SEC after 2026 will be in Linköping, Sweden; dates and deadlines are not yet available."
 
 - title: "NDSS"
   year: 2027
