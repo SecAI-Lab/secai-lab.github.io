@@ -1,38 +1,27 @@
 {
   "version": 1,
   "corroboration": {
-    "ASIACCS\t2026": {
+    "ACNS\t2026": {
       "claims": {
-        "fields:date,deadline,place,timezone": {
-          "fingerprint": "sha256:01449631b703c9b5d06781ac7d52887011eb34f5df498b354f105a777761ba06",
+        "fields:deadline,place,timezone": {
+          "fingerprint": "sha256:6b94e22cf6ddcb74a67dad9b849852ce1209968a17b60290270a116d84cfe81d",
           "action": "upsert_manual",
           "fields": [
-            "date",
             "deadline",
             "place",
             "timezone"
           ],
-          "first_seen": "2026-10-19",
-          "last_seen": "2026-10-19",
+          "first_seen": "2026-10-26",
+          "last_seen": "2026-10-26",
           "verified_runs": 1
         }
       }
     }
   },
   "retry": {
-    "AAAI\t2026": {
-      "last_seen": "2026-10-19",
-      "reason": "citation",
-      "fields": [
-        "abstract_deadline",
-        "deadline",
-        "timezone"
-      ],
-      "whole_record": false
-    },
     "ACNS\t2026": {
-      "last_seen": "2026-10-19",
-      "reason": "citation",
+      "last_seen": "2026-10-26",
+      "reason": "corroboration",
       "fields": [
         "date",
         "deadline",
@@ -45,70 +34,58 @@
       "last_seen": "2026-10-19",
       "reason": "citation",
       "fields": [
-        "date",
-        "deadline",
-        "place",
         "timezone"
       ],
-      "whole_record": true
+      "whole_record": false
     },
     "ACSAC\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [],
       "whole_record": true
     },
     "ASE\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [],
       "whole_record": true
     },
-    "ASIACCS\t2026": {
-      "last_seen": "2026-10-19",
-      "reason": "corroboration",
+    "ATC\t2026": {
+      "last_seen": "2026-10-26",
+      "reason": "citation",
       "fields": [
-        "date",
         "deadline",
+        "note",
         "place",
         "timezone"
       ],
       "whole_record": false
     },
-    "ATC\t2026": {
-      "last_seen": "2026-10-19",
-      "reason": "corroboration",
-      "fields": [
-        "deadline",
-        "note",
-        "place"
-      ],
-      "whole_record": false
-    },
     "ATC\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [],
       "whole_record": true
     },
     "CCS\t2027": {
-      "last_seen": "2026-10-05",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "place"
       ],
       "whole_record": false
     },
-    "CODASPY\t2027": {
-      "last_seen": "2026-10-19",
+    "CODASPY\t2026": {
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
-        "place"
+        "abstract_deadline",
+        "deadline"
       ],
       "whole_record": false
     },
     "DIMVA\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "date",
@@ -118,7 +95,7 @@
       "whole_record": false
     },
     "DSN\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "abstract_deadline",
@@ -139,19 +116,22 @@
       "whole_record": false
     },
     "ESORICS\t2027": {
-      "last_seen": "2026-10-19",
-      "reason": "unverifiable",
-      "fields": [],
+      "last_seen": "2026-10-26",
+      "reason": "citation",
+      "fields": [
+        "date",
+        "link",
+        "note",
+        "place"
+      ],
       "whole_record": true
     },
     "EuroS&P\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "abstract_deadline",
-        "date",
         "deadline",
-        "place",
         "timezone"
       ],
       "whole_record": false
@@ -160,7 +140,6 @@
       "last_seen": "2026-10-19",
       "reason": "citation",
       "fields": [
-        "abstract_deadline",
         "date",
         "deadline",
         "timezone"
@@ -168,7 +147,7 @@
       "whole_record": false
     },
     "EuroSys\t2026": {
-      "last_seen": "2026-10-05",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "date"
@@ -176,49 +155,66 @@
       "whole_record": false
     },
     "FSE\t2026": {
-      "last_seen": "2026-10-19",
-      "reason": "unverifiable",
+      "last_seen": "2026-10-26",
+      "reason": "citation",
       "fields": [
         "abstract_deadline",
         "deadline",
         "place"
       ],
-      "whole_record": true
+      "whole_record": false
     },
     "FSE\t2027": {
-      "last_seen": "2026-10-12",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
-        "note"
+        "deadline",
+        "note",
+        "timezone"
       ],
       "whole_record": false
     },
     "ICSE\t2026": {
-      "last_seen": "2026-10-05",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
+        "abstract_deadline",
         "deadline"
       ],
       "whole_record": false
     },
     "ICSE\t2027": {
-      "last_seen": "2026-10-05",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
-        "deadline"
+        "abstract_deadline",
+        "deadline",
+        "timezone"
+      ],
+      "whole_record": false
+    },
+    "IFIP-Sec\t2026": {
+      "last_seen": "2026-10-26",
+      "reason": "citation",
+      "fields": [
+        "date"
       ],
       "whole_record": false
     },
     "IFIP-Sec\t2027": {
-      "last_seen": "2026-10-12",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
-        "note"
+        "date",
+        "deadline",
+        "note",
+        "place",
+        "timezone"
       ],
       "whole_record": false
     },
     "IJCAI\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "abstract_deadline",
@@ -230,7 +226,7 @@
       "whole_record": false
     },
     "IJCAI\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "abstract_deadline",
@@ -252,7 +248,7 @@
       "whole_record": false
     },
     "NSDI\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [
         "abstract_deadline",
@@ -265,7 +261,7 @@
       "whole_record": true
     },
     "NSDI\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [
         "abstract_deadline",
@@ -278,7 +274,7 @@
       "whole_record": true
     },
     "OSDI\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [
         "abstract_deadline",
@@ -290,7 +286,7 @@
       "whole_record": true
     },
     "OSDI\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [
         "abstract_deadline",
@@ -303,7 +299,7 @@
       "whole_record": true
     },
     "RAID\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [],
       "whole_record": true
@@ -317,20 +313,18 @@
       "whole_record": false
     },
     "SAC\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
-        "date",
         "deadline",
         "timezone"
       ],
       "whole_record": false
     },
     "SAC\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
-        "date",
         "deadline",
         "note",
         "timezone"
@@ -338,16 +332,24 @@
       "whole_record": false
     },
     "SOSP\t2027": {
-      "last_seen": "2026-10-19",
-      "reason": "citation",
+      "last_seen": "2026-10-26",
+      "reason": "unverifiable",
       "fields": [
         "date",
         "place"
       ],
       "whole_record": true
     },
+    "SecureComm\t2026": {
+      "last_seen": "2026-10-26",
+      "reason": "citation",
+      "fields": [
+        "place"
+      ],
+      "whole_record": false
+    },
     "USENIX Security\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [
         "abstract_deadline",
@@ -360,7 +362,7 @@
       "whole_record": true
     },
     "USENIX Security\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "unverifiable",
       "fields": [
         "abstract_deadline",
@@ -372,7 +374,7 @@
       "whole_record": true
     },
     "WWW\t2026": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "abstract_deadline",
@@ -384,7 +386,7 @@
       "whole_record": false
     },
     "WWW\t2027": {
-      "last_seen": "2026-10-19",
+      "last_seen": "2026-10-26",
       "reason": "citation",
       "fields": [
         "abstract_deadline",

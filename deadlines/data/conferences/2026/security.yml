@@ -26,11 +26,12 @@
   tier: T3
   link: https://www.acsac.org/2026/submissions/papers/
   deadline: "2026-05-26 23:59"
-  timezone: UTC-12
+  timezone: AoE
   place: "Los Angeles, CA, USA"
-  date: "Dec 7-11, 2026"
+  date: "December 7-11, 2026"
   start: 2026-12-07
   end: 2026-12-11
+  note: "Timezone not stated by the official page; AoE assumed, which is the CFP convention."
 
 - title: "ASIACCS"
   year: 2026
@@ -44,8 +45,8 @@
     - "2025-12-12 23:59"
   timezone: UTC-12
   place: "Bangalore, India"
-  date: "June 3-5, 2026"
-  start: 2026-06-03
+  date: "June 1-5, 2026"
+  start: 2026-06-01
   end: 2026-06-05
 
 - title: "CCS"

@@ -346,3 +346,52 @@
   timezone: AoE
   place: "Enschede, The Netherlands"
   date: "June 30 - July 2, 2027"
+
+# Official Important Dates page confirms the stored deadline, abstract
+# deadline and timezone as previously verified. The place field is
+# corrected: the page spells out the state name ('Colorado'), not the stored
+# abbreviation ('CO'), so the value is updated to match the page.
+# Verified 2026-10-26 against
+# http://www.codaspy.org/2027/important-dates.html
+# "Research paper submission November 23, 2026"
+- title: "CODASPY"
+  year: 2027
+  abstract_deadline: "2026-11-16 23:59"
+  deadline: "2026-11-23 23:59"
+  timezone: AoE
+  place: "Fort Collins, Colorado, USA"
+  date: "June 14-17, 2027"
+
+# acsac.org disallows all automated retrieval (robots.txt: 'Disallow: /' for
+# default user agents), confirmed by this run's fetch and independently
+# noted on the TC calendar page itself ('the site disallows automated
+# retrieval'), so the previously proposed acsac.org source is replaced with
+# the IEEE S&P TC's own CFP calendar entry for ACSAC 2026, an admissible
+# publisher CFP calendar page. It confirms the stored deadline and place.
+# Date is corrected to the page's spelled-out month ('December' rather than
+# 'Dec'). This source states no timezone, so the stored timezone is left
+# unchanged rather than guessed.
+# Verified 2026-10-26 against
+# https://www.ieee-security.org/Calendar/cfps/cfp-IEEEACSAC2026.html
+# "Submission Deadline: May 26, 2026 (firm; deadline passed)"
+- title: "ACSAC"
+  year: 2026
+  deadline: "2026-05-26 23:59"
+  timezone: AoE
+  place: "Los Angeles, CA, USA"
+  date: "December 7-11, 2026"
+  note: "Timezone not stated by the official page; AoE assumed, which is the CFP convention."
+
+# The official site's banner gives the conference dates as 1-5 June 2026,
+# not the stored June 3-5, 2026. Deadlines, timezone and place are confirmed
+# correct on the same page.
+# Verified 2026-10-26 against https://asiaccs2026.cse.iitkgp.ac.in/
+# "Paper Submission Deadline: 23:59, 25 August 2025 (AoE)"
+- title: "ASIACCS"
+  year: 2026
+  deadline:
+    - "2025-08-25 23:59"
+    - "2025-12-12 23:59"
+  timezone: UTC-12
+  place: "Bangalore, India"
+  date: "June 1-5, 2026"
