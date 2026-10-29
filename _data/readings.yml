@@ -1,4 +1,4 @@
-- title: "ROSA: Finding Backdoors with Fuzzing"
+- title: "Optimization-Aware Test Generation for Deep Learning Compilers"
   link: "https://arxiv.org/pdf/2511.18918"
   ppt_link: "https://drive.google.com/file/d/1NCRCJnIzrZb8dRINEIXTAxVTQWT0PI_6/view?usp=sharing"
   code_link: "https://github.com/ShenQingchao/OATest"
