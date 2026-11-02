@@ -64,16 +64,21 @@
   place: "San Diego, CA"
   date: "February 23-27, 2026"
 
-# sec-deadlines carries DIMVA 2026's pre-extension dates. The official page
-# shows both cycles extended: "10 December 2025 (extended!)" and
-# "18 February 2026 (extended!)", AoE.
-# Verified 2026-08-07 against https://www.dimva.org/dimva2026/
+# The stored conference date 'July 2-3, 2026' does not match the official
+# page, which states 'Conference: 1-3 July 2026'; corrected to the full
+# 3-day span. Both submission cycles (extended), the venue and the AoE
+# timezone are reconfirmed from the same page.
+# Verified 2026-11-02 against https://www.dimva.org/dimva2026/
+# "Conference: 1-3 July 2026"
+# Earlier: Verified 2026-08-07 against https://www.dimva.org/dimva2026/
 - title: "DIMVA"
   year: 2026
   deadline:
     - "2025-12-10 23:59"
     - "2026-02-18 23:59"
   timezone: AoE
+  place: "Chania, Greece"
+  date: "July 1-3, 2026"
 
 # The stored timezone (UTC-12) does not match the official CFP page, which
 # states submissions close at 23:59 UTC, not AoE. Deadline calendar dates
@@ -228,14 +233,16 @@
   year: 2027
   note: "Two submission cycles. Venue within Montreal is not announced yet."
 
-# The CCS 2027 page now shows precise conference dates and a plain 'Atlanta,
-# USA' location (no state qualifier); the stored record had the vaguer
-# 'October 2027' and 'Atlanta, GA, USA'. The page still reads 'Coming Soon'
-# for the CFP, so no deadline is proposed.
-# Verified 2026-09-01 against https://www.sigsac.org/ccs/CCS2027/
-# "October 11-15, 2027 Atlanta, USA"
+# The stored place includes the state abbreviation 'GA', which the official
+# page (currently a 'Coming Soon' placeholder) does not state; corrected to
+# match the page exactly. Date is reconfirmed. CFP and deadlines remain
+# unannounced, consistent with the existing note.
+# Verified 2026-11-02 against https://www.sigsac.org/ccs/CCS2027/
+# "ACM CCS 2027 October 11-15, 2027 Atlanta, USA"
+# Earlier: Verified 2026-09-01 against https://www.sigsac.org/ccs/CCS2027/
 - title: "CCS"
   year: 2027
+  place: "Atlanta, USA"
   date: "October 11-15, 2027"
 
 # Stored record lists the conference date as October 3-9, 2026, but the
