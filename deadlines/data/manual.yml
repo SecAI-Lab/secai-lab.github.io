@@ -402,3 +402,32 @@
   timezone: UTC-12
   place: "Bangalore, India"
   date: "June 1-5, 2026"
+
+# Deadlines/timezone/date are already correct, but the official announcement
+# sentence names the venue only as 'Montreal, Canada' with no province
+# component, so the stored 'Montreal, Quebec, Canada' is not supported by
+# the fetched page.
+# Verified 2026-11-09 against https://aaai.org/conference/aaai/aaai-27/
+# "July 28, 2026 Full papers due at 11:59 PM UTC-12"
+- title: "AAAI"
+  year: 2027
+  abstract_deadline: "2026-07-21 23:59"
+  deadline: "2026-07-28 23:59"
+  timezone: UTC-12
+  place: "Montréal, Canada"
+  date: "February 16-23, 2027"
+
+# Deadlines and timezone are already correct, but the official site names
+# the venue only as 'Egham, United Kingdom'; the stored 'Egham, Surrey, UK'
+# is not supported by the fetched page (the only 'Surrey' occurrence is an
+# unrelated program-committee affiliation).
+# Verified 2026-11-09 against https://acns2027.isg.rhul.ac.uk/
+# "Submission deadline: 24 September 2026 AoE"
+- title: "ACNS"
+  year: 2027
+  deadline:
+    - "2026-09-24 23:59"
+    - "2027-01-21 23:59"
+  timezone: UTC-12
+  place: "Egham, United Kingdom"
+  date: "June 28 - July 1, 2027"
