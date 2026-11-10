@@ -1,5 +1,15 @@
 - title: "Optimization-Aware Test Generation for Deep Learning Compilers"
   link: "https://arxiv.org/pdf/2511.18918"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_AIxCC_USENIX26.pdf"
+  code_link: ""
+  presenter: Jiyong
+  conference: Usenix
+  date: 2026.11.6
+  pub_year: 2026
+  discussion: "(Discussion)"
+
+- title: "Optimization-Aware Test Generation for Deep Learning Compilers"
+  link: "https://arxiv.org/pdf/2511.18918"
   ppt_link: "https://drive.google.com/file/d/1NCRCJnIzrZb8dRINEIXTAxVTQWT0PI_6/view?usp=sharing"
   code_link: "https://github.com/ShenQingchao/OATest"
   presenter: Yujeong
