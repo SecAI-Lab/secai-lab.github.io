@@ -1,3 +1,24 @@
+- title: "Unlearning Isn't Invisible: Detecting Unlearning Traces in LLMs from Model Outputs"
+  link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/b51362de8ffda06bcdf0bc538a1a0fc1-Paper-Conference.pdf"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentation/gahyun_1113.pdf"
+  code_link: ""
+  presenter: Gahyun
+  conference: ICLR
+  date: 2026.11.13
+  pub_year: 2026
+  discussion: "(Discussion)"
+
+
+- title: ""
+  link: ""
+  ppt_link: ""
+  code_link: ""
+  presenter: 
+  conference: 
+  date: 
+  pub_year: 
+  discussion: "(Discussion)"
+
 - title: "SoK: DARPA's AI Cyber Challenge (AIxCC): Competition Design, Architectures, and Lessons Learned"
   link: "https://arxiv.org/pdf/2511.18918"
   ppt_link: "https://secai.skku.edu/assets/paper-presentation/jiyong_AIxCC_USENIX26.pdf"
