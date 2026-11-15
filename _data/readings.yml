@@ -1,9 +1,9 @@
-- title: ""
-  link: ""
-  ppt_link: ""
+- title: "Training a Misaligned Reward Seeker"
+  link: "https://alignment.anthropic.com/2026/reward-seeker/"
+  ppt_link: "https://deniskim1.com/lab-meeting/1113_Rewarding_misaligned_seeker.pdf"
   code_link: ""
   presenter: Minseok
-  conference: 
+  conference: arXiv 
   date: 2026.11.13
   pub_year: 2026
   discussion: "(Discussion)"
