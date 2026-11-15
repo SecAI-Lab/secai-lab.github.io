@@ -137,14 +137,28 @@ main_nav: true
 
 <div class="year-sections">
   {% for year in years %}
-    {% assign year_posts = '' | split: ',' %}
+    {% comment %}
+      Order by a normalized YYYYMMDD key, never by the raw `date` text: sorting
+      the text puts 2026.11.6 above 2026.11.13. Parsing the date first makes the
+      order independent of how it was typed in readings.yml (2026.11.6,
+      2026.11.06, 2026-11-06). The padded file position appended to each key
+      keeps same-day entries in a fixed order and points back to the entry.
+    {% endcomment %}
+    {% assign sort_keys = '' | split: ',' %}
     {% for post in site.data.readings %}
       {% assign post_year = post.date | date: '%Y' %}
       {% if post_year == year %}
-        {% assign year_posts = year_posts | push: post %}
+        {% assign position = forloop.index0 | plus: 100000 %}
+        {% assign sort_key = post.date | date: '%Y%m%d' | append: '-' | append: position %}
+        {% assign sort_keys = sort_keys | push: sort_key %}
       {% endif %}
     {% endfor %}
-    {% assign year_posts = year_posts | sort: 'date' | reverse %}
+    {% assign sort_keys = sort_keys | sort | reverse %}
+    {% assign year_posts = '' | split: ',' %}
+    {% for sort_key in sort_keys %}
+      {% assign position = sort_key | split: '-' | last | minus: 100000 %}
+      {% assign year_posts = year_posts | push: site.data.readings[position] %}
+    {% endfor %}
     {% assign half = year_posts.size | plus: 1 | divided_by: 2 %}
     <div class="year-section{% if forloop.first %} active{% endif %}" data-year="{{ year }}">
       <div class="post-list">
