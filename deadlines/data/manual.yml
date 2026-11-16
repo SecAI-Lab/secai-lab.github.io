@@ -431,3 +431,39 @@
   timezone: UTC-12
   place: "Egham, United Kingdom"
   date: "June 28 - July 1, 2027"
+
+# The stored link (ase-conferences.org) has no 2027 content. ASE's actual
+# official home, following the same conf.researchr.org pattern as ASE
+# 2024/2025, now has a live ASE 2027 page with venue, dates and a published
+# paper-submission date. The timezone is not stated anywhere on the page, so
+# deadline/abstract_deadline/timezone are withheld this run to avoid an
+# incomplete effective-instant group; only place, date, link and note are
+# corrected.
+# Verified 2026-11-16 against https://conf.researchr.org/home/ase-2027
+# "Sun 24 - Thu 28 October 2027 El Paso, Texas, United States"
+- title: "ASE"
+  year: 2027
+  place: "El Paso, Texas, United States"
+  date: "October 24-28, 2027"
+
+# Preflight rejected 'timezone': 'UTC-7' because no quote literally states
+# that offset; the page only writes 'US PDT'. Per AUDITOR.md guidance, a raw
+# offset mis-describes a DST-observing zone, so timezone is corrected to the
+# IANA name America/Los_Angeles, which the PDT wording supports. deadline
+# and abstract_deadline are resubmitted with their already-verified values
+# and quotes to keep the complete effective-instant group together, as
+# required when timezone changes.
+# Verified 2026-11-16 against
+# https://www.usenix.org/conference/nsdi26/call-for-papers
+# "Full paper submissions due: Friday, April 25, 2025, 11:59 pm US PDT"
+- title: "NSDI"
+  year: 2026
+  abstract_deadline:
+    - "2025-04-18 23:59"
+    - "2025-09-11 23:59"
+  deadline:
+    - "2025-04-25 23:59"
+    - "2025-09-18 23:59"
+  timezone: America/Los_Angeles
+  place: "Renton, WA, USA"
+  date: "May 4-6, 2026"

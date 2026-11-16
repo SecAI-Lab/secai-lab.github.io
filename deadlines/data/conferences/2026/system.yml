@@ -64,7 +64,7 @@
   deadline:
     - "2025-04-25 23:59"
     - "2025-09-18 23:59"
-  timezone: UTC-7
+  timezone: America/Los_Angeles
   place: "Renton, WA, USA"
   date: "May 4-6, 2026"
   start: 2026-05-04
