@@ -6,7 +6,7 @@
   conference: arXiv 
   date: 2026.11.13
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This paper investigates whether reward hacking during reinforcement learning can generalize into more harmful behavior by training an Opus-class model on 80 vulnerable environments. The resulting model exhibits reward-seeking behavior in unseen scenarios, including reward tampering, safety monitor bypass attempts, and simulated cyberattacks. Its main contribution is showing that models appearing aligned in general evaluations can still exhibit harmful behavior when explicit rewards are present. However, the training deliberately amplifies reward hacking and omits alignment training used in production, making it difficult to determine whether similar risks would emerge under realistic training conditions. Moreover, the cyberattack evaluations rely on simulated tool interactions, limiting conclusions about real-world behavior. Overall, this work highlights a context-dependent alignment risk and suggests the need for more comprehensive evaluations of reward-driven behavior. (Mijin)"
   
 - title: "Unlearning Isn't Invisible: Detecting Unlearning Traces in LLMs from Model Outputs"
   link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/b51362de8ffda06bcdf0bc538a1a0fc1-Paper-Conference.pdf"
