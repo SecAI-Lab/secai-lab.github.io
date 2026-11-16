@@ -26,7 +26,7 @@
   conference: Usenix
   date: 2026.11.06
   pub_year: 2026
-  discussion: "(Discussion)"
+  discussion: "(Discussion) This SoK provides a comprehensive analysis of DARPA’s AI Cyber Challenge (AIxCC), examining competition design, finalist CRS architectures, and performance beyond leaderboard rankings. A particularly valuable insight is that system reliability and engineering quality can matter as much as technical sophistication in autonomous vulnerability discovery and patching. The paper also demonstrates how LLM-based reasoning complements traditional fuzzing while highlighting persistent challenges in generating semantically correct patches. However, the evaluation relies heavily on synthetic vulnerabilities and competition-specific settings, which may limit the generalizability of its findings to real-world software security. Moreover, incomplete execution traces and the absence of controlled ablation studies make it difficult to isolate the effectiveness of individual techniques. The substantial computational resources and reliance on commercial LLMs also raise concerns about practical deployment and scalability. Overall, this SoK offers valuable lessons for developing autonomous Cyber Reasoning Systems, but further research is needed to establish their reliability, cost-effectiveness, and applicability beyond competition environments. (Yiyue)"
 
 - title: "Optimization-Aware Test Generation for Deep Learning Compilers"
   link: "https://arxiv.org/pdf/2511.18918"
