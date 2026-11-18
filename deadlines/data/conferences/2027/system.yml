@@ -8,11 +8,13 @@
   full_name: "ACM SIGOPS Annual Technical Conference"
   type: conference
   tier: T2
-  link: https://sigops.org/s/conferences/atc/
-  place: "TBA"
-  date: "TBA"
-  note: "Official ATC 2027 CFP/page not yet available."
-  tba: true
+  link: https://atc.sigops.org/2027/
+  deadline: "2027-01-19 23:59"
+  timezone: AoE
+  place: "Rennes, France"
+  date: "June 28-July 1, 2027"
+  start: 2027-06-28
+  end: 2027-07-01
 
 - title: "DSN"
   year: 2027
