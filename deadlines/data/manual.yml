@@ -354,17 +354,19 @@
   place: "Enschede, The Netherlands"
   date: "June 30 - July 2, 2027"
 
-# Official Important Dates page confirms the stored deadline, abstract
-# deadline and timezone as previously verified. The place field is
-# corrected: the page spells out the state name ('Colorado'), not the stored
-# abbreviation ('CO'), so the value is updated to match the page.
-# Verified 2026-10-26 against
-# http://www.codaspy.org/2027/important-dates.html
-# "Research paper submission November 23, 2026"
+# The conference's own deadline-extension notice confirms both the abstract
+# and paper deadlines were pushed back (abstract to Nov 30, paper to Dec 7,
+# 2026, AoE); the stored record still has the pre-extension dates. The
+# notice is split into two single-date quotes, one per field, because the
+# Important Dates list bundles the retired and current date into one row and
+# a quote spanning both dates is refused as ambiguous.
+# Verified 2026-11-19 against https://www.codaspy.org/2027/
+# "and paper submission to December 7, 2026 (AoE)."
+# Earlier: Verified 2026-10-26 against
 - title: "CODASPY"
   year: 2027
-  abstract_deadline: "2026-11-16 23:59"
-  deadline: "2026-11-23 23:59"
+  abstract_deadline: "2026-11-30 23:59"
+  deadline: "2026-12-07 23:59"
   timezone: AoE
   place: "Fort Collins, Colorado, USA"
   date: "June 14-17, 2027"
@@ -432,17 +434,18 @@
   place: "Egham, United Kingdom"
   date: "June 28 - July 1, 2027"
 
-# The stored link (ase-conferences.org) has no 2027 content. ASE's actual
-# official home, following the same conf.researchr.org pattern as ASE
-# 2024/2025, now has a live ASE 2027 page with venue, dates and a published
-# paper-submission date. The timezone is not stated anywhere on the page, so
-# deadline/abstract_deadline/timezone are withheld this run to avoid an
-# incomplete effective-instant group; only place, date, link and note are
-# corrected.
-# Verified 2026-11-16 against https://conf.researchr.org/home/ase-2027
-# "Sun 24 - Thu 28 October 2027 El Paso, Texas, United States"
+# A preliminary CFP is now live on the official researchr.org track page for
+# ASE 2027, giving a paper-submission deadline and timezone where the record
+# previously had none; the placeholder note claiming no CFP exists yet is
+# now stale.
+# Verified 2026-11-19 against
+# https://conf.researchr.org/track/ase-2027/ase-2027-research-track
+# "Wed 10 Mar 2027 Paper submission"
+# Earlier: Verified 2026-11-16 against https://conf.researchr.org/home/ase-2027
 - title: "ASE"
   year: 2027
+  deadline: "2027-03-10 23:59"
+  timezone: AoE
   place: "El Paso, Texas, United States"
   date: "October 24-28, 2027"
 

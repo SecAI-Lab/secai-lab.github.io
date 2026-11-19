@@ -8,11 +8,12 @@
   full_name: "IEEE/ACM International Conference on Automated Software Engineering"
   type: conference
   link: https://ase-conferences.org/
+  deadline: "2027-03-10 23:59"
+  timezone: AoE
   place: "El Paso, Texas, United States"
   date: "October 24-28, 2027"
   start: 2027-10-24
   end: 2027-10-28
-  note: "Official ASE 2027 conference page/CFP not publicly available yet."
 
 - title: "FSE"
   year: 2027
