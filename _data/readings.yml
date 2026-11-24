@@ -1,3 +1,13 @@
+- title: "WebCloak: Characterizing and Mitigating Threats From LLM-Driven Web Agents as Intelligent Scrapers"
+  link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11573457"
+  ppt_link: "https://secai.skku.edu/assets/paper-presentationWoomin_26_11_20_weekly_meeting.pdf"
+  code_link: ""
+  presenter: Woomin
+  conference: S&P
+  date: 2026.11.20
+  pub_year: 2026
+  discussion: ""
+  
 - title: "Training a Misaligned Reward Seeker"
   link: "https://alignment.anthropic.com/2026/reward-seeker/"
   ppt_link: "https://deniskim1.com/lab-meeting/1113_Rewarding_misaligned_seeker.pdf"
