@@ -6,7 +6,7 @@
   conference: ICLR
   date: 2026.11.20
   pub_year: 2026
-  discussion: ""
+  discussion: "(Discussion) This paper proposes ChatInject, which attacks LLM-based agents using chat templates and multi-turn conversations. The authors show that ChatInject achieves a high attack success rate across several LLMs. However, this paper has a limitation in that it does not report the computational and inference costs of the attack. Since ChatInject uses longer prompts, it may require more input tokens and inference time. It is also unclear whether the higher attack success rate comes from the proposed method itself or the additional information in longer prompts. Therefore, comparing existing attacks under the same token budget would provide a fairer evaluation. Additional experiments on attack efficiency and cost are needed to demonstrate the practicality of ChatInject. (gahyun)"
 
 - title: "WebCloak: Characterizing and Mitigating Threats From LLM-Driven Web Agents as Intelligent Scrapers"
   link: "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11573457"
