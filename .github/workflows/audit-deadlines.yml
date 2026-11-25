@@ -132,9 +132,11 @@ jobs:
     # Two bounded 24-minute model attempts plus first/final deterministic
     # reconciliation and citation preflight may exercise network backoff.
     timeout-minutes: 120
+    # Shards run in parallel: each is read-only and writes only its own
+    # artifact. fail-fast is off so one failed shard does not cancel the
+    # others mid-audit; apply still needs every shard to succeed.
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     permissions:
       contents: read

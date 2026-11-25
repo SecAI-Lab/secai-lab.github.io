@@ -81,8 +81,8 @@ def workflow_contract():
     require(int(shard.get("timeout-minutes", 0)) >= 120,
             "the shard envelope must fit both reconciliations, two model "
             "attempts, and citation backoff")
-    require((shard.get("strategy") or {}).get("max-parallel") == 1,
-            "audit shards must be serial to bound subscription usage")
+    require((shard.get("strategy") or {}).get("fail-fast") is False,
+            "parallel shards must not cancel each other when one fails")
     require((shard.get("permissions") or {}).get("contents") == "read",
             "model job must not receive contents:write")
     checkouts = [step for step in shard.get("steps") or []
