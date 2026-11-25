@@ -69,7 +69,8 @@ def workflow_contract():
     test_script = named_step(prepare, "Run pipeline tests").get("run", "")
     for suite in (
         "test_update_deadlines.py", "test_audit_lint.py",
-        "test_apply_proposals.py", "test_audit_state.py",
+        "test_apply_proposals.py", "test_defer_invalid_audit_claims.py",
+        "test_audit_state.py",
         "test_audit_batches.py", "test_reconcile_audit_outcomes.py",
         "test_risk_policy.py", "test_verify_citations.py",
         "simulate_workflow.py",
@@ -184,6 +185,18 @@ def workflow_contract():
             < names.index(clean_reconcile_name)
             < names.index("Verify official citations independently"),
             "clean apply job must reconcile negative claims before citation verification")
+    merged_deferral_name = "Defer malformed claims in merged audit output"
+    merged_deferral = str(named_step(apply, merged_deferral_name).get("run", ""))
+    require(names.index("Merge exact-once audit output")
+            < names.index(merged_deferral_name)
+            < names.index(clean_reconcile_name),
+            "shard checkpoints upload under always(), so the apply job must "
+            "itself defer malformed claims before finalization (audit run #33)")
+    require("defer_invalid_audit_claims.py" in merged_deferral
+            and "--watchlist watchlist.json" in merged_deferral
+            and "PIPESTATUS" in merged_deferral,
+            "merged-output schema deferral must be bound to the watchlist "
+            "and fail closed")
     clean_reconcile_run = str(clean_reconcile.get("run", ""))
     require("--watchlist watchlist.json" in clean_reconcile_run
             and "--finalize-deferred" in clean_reconcile_run

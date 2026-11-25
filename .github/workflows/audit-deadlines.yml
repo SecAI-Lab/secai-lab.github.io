@@ -444,6 +444,20 @@ jobs:
             watchlist.json audit-proposals.json \
             --audit-date "$AUDIT_DATE" --allow-unfinished
 
+      # Shard checkpoints upload under if: always(), so a shard whose own
+      # deferral step never ran still reaches this job. Re-run the deferral on
+      # the merged document: a malformed claim (e.g. timezone "EST", audit run
+      # #33) is returned to the retry queue for that one record instead of
+      # refusing every other correction at the post-merge check.
+      - name: Defer malformed claims in merged audit output
+        env:
+          AUDIT_DATE: ${{ needs.prepare.outputs.audit_date }}
+        run: |
+          python3 deadlines/scripts/defer_invalid_audit_claims.py \
+            --watchlist watchlist.json --proposals audit-proposals.json \
+            --audit-date "$AUDIT_DATE" | tee -a "$GITHUB_STEP_SUMMARY"
+          exit "${PIPESTATUS[0]}"
+
       # Start the write-capable trust boundary by independently checking every
       # negative source claim too. Shard reconciliation is useful repair
       # feedback, but only this fresh checkout is publication authority.

@@ -17,6 +17,7 @@ from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import update_deadlines as U  # noqa: E402
 import verify_citations as V  # noqa: E402
 
 NDSS = """<html><body><h2>Important Dates</h2>
@@ -681,6 +682,67 @@ class StrongShortContext(unittest.TestCase):
         quote = "Important Dates (AoE)"
         self.assertEqual(self.verify(f"<h3>{quote}</h3>", "timezone", "AoE", quote),
                          "VERIFIED")
+
+    def test_est_quote_grounds_the_iana_new_york_zone(self):
+        # SAC 2027's real dates block. Without this, the only timezone claim
+        # that grounded was the literal "EST", which the schema rejects.
+        quote = "Important Dates: October 2, 2026 (EST) Submission of regular papers"
+        self.assertEqual(self.verify(f"<p>{quote}</p>", "timezone",
+                                     "America/New_York", quote),
+                         "VERIFIED")
+
+    def test_timezone_form_must_be_a_whole_token(self):
+        quote = "Important Dates: submit at the latest by the deadline"
+        self.assertEqual(self.verify(f"<p>{quote}</p>", "timezone",
+                                     "America/New_York", quote),
+                         "UNCONFIRMED")
+
+    def tz_status(self, zone, quote):
+        if not U.TZDB_AVAILABLE:
+            self.skipTest("no tz database available")
+        return self.verify(f"<p>{quote}</p>", "timezone", zone, quote)
+
+    def test_unambiguous_abbreviation_grounds_its_iana_zone(self):
+        cases = [
+            ("Asia/Seoul", "Important Dates: paper submission October 2, 2026 (KST)"),
+            ("Asia/Tokyo", "Important Dates: all deadlines are 23:59 JST"),
+            ("Europe/Berlin", "Important Dates: deadlines are 23:59 CEST"),
+            ("Europe/Berlin", "Important Dates: deadlines are 23:59 CET"),
+        ]
+        for zone, quote in cases:
+            with self.subTest(zone=zone, quote=quote):
+                self.assertEqual(self.tz_status(zone, quote), "VERIFIED")
+
+    def test_abbreviation_does_not_ground_a_different_zone(self):
+        quote = "Important Dates: paper submission October 2, 2026 (KST)"
+        self.assertEqual(self.tz_status("Asia/Tokyo", quote), "UNCONFIRMED")
+
+    def test_ambiguous_abbreviation_grounds_no_zone(self):
+        # CST is US Central, China and Cuba; IST is India, Israel and Ireland.
+        for zone, quote in [
+            ("Asia/Shanghai", "Important Dates: all deadlines are 23:59 CST"),
+            ("America/Chicago", "Important Dates: all deadlines are 23:59 CST"),
+            ("Asia/Kolkata", "Important Dates: all deadlines are 23:59 IST"),
+        ]:
+            with self.subTest(zone=zone):
+                self.assertEqual(self.tz_status(zone, quote), "UNCONFIRMED")
+
+    def test_english_word_abbreviations_are_not_forms(self):
+        if not U.TZDB_AVAILABLE:
+            self.skipTest("no tz database available")
+        self.assertNotIn("eat", V.tz_forms("Africa/Nairobi"))
+        self.assertNotIn("west", V.tz_forms("Atlantic/Madeira"))
+
+    def test_utc_claim_does_not_ground_on_an_aoe_offset_quote(self):
+        quote = "Important Dates: all deadlines are 23:59 UTC-12"
+        self.assertEqual(self.verify(f"<p>{quote}</p>", "timezone", "UTC", quote),
+                         "UNCONFIRMED")
+
+    def test_tz_form_does_not_match_inside_a_signed_offset(self):
+        self.assertFalse(V.tz_form_in("utc", "all deadlines are utc-12"))
+        self.assertTrue(V.tz_form_in("utc", "all deadlines are 23:59 utc."))
+        self.assertTrue(V.tz_form_in("utc-12", "deadlines (utc-12)"))
+        self.assertFalse(V.tz_form_in("est", "at the latest"))
 
     def test_exact_submission_key_is_narrowly_accepted(self):
         quote = "Submission: 10 December 2025 (extended!)"

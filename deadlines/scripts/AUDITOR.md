@@ -128,7 +128,7 @@ do not retype it from memory, and do not tidy it up.
 | Field | Format |
 |---|---|
 | `deadline`, `abstract_deadline` | `"YYYY-MM-DD HH:MM"`, an array for multi-cycle venues, or `"TBA"`. **Each cycle in an array needs its own quote** — one quote cannot evidence two cycles |
-| `timezone` | `AoE`, `UTC+9`, `UTC-5`, `PST`, or an IANA name like `America/Los_Angeles` |
+| `timezone` | `AoE`, `UTC+9`, `UTC-5`, `PST`, or an IANA name like `America/Los_Angeles`. **Never** a region abbreviation (`EST`, `EDT`, `CST`, `CET`, `IST`, `JST`, `KST`…): those are rejected and the record is deferred. A CFP writing `(EST)`/`(EDT)` is `America/New_York`, `(KST)` is `Asia/Seoul`, `(CET)`/`(CEST)` is `Europe/Berlin` (or the venue's own European zone); quote the abbreviation as the evidence. `CST`, `CDT` and `IST` name several zones and ground none: quote a line stating the UTC offset, or omit `timezone` |
 | `place` | `"City, Country"` |
 | `date` | `"April 27-30, 2026"` or `"June 29 - July 3, 2026"` |
 | `link` | `https://…` |
@@ -229,7 +229,9 @@ a page:
 - **Not every CFP says "deadline" either.** SAC 2027's page has a full
   `IMPORTANT DATES` block — "October 2, 2026 (EST) Submission of regular
   papers" — and the word "deadline" appears nowhere on it. A dates block with
-  milestone labels is a CFP whatever it calls itself.
+  milestone labels is a CFP whatever it calls itself. Its timezone is
+  `America/New_York`, not `EST`: the page's "(EST)" is the quote, never the
+  value (2 October is in Eastern *Daylight* time anyway).
 - **Dates sometimes come before their labels.** DSN 2027's table is
   `December 2, 2026 | Paper Submission Deadline`; NDSS writes
   `Wed, 23 April 2025: Paper submission deadline`; other pages put the label

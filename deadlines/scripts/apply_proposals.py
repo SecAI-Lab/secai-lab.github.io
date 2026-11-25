@@ -561,7 +561,49 @@ def validate_proposal(p, targets_by_key, errors):
                         and not U.valid_deadline(v):
                     _err(errors, pid, f"{name} {v!r} must be 'YYYY-MM-DD HH:MM'")
                     ok = False
+    if ok and not validate_proposal_values(p, errors):
+        ok = False
     return ok
+
+
+# Region abbreviations auditors copy verbatim from CFPs. None is a valid stored
+# timezone: the page has no branch for them, and most are ambiguous (CST is US
+# Central or China; IST is India, Israel or Ireland).
+TZ_ABBREVIATIONS = frozenset((
+    "EST", "EDT", "ET", "CST", "CDT", "CT", "MST", "MDT", "MT", "PT",
+    "AKST", "AKDT", "HST", "GMT", "BST", "IST", "WET", "WEST", "CET", "CEST",
+    "EET", "EEST", "MSK", "JST", "KST", "SGT", "HKT", "AEST", "AEDT", "ACST",
+    "AWST", "NZST", "NZDT", "BRT", "ART",
+))
+
+
+def validate_proposal_values(p, errors):
+    """Run the updater's record validator over the proposed values alone.
+
+    The applier re-runs U.validate() after merging, and any failure there
+    refuses the WHOLE batch. Every check in U.validate() is per-field, and
+    existing manual.yml fields were written through the same check, so a
+    proposal that passes here cannot fail post-merge. Running the same function
+    (not a copy of its rules) at shard time means a new rule added to
+    U.validate() is enforced on proposals automatically, and a bad value is
+    deferred for that one record instead of blocking every other correction.
+    """
+    pid = p.get("id") or "<no id>"
+    probe = {"title": p["title"], "year": p["year"]}
+    probe.update({name: value
+                  for name, value in normalise_fields(p["fields"]).items()
+                  if value is not None})
+    probe.setdefault("deadline", "TBA")
+    problems = U.validate(probe, {p["title"]}, require_deadline=False)
+    tz = probe.get("timezone")
+    if isinstance(tz, str) and tz.strip().upper() in TZ_ABBREVIATIONS:
+        problems.append(
+            f"timezone {tz!r} is a region abbreviation, not a stored timezone: "
+            "propose the venue's IANA zone (e.g. America/New_York for a CFP "
+            "that writes EST/EDT) and quote the abbreviation as evidence")
+    for problem in problems:
+        _err(errors, pid, problem)
+    return not problems
 
 
 def validate_unverifiable(items, targets_by_key, errors):

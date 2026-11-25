@@ -72,6 +72,37 @@ class DeferInvalidAuditClaims(unittest.TestCase):
             self.watchlist, finalized, allow_machine_deferred=True
         )
 
+    def test_timezone_abbreviation_is_deferred_not_fatal(self):
+        # Regression for audit run #33: SAC 2027 "EST" must be returned to the
+        # retry queue at shard time so the rest of the batch still applies.
+        est = copy.deepcopy(self.good)
+        est.update(id="upsert_manual:SAC:2027", action="upsert_manual")
+        est["fields"] = {"timezone": {
+            "value": "EST",
+            "evidence": [{"quote": "October 2, 2026 (EST) Submission of regular papers"}],
+        }}
+        eurosp = {
+            "id": "no_change:EuroS&P:2027", "action": "no_change",
+            "title": "EuroS&P", "year": 2027,
+            "source_url": "https://eurosp2027.ieee-security.org/cfp.html",
+            "reason": "The official page confirms the recorded place.",
+            "fields": {"place": {
+                "value": "Madrid, Spain",
+                "evidence": [{"quote": "EuroS&P 2027 will be held in Madrid, Spain"}],
+            }},
+        }
+        original = self.document()
+        original["proposals"] = [est, eurosp]
+        repaired, diagnostics = D.defer_invalid_claims(
+            self.watchlist, original, self.targets, "2026-10-12"
+        )
+        self.assertEqual(repaired["proposals"], [eurosp])
+        self.assertEqual(repaired["unverifiable"], [{
+            "title": "SAC", "year": 2027, "cause": "not_checked",
+        }])
+        self.assertTrue(any("bad timezone 'EST'" in e for e in diagnostics[0][2]),
+                        diagnostics)
+
     def test_valid_document_is_unchanged(self):
         original = self.document()
         original["proposals"] = [self.good]

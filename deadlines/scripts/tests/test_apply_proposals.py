@@ -1528,6 +1528,44 @@ class Validation(unittest.TestCase):
         }}))
         self.assertTrue(ok, errors)
 
+    def test_timezone_abbreviation_is_refused_before_apply(self):
+        # Regression: audit run #33 proposed SAC 2027 timezone "EST"; only the
+        # post-merge check caught it, and that refused the entire batch.
+        for tz in ("EST", "EDT", "CET", "KST", "est"):
+            with self.subTest(tz=tz):
+                ok, errors = self.check(proposal(title="SAC", year=2027, fields={
+                    "timezone": claim(tz, "October 2, 2026 (EST) Submission")}))
+                self.assertFalse(ok)
+                self.assertTrue(any("IANA" in e for e in errors), errors)
+
+    def test_iana_timezone_is_accepted(self):
+        ok, errors = self.check(proposal(title="SAC", year=2027, fields={
+            "timezone": claim("America/New_York", "October 2, 2026 (EST) Submission")}))
+        self.assertTrue(ok, errors)
+
+    def test_every_post_merge_rejection_is_caught_per_proposal(self):
+        """Invariant: a proposal validate_proposal accepts never fails
+        validate_merged, so one bad value can no longer refuse a whole batch."""
+        bad = {
+            "timezone": ["EST", "not a zone!", "UTC+15", "Banana/Republic"],
+            "link": ["ftp://example.org/cfp", "www.example.org"],
+            "deadline": ["2026-10-02", "October 2, 2026"],
+        }
+        keys = {t for t in self.targets}
+        for name, values in bad.items():
+            for value in values:
+                with self.subTest(field=name, value=value):
+                    p = proposal(fields={name: claim(value)})
+                    merged_errors = []
+                    merged_ok = A.validate_merged(
+                        {"title": p["title"], "year": p["year"], name: value},
+                        keys, p["id"], merged_errors)
+                    if merged_ok:
+                        continue  # e.g. no tz database for Banana/Republic
+                    ok, errors = self.check(p)
+                    self.assertFalse(ok, f"{name}={value!r} passed validate_proposal "
+                                         f"but fails post-merge: {merged_errors}")
+
     def test_timezone_deletion_is_refused(self):
         ok, errors = self.check(proposal(fields={"timezone": {
             "value": None, "absence_scope_quote": "Important Dates: ..."}}))

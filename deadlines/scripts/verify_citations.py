@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import functools
 import hashlib
 import html as htmllib
 import ipaddress
@@ -382,8 +383,94 @@ def tz_forms(tz: str) -> list[str]:
         "UTC-5": ["utc-5", "gmt-5", "est", "eastern standard time"],
         "UTC-8": ["pst", "pdt", "pacific time", "utc-8"],
         "America/Los_Angeles": ["pst", "pdt", "pacific time", "america/los_angeles"],
+        # CFPs write "(EST)" year-round, including dates inside daylight time
+        # (SAC 2027: "October 2, 2026 (EST)"). The stored zone must be the IANA
+        # name so the offset resolves per date; without these forms the correct
+        # value was uncitable and the literal, invalid "EST" was the only claim
+        # that grounded.
+        "America/New_York": ["est", "edt", "eastern time", "eastern standard time",
+                             "eastern daylight time", "america/new_york"],
     }
-    return table.get(canon, [normalize(canon)])
+    if canon in table:
+        return table[canon]
+    # Any other IANA zone: also accept its own unambiguous abbreviations
+    # ("KST" for Asia/Seoul, "CET"/"CEST" for Europe/Berlin), so a CFP's
+    # abbreviation can ground the correct IANA value instead of leaving the
+    # record permanently uncitable.
+    return [normalize(canon)] + zone_abbreviation_forms(canon)
+
+
+# Abbreviations that are also ordinary English words: as whole tokens they
+# would still match prose ("we eat", "West Lafayette").
+_TZ_ABBREVIATION_STOPWORDS = frozenset(("cat", "eat", "west", "wit"))
+
+
+@functools.lru_cache(maxsize=1)
+def _tz_abbreviation_offsets() -> dict[str, frozenset]:
+    """abbreviation -> every UTC offset any zone uses it for (Jan and Jul).
+
+    Empty when no tz database is available, which leaves only the static forms.
+    """
+    try:
+        import zoneinfo
+        names = zoneinfo.available_timezones()
+    except Exception:  # noqa: BLE001 - no tz database: static table only
+        return {}
+    year = dt.date.today().year
+    index: dict[str, set] = {}
+    for name in names:
+        try:
+            zone = zoneinfo.ZoneInfo(name)
+        except Exception:  # noqa: BLE001
+            continue
+        for month in (1, 7):
+            instant = dt.datetime(year, month, 15, 12, tzinfo=zone)
+            abbr = instant.tzname()
+            if abbr and abbr.isalpha():
+                index.setdefault(abbr.casefold(), set()).add(instant.utcoffset())
+    return {abbr: frozenset(offsets) for abbr, offsets in index.items()}
+
+
+@functools.lru_cache(maxsize=None)
+def zone_abbreviation_forms(zone_name: str) -> list[str]:
+    """The zone's own abbreviations that name exactly one UTC offset worldwide.
+
+    CST (US Central / China / Cuba), IST (India / Israel / Ireland) and PST
+    (US Pacific / Philippines) are excluded: a quote saying "CST" cannot tell
+    which zone the auditor meant, and a wrong pick moves the deadline by hours.
+    """
+    if "/" not in zone_name:
+        return []
+    try:
+        import zoneinfo
+        zone = zoneinfo.ZoneInfo(zone_name)
+    except Exception:  # noqa: BLE001 - unknown zone or no tz database
+        return []
+    offsets = _tz_abbreviation_offsets()
+    year = dt.date.today().year
+    forms = []
+    for month in (1, 7):
+        abbr = (dt.datetime(year, month, 15, 12, tzinfo=zone).tzname() or "").casefold()
+        if abbr.isalpha() and abbr not in forms \
+                and abbr not in _TZ_ABBREVIATION_STOPWORDS \
+                and abbr != "utc" \
+                and len(offsets.get(abbr, ())) == 1:
+            forms.append(abbr)
+    return forms
+
+
+def tz_form_in(form: str, haystack: str, flat: bool = False) -> bool:
+    """Whole-token match for a timezone form.
+
+    A bare substring test lets 'est' match 'latest' or 'request', and lets
+    'utc' (UTC+0) match the 'utc' inside 'UTC-12'. A form must not touch a
+    letter or digit on either side, nor be followed by a signed offset. In the
+    flat view the sign is gone ('utc-12' -> 'utc 12'), so there a following
+    number is refused too.
+    """
+    tail = r"(?![a-z0-9]|[+-]\d" + (r"| \d" if flat else "") + ")"
+    pattern = r"(?<![a-z0-9])" + re.escape(form) + tail
+    return re.search(pattern, haystack) is not None
 
 
 def count_dates(text: str) -> int:
@@ -878,7 +965,13 @@ def ground_quote(page_toks, quote, forms, labels, single_date=False, field=None)
                       "surrounding label text to identify what the date is")
     # Signed view for offsets; flat view for everything else (see tz_forms).
     haystack = qflat + " " + normalize(quote)
-    if forms and not any(f in haystack for f in forms):
+    # The flat half turns "UTC-12" into "utc 12", where a bare "utc" (UTC+0)
+    # claim would otherwise ground; in the flat view a form followed by a number
+    # is therefore refused (the signed view still sees "23:59 UTC, 2 Oct").
+    signed = normalize(quote)
+    present = (lambda f: tz_form_in(f, signed) or tz_form_in(f, qflat, flat=True)) \
+        if field == "timezone" else (lambda f: f in haystack)
+    if forms and not any(present(f) for f in forms):
         return None, "the quote does not contain the proposed value"
     if single_date and count_dates(quote) > 1:
         return None, ("the quote contains more than one date, so it does not "
