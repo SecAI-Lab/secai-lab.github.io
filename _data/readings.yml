@@ -1,3 +1,13 @@
+- title: "Chasing Shadows: Pitfalls in LLM Security Research"
+  link: "https://www.ndss-symposium.org/ndss-paper/chasing-shadows-pitfalls-in-llm-security-research/"
+  ppt_link: "https://docs.google.com/presentation/d/1SD1VYio6epLX5jRldhDP4NwRbRRjCEycaPLNQh_6TKI/edit?usp=sharing"
+  code_link: ""
+  presenter: Byungsoo
+  conference: NDSS
+  date: 2026.11.27
+  pub_year: 2026
+  discussion: ""
+
 - title: "ChatInject: Abusing Chat Templates for Prompt Injection in LLM Agents"
   link: "https://proceedings.iclr.cc/paper_files/paper/2026/file/2a48e053db5f0cd57015a33bbc3f794b-Paper-Conference.pdf"
   ppt_link: "https://drive.google.com/file/d/1LY-__YZRk-c3fv5jtr65Dh7gDhCQGxmR/view?usp=drive_link"
